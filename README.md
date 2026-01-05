@@ -9,18 +9,24 @@
 - Фронтенд: Javascript (React 19.2.3)
 
 Що зроблено (станом на 31.12.2025):
-<p style="color: red">-  Реєстрація Користувача</p>
-<p style="color: red">-  Вхід в Систему</p>
-<p style="color: red">-  Вихід з Системи</p>
-<p style="color: red">-  Захист Маршрутів</p>
-<p style="color: red">-  Перегляд Профілю</p>
-<p style="color: red">-  Редагування Профілю</p>
-<p style="color: red">-  Створення Посту</p>
-<p style="color: red">-  Перегляд Стрічки Новин</p>
-<p style="color: red">-  Надсилання Запиту на Дружбу</p>
-<p style="color: red">-  Керування Запитами</p>
-<p style="color: red">-  Список Друзів</p>
-<p style="color: red">-  Статуси Дружби</p>
+<p style="color: red">-  Реєстрація Користувача 90%</p>
+<p style="color: red">-  Вхід в Систему 95%</p>
+<p style="color: red">-  Вихід з Системи 0%</p>
+<p style="color: red">-  Захист Маршрутів 0%</p>
+<p style="color: red">-  Перегляд Профілю 50%</p>
+<p style="color: red">-  Редагування Профілю 0%</p>
+<p style="color: red">-  Створення Посту 0%</p>
+<p style="color: red">-  Перегляд Стрічки Новин 0%</p>
+<p style="color: red">-  Надсилання Запиту на Дружбу 0%</p>
+<p style="color: red">-  Керування Запитами 0%</p>
+<p style="color: red">-  Список Друзів 0%</p>
+<p style="color: red">-  Статуси Дружби 0%</p>
+
+## Перед запуском
+- Встановити послідню версію PHP VS17 x64 Thread Safe
+ 
+## Запуск
+- Бекенд: `php artisan serve`
 
 ## Майбутні можливості
 1.	Система коментування постів.
