@@ -1,18 +1,49 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
+import { useFriendship } from "../hooks/useFriendship";
 import "../styles/Friends.css";
 
 export default function FriendsPage() {
     const { user: currentUser } = useContext(AuthContext);
+    const { addFriend, acceptRequest, removeFriend, blockUser, unblockUser } = useFriendship();
+
     const [activeTab, setActiveTab] = useState('my');
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const abortControllerRef = useRef(null);
 
-    // Функція завантаження (приймає signal для скасування)
+    const confirmAction = (message) => {
+        return new Promise((resolve) => {
+            toast((t) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span>{message}</span>
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t.id); // ben not want talk to you
+                            resolve(true); // hohoho, YES
+                        }}
+                        style={{ padding: '4px 8px', background: '#d33', border: 'none', borderRadius: '4px', color: 'white', cursor: 'pointer' }}
+                    >
+                        Так
+                    </button>
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t.id);
+                            resolve(false); //hohoho, NO
+                        }}
+                        style={{ padding: '4px 8px', background: '#555', border: 'none', borderRadius: '4px', color: 'white', cursor: 'pointer' }}
+                    >
+                        Ні
+                    </button>
+                </div>
+            ), { duration: 5000, icon: '?' });
+        });
+    };
+
     const fetchUsers = async (query = "", signal) => {
         setLoading(true);
         try {
@@ -22,76 +53,63 @@ export default function FriendsPage() {
             else if (activeTab === 'all') endpoint = `/users?search=${query}`;
 
             const res = await api.get(endpoint, { signal });
-
-            // Якщо ми тут, значить запит не скасовано
             setUsers(Array.isArray(res.data) ? res.data : (res.data.data || []));
         } catch (err) {
             if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
                 console.error("Помилка завантаження:", err);
             }
         } finally {
-            // Вимикаємо лоадер тільки якщо запит не був скасований
-            if (!signal.aborted) {
-                setLoading(false);
-            }
+            if (!signal.aborted) setLoading(false);
         }
     };
 
     useEffect(() => {
-        // 1. Скасовуємо попередній запит, якщо він ще висить
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-
-        // 2. Створюємо новий контролер
+        if (abortControllerRef.current) abortControllerRef.current.abort();
         const newController = new AbortController();
         abortControllerRef.current = newController;
 
-        // 3. Робимо запит
-        // Якщо це пошук і є текст - робимо затримку
         if (activeTab === 'all' && searchQuery) {
-            const timeoutId = setTimeout(() => {
-                fetchUsers(searchQuery, newController.signal);
-            }, 500);
-
+            const timeoutId = setTimeout(() => fetchUsers(searchQuery, newController.signal), 500);
             return () => clearTimeout(timeoutId);
         } else {
-            // Звичайний запит без затримки
             fetchUsers(searchQuery, newController.signal);
         }
-
-        return () => {
-            newController.abort();
-        };
+        return () => newController.abort();
     }, [activeTab, searchQuery]);
 
     const handleAction = async (action, username) => {
-        // потім зробити рефакторинг цього "шедевру" а то тут чорт голову вломить що де і як працює
-        try {
-            if (action === 'add') {
-                await api.post('/friends/add', { username });
-                alert("Заявку надіслано!");
-            }
-            else if (action === 'accept') {
-                await api.post('/friends/accept', { username });
+        if (action === 'delete' || action === 'block') {
+            const message = action === 'block'
+                ? `Заблокувати @${username}?`
+                : `Видалити @${username}?`;
+
+            const isConfirmed = await confirmAction(message);
+            if (!isConfirmed) return;
+        }
+
+        const loadingToast = toast.loading('Обробка...');
+
+        let result;
+        switch (action) {
+            case 'add': result = await addFriend(username); break;
+            case 'accept': result = await acceptRequest(username); break;
+            case 'delete':
+            case 'cancel_request': result = await removeFriend(username); break;
+            case 'block': result = await blockUser(username); break;
+            case 'unblock': result = await unblockUser(username); break;
+            default: toast.dismiss(loadingToast); return;
+        }
+
+        toast.dismiss(loadingToast);
+
+        if (result.success) {
+            toast.success(result.message);
+
+            if (action !== 'add') {
                 setUsers(prev => prev.filter(u => u.username !== username));
             }
-            else if (action === 'block') {
-                if (!window.confirm(`Заблокувати @${username}?`)) return;
-                await api.post('/friends/block', { username });
-                setUsers(prev => prev.filter(u => u.username !== username));
-            }
-            else if (action === 'delete' || action === 'cancel_request') {
-                if (action === 'delete' && !window.confirm(`Видалити @${username}?`)) return;
-                await api.delete(`/friends/${username}`);
-                setUsers(prev => prev.filter(u => u.username !== username));
-            }
-            else if (action === 'unblock') {
-                await api.delete(`/friends/blocked/${username}`);
-                setUsers(prev => prev.filter(u => u.username !== username));
-            }
-        } catch (err) {
-            alert(err.response?.data?.message || "Помилка виконання дії");
+        } else {
+            toast.error(result.message);
         }
     };
 
@@ -102,7 +120,6 @@ export default function FriendsPage() {
         return (u.first_name + " " + u.last_name).toLowerCase().includes(search) ||
             u.username.toLowerCase().includes(search);
     });
-
     return (
         <div className="friends-container">
             <h2 style={{ marginBottom: 20 }}>Контакти</h2>
@@ -156,7 +173,6 @@ export default function FriendsPage() {
                             <div className="user-row-actions">
                                 {activeTab === 'my' && (
                                     <>
-                                        <button className="btn-small" style={{ background: '#444', color: '#fff' }}>SMS</button>
                                         <button className="btn-small btn-remove" onClick={() => handleAction('delete', u.username)}>Видалити</button>
                                         <button className="btn-small btn-remove" onClick={() => handleAction('block', u.username)}>Block</button>
                                     </>

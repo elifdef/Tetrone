@@ -1,13 +1,20 @@
 @import url('https://fonts.cdnfonts.com/css/tahoma');
 
 :root {
-    --vk-dark-bg: #1e1e1e;          /* Основний фон */
-    --vk-dark-box-bg: #2b2b2b;      /* Фон блоків */
-    --vk-dark-border: #424242;      /* Рамки */
-    --vk-dark-text-main: #e0e0e0;   /* Основний текст */
-    --vk-dark-text-muted: #8c8c8c;  /* Сірий текст (лейбли) */
-    --vk-dark-link: #5b9bd5;        /* Колір посилань/імен */
-    --vk-dark-button-bg: #3a3a3a;   /* Фон кнопок */
+    --vk-dark-bg: #1e1e1e;
+    /* Основний фон */
+    --vk-dark-box-bg: #2b2b2b;
+    /* Фон блоків */
+    --vk-dark-border: #424242;
+    /* Рамки */
+    --vk-dark-text-main: #e0e0e0;
+    /* Основний текст */
+    --vk-dark-text-muted: #8c8c8c;
+    /* Сірий текст (лейбли) */
+    --vk-dark-link: #5b9bd5;
+    /* Колір посилань/імен */
+    --vk-dark-button-bg: #3a3a3a;
+    /* Фон кнопок */
     --vk-dark-button-hover: #4a4a4a;
 }
 
@@ -45,7 +52,7 @@
     width: 100%;
     height: auto;
     display: block;
-    min-height: 200px; 
+    min-height: 200px;
     background-color: #333;
     object-fit: cover;
 }
@@ -64,6 +71,7 @@
     font-family: 'Tahoma', sans-serif;
     transition: background 0.2s;
 }
+
 .vk-btn:hover {
     background: var(--vk-dark-button-hover);
 }
@@ -125,4 +133,73 @@
 .vk-value {
     color: var(--vk-dark-text-main);
     flex: 1;
+}
+
+.vk-btn-more {
+    background: #444;
+    color: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0 12px;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vk-btn-more:hover {
+    background: #555;
+    color: #fff;
+}
+
+/* Контейнер для меню (щоб позиціонувати випадайку) */
+.vk-actions-container {
+    display: flex;
+    position: relative;
+    /* Важливо для absolute позиціонування меню */
+}
+
+/* Випадаюче меню */
+.vk-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    /* Знизу кнопки */
+    right: 0;
+    margin-top: 5px;
+    background: #2b2b2b;
+    border: 1px solid #444;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    min-width: 180px;
+    overflow: hidden;
+    padding: 5px 0;
+}
+
+.vk-dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    background: transparent;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.vk-dropdown-item:hover {
+    background: #3a3a3a;
+}
+
+.vk-dropdown-item.danger {
+    color: #ff5555;
+}
+
+.vk-dropdown-item.danger:hover {
+    background: #442222;
 }
