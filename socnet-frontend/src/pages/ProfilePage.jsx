@@ -3,9 +3,10 @@ import { Navigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import NotFoundPage from "./NotFoundPage";
-import UserProfileCard from "../components/UserProfileCard";
-import UserWall from "../components/UserWall"
+import UserProfileCard from "../components/profile/UserProfileCard";
+import UserWall from "../components/wall/UserWall"
 import { usePageTitle } from "../hooks/usePageTitle";
+import { mapUser } from "../services/mappers"
 
 export default function ProfilePage() {
     const { username } = useParams();
@@ -19,7 +20,7 @@ export default function ProfilePage() {
         setError(false);
         setLoading(true);
         api.get(`/users/${username}`)
-            .then(res => setProfile(res.data.data))
+            .then(res => setProfile(mapUser(res.data)))
             .catch(err => {
                 if (err.response && err.response.status === 404)
                     setError(true);
@@ -30,7 +31,8 @@ export default function ProfilePage() {
     if (error)
         return <NotFoundPage />;
 
-    if (loading) return <div style={{ color: 'white', padding: 20 }}>Завантаження...</div>;
+    if (loading)
+        return <div style={{ color: 'white', padding: 20 }}>Завантаження...</div>;
 
     const isOwnProfile = authUser && authUser.username === profile.username;
 

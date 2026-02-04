@@ -68,7 +68,6 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
                 notifyError(result.message);
             }
         } catch (e) {
-            console.error(e);
             notifyError("Помилка");
         } finally {
             setLoading(false);

@@ -7,6 +7,9 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
+use Illuminate\Cache\RateLimiting\Limit;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +26,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        VerifyEmail::createUrlUsing(function ($notifiable) {
+        RateLimiter::for('api', function (Request $request)
+        {
+            // якщо локалка то без обмежень
+            if (app()->environment('local'))
+                return Limit::perMinute(10000000)->by($request->user()?->id ?: $request->ip());
+
+            // якщо прод - 180 запитів
+            return Limit::perMinute(180)->by($request->user()?->id ?: $request->ip());
+        });
+
+        VerifyEmail::createUrlUsing(function ($notifiable)
+        {
             $backendUrl = URL::temporarySignedRoute(
                 'verification.verify',
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)), // година часу

@@ -1,9 +1,10 @@
 import { useState, useContext } from "react";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
-import UserProfileCard from "../components/UserProfileCard";
-import FormInput from "../components/FormInput"
-import { notifyError, notifyWarn } from "../components/Notify"
+import UserProfileCard from "../components/profile/UserProfileCard";
+import FormInput from "../components/UI/FormInput"
+import { notifyError } from "../components/Notify"
+import { validateImageFile } from "../services/upload";
 
 export default function SetupProfilePage() {
     const { user: authUser, login } = useContext(AuthContext);
@@ -26,17 +27,9 @@ export default function SetupProfilePage() {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            if (file.size > 5 * 1024 * 1024) {
-                notifyWarn('Файл занадто великий. Максимальний розмір: 5 МБ.');
-                return;
-            }
+        if (!file) return;
+        if (!validateImageFile(file)) return;
 
-            if (!file.type.startsWith('image/')) {
-                notifyError('Будь ласка, завантажте зображення.');
-                return;
-            }
-        }
         setAvatarFile(file);
         setPreview(URL.createObjectURL(file));
     };

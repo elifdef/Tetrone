@@ -7,9 +7,18 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Friendship;
+use App\Services\FileStorageService;
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
+    protected $fileService;
+
+    public function __construct(FileStorageService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     // Отримати пости конкретного юзера
     public function index(Request $request, string $username)
     {
@@ -23,11 +32,12 @@ class PostController extends Controller
             ], 403);
 
         $posts = $targetUser->posts()
-            ->with('user:id,username,first_name,last_name,avatar')
+            ->with('user')
+            ->withCount(['likes', 'comments'])
             ->latest()
             ->paginate(10);
 
-        return response()->json($posts);
+        return PostResource::collection($posts);
     }
 
     // показати один пост по його id
@@ -38,7 +48,10 @@ class PostController extends Controller
         if ($currentUser && $this->isBlockedByTarget($currentUser->id, $post->user_id))
             return response()->json(['message' => 'Forbidden'], 403);
 
-        return response()->json($post->load('user:id,username,first_name,last_name,avatar'));
+        $post->load('user');
+        $post->loadCount(['likes', 'comments']);
+
+        return new PostResource($post);
     }
 
     // Створити пост
@@ -46,7 +59,7 @@ class PostController extends Controller
     {
         $request->validate([
             'content' => 'nullable|string|max:2048',
-            'image' => 'nullable|image|max:5120', // 5МБ
+            'image' => 'nullable|image|max:' . config('uploads.max_size')
         ]);
 
         if (!$request->input('content') && !$request->hasFile('image'))
@@ -54,7 +67,13 @@ class PostController extends Controller
 
         $path = null;
         if ($request->hasFile('image'))
-            $path = $request->file('image')->store('posts', 'public');
+        {
+            $path = $this->fileService->upload(
+                file: $request->file('image'),
+                folder: $request->user()->username,
+                prefix: 'post'
+            );
+        }
 
         $post = $request->user()->posts()->create([
             'content' => $request->input('content'),
@@ -86,7 +105,7 @@ class PostController extends Controller
 
         $request->validate([
             'content' => 'nullable|string|max:2048',
-            'image' => 'nullable|image|max:5120',
+            'image' => 'nullable|image|max:' . config('uploads.max_size')
         ]);
 
         $data = [];
@@ -124,5 +143,51 @@ class PostController extends Controller
             ->where('friend_id', $viewerId)
             ->where('status', Friendship::STATUS_BLOCKED)
             ->exists();
+    }
+
+    // стрічка новин з постами НАШИХ друзів
+    public function feed(Request $request)
+    {
+        $user = $request->user();
+        $friendIds = $user->getAllFriendIds();
+        $friendIds->push($user->id); // щоб бачити і свої пости
+
+        $posts = Post::whereIn('user_id', $friendIds)
+            ->with('user')
+            ->withCount(['likes', 'comments'])
+            ->latest()
+            ->paginate(20);
+
+        return PostResource::collection($posts);
+    }
+
+    // глобальна стрічка з ВСІМА постами
+    public function globalFeed(Request $request)
+    {
+        $user = $request->user('sanctum');
+
+        $query = Post::with('user:id,username,first_name,last_name,avatar')->latest();
+
+        if ($user)
+        {
+            // отримуємо ID тих хто заблокував МЕНЕ
+            $blockedBy = Friendship::where('friend_id', $user->id)
+                ->where('status', Friendship::STATUS_BLOCKED)
+                ->pluck('user_id');
+
+            // отримуємо ID тих кого заблокував Я
+            $blockedByMe = Friendship::where('user_id', $user->id)
+                ->where('status', Friendship::STATUS_BLOCKED)
+                ->pluck('friend_id');
+
+            $query->whereNotIn('user_id', $blockedBy->merge($blockedByMe));
+        }
+
+        $posts = $query
+            ->with('user')
+            ->withCount(['likes', 'comments'])
+            ->latest()
+            ->paginate(20);
+        return PostResource::collection($posts);
     }
 }

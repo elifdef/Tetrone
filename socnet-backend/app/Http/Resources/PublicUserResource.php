@@ -15,7 +15,8 @@ class PublicUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $status = $this->getFriendshipStatus($request->user('sanctum'));
+        $currentUser = $request->user('sanctum');
+        $status = $this->getFriendshipStatusWith($currentUser);
         if ($status === 'blocked_by_target')
         {
             return [
@@ -36,7 +37,7 @@ class PublicUserResource extends JsonResource
             // $this посилається на об'єкт User
             'id' => $this->id,
             'username' => $this->username,
-            'email' => $this->email,
+            'email' => $this->when($currentUser && $currentUser->id === $this->id, $this->email),
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'avatar' => $this->avatar,
@@ -56,54 +57,9 @@ class PublicUserResource extends JsonResource
             }),
             'is_setup_complete' => (bool)$this->is_setup_complete,
             'email_verified_at' => $this->email_verified_at,
-            'friendship_status' => $this->getFriendshipStatus($request->user('sanctum')),
-            'friends_count' =>
-                $this->friendOf()->wherePivot('status', Friendship::STATUS_ACCEPTED)->count() +
-                $this->friendsOfMine()->wherePivot('status', Friendship::STATUS_ACCEPTED)->count(),
-            'followers_count' =>
-                $this->friendOf()->wherePivot('status', Friendship::STATUS_PENDING)->count(),
+            'friendship_status' => $status,
+            'friends_count' => $this->getAllFriendIds()->count(),
+            'followers_count' => $this->receivedFriendships()->wherePivot('status', Friendship::STATUS_PENDING)->count()
         ];
-    }
-
-    /**
-     * Визначає статус відносин відносно поточного авторизованого користувача.
-     */
-    protected function getFriendshipStatus($currentUser)
-    {
-        // якщо це не залогінений або це ми самі
-        if (!$currentUser || $currentUser->id === $this->id)
-            return 'none';
-
-        // перевіряємо обидва напрямки: А -> В або В -> А
-        $friendship = Friendship::where(function ($q) use ($currentUser)
-        {
-            $q->where('user_id', $currentUser->id)->where('friend_id', $this->id);
-        })->orWhere(function ($q) use ($currentUser)
-        {
-            $q->where('user_id', $this->id)->where('friend_id', $currentUser->id);
-        })->first();
-
-        if (!$friendship)
-            return 'none';
-
-        if ($friendship->status === Friendship::STATUS_ACCEPTED)
-            return 'friends';
-
-        if ($friendship->status === Friendship::STATUS_PENDING)
-        {
-            if ($friendship->user_id === $currentUser->id)
-                return 'pending_sent'; // якщо А "відправив"
-            return 'pending_received'; // якщо А "отримав"
-        }
-
-        if ($friendship->status == Friendship::STATUS_BLOCKED)
-        {
-            // я заблокував його
-            if ($friendship->user_id === $currentUser->id)
-                return 'blocked_by_me';
-            //він заблокував мене
-            return 'blocked_by_target';
-        }
-        return 'none';
     }
 }

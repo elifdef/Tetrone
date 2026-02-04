@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { notifySuccess, notifyConfirmAction, notifyError, notifyWarn } from "../components/Notify"
+import { notifySuccess, notifyConfirmAction, notifyError } from "../components/Notify"
+import { validateImageFile } from "../services/upload";
+import { mapPost } from '../services/mappers';
 
 export const useUserWall = (profileUser) => {
     const [posts, setPosts] = useState([]);
@@ -13,7 +15,7 @@ export const useUserWall = (profileUser) => {
 
     // для редагування
     const [editingPostId, setEditingPostId] = useState(null);
-    const [editContent, setEditContent] = useState("");
+    const [editContent, setEditContent] = useState('');
     const [editImage, setEditImage] = useState(null);
     const [editPreview, setEditPreview] = useState(null);
     const [deleteExistingImage, setDeleteExistingImage] = useState(false);
@@ -24,11 +26,12 @@ export const useUserWall = (profileUser) => {
         const fetchPosts = async () => {
             try {
                 const response = await api.get(`/users/${profileUser.username}/posts`);
-                setPosts(response.data.data);
+                const processedPosts = response.data.data.map(mapPost);
+                setPosts(processedPosts);
             } catch (err) {
                 (err.response && err.response.status === 403)
                     ? setPosts([])
-                    : console.error("Error fetching posts:", err);
+                    : notifyError("Error fetching posts");
             }
         };
 
@@ -38,31 +41,44 @@ export const useUserWall = (profileUser) => {
     const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
     const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
 
-    const handleDrop = (e) => {
-        e.preventDefault(); setIsDragging(false);
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            if (file.size > 5 * 1024 * 1024) {
-                notifyWarn('Файл занадто великий. Максимальний розмір: 5 МБ.');
-                return;
-            }
+    const setFileState = (file, setImageState, setPreviewState) => {
+        if (!file) return;
+        if (!validateImageFile(file)) return;
 
-            if (!file.type.startsWith('image/')) {
-                notifyError('Будь ласка, завантажте зображення.');
-                return;
-            }
-            setImage(file);
-            setPreview(URL.createObjectURL(file));
-        }
+        setImageState(file);
+        setPreviewState(URL.createObjectURL(file));
+
+        if (setImageState === setEditImage)
+            setDeleteExistingImage(false);
     };
 
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        setFileState(e.dataTransfer.files[0], setImage, setPreview);
+    };
+
+    // для інпута при створенні
     const handleFileSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            setImage(file);
-            setPreview(URL.createObjectURL(file));
-        } else {
-            notifyWarn("Можна кидати тільки картинки!");
+        setFileState(e.target.files[0], setImage, setPreview);
+    };
+
+    // для інпута при редагуванні
+    const handleEditFileSelect = (e) => {
+        setFileState(e.target.files[0], setEditImage, setEditPreview);
+    };
+
+    const handlePaste = (e, target = 'create') => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                (target === 'edit')
+                    ? setFileState(file, setEditImage, setEditPreview)
+                    : setFileState(file, setImage, setPreview);
+                e.preventDefault();
+                return;
+            }
         }
     };
 
@@ -79,7 +95,7 @@ export const useUserWall = (profileUser) => {
             const res = await api.post('/posts', formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            setPosts([res.data, ...posts]);
+            setPosts([mapPost(res.data), ...posts]);
             setContent('');
             setImage(null);
             setPreview(null);
@@ -92,9 +108,9 @@ export const useUserWall = (profileUser) => {
 
     const startEditing = (post) => {
         setEditingPostId(post.id);
-        setEditContent(post.content);
+        setEditContent(post.content || '');
         // стара картинка як превю
-        setEditPreview(post.image ? `http://localhost:8000/storage/${post.image}` : null);
+        setEditPreview(post.image ? `/${post.image}` : null);
         setEditImage(null);
         setDeleteExistingImage(false);
     };
@@ -120,7 +136,7 @@ export const useUserWall = (profileUser) => {
     };
 
     const saveEdit = async (postId) => {
-        if (!content.trim() && !image) {
+        if (!editContent.trim() && !editImage && !editPreview) {
             notifyError("Пост не може бути порожнім.");
             return;
         }
@@ -145,7 +161,6 @@ export const useUserWall = (profileUser) => {
             notifySuccess("Збережено!");
             cancelEditing();
         } catch (error) {
-            console.error(error);
             notifyError("Помилка збереження");
         }
     };
@@ -170,11 +185,11 @@ export const useUserWall = (profileUser) => {
     return {
         posts,
         content, setContent, image, preview, isDragging,
-        handleDragOver, handleDragLeave, handleDrop, handleFileSelect, handleSubmit, removeImage, removeEditImage,
+        handleDragOver, handleDragLeave, handleDrop, handlePaste, handleFileSelect, handleSubmit, removeImage, removeEditImage,
         editingPostId,
         editContent, setEditContent,
         editPreview,
-        setEditImage, setEditPreview,
+        setEditImage, handleEditFileSelect, setEditPreview,
         startEditing, cancelEditing, saveEdit,
         handleDelete, getDeclension
     };

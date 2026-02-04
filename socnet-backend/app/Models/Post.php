@@ -15,7 +15,8 @@ class Post extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        static::creating(function ($model)
+        {
             if (empty($model->id))
                 $model->id = Str::lower(Str::random(16));
         });
@@ -30,5 +31,21 @@ class Post extends Model
     public function getImageUrlAttribute()
     {
         return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // чи лайкнув пост конкретний юзер
+    public function isLikedBy(User $user)
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
     }
 }

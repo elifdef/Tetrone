@@ -1,9 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import FormInput from "../../components/FormInput"
+import FormInput from "../../components/UI/FormInput"
 import { AuthContext } from "../../context/AuthContext"
 import api from '../../api/axios';
-import { notifySuccess, notifyWarn, notifyError, notifyLoading, dismissToast } from '../../components/Notify';
+import { notifySuccess, notifyError, notifyLoading, dismissToast, notifyInfo } from '../../components/Notify';
+import { validateImageFile } from "../../services/upload";
 
 const ProfileSettings = () => {
     const { user, setUser } = useContext(AuthContext);
@@ -15,6 +16,7 @@ const ProfileSettings = () => {
         last_name: user.last_name || '',
         bio: user.bio || '',
         country_id: user.country ? user.country.id : '',
+        avatarFile: null
     });
 
     useEffect(() => {
@@ -22,9 +24,34 @@ const ProfileSettings = () => {
     }, []);
 
     useEffect(() => {
-        if (user)
-            setPreviewUser(user);
+        if (user) setPreviewUser(user);
     }, [user]);
+
+    const isChanged = useMemo(() => {
+        if (formData.first_name !== (user.first_name || ''))
+            return true;
+
+        if (formData.last_name !== (user.last_name || ''))
+            return true;
+
+        const userBio = user.bio || '';
+        const formBio = formData.bio || '';
+
+        if (formBio !== userBio)
+            return true;
+
+        const userCountryId = user.country ? String(user.country.id) : '';
+        const formCountryId = String(formData.country_id);
+
+        if (formCountryId !== userCountryId)
+            return true;
+
+        if (formData.avatarFile)
+            return true;
+
+        return false;
+    }, [formData, user]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,30 +71,38 @@ const ProfileSettings = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
 
-        if (file) {
-            if (file.size > 5 * 1024 * 1024) {
-                notifyWarn('Файл занадто великий. Максимальний розмір: 5 МБ.');
-                return;
-            }
+        if (!file)
+            return;
 
-            if (!file.type.startsWith('image/')) {
-                notifyError('Будь ласка, завантажте зображення.');
-                return;
-            }
+        if (!validateImageFile(file))
+            return;
 
-            setPreviewUser(prev => ({ ...prev, avatar: URL.createObjectURL(file) }));
-            setFormData(prev => ({ ...prev, avatarFile: file }));
-        }
+        setPreviewUser(prev => ({ ...prev, avatar: URL.createObjectURL(file) }));
+        setFormData(prev => ({ ...prev, avatarFile: file }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // якщо користувач зніме disabled через DevTools
+        if (!isChanged) {
+            notifyInfo("Яйяйяйяйяй мамкін хакер хоче погратись у програміста))0). Найшовся тут розумник який подивився 5 мінут відео від Хауді Хо і возомнив себе програмістом. Йди мамі допоможи почистити картоплю або прибери кімнату.");
+
+            setPreviewUser(prev => ({ ...prev, avatar: "https://substackcdn.com/image/fetch/$s_!N8t_!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25d56fff-096b-4f24-a996-149cc73e9cf6_1055x1212.jpeg" }));
+
+            setTimeout(() => {
+                window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1";
+            }, 8000);
+            return;
+        }
+
         const toastId = notifyLoading("Збереження...");
         const data = new FormData();
         data.append('_method', 'PATCH');
         data.append('first_name', formData.first_name);
         data.append('last_name', formData.last_name);
-        data.append('bio', formData.bio);
+
+        data.append('bio', formData.bio || '');
 
         if (formData.country_id) data.append('country_id', formData.country_id);
         if (formData.avatarFile) data.append('avatar', formData.avatarFile);
@@ -76,72 +111,72 @@ const ProfileSettings = () => {
             await api.post(`/users/${user.username}`, data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            setUser(prevUser => ({
-                ...prevUser,      // старі дані
-                ...previewUser    // нові дані
-            }));
+
+            setUser(prev => ({ ...prev, ...previewUser }));
             notifySuccess('Зміни успішно збережено!');
+            setFormData(prev => ({ ...prev, avatarFile: null }));
+
         } catch (error) {
-            notifyError(error.response?.data?.message || "Помилка збереження");
-            console.log(error);
+            error.response?.status === 418
+                ? notifyInfo("Дані схожі. Нема що оновлювати")
+                : notifyError(error.response?.data?.message || "Помилка при збереженні");
             setPreviewUser(user);
-            notifyError('Помилка при збереженні');
         } finally {
             dismissToast(toastId);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="settings-form">
-            <div className="form-group">
-                <label className="form-label">Аватар</label>
+        <form onSubmit={handleSubmit} className="vk-settings-form">
+            <div className="vk-form-group">
+                <label className="vk-form-label">Аватар</label>
                 <FormInput
                     type="file"
                     onChange={handleFileChange}
-                    className="form-input"
+                    className="vk-form-input"
                     accept="image/*"
                 />
             </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Ім'я</label>
+            <div className="vk-form-row">
+                <div className="vk-form-group">
+                    <label className="vk-form-label">Ім'я</label>
                     <FormInput
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleChange}
-                        className="form-input"
+                        className="vk-form-input"
                         maxLength={50}
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label className="form-label">Прізвище</label>
+                <div className="vk-form-group">
+                    <label className="vk-form-label">Прізвище</label>
                     <FormInput
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleChange}
-                        className="form-input"
+                        className="vk-form-input"
                         maxLength={50}
                     />
                 </div>
             </div>
 
-            <div className="form-group">
-                <label className="form-label">Про себе (Bio)</label>
+            <div className="vk-form-group">
+                <label className="vk-form-label">Про себе (Bio)</label>
                 <textarea
                     name="bio"
                     rows="3"
                     value={formData.bio}
                     onChange={handleChange}
-                    className="form-textarea"
+                    className="vk-form-textarea"
                     maxLength={1000}
                 ></textarea>
             </div>
 
-            <div className="form-group">
-                <label className="form-label">Країна</label>
-                <select name="country_id" value={formData.country_id} onChange={handleChange} className="form-select">
+            <div className="vk-form-group">
+                <label className="vk-form-label">Країна</label>
+                <select name="country_id" value={formData.country_id} onChange={handleChange} className="vk-form-select">
                     <option value="">Не обрано</option>
                     {countries.map(c => (
                         <option key={c.id} value={c.id}>
@@ -150,7 +185,14 @@ const ProfileSettings = () => {
                     ))}
                 </select>
             </div>
-            <button type="submit" className="btn-save">Зберегти зміни</button>
+
+            <button
+                type="submit"
+                className="vk-btn-save"
+                disabled={!isChanged}
+            >
+                Зберегти зміни
+            </button>
         </form>
     );
 };

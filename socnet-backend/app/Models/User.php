@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -53,28 +54,48 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /*
-     * friendsOfMine (Мої друзі / Я ініціатор)
-        user_id = Я
-        friend_id = Інший
-        Використання: Коли я кидаю заявку (я чийсь підписник).
-
-     * friendOf (Друг когось / Мене додали)
-        user_id = Інший
-        friend_id = Я
-        Використання: Коли мені кидають заявку (підписники).
-    */
-
-    // звязок де Я кинув заявку
-    public function friendsOfMine()
+    // заявки які Я кинув
+    public function sentFriendships()
     {
-        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id');
+        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
+            ->withPivot('status');
     }
 
-    // звязок де МЕНЕ додали
-    public function friendOf()
+    // заявки які МЕНІ прийшли
+    public function receivedFriendships()
     {
-        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id');
+        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
+            ->withPivot('status');
+    }
+
+    // отримання ID друзів
+    public function getAllFriendIds(): Collection
+    {
+        $initiated = $this->sentFriendships()->wherePivot('status', Friendship::STATUS_ACCEPTED)->pluck('users.id');
+        $received = $this->receivedFriendships()->wherePivot('status', Friendship::STATUS_ACCEPTED)->pluck('users.id');
+
+        return $initiated->merge($received)->unique();
+    }
+
+    // отримання статусу дружби між двома користувачами
+    public function getFriendshipStatusWith(?User $currentUser): string
+    {
+        if (!$currentUser || $currentUser->id === $this->id)
+            return 'none';
+
+        $friendship = Friendship::between($this, $currentUser)->first();
+
+        if (!$friendship) return 'none';
+
+        if ($friendship->status === Friendship::STATUS_ACCEPTED) return 'friends';
+
+        if ($friendship->status === Friendship::STATUS_PENDING)
+            return $friendship->user_id === $currentUser->id ? 'pending_sent' : 'pending_received';
+
+        if ($friendship->status === Friendship::STATUS_BLOCKED)
+            return $friendship->user_id === $currentUser->id ? 'blocked_by_me' : 'blocked_by_target';
+
+        return 'none';
     }
 
     // звязок country_id з users до id в countries

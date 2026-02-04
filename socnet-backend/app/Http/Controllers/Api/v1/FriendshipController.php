@@ -28,13 +28,7 @@ class FriendshipController extends Controller
             return response()->json(['message' => 'You cannot friend yourself XD'], 400);
 
         // перевірка чи вже є якісь відносини між А і В або навпаки
-        $existing = Friendship::where(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $me->id)->where('friend_id', $targetUser->id);
-        })->orWhere(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $targetUser->id)->where('friend_id', $me->id);
-        })->first();
+        $existing = Friendship::between($me, $targetUser)->first();
 
         if ($existing)
         {
@@ -85,17 +79,7 @@ class FriendshipController extends Controller
     public function destroy(Request $request, string $username)
     {
         $targetUser = User::where('username', $username)->firstOrFail();
-        $me = $request->user();
-
-        // видаляємо запис незалежно від того, хто його створив
-        Friendship::where(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $me->id)->where('friend_id', $targetUser->id);
-        })->orWhere(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $targetUser->id)->where('friend_id', $me->id);
-        })->delete();
-
+        Friendship::between($request->user(), $targetUser)->delete();
         return response()->json(['status' => true, 'message' => 'Relationship removed']);
     }
 
@@ -111,13 +95,7 @@ class FriendshipController extends Controller
             return response()->json(['message' => 'Cannot block yourself 1000-7'], 400);
 
         // видаляємо будь-які старі відносини (дружбу або заявки)
-        Friendship::where(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $me->id)->where('friend_id', $targetUser->id);
-        })->orWhere(function ($q) use ($me, $targetUser)
-        {
-            $q->where('user_id', $targetUser->id)->where('friend_id', $me->id);
-        })->delete();
+        Friendship::between($me, $targetUser)->delete();
 
         // новий запис про блокування, де ініціатор - Я
         Friendship::create([
@@ -134,40 +112,13 @@ class FriendshipController extends Controller
     {
         $me = $request->user();
 
-        // Використовуємо whereHas для фільтрації
-        $friends = User::where(function ($query) use ($me)
-        {
-            // той кого я додав і вони прийняли
-            $query->whereHas('friendOf', function ($q) use ($me)
-            {
-                $q->where('user_id', $me->id)
-                    ->where('status', Friendship::STATUS_ACCEPTED);
-            });
-        })
-            ->orWhere(function ($query) use ($me)
-            {
-                // той хто мене додав і я прийняв
-                $query->whereHas('friendsOfMine', function ($q) use ($me)
-                {
-                    $q->where('friend_id', $me->id)
-                        ->where('status', Friendship::STATUS_ACCEPTED);
-                });
-            })
-            ->get();
+        // беремо ID всіх друзів
+        $friendIds = $me->getAllFriendIds();
+
+        // знаходимо юзерів по цих ID
+        $friends = User::whereIn('id', $friendIds)->get();
 
         return PublicUserResource::collection($friends);
-    }
-
-    // для отримання моїх підписок
-    public function sentRequests(Request $request)
-    {
-        $me = $request->user();
-        $users = User::whereHas('friendOf', function ($q) use ($me)
-        {
-            $q->where('user_id', $me->id)
-                ->where('status', Friendship::STATUS_PENDING);
-        })->get();
-        return PublicUserResource::collection($users);
     }
 
     // для підрахунку кількості заявок у друзі
@@ -180,11 +131,23 @@ class FriendshipController extends Controller
         return response()->json(['requests_count' => $requestsCount]);
     }
 
+    // для отримання моїх підписок
+    public function sentRequests(Request $request)
+    {
+        $me = $request->user();
+        $users = User::whereHas('receivedFriendships', function ($q) use ($me)
+        {
+            $q->where('user_id', $me->id)
+                ->where('status', Friendship::STATUS_PENDING);
+        })->get();
+        return PublicUserResource::collection($users);
+    }
+
     // для отримання списку користувачів які НАМ кинули заявку в др
     public function requests(Request $request)
     {
         $me = $request->user();
-        $users = User::whereHas('friendsOfMine', function ($q) use ($me)
+        $users = User::whereHas('sentFriendships', function ($q) use ($me)
         {
             $q->where('friend_id', $me->id)
                 ->where('status', Friendship::STATUS_PENDING);
@@ -197,7 +160,7 @@ class FriendshipController extends Controller
     public function blocked(Request $request)
     {
         $me = $request->user();
-        $users = User::whereHas('friendOf', function ($q) use ($me)
+        $users = User::whereHas('receivedFriendships', function ($q) use ($me)
         {
             $q->where('user_id', $me->id)
                 ->where('status', Friendship::STATUS_BLOCKED);

@@ -8,9 +8,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use App\Services\FileStorageService;
 
 class UserController extends Controller
 {
+    protected $fileService;
+
+    public function __construct(FileStorageService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     // вивести дані ВСІХ користувачів
     public function index(Request $request)
     {
@@ -53,7 +61,7 @@ class UserController extends Controller
     public function show(string $username)
     {
         $currentUser = User::with('country')->where('username', $username)->firstOrFail();
-        return new PublicUserResource($currentUser);
+        return (new PublicUserResource($currentUser))->resolve();
     }
 
     // обновити користувача (якщо він поміняв аватарку, ПІБ і т.д)
@@ -71,7 +79,7 @@ class UserController extends Controller
         $rules = [
             'bio' => 'nullable|string|max:1000',
             'last_name' => 'nullable|string|min:3|max:50',
-            'avatar' => 'nullable|image|max:5120', // 5mb
+            'avatar' => 'nullable|image|max:' . config('uploads.max_size'),
             'country_id' => 'nullable|integer|exists:countries,id',
         ];
 
@@ -87,39 +95,24 @@ class UserController extends Controller
 
         $validated = $request->validate($rules);
 
-        $dataToUpdate = collect($validated)->except(['avatar'])->toArray();
-        $targetUser->fill($dataToUpdate);
+        $targetUser->fill(collect($validated)->except(['avatar'])->toArray());
 
         if ($request->hasFile('avatar'))
         {
-            $file = $request->file('avatar');
-            $usernameFolder = $targetUser->username;
+            $path = $this->fileService->upload(
+                file: $request->file('avatar'),
+                folder: $targetUser->username,
+                prefix: 'avatar'
+            );
 
-            $randomString = bin2hex(random_bytes(8));
-            $timestamp = time();
-            $extension = $file->getClientOriginalExtension();
-
-            // Формат: avatar-1735689000-a1b2c3d4e5f6g7h8.jpg
-            $filename = "avatar-{$timestamp}-{$randomString}.{$extension}";
-
-            // storage/app/public/{username}/{filename}
-            $path = $file->storeAs($usernameFolder, $filename, 'public');
-
-            $targetUser->avatar = asset('storage/' . $path);
+            $targetUser->avatar = $path;
         }
 
-        if ($request->has('finish_setup') && $request->input('finish_setup') == 1)
-        {
+        if ($request->has('finish_setup') && $request->input('finish_setup'))
             $targetUser->is_setup_complete = true;
-        }
 
         if (!$targetUser->isDirty())
-        {
-            return response()->json([
-                'status' => true,
-                'message' => 'Nothing to update'
-            ], 200);
-        }
+            return response()->json(['status' => true, 'message' => 'Nothing to update'], 418);
 
         $targetUser->save();
         return response()->json([

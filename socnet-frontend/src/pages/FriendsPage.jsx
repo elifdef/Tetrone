@@ -1,175 +1,69 @@
-import { Link } from "react-router-dom";
-import FormInput from "../components/FormInput";
-import { useFriendsPageLogic } from "../hooks/useFriendsPageLogic";
-import "../styles/Friends.css";
+import FormInput from "../components/UI/FormInput";
+import FriendCard from "../components/friends/FriendCard";
+import { useFriendsLogic } from "../hooks/useFriendsLogic";
 
 export default function FriendsPage() {
     const {
-        tabs,
-        activeTab,
-        handleTabChange,
-        searchQuery,
-        setSearchQuery,
-        loading,
-        filteredUsers,
-        handleAction
-    } = useFriendsPageLogic();
+        tabs, activeTab, handleTabChange,
+        searchQuery, setSearchQuery, handleSearchSubmit,
+        users, loading, handleAction
+    } = useFriendsLogic();
 
-    const renderButtons = (u) => {
-        const btnClass = "btn-small";
-
-        if (activeTab === 'my')
-            return (
-                <>
-                    <button
-                        className={`${btnClass} btn-remove`}
-                        onClick={() => handleAction('delete', u.username)}>
-                        Видалити
-                    </button>
-                    <button
-                        className={`${btnClass} btn-remove`}
-                        onClick={() => handleAction('block', u.username)}>
-                        Заблокувати
-                    </button>
-                </>
-            );
-
-        if (activeTab === 'requests')
-            return (
-                <>
-                    <button
-                        className={`${btnClass} btn-add`}
-                        onClick={() => handleAction('accept', u.username)}>
-                        Прийняти
-                    </button>
-                    <button
-                        className={`${btnClass} btn-remove`}
-                        onClick={() => handleAction('cancel_request', u.username)}>
-                        Відхилити
-                    </button>
-                </>
-            );
-
-        if (activeTab === 'subscriptions')
-            return (
-                <button
-                    className={`${btnClass} btn-remove`}
-                    onClick={() => handleAction('cancel_request', u.username)}>
-                    Скасувати заявку
-                </button>
-            );
-
-        if (activeTab === 'blocked')
-            return (
-                <button
-                    className={`${btnClass} btn-add`}
-                    onClick={() => handleAction('unblock', u.username)}>
-                    Розблокувати
-                </button>
-            );
-
-        const status = u.friendship_status || 'none';
-        switch (status) {
-            case 'friends':
-                return renderButtons({ ...u }, 'my');
-
-            case 'pending_sent':
-                return (
-                    <button
-                        className={`${btnClass} btn-remove`}
-                        onClick={() => handleAction('cancel_request', u.username)}>
-                        Скасувати
-                    </button>
-                );
-
-            case 'pending_received':
-                return (
-                    <button
-                        className={`${btnClass} btn-add`}
-                        onClick={() => handleAction('accept', u.username)}>
-                        Прийняти
-                    </button>
-                );
-
-            case 'blocked_by_me':
-                return (
-                    <button
-                        className={`${btnClass} btn-add`}
-                        onClick={() => handleAction('unblock', u.username)}>
-                        Розблокувати
-                    </button>
-                );
-
-            case 'blocked_by_target':
-                return (
-                    <span style={{ fontSize: '12px', color: '#777' }}>
-                        Заблоковано
-                    </span>
-                );
-
-            default:
-                return (
-                    <button
-                        className={`${btnClass} btn-add`}
-                        onClick={() => handleAction('add', u.username)}>
-                        Додати
-                    </button>
-                );
-        }
-    };
+    const displayUsers = activeTab === 'all'
+        ? users
+        : users.filter(u =>
+            (u.first_name + " " + u.last_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+            u.username.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
     return (
-        <div className="friends-container">
-            <h2 style={{ marginBottom: 20 }}>Контакти</h2>
-            <div className="tabs-header">
+        <div className="vk-friends-page">
+            <h1 className="vk-friends-title">Ваші контакти</h1>
+            <div className="vk-friends-tabs">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
-                        className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-                        onClick={() => handleTabChange(tab.id)}>
+                        className={`vk-friends-tab ${activeTab === tab.id ? 'active' : ''}`}
+                        onClick={() => handleTabChange(tab.id)}
+                    >
                         {tab.label}
                     </button>
                 ))}
             </div>
 
-            <div style={{ marginBottom: 15 }}>
+            <div className="vk-friends-search-wrapper">
                 <FormInput
-                    type="text"
-                    placeholder="Швидкий пошук..."
-                    className="input-field"
+                    placeholder={activeTab === 'all' ? "Пошук людей..." : "Фільтр списку..."}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && activeTab === 'all' && handleSearchSubmit()}
+                    className="vk-friends-search-input"
                 />
+                {activeTab === 'all' && (
+                    <button className="vk-friends-search-btn" onClick={handleSearchSubmit}>
+                        Знайти
+                    </button>
+                )}
             </div>
 
-            {loading && filteredUsers.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: 20 }}>Завантаження...</div>
-            ) : (
-                <div className="users-list">
-                    {filteredUsers.length === 0 && !loading && (
-                        <div style={{ textAlign: 'center', color: '#888', padding: 20 }}>Список порожній</div>
-                    )}
+            <div className="vk-friends-list">
+                {loading && <div className="vk-friends-loading">Завантаження...</div>}
 
-                    {filteredUsers.map(u => (
-                        <div key={u.id} className="user-row">
-                            <Link to={`/${u.username}`}>
-                                <img src={u.avatar || "/defaultAvatar.jpg"} alt={u.username} className="user-row-avatar" />
-                            </Link>
+                {!loading && displayUsers.length === 0 && (
+                    <div className="vk-friends-empty">
+                        {activeTab === 'all' ? "Введіть запит для пошуку" : "Список порожній"}
+                    </div>
+                )}
 
-                            <div className="user-row-info">
-                                <Link to={`/${u.username}`} className="user-row-name">
-                                    {u.first_name} {u.last_name}
-                                </Link>
-                                <div className="user-row-bio">@{u.username}</div>
-                            </div>
-
-                            <div className="user-row-actions">
-                                {renderButtons(u)}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                {displayUsers.map(user => (
+                    <FriendCard
+                        key={user.id}
+                        user={user}
+                        viewMode={activeTab}
+                        onAction={handleAction}
+                    />
+                ))}
+            </div>
         </div>
     );
 }

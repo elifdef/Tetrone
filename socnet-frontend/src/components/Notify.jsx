@@ -1,5 +1,9 @@
 import toast from 'react-hot-toast';
-import { InfoIcon, SuccessIcon, ErrorIcon, WarningIcon, LoadingIcon } from './Icons/Icons';
+import InfoIcon from '../assets/info.svg?react';
+import SuccessIcon from '../assets/success.svg?react';
+import ErrorIcon from '../assets/error.svg?react';
+import WarningIcon from '../assets/warning.svg?react';
+import LoadingIcon from '../assets/loader.svg?react';
 
 const toastStyles = {
     fontFamily: 'Tahoma, sans-serif',
@@ -26,19 +30,19 @@ const renderToast = (message, IconComponent) => {
 };
 
 export const notifyInfo = (message) => {
-    return renderToast(message, <InfoIcon />);
+    return renderToast(message, <InfoIcon width={20} height={20} fill="#71aaeb" />);
 };
 
 export const notifySuccess = (message) => {
-    return renderToast(message, <SuccessIcon />);
+    return renderToast(message, <SuccessIcon width={20} height={20} fill="#4bb34b" />);
 };
 
 export const notifyError = (message) => {
-    return renderToast(message, <ErrorIcon />);
+    return renderToast(message, <ErrorIcon width={20} height={20} fill="#ff3347" />);
 };
 
 export const notifyWarn = (message) => {
-    return renderToast(message, <WarningIcon />);
+    return renderToast(message, <WarningIcon width={20} height={20} fill="#f5c400" />);
 };
 
 export const notifyConfirmAction = (message, btnYes = "Так", btnNo = "Ні") => {
@@ -67,8 +71,6 @@ export const notifyConfirmAction = (message, btnYes = "Так", btnNo = "Ні") 
                             fontSize: '11px',
                             fontWeight: 'bold'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#537599'}
-                        onMouseOut={(e) => e.currentTarget.style.background = '#45688E'}
                     >
                         {btnYes}
                     </button>
@@ -85,8 +87,6 @@ export const notifyConfirmAction = (message, btnYes = "Так", btnNo = "Ні") 
                             fontFamily: 'Tahoma, sans-serif',
                             fontSize: '11px'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#E5EBF1'}
-                        onMouseOut={(e) => e.currentTarget.style.background = '#F5F7FA'}
                     >
                         {btnNo}
                     </button>
@@ -107,7 +107,7 @@ export const notifyConfirmAction = (message, btnYes = "Так", btnNo = "Ні") 
 export const notifyLoading = (message = "Обробка...") => {
     return toast((t) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {LoadingIcon}
+            <LoadingIcon width={20} height={20} fill="#fff" className="vk-spin" />
             <span>{message}</span>
         </div>
     ), {

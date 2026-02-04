@@ -41,7 +41,6 @@ export const useSecuritySettings = () => {
             notifySuccess(response.data.message);
 
         } catch (error) {
-            console.error(error);
             if (error.response?.status === 422) {
                 const msg = error.response.data.message || 'Помилка валідації';
                 notifyError(msg);

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import Footer from "../components/Footer"
+import Footer from "../components/layout/Footer"
 import { APP_NAME } from "../config";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function MainPage() {
+    usePageTitle();
     return (
         <div className="landing-page-wrapper">
             <header className="landing-header">

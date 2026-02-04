@@ -2,8 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
-import UserProfileCard from '../../components/UserProfileCard';
-import '../../styles/Settings.css';
+import UserProfileCard from '../../components/profile/UserProfileCard';
 
 const SettingsLayout = () => {
     const { user, setUser } = useContext(AuthContext);
@@ -24,19 +23,19 @@ const SettingsLayout = () => {
 
     usePageTitle(getPageTitle());
 
-    if (!user) return <div className="settings-container">Завантаження...</div>;
+    if (!user) return <div className="vk-settings-page">Завантаження...</div>;
 
     return (
-        <div className="settings-container">
+        <div className="vk-settings-page">
             <div>
                 <UserProfileCard currentUser={previewUser} isPreview={true} />
             </div>
 
-            <div className="settings-tabs">
-                <NavLink to="profile" className={({ isActive }) => `tab-link ${isActive ? 'active' : ''}`}>
+            <div className="vk-settings-tabs">
+                <NavLink to="profile" className={({ isActive }) => `vk-settings-tab ${isActive ? 'active' : ''}`}>
                     Профіль
                 </NavLink>
-                <NavLink to="security" className={({ isActive }) => `tab-link ${isActive ? 'active' : ''}`}>
+                <NavLink to="security" className={({ isActive }) => `vk-settings-tab ${isActive ? 'active' : ''}`}>
                     Безпека
                 </NavLink>
             </div>

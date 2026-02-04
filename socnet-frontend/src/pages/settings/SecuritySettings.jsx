@@ -1,5 +1,5 @@
 import { useSecuritySettings } from '../../hooks/useSecuritySettings';
-import FormInput from '../../components/FormInput';
+import FormInput from '../../components/UI/FormInput';
 import { notifyWarn } from "../../components/Notify";
 
 const SecuritySettings = () => {
@@ -16,15 +16,15 @@ const SecuritySettings = () => {
 
     return (
         <>
-            <div className="info-box">
+            <div className="vk-settings-box">
                 <strong>Зміна електронної пошти</strong>
-                <div className="info-box-block">
-                    <div className="info-box-block-email">
+                <div className="vk-settings-info-row">
+                    <div className="vk-settings-info-item">
                         <span>Поточна електронна адреса:</span>
                         <span>{user?.email}</span>
                     </div>
 
-                    <div className="info-box-block-email-verif">
+                    <div className="vk-settings-info-item">
                         <span>Статус верифікації:</span>
                         <span style={{ color: user?.email_verified_at ? '#10b981' : '#f59e0b' }}>
                             {user?.email_verified_at ? "Підтверджено" : "Непідтверджено"}
@@ -32,12 +32,12 @@ const SecuritySettings = () => {
                     </div>
                 </div>
 
-                <form onSubmit={handleUpdateEmail} className="settings-form">
-                    <div className="form-group">
-                        <label className="form-label">Нова електронна адреса</label>
+                <form onSubmit={handleUpdateEmail} className="vk-settings-form">
+                    <div className="vk-form-group">
+                        <label className="vk-form-label">Нова електронна адреса</label>
                         <FormInput
                             type="email"
-                            className="form-input"
+                            className="vk-form-input"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -45,11 +45,11 @@ const SecuritySettings = () => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Пароль акаунту</label>
+                    <div className="vk-form-group">
+                        <label className="vk-form-label">Пароль акаунту</label>
                         <FormInput
                             type="password"
-                            className="form-input"
+                            className="vk-form-input"
                             required
                             value={passwordForEmail}
                             onChange={(e) => setPasswordForEmail(e.target.value)}
@@ -57,7 +57,7 @@ const SecuritySettings = () => {
                         />
                     </div>
                     <button
-                        className="btn-save"
+                        className="vk-btn-save"
                         type="submit"
                         disabled={loadingEmail}
                     >
@@ -66,14 +66,14 @@ const SecuritySettings = () => {
                 </form>
             </div>
 
-            <div className="info-box">
+            <div className="vk-settings-box">
                 <strong>Зміна паролю</strong>
                 <form onSubmit={handleUpdatePassword}>
-                    <div className="form-group">
-                        <label className="form-label">Поточний пароль</label>
+                    <div className="vk-form-group">
+                        <label className="vk-form-label">Поточний пароль</label>
                         <FormInput
                             type="password"
-                            className="form-input"
+                            className="vk-form-input"
                             required
                             placeholder="********"
                             value={currentPassword}
@@ -81,11 +81,11 @@ const SecuritySettings = () => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Новий пароль (не менше 8 символів)</label>
+                    <div className="vk-form-group">
+                        <label className="vk-form-label">Новий пароль (не менше 8 символів)</label>
                         <FormInput
                             type="password"
-                            className="form-input"
+                            className="vk-form-input"
                             required
                             placeholder="********"
                             value={newPassword}
@@ -93,11 +93,11 @@ const SecuritySettings = () => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Підтвердіть новий пароль</label>
+                    <div className="vk-form-group">
+                        <label className="vk-form-label">Підтвердіть новий пароль</label>
                         <FormInput
                             type="password"
-                            className="form-input"
+                            className="vk-form-input"
                             required
                             placeholder="********"
                             value={confirmPassword}
@@ -106,7 +106,7 @@ const SecuritySettings = () => {
                     </div>
                     <button
                         type="submit"
-                        className="btn-save"
+                        className="vk-btn-save"
                         disabled={loadingPass}
                     >
                         {loadingPass ? 'Зберігаємо...' : 'Змінити пароль'}
@@ -114,19 +114,19 @@ const SecuritySettings = () => {
                 </form>
             </div>
 
-            <div className="danger-zone">
-                <div className="danger-header">Небезпечна зона</div>
-                <div className="danger-body">
+            <div className="vk-settings-danger">
+                <div className="vk-settings-danger-header">Небезпечна зона</div>
+                <div className="vk-settings-danger-body">
                     <div>
-                    <h4>Видалити акаунт</h4>
-                    <div className="danger-body-quote">
-                        - Ти це зробиш?<br />
-                        - Так.<br />
-                        - І якою ціною?<br />
-                        - Ціною всього.
+                        <h4>Видалити акаунт</h4>
+                        <div className="vk-settings-quote">
+                            - Ти це зробиш?<br />
+                            - Так.<br />
+                            - І якою ціною?<br />
+                            - Ціною всього.
+                        </div>
                     </div>
-                    </div>
-                    <button className="btn-delete" onClick={() => notifyWarn('Не сьогодні')}>
+                    <button className="vk-btn-delete" onClick={() => notifyWarn('Не сьогодні')}>
                         Видалити акаунт
                     </button>
                 </div>

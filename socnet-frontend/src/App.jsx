@@ -1,105 +1,38 @@
-import { Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
-
-import Layout from "./components/Layout";
-import NotFoundPage from "./pages/NotFoundPage";
-import SettingsLayout from './pages/settings/SettingsLayout';
-import ProfileSettings from './pages/settings/ProfileSettings';
-import SecuritySettings from './pages/settings/SecuritySettings';
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import HomePage from "./pages/HomePage";
-import MainPage from "./pages/MainPage";
-import ProfilePage from "./pages/ProfilePage";
-import FriendsPage from "./pages/FriendsPage";
-import SetupProfilePage from "./pages/SetupProfilePage";
-import Footer from "./components/Footer";
-import EmailVerifyPage from "./components/EmailVerifyPage"
-
-const GuestProfileWrapper = ({ children }) => (
-  <div className="guest-profile-container">
-    <div className="guest-content">
-      {children}
-    </div>
-    <Footer />
-  </div>
-);
+import { AuthContext } from "./context/AuthContext";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  const { user, loading } = useContext(AuthContext);
+  const { loading } = useContext(AuthContext);
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>Завантаження...</div>;
+  if (loading) {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#19191a',
+        color: '#e1e3e6'
+      }}>
+        Завантаження...
+      </div>
+    );
+  }
 
   return (
     <>
-      <Toaster />
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            !user ? <LoginPage /> : (
-              user.is_setup_complete ? <Navigate to="/" />
-                : <Navigate to="/setup-profile" />
-            )
-          }
-        />
-
-        <Route
-          path="/register"
-          element={
-            !user ? <RegisterPage /> : (
-              user.is_setup_complete ? <Navigate to="/" />
-                : <Navigate to="/setup-profile" />
-            )
-          }
-        />
-
-        <Route
-          path="/setup-profile"
-          element={
-            user ? <SetupProfilePage />
-              : <Navigate to="/login" />
-          }
-        />
-
-        {!user && <Route path="/" element={<MainPage />} />}
-
-        {!user && (
-          <>
-            {/*забороняємо гостям заходити на ці адреси*/}
-            <Route path="/friends" element={<Navigate to="/login" />} />
-            <Route path="/settings" element={<Navigate to="/login" />} />
-            <Route path="/messages" element={<Navigate to="/login" />} />
-
-            <Route path=":username" element={
-              <GuestProfileWrapper>
-                <ProfilePage />
-              </GuestProfileWrapper>
-            } />
-          </>
-        )}
-
-        {/* ДЛЯ АВТОРИЗОВАНИХ З Layout*/}
-        {user && (
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path=":username" element={<ProfilePage />} />
-            <Route path="/friends" element={<FriendsPage />} />
-            <Route path="/email-verify/:id/:hash" element={<EmailVerifyPage />} />
-
-            {/* Головний роут Settings */}
-            <Route path="/settings" element={<SettingsLayout />}>
-              <Route index element={<Navigate to="profile" replace />} />
-              <Route path="profile" element={<ProfileSettings />} />
-              <Route path="security" element={<SecuritySettings />} />
-            </Route>
-          </Route>
-        )}
-
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      />
+      <AppRoutes />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
-
+import { mapUser } from "../services/mappers";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -12,8 +12,8 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             api.get('/me')
-                .then(res => setUser(res.data))
-                .catch(() => {
+                .then(res => setUser(mapUser(res.data)))
+                .catch((err) => {
                     localStorage.removeItem('token');
                     setToken(null);
                 })
@@ -23,29 +23,27 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
+    // для точного визначення статусу онлайна користувача
     useEffect(() => {
-        if (!user) return;
-
+        if (!user)
+            return;
         const sendOnline = () => {
             api.post('/user/ping').catch(() => { });
         };
 
-        // кожні 60 секунд
         const interval = setInterval(sendOnline, 60000);
-
         return () => clearInterval(interval);
     }, [user]);
 
+    // для моментальної зміни статусу підтвердження пошти
     useEffect(() => {
         const channel = new BroadcastChannel('auth_channel');
-
         channel.onmessage = (event) => {
-            if (event.data.type === 'EMAIL_VERIFIED' && user) {
+            if (event.data.type === 'EMAIL_VERIFIED' && user)
                 setUser((prevUser) => ({
                     ...prevUser,
                     email_verified_at: event.data.date
                 }));
-            }
         };
         return () => {
             channel.close();
