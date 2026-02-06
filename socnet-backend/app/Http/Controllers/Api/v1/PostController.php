@@ -114,20 +114,25 @@ class PostController extends Controller
         if ($request->has('content'))
             $data['content'] = $request->input('content');
 
-        // Якщо delete_image = true
-        if ($request->boolean('delete_image'))
+        if ($request->boolean('delete_image') && !$request->hasFile('image'))
         {
             if ($post->image)
                 Storage::disk('public')->delete($post->image);
             $data['image'] = null;
         }
 
-        // Якщо завантажують НОВУ картинку (стару теж треба видалити)
         if ($request->hasFile('image'))
         {
             if ($post->image)
                 Storage::disk('public')->delete($post->image);
-            $data['image'] = $request->file('image')->store('posts', 'public');
+
+            $path = $this->fileService->upload(
+                file: $request->file('image'),
+                folder: $request->user()->username,
+                prefix: 'post'
+            );
+
+            $data['image'] = $path;
         }
 
         $post->update($data);

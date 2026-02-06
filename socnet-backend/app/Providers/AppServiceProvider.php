@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         {
             // якщо локалка то без обмежень
             if (app()->environment('local'))
-                return Limit::perMinute(10000000)->by($request->user()?->id ?: $request->ip());
+                return Limit::perMinute(100000)->by($request->user()?->id ?: $request->ip());
 
             // якщо прод - 180 запитів
             return Limit::perMinute(180)->by($request->user()?->id ?: $request->ip());

@@ -481,12 +481,17 @@ body {
     align-items: center;
     gap: 20px;
     padding: 10px 15px;
-    border-top: 1px solid var(--theme-border);
     margin-top: 5px;
 }
 
 .vk-post-image {
     margin-top: 10px;
+}
+
+.vk-post-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+    word-wrap: normal;
 }
 
 .vk-post-image img {
@@ -1045,14 +1050,9 @@ body {
     background: var(--theme-bg-box);
 }
 
-.vk-feed-empty-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
-}
-
 .vk-feed-empty h3 {
     margin: 0 0 10px 0;
-    font-size: 14px;
+    font-size: 18px;
     color: var(--theme-link);
 }
 
@@ -1309,4 +1309,96 @@ body {
     font-weight: bold;
     cursor: pointer;
     margin-top: 5px;
+}
+
+/* модалка для перегляду фото */
+.vk-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+.vk-modal-content {
+    width: 100%;
+    max-width: 50%;
+    margin-bottom: 50px;
+    position: relative;
+    background-color: var(--theme-bg-box);
+}
+
+.vk-modal-image-wrapper {
+    margin-bottom: 15px;
+}
+
+.vk-modal-image {
+    max-width: 100%;
+    border: 1px solid #fff;
+    display: block;
+    margin: 0 auto;
+}
+
+.vk-modal-info {
+    padding: 10px;
+    color: var(--theme-text-main);
+}
+
+.vk-modal-author-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+.vk-modal-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.vk-modal-author-name {
+    font-weight: bold;
+    color: var(--theme-link);
+    text-decoration: none;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.vk-modal-author-name:hover {
+    text-decoration: underline;
+}
+
+.vk-modal-date {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+    display: block;
+    margin-top: 2px;
+}
+
+.vk-modal-close {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    color: #fff;
+    font-family: Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background 0.2s;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.071);
+}
+
+.vk-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
 }

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import SendIcon from "../../assets/sendComment.svg?react";
 
 export default function CommentForm({ user, text, setText, onSubmit }) {
@@ -6,13 +5,11 @@ export default function CommentForm({ user, text, setText, onSubmit }) {
         <form className="vk-comment-form" onSubmit={onSubmit}>
             {user && (
                 <>
-                    <Link to={`/${user.username}`}>
-                        <img
-                            src={user.avatar || "/defaultAvatar.jpg"}
-                            alt="Me"
-                            className="vk-comment-avatar"
-                        />
-                    </Link>
+                    <img
+                        src={user.avatar || "/defaultAvatar.jpg"}
+                        alt="Me"
+                        className="vk-comment-avatar"
+                    />
 
                     <div className="vk-comment-input-wrapper">
                         <input

@@ -28,9 +28,9 @@ const RightSidebar = () => {
     const { user } = useContext(AuthContext);
 
     return (
-        <div className="right-sidebar">
+        <aside className="right-sidebar">
             {user ? <XD /> : <JoinPromo />}
-        </div>
+        </aside>
     );
 };
 

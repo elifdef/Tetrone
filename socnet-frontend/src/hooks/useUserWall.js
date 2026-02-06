@@ -110,7 +110,7 @@ export const useUserWall = (profileUser) => {
         setEditingPostId(post.id);
         setEditContent(post.content || '');
         // стара картинка як превю
-        setEditPreview(post.image ? `/${post.image}` : null);
+        setEditPreview(post.image ? `${post.image}` : null);
         setEditImage(null);
         setDeleteExistingImage(false);
     };

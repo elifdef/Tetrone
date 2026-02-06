@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
 import { mapUser } from "../services/mappers";
+import { notifyError } from "../components/Notify";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -14,8 +15,11 @@ export const AuthProvider = ({ children }) => {
             api.get('/me')
                 .then(res => setUser(mapUser(res.data)))
                 .catch((err) => {
-                    localStorage.removeItem('token');
-                    setToken(null);
+                    if (err.response && err.response.status === 401) {
+                        localStorage.removeItem('token');
+                        setToken(null);
+                    }
+                    notifyError("Помилка сервера.");
                 })
                 .finally(() => setLoading(false));
         } else {

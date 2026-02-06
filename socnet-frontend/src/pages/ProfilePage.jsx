@@ -7,6 +7,7 @@ import UserProfileCard from "../components/profile/UserProfileCard";
 import UserWall from "../components/wall/UserWall"
 import { usePageTitle } from "../hooks/usePageTitle";
 import { mapUser } from "../services/mappers"
+import { notifyError } from "../components/Notify";
 
 export default function ProfilePage() {
     const { username } = useParams();
@@ -24,6 +25,8 @@ export default function ProfilePage() {
             .catch(err => {
                 if (err.response && err.response.status === 404)
                     setError(true);
+                else
+                    notifyError("Помилка сервера.");
             })
             .finally(() => setLoading(false));
     }, [username]);

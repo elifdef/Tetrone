@@ -11,16 +11,19 @@ export default function HomePage() {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'feed';
-
+    const [error, setError] = useState(false);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const abortControllerRef = useRef(null);
 
     const handleTabChange = (tab) => {
-        if (activeTab === tab) return;
+        if (activeTab === tab)
+            return;
+
         setLoading(true);
         setPosts([]);
+        setError(false);
         setSearchParams({ tab });
     };
 
@@ -31,12 +34,15 @@ export default function HomePage() {
 
         const fetchFeed = async () => {
             try {
+                setError(false);
                 const endpoint = activeTab === 'global' ? '/feed/global' : '/feed';
                 const res = await api.get(endpoint, { signal: newController.signal });
                 setPosts(res.data.data.map(mapPost));
             } catch (err) {
-                if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED")
-                    notifyError("Помилка завантаження стрічки", err);
+                if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
+                    setError(true);
+                    notifyError("Помилка завантаження стрічки");
+                }
             } finally {
                 if (!newController.signal.aborted) setLoading(false);
             }
@@ -48,8 +54,7 @@ export default function HomePage() {
 
     const EmptyState = () => (
         <div className="vk-feed-empty">
-            <div className="vk-feed-empty-icon">👋</div>
-            <h3>Ласкаво просимо!</h3>
+            <h3>Ласкаво просимо</h3>
 
             {activeTab === 'feed' ? (
                 <>
@@ -78,6 +83,21 @@ export default function HomePage() {
         </div>
     );
 
+    const ErrorState = () => (
+        <div className="vk-feed-empty">
+            <h3>Помилка з'єднання</h3>
+            <p>Сталася помилка при завантаженні постів.</p>
+            <div className="vk-feed-actions">
+                <button
+                    className="vk-btn-small"
+                    onClick={() => window.location.reload()}
+                >
+                    Оновити сторінку
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <div className="vk-feed-page">
             <div className="vk-feed-tabs">
@@ -99,7 +119,9 @@ export default function HomePage() {
                 </div>
             ) : (
                 <div className="vk-feed-list">
-                    {posts.length > 0 ? (
+                    {error ? (
+                        <ErrorState />
+                    ) : posts.length > 0 ? (
                         posts.map(post => (
                             <PostItem key={post.id} post={post} />
                         ))

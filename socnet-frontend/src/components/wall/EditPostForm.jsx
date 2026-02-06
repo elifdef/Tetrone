@@ -13,6 +13,7 @@ export default function EditPostForm({
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     onPaste={(e) => handlePaste(e, 'edit')}
+                    maxLength={2048}
                 />
 
                 {editPreview && (

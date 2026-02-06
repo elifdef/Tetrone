@@ -1,5 +1,7 @@
 import Linkify from "linkify-react";
 import "linkify-plugin-mention";
+import { useState } from "react";
+import PhotoModal from "../UI/PhotoModal";
 
 const linkifyOptions = {
     target: "_blank",
@@ -10,19 +12,39 @@ const linkifyOptions = {
     },
 };
 
-export default function PostContent({ content, image }) {
+export default function PostContent({ content, image, post, onUpdate, style }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    {/* <div >{content}</div> */ }
     return (
-        <div className="vk-post-content">
-            {content && (
-                <p style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                    <Linkify options={linkifyOptions}>{content}</Linkify>
-                </p>
-            )}
+        <>
+            <div className="vk-post-content" style={style}>
+                {content &&
+                    <p className="vk-post-text">
+                        <Linkify options={linkifyOptions}>{content}</Linkify>
+                    </p>}
+
+                {image && (
+                    <div className="vk-post-image">
+                        <img
+                            src={image}
+                            alt="Post content"
+                            className="vk-post-image"
+                            onClick={() => setIsModalOpen(true)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    </div>
+                )}
+            </div>
+
             {image && (
-                <div className="vk-post-image">
-                    <img src={`${image}`} alt="Post" />
-                </div>
+                <PhotoModal
+                    isOpen={isModalOpen}
+                    image={image}
+                    post={post}
+                    onClose={() => setIsModalOpen(false)}
+                    onUpdate={onUpdate}
+                />
             )}
-        </div>
+        </>
     );
 }

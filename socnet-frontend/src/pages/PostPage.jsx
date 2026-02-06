@@ -28,7 +28,7 @@ export default function PostPage() {
 
     const handleCommentCountChange = (amount) => {
         setPost(prev => {
-            if (!prev) 
+            if (!prev)
                 return prev;
 
             return {
@@ -38,8 +38,24 @@ export default function PostPage() {
         });
     };
 
-    if (loading) return <div style={{ padding: 20 }}>Завантаження...</div>;
-    if (error) return <div style={{ padding: 40 }}>{error}</div>;
+    if (loading)
+        return (<div style={{ padding: 20 }}>Завантаження...</div>);
+
+    if (error)
+        return (
+            <div className="vk-feed-empty">
+                <h3>Помилка з'єднання</h3>
+                <p>Сталася помилка при завантаженні поста.</p>
+                <div className="vk-feed-actions">
+                    <button
+                        className="vk-btn-small"
+                        onClick={() => window.location.reload()}
+                    >
+                        Оновити сторінку
+                    </button>
+                </div>
+            </div>
+        );
 
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: 50 }}>
