@@ -35,7 +35,7 @@ class PostController extends Controller
             ->with('user')
             ->withCount(['likes', 'comments'])
             ->latest()
-            ->paginate(10);
+            ->paginate(config('posts.max_paginate'));
 
         return PostResource::collection($posts);
     }
@@ -161,7 +161,7 @@ class PostController extends Controller
             ->with('user')
             ->withCount(['likes', 'comments'])
             ->latest()
-            ->paginate(20);
+            ->paginate(config('posts.max_paginate'));
 
         return PostResource::collection($posts);
     }
@@ -192,7 +192,7 @@ class PostController extends Controller
             ->with('user')
             ->withCount(['likes', 'comments'])
             ->latest()
-            ->paginate(20);
+            ->paginate(config('posts.max_paginate'));
         return PostResource::collection($posts);
     }
 }

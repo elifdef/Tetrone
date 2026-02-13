@@ -226,7 +226,8 @@
     "attach_photo": "Додати фото",
     "posts_count_one": "{{count}} запис",
     "posts_count_few": "{{count}} записи",
-    "posts_count_many": "{{count}} записів"
+    "posts_count_many": "{{count}} записів",
+    "no_posts": "Більше постів немає"
   },
 
   "friends": {

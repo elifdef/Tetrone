@@ -1,5 +1,5 @@
 import { useSecuritySettings } from '../../hooks/useSecuritySettings';
-import FormInput from '../../components/UI/FormInput';
+import LabeledInput from '../../components/UI/LabeledInput';
 import { notifyWarn } from "../../components/Notify";
 
 const SecuritySettings = () => {
@@ -37,7 +37,7 @@ const SecuritySettings = () => {
                 <form onSubmit={handleUpdateEmail} className="vk-settings-form">
                     <div className="vk-form-group">
                         <label className="vk-form-label">{t('settings.new_email')}</label>
-                        <FormInput
+                        <LabeledInput
                             type="email"
                             className="vk-form-input"
                             required
@@ -49,7 +49,7 @@ const SecuritySettings = () => {
 
                     <div className="vk-form-group">
                         <label className="vk-form-label">{t('settings.account_password')}</label>
-                        <FormInput
+                        <LabeledInput
                             type="password"
                             className="vk-form-input"
                             required
@@ -73,7 +73,7 @@ const SecuritySettings = () => {
                 <form onSubmit={handleUpdatePassword}>
                     <div className="vk-form-group">
                         <label className="vk-form-label">{t('settings.current_password')}</label>
-                        <FormInput
+                        <LabeledInput
                             type="password"
                             className="vk-form-input"
                             required
@@ -85,7 +85,7 @@ const SecuritySettings = () => {
 
                     <div className="vk-form-group">
                         <label className="vk-form-label">{t('settings.new_password')}</label>
-                        <FormInput
+                        <LabeledInput
                             type="password"
                             className="vk-form-input"
                             required
@@ -97,7 +97,7 @@ const SecuritySettings = () => {
 
                     <div className="vk-form-group">
                         <label className="vk-form-label">{t('auth.password_confirmation')}</label>
-                        <FormInput
+                        <LabeledInput
                             type="password"
                             className="vk-form-input"
                             required

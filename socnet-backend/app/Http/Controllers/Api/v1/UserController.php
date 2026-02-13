@@ -60,7 +60,7 @@ class UserController extends Controller
     // вивести дані КОНКРЕТНОГО користувача
     public function show(string $username)
     {
-        $currentUser = User::with('country')->where('username', $username)->firstOrFail();
+        $currentUser = User::where('username', $username)->firstOrFail();
         return (new PublicUserResource($currentUser))->resolve();
     }
 
@@ -80,7 +80,7 @@ class UserController extends Controller
             'bio' => 'nullable|string|max:1000',
             'last_name' => 'nullable|string|min:3|max:50',
             'avatar' => 'nullable|image|max:' . config('uploads.max_size'),
-            'country_id' => 'nullable|integer|exists:countries,id',
+            'country' => 'nullable|string|size:2|alpha',
             'gender' => 'nullable|integer|in:1,2'
         ];
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
-import FormInput from "../UI/FormInput";
+import LabeledInput from '../UI/LabeledInput';
 import { useTranslation } from 'react-i18next';
 
 export default function RegisterForm() {
@@ -48,7 +48,7 @@ export default function RegisterForm() {
     return (
         <>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <FormInput
+                <LabeledInput
                     type="text"
                     name="username"
                     id="reg-username"
@@ -60,7 +60,7 @@ export default function RegisterForm() {
                     required
                 />
 
-                <FormInput
+                <LabeledInput
                     type="email"
                     name="email"
                     id="reg-email"
@@ -72,7 +72,7 @@ export default function RegisterForm() {
                     required
                 />
 
-                <FormInput
+                <LabeledInput
                     type="password"
                     name="password"
                     id="reg-password"
@@ -84,7 +84,7 @@ export default function RegisterForm() {
                     required
                 />
 
-                <FormInput
+                <LabeledInput
                     type="password"
                     name="password_confirmation"
                     id="reg-confirm-password"

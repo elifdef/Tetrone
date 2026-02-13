@@ -6,7 +6,7 @@ import ProfileStatus from "./ProfileStatus";
 import ProfileInfo from "./ProfileInfo";
 
 export default function UserProfileCard({ currentUser, isPreview = false }) {
-    if (!currentUser) 
+    if (!currentUser)
         return null;
 
     const {
@@ -43,7 +43,6 @@ export default function UserProfileCard({ currentUser, isPreview = false }) {
                     <ProfileHeader user={currentUser} />
 
                     <ProfileStatus bio={displayBio} />
-
                     {(isPreview || !isBlockedByTarget) && (
                         <ProfileInfo
                             user={currentUser}

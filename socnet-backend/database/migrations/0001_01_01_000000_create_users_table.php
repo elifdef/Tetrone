@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->date('birth_date')->nullable();
             $table->tinyInteger('gender')->nullable()->default(null);
-            $table->foreignId('country_id')->nullable()->constrained('countries');
+            $table->char('country', 2)->nullable();
             $table->text('bio')->nullable();
             $table->boolean('is_setup_complete')->default(false);
             $table->timestamp('last_seen_at')->nullable();

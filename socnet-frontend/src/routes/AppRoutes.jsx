@@ -16,7 +16,7 @@ import PostPage from "../pages/PostPage";
 import EmailVerifyPage from "../pages/EmailVerifyPage";
 import NotFoundPage from "../pages/NotFoundPage";
 
-import ProfileSettings from '../pages/settings/ProfileSettings';
+import ProfileSettings from '../components/settings/ProfileSettings';
 import SecuritySettings from '../pages/settings/SecuritySettings';
 
 import { GuestGuard, AuthGuard, SetupGuard } from "./Guards";

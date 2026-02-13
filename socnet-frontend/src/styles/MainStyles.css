@@ -1,5 +1,3 @@
-@import url('https://fonts.cdnfonts.com/css/tahoma');
-
 :root {
     --theme-bg-page: #1e1e1e;
     --theme-bg-box: #2b2b2b;
@@ -30,6 +28,10 @@
     --theme-input-border: #C0CAD5;
 }
 
+* {
+    font-family: tahoma, verdana, arial, sans-serif;
+}
+
 body {
     background-color: var(--theme-bg-page);
     color: var(--theme-text-main);
@@ -53,7 +55,6 @@ body {
     border: 1px solid var(--theme-input-border);
     background: var(--theme-input-bg);
     color: var(--theme-text-main);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     box-sizing: border-box;
 }
@@ -87,7 +88,6 @@ body {
 /* профіль */
 .vk-card-wrapper,
 .vk-friends-page {
-    font-family: 'Tahoma', sans-serif, Arial;
     font-size: 11px;
     color: var(--theme-text-main);
     background-color: var(--theme-bg-page);
@@ -147,7 +147,6 @@ body {
     font-size: 11px;
     cursor: pointer;
     text-align: center;
-    font-family: 'Tahoma', sans-serif;
     transition: background 0.2s;
 }
 
@@ -281,7 +280,6 @@ body {
     text-align: center;
     position: relative;
     cursor: pointer;
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     padding: 6px;
     display: block;
@@ -312,7 +310,6 @@ body {
     border: none;
     border-top: 1px solid var(--theme-border);
     cursor: pointer;
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     color: var(--theme-text-main);
     box-sizing: border-box;
@@ -376,7 +373,6 @@ body {
     width: 100%;
     height: 50px;
     border: 1px solid var(--theme-input-border);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     resize: none;
     padding: 5px;
@@ -404,7 +400,6 @@ body {
     padding: 4px 15px;
     cursor: pointer;
     font-size: 11px;
-    font-family: Tahoma, sans-serif;
     font-weight: bold;
 }
 
@@ -463,7 +458,6 @@ body {
     font-weight: bold;
     text-decoration: none;
     font-size: 12px;
-    font-family: Tahoma, sans-serif;
 }
 
 .vk-post-author:hover {
@@ -481,7 +475,6 @@ body {
     font-size: 11px;
     line-height: 1.4;
     padding-left: 60px;
-    font-family: Tahoma, sans-serif;
     margin-top: -30px;
 }
 
@@ -594,7 +587,6 @@ body {
     min-height: 60px;
     border: 1px solid var(--theme-input-border);
     padding: 5px;
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     resize: vertical;
     margin-bottom: 5px;
@@ -619,7 +611,6 @@ body {
     border: none;
     cursor: pointer;
     padding: 5px 0;
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     font-weight: bold;
     color: var(--theme-link);
@@ -681,7 +672,6 @@ body {
     color: var(--theme-text-main);
     padding: 8px 35px 8px 10px;
     font-size: 11px;
-    font-family: Tahoma, sans-serif;
     height: 32px;
     box-sizing: border-box;
 }
@@ -797,7 +787,6 @@ body {
     padding: 15px;
     background-color: var(--theme-bg-page);
     border: 1px solid var(--theme-border);
-    font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: 11px;
     color: var(--theme-text-main);
 }
@@ -832,7 +821,6 @@ body {
     background: none;
     border: none;
     color: var(--theme-link);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     font-weight: bold;
     cursor: pointer;
@@ -872,7 +860,6 @@ body {
     flex: 1;
     padding: 4px;
     border: 1px solid var(--theme-input-border);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     background: var(--theme-input-bg);
     color: var(--theme-text-main);
@@ -886,7 +873,6 @@ body {
     font-weight: bold;
     padding: 4px 10px;
     cursor: pointer;
-    font-family: Tahoma, sans-serif;
 }
 
 .vk-friends-search-btn:hover {
@@ -960,7 +946,6 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    font-family: Tahoma, sans-serif;
     font-size: 10px;
     padding: 0;
     text-align: right;
@@ -995,7 +980,6 @@ body {
     padding: 15px;
     background-color: var(--theme-bg-page);
     border: 1px solid var(--theme-border);
-    font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: 11px;
     color: var(--theme-text-main);
     box-sizing: border-box;
@@ -1017,7 +1001,6 @@ body {
     background: none;
     border: none;
     color: var(--theme-link);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     font-weight: bold;
     cursor: pointer;
@@ -1085,7 +1068,6 @@ body {
     padding: 15px;
     background-color: var(--theme-bg-page);
     border: 1px solid var(--theme-border);
-    font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: 11px;
     color: var(--theme-text-main);
     box-sizing: border-box;
@@ -1107,7 +1089,6 @@ body {
     background: none;
     border: none;
     color: var(--theme-link);
-    font-family: Tahoma, sans-serif;
     font-size: 11px;
     font-weight: bold;
     cursor: pointer;
@@ -1226,7 +1207,6 @@ body {
     font-weight: bold;
     cursor: pointer;
     font-size: 11px;
-    font-family: Tahoma, sans-serif;
 }
 
 .vk-btn-save:disabled {
@@ -1267,7 +1247,6 @@ body {
     justify-content: center;
     height: 100vh;
     background: var(--theme-bg-page);
-    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', Helvetica, Arial, sans-serif;
 }
 
 .not-found-content {
@@ -1391,7 +1370,6 @@ body {
     font-weight: bold;
     color: var(--theme-link);
     text-decoration: none;
-    font-family: Tahoma, sans-serif;
     font-size: 13px;
 }
 
@@ -1411,7 +1389,6 @@ body {
     top: 20px;
     right: 30px;
     color: #fff;
-    font-family: Tahoma, sans-serif;
     font-weight: bold;
     font-size: 14px;
     cursor: pointer;
@@ -1424,4 +1401,487 @@ body {
 
 .vk-modal-close:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+/* кастомний випадаючий список для вибору країн */
+.vk-custom-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-link);
+    border-top: none;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.vk-custom-dropdown-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-text-main);
+    transition: background 0.1s;
+}
+
+.vk-custom-dropdown-item.not-selected {
+    color: var(--theme-text-muted);
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.vk-custom-dropdown-item:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.vk-custom-dropdown-item.selected {
+    background-color: var(--theme-btn-hover);
+}
+
+.vk-custom-dropdown-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.vk-custom-dropdown-list::-webkit-scrollbar-track {
+    background: var(--theme-bg-box);
+}
+
+.vk-custom-dropdown-list::-webkit-scrollbar-thumb {
+    background: var(--theme-border);
+    border-radius: 4px;
+}
+
+.vk-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-muted);
+}
+
+.vk-setup-wrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 10px;
+}
+
+.vk-setup-header {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 15px 20px;
+    border-bottom: none;
+}
+
+.vk-setup-title {
+    font-size: 16px;
+    color: var(--theme-link);
+    margin: 0 0 5px 0;
+}
+
+.vk-setup-subtitle {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+    margin: 0;
+}
+
+.vk-setup-layout {
+    display: flex;
+    align-items: flex-start;
+}
+
+.vk-setup-form-col {
+    flex: 1;
+    min-width: 0;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 20px;
+}
+
+.vk-setup-preview-col {
+    width: 280px;
+    margin-left: 20px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+}
+
+.vk-preview-label {
+    text-align: center;
+    color: var(--theme-text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.vk-setup-preview-col .vk-card-wrapper {
+    padding: 10px;
+}
+
+.vk-setup-preview-col .vk-container {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vk-setup-preview-col .vk-left-col {
+    width: 100%;
+}
+
+.vk-setup-preview-col .vk-right-col {
+    width: 100%;
+    padding-right: 0;
+}
+
+.vk-setup-preview-col .vk-status-box {
+    margin-bottom: 5px;
+}
+
+.mobile-menu-btn {
+    display: none;
+}
+
+.mobile-menu-overlay {
+    display: none;
+}
+
+/* футер */
+.vk-footer {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.vk-footer-languages {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.vk-footer-lang-item {
+    display: flex;
+    align-items: center;
+}
+
+.vk-lang-btn {
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.vk-lang-btn:hover {
+    opacity: 0.8;
+}
+
+.vk-lang-btn.active {
+    opacity: 1;
+    cursor: default;
+}
+
+.vk-lang-separator {
+    color: var(--theme-border);
+    margin-left: 12px;
+    font-size: 12px;
+}
+
+.vk-lang-all {
+    font-size: 11px;
+    color: var(--theme-link);
+    cursor: pointer;
+}
+
+.vk-lang-all:hover {
+    text-decoration: underline;
+}
+
+.vk-footer-copyright {
+    margin-top: 15px;
+    font-size: 11px;
+    color: var(--theme-text-muted);
+}
+
+/* для телефонів */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+
+    .main-content {
+        width: 100% !important;
+        padding: 0 !important;
+        padding-top: 60px !important;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 2000;
+        background: var(--theme-bg-box);
+        border: 1px solid var(--theme-border);
+        color: var(--theme-link);
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .mobile-menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1400;
+    }
+
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: auto !important;
+        background: var(--theme-bg-page) !important;
+        z-index: 1500 !important;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 60px !important;
+        padding-bottom: 25px !important;
+
+        transform: translateY(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid var(--theme-border) !important;
+        border-right: none !important;
+    }
+
+    .sidebar.open {
+        transform: translateY(0);
+    }
+
+    .sidebar h1,
+    .sidebar .logo {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .vk-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .vk-left-col,
+    .vk-right-col {
+        width: 100% !important;
+        padding: 0 !important;
+        max-width: none !important;
+    }
+
+    .vk-avatar {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        min-height: auto;
+    }
+
+    .vk-name-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .vk-form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .vk-settings-tabs {
+        flex-wrap: wrap;
+    }
+
+    .vk-setup-layout {
+        flex-direction: column-reverse;
+    }
+
+    .vk-setup-preview-col {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 20px;
+        position: static;
+    }
+
+    .vk-setup-preview-col .vk-container {
+        flex-direction: row;
+    }
+
+    .vk-setup-preview-col .vk-left-col {
+        width: 150px;
+    }
+
+    .vk-feed-page {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        border: none !important;
+    }
+
+    .vk-wall,
+    .vk-post {
+        margin-left: -10px;
+        margin-right: -10px;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+
+    .vk-post-header {
+        padding-left: 10px;
+        align-items: center;
+    }
+
+    .vk-post-content {
+        padding-left: 10px;
+        margin-top: 10px;
+    }
+
+    .vk-post-footer {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .vk-post-image img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+    }
+
+    .vk-post-actions-top {
+        opacity: 1;
+    }
+
+    .friend-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .vk-friends-avatar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .vk-friends-actions {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .vk-friends-btn {
+        text-align: center;
+    }
+
+    .vk-comment-item {
+        flex-direction: column;
+    }
+
+    .vk-comment-avatar {
+        margin-bottom: 5px;
+    }
+
+    .vk-modal-overlay {
+        align-items: flex-start;
+    }
+
+    .vk-modal-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        min-height: 100vh;
+        margin: 0 !important;
+        border: none;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .vk-modal-image-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        background: #000;
+        margin-bottom: 0;
+    }
+
+    .vk-modal-image {
+        max-height: 60vh;
+        object-fit: contain;
+    }
+
+    .vk-modal-info {
+        background: var(--theme-bg-box);
+        padding: 15px;
+    }
+
+    .vk-modal-close {
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 10px 15px;
+        border-radius: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .vk-btn,
+    .vk-btn-save,
+    .vk-btn-dropdown-trigger {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .vk-form-input,
+    .vk-form-textarea,
+    .vk-form-select {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .vk-label {
+        width: 100%;
+        margin-bottom: 3px;
+    }
+
+    .vk-info-row {
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    .vk-setup-preview-col .vk-container {
+        flex-direction: column;
+    }
+
+    .vk-setup-preview-col .vk-left-col {
+        width: 100%;
+    }
 }

@@ -27,7 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'birth_date',
         'bio',
-        'country_id',
+        'country',
         'gender'
     ];
 
@@ -100,12 +100,6 @@ class User extends Authenticatable implements MustVerifyEmail
             return $friendship->user_id === $currentUser->id ? 'blocked_by_me' : 'blocked_by_target';
 
         return 'none';
-    }
-
-    // звязок country_id з users до id в countries
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
     }
 
     public function getIsOnlineAttribute()

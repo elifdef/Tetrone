@@ -48,15 +48,7 @@ class PublicUserResource extends JsonResource
             'birth_date' => $this->birth_date,
             'is_online' => $this->is_online,
             'last_seen' => $this->last_seen_at,
-            'country' => $this->whenLoaded('country', function ()
-            {
-                return [
-                    'id' => $this->country->id,
-                    'name' => $this->country->name,
-                    'emoji' => $this->country->emoji,
-                    'code' => $this->country->iso2,
-                ];
-            }),
+            'country' => $this->country,
             'is_setup_complete' => (bool)$this->is_setup_complete,
             'email_verified_at' => $this->email_verified_at,
             'friendship_status' => $status,

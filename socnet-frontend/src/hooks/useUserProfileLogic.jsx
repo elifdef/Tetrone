@@ -41,7 +41,7 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
     };
 
     const displayBirth = getField(currentUser?.birth_date);
-    const displayCountry = getField(currentUser?.country, (c) => `${c.emoji} ${c.name}`);
+    const displayCountry = getField(currentUser?.country);
     const displayBio = getDisplayBio();
     const displayGender = getField(currentUser?.gender, (g) => {
         if (g === 1) return t('common.gender_male');

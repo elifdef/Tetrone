@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import LeftSidebar from "./LeftSidebar";
@@ -8,17 +8,31 @@ import EmailVerificationBanner from "./EmailVerificationBanner";
 
 export default function MainLayout() {
     const { user } = useContext(AuthContext);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+    const closeMenu = () => setIsMobileMenuOpen(false);
 
     return (
         <>
             {user && <EmailVerificationBanner user={user} />}
+            
+            <button className="mobile-menu-btn" onClick={toggleMenu}>
+                {isMobileMenuOpen ? '✖' : '☰'}
+            </button>
+
+            {isMobileMenuOpen && (
+                <div className="mobile-menu-overlay" onClick={closeMenu}></div>
+            )}
+
             <div className="app-container">
-                <LeftSidebar />
+                <LeftSidebar isOpen={isMobileMenuOpen} closeMenu={closeMenu} />
+                
                 <main className="main-content">
                     <div style={{ minHeight: '80vh' }}>
                         <Outlet />
                     </div>
                 </main>
+                
                 <RightSidebar />
             </div>
             <Footer />

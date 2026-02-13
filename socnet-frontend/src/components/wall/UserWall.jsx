@@ -1,13 +1,22 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useUserWall } from '../../hooks/useUserWall';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import WallHeader from './WallHeader';
 import CreatePostForm from './CreatePostForm';
 import WallPostList from './WallPostList';
+import { useTranslation } from 'react-i18next';
 
 export default function UserWall({ profileUser, isOwnProfile }) {
     const { user: authUser } = useContext(AuthContext);
+    const { t } = useTranslation();
     const wallData = useUserWall(profileUser);
+
+    const loaderRef = useIntersectionObserver(
+        wallData.loadMore,
+        wallData.hasMore,
+        wallData.isLoadingMore
+    );
 
     return (
         <div className="vk-wall">
@@ -46,6 +55,22 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 startEditing={wallData.startEditing}
                 handleDelete={wallData.handleDelete}
             />
+
+            {wallData.hasMore && (
+                <div
+                    ref={loaderRef}
+                    style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '12px' }}
+                >
+                    {wallData.isLoadingMore ? t('common.loading') + '...' : ''}
+                </div>
+            )}
+
+            {!wallData.hasMore && wallData.posts.length > 0 && (
+                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '11px' }}>
+                    {t('wall.no_posts')}
+
+                </div>
+            )}
         </div>
     );
 }

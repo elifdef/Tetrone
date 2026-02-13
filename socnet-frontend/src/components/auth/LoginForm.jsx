@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import FormInput from "../UI/FormInput";
+import LabeledInput from "../UI/LabeledInput";
 import { useAuthForms } from "../../hooks/useAuthForms";
 import { useTranslation } from 'react-i18next';
 
@@ -27,7 +27,7 @@ export default function LoginForm() {
     return (
         <>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <FormInput
+                <LabeledInput
                     type="email"
                     name="email"
                     id="login-email"
@@ -39,7 +39,7 @@ export default function LoginForm() {
                     required
                 />
 
-                <FormInput
+                <LabeledInput
                     type="password"
                     name="password"
                     id="login-password"

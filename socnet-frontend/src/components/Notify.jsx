@@ -7,7 +7,6 @@ import LoadingIcon from '../assets/loader.svg?react';
 import i18n from "../i18n";
 
 const toastStyles = {
-    fontFamily: 'Tahoma, sans-serif',
     fontSize: '12px',
     color: '#FFFFFF',
     background: '#2b2b2b',
@@ -68,7 +67,6 @@ export const notifyConfirmAction = (message, btnYes = i18n.t('common.yes'), btnN
                             borderRadius: '2px',
                             color: 'white',
                             cursor: 'pointer',
-                            fontFamily: 'Tahoma, sans-serif',
                             fontSize: '11px',
                             fontWeight: 'bold'
                         }}
@@ -85,7 +83,6 @@ export const notifyConfirmAction = (message, btnYes = i18n.t('common.yes'), btnN
                             borderRadius: '2px',
                             color: '#45688E',
                             cursor: 'pointer',
-                            fontFamily: 'Tahoma, sans-serif',
                             fontSize: '11px'
                         }}
                     >

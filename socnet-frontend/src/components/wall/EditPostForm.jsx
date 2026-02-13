@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import Textarea from "../UI/Textarea"
 
 export default function EditPostForm({
     post,
@@ -12,7 +13,7 @@ export default function EditPostForm({
     return (
         <div className="vk-post">
             <div className="vk-edit-mode">
-                <textarea
+                <Textarea
                     className="vk-edit-textarea"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}

@@ -1,5 +1,6 @@
-import ImageAttach from '../../assets/ImageAttach.svg?react';
 import { useTranslation } from 'react-i18next';
+import ImageAttach from '../../assets/ImageAttach.svg?react';
+import Textarea from "../UI/Textarea"
 
 export default function CreatePostForm({
     content, setContent,
@@ -16,13 +17,13 @@ export default function CreatePostForm({
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            <textarea
+            <Textarea
                 placeholder={isDragging ? t('wall.drop_image') : t('wall.write_post')}
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 onPaste={(e) => handlePaste(e, 'create')}
                 maxLength={2048}
-            ></textarea>
+            ></Textarea>
 
             {preview && (
                 <div className="vk-post-preview">

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 import { notifySuccess, notifyConfirmAction, notifyError } from "../components/Notify"
 import { validateImageFile } from "../services/upload";
 import { mapPost } from '../services/mappers';
-import { useTranslation } from 'react-i18next';
 
 export const useUserWall = (profileUser) => {
     const { t } = useTranslation();
@@ -22,23 +22,65 @@ export const useUserWall = (profileUser) => {
     const [editPreview, setEditPreview] = useState(null);
     const [deleteExistingImage, setDeleteExistingImage] = useState(false);
 
-    // Завантаження постів
-    useEffect(() => {
-        if (!profileUser?.username) return;
-        const fetchPosts = async () => {
-            try {
-                const response = await api.get(`/users/${profileUser.username}/posts`);
-                const processedPosts = response.data.data.map(mapPost);
-                setPosts(processedPosts);
-            } catch (err) {
-                (err.response && err.response.status === 403)
-                    ? setPosts([])
-                    : notifyError(t('error.loading_post'));
-            }
-        };
+    // для пагінації
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-        fetchPosts();
-    }, [profileUser.username]);
+    // Завантаження постів
+    const fetchPosts = async (pageNumber = 1) => {
+        if (!profileUser?.username)
+            return;
+
+        if (pageNumber > 1)
+            setIsLoadingMore(true);
+
+        try {
+            const response = await api.get(`/users/${profileUser.username}/posts?page=${pageNumber}`);
+
+            const processedPosts = response.data.data.map(mapPost);
+
+            // якщо це перша сторінка - замінюємо пости, ні - в кінець
+            // з фільтрацією щоб уникнути повторів ключів під час рендеру
+            if (pageNumber === 1) {
+                setPosts(processedPosts);
+            } else {
+                setPosts(prev => {
+                    const uniqueNewPosts = processedPosts.filter(
+                        newPost => !prev.some(existingPost => existingPost.id === newPost.id)
+                    );
+                    return [...prev, ...uniqueNewPosts];
+                });
+            }
+
+            const meta = response.data.meta;
+            setHasMore(meta.current_page < meta.last_page);
+        } catch (err) {
+            if (err.response && err.response.status === 403)
+                setPosts([]);
+            else
+                notifyError(t('error.loading_post'));
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
+
+    // перше завантаження
+    useEffect(() => {
+        setPage(1);
+        setHasMore(true);
+        fetchPosts(1);
+    }, [profileUser?.username]);
+
+    // для другого/третього/.../n-го завантаження
+    const loadMore = useCallback(() => {
+        if (!isLoadingMore && hasMore) {
+            setIsLoadingMore(true);
+            const nextPage = page + 1;
+            setPage(nextPage);
+            fetchPosts(nextPage);
+        }
+    }, [isLoadingMore, hasMore, page, profileUser?.username]);
 
     const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
     const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
@@ -99,7 +141,8 @@ export const useUserWall = (profileUser) => {
             });
             setPosts([mapPost(res.data), ...posts]);
             setContent('');
-            setImage(null);            
+            setImage(null);
+            setPreview(null);
         } catch (error) {
             notifyError(t('common.error'));
         }
@@ -158,7 +201,7 @@ export const useUserWall = (profileUser) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            setPosts(posts.map(p => p.id === postId ? res.data : p));
+            setPosts(posts.map(p => p.id === postId ? mapPost(res.data) : p));
             notifySuccess(t('success.changes_saved'));
             cancelEditing();
         } catch (error) {
@@ -186,6 +229,7 @@ export const useUserWall = (profileUser) => {
         editPreview,
         setEditImage, handleEditFileSelect, setEditPreview,
         startEditing, cancelEditing, saveEdit,
-        handleDelete
+        handleDelete,
+        hasMore, isLoadingMore, loadMore,
     };
 };

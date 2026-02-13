@@ -225,7 +225,8 @@
     "empty_wall": "There are no posts on the wall yet.",
     "attach_photo": "Attach a photo",
     "posts_count_one": "{{count}} post",
-    "posts_count_other": "{{count}} posts"
+    "posts_count_other": "{{count}} posts",
+    "no_posts": "There are no more posts."
   },
 
   "friends": {

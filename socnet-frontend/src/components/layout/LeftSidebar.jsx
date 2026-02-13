@@ -47,7 +47,7 @@ const GuestNav = ({ getLinkClass }) => {
     );
 };
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ isOpen }) => {
     const { t } = useTranslation();
     const { logout, user } = useContext(AuthContext);
     const location = useLocation();
@@ -64,7 +64,7 @@ const LeftSidebar = () => {
     };
 
     return (
-        <aside className="sidebar">
+        <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
             <div>
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <h1>{APP_NAME}</h1>

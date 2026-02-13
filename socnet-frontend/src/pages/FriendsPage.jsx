@@ -1,4 +1,4 @@
-import FormInput from "../components/UI/FormInput";
+import LabeledInput from "../components/UI/LabeledInput";
 import FriendCard from "../components/friends/FriendCard";
 import { useFriendsLogic } from "../hooks/useFriendsLogic";
 
@@ -32,7 +32,7 @@ export default function FriendsPage() {
             </div>
 
             <div className="vk-friends-search-wrapper">
-                <FormInput
+                <LabeledInput
                     placeholder={activeTab === 'all' ? t('friends.search_people') : t('friends.list_filter')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
