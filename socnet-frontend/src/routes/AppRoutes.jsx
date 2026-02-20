@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 import MainLayout from "../components/layout/MainLayout";
-import SettingsLayout from '../pages/settings/SettingsLayout';
 
+import SettingsPage from '../pages/SettingsPage';
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import SetupProfilePage from "../pages/SetupProfilePage";
@@ -15,9 +15,6 @@ import FriendsPage from "../pages/FriendsPage";
 import PostPage from "../pages/PostPage";
 import EmailVerifyPage from "../pages/EmailVerifyPage";
 import NotFoundPage from "../pages/NotFoundPage";
-
-import ProfileSettings from '../components/settings/ProfileSettings';
-import SecuritySettings from '../pages/settings/SecuritySettings';
 
 import { GuestGuard, AuthGuard, SetupGuard } from "./Guards";
 
@@ -50,12 +47,7 @@ export default function AppRoutes() {
                     <Route path="/friends" element={<FriendsPage />} />
                     <Route path="/messages" element={<div>messageTemplate</div>} />
                     <Route path="/email-verify/:id/:hash" element={<EmailVerifyPage />} />
-
-                    <Route path="/settings" element={<SettingsLayout />}>
-                        <Route index element={<Navigate to="profile" replace />} />
-                        <Route path="profile" element={<ProfileSettings />} />
-                        <Route path="security" element={<SecuritySettings />} />
-                    </Route>
+                    <Route path="/settings" element={<SettingsPage />} />
                 </Route>
             </Route>
 

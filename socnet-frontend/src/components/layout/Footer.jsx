@@ -18,29 +18,29 @@ export default function Footer() {
     const isActive = (lang) => i18n.language.startsWith(lang);
 
     return (
-        <footer className="vk-footer">
-            <div className="vk-footer-languages">
+        <footer className="socnet-footer">
+            <div className="socnet-footer-languages">
                 {SUPPORTED_LANGUAGES.map((lang, index) => (
-                    <div key={lang.code} className="vk-footer-lang-item">
+                    <div key={lang.code} className="socnet-footer-lang-item">
                         <span
-                            className={`vk-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
+                            className={`socnet-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
                             onClick={() => changeLanguage(lang.code)}
                             title={lang.name}
                         >
                             <span className={`fi fi-${lang.countryCode}`}></span>
                         </span>
                         {index < SUPPORTED_LANGUAGES.length - 1 && (
-                            <span className="vk-lang-separator">|</span>
+                            <span className="socnet-lang-separator">|</span>
                         )}
                     </div>
                 ))}
-                <span className="vk-lang-separator">|</span>
+                <span className="socnet-lang-separator">|</span>
 
-                <span className="vk-lang-all">
+                <span className="socnet-lang-all">
                     all languages »
                 </span>
             </div>
-            <div className="vk-footer-copyright">
+            <div className="socnet-footer-copyright">
                 © 2025 - 2026 {APP_NAME}. {t('footer.text')}
             </div>
         </footer>

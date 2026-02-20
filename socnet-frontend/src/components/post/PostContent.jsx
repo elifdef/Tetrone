@@ -5,11 +5,14 @@ import PhotoModal from "../UI/PhotoModal";
 
 const linkifyOptions = {
     target: "_blank",
-    className: "vk-link",
+    className: "socnet-link",
     formatHref: {
         mention: (href) => `/${href.substring(1)}`, // перетворює @teto на /teto
         url: (href) => href,
     },
+    validate: {
+        mention: (value) => value.substring(1).length >= 4 // якщо юзернейм invalid
+    }
 };
 
 export default function PostContent({ content, image, post, onUpdate, style }) {
@@ -17,17 +20,17 @@ export default function PostContent({ content, image, post, onUpdate, style }) {
 
     return (
         <>
-            <div className="vk-post-content" style={style}>
+            <div className="socnet-post-content" style={style}>
                 {content &&
-                    <p className="vk-post-text">
+                    <p className="socnet-post-text">
                         <Linkify options={linkifyOptions}>{content}</Linkify>
                     </p>}
 
                 {image && (
-                    <div className="vk-post-image">
+                    <div className="socnet-post-image">
                         <img
                             src={image}
-                            className="vk-post-image"
+                            className="socnet-post-image"
                             onClick={() => setIsModalOpen(true)}
                             style={{ cursor: 'pointer' }}
                         />

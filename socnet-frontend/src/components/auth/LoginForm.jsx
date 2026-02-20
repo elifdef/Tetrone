@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import LabeledInput from "../UI/LabeledInput";
 import { useAuthForms } from "../../hooks/useAuthForms";
 import { useTranslation } from 'react-i18next';
+import Input from "../UI/Input"
 
 export default function LoginForm() {
     const { t } = useTranslation();
@@ -15,8 +15,7 @@ export default function LoginForm() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        if (error)
-            setError(null);
+        if (error) setError(null);
     };
 
     const handleSubmit = (e) => {
@@ -25,42 +24,44 @@ export default function LoginForm() {
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <LabeledInput
-                    type="email"
-                    name="email"
-                    id="login-email"
-                    label={t('auth.email')}
-                    placeholder="Example@mail.com"
-                    autoComplete="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
+        <form onSubmit={handleSubmit}>
+            <Input
+                type="email"
+                name="email"
+                id="login-email"
+                label={t('auth.email')}
+                placeholder="email@example.com"
+                autoComplete="username"
+                value={formData.email}
+                onChange={handleChange}
+                required
+            />
 
-                <LabeledInput
-                    type="password"
-                    name="password"
-                    id="login-password"
-                    label={t('auth.password')}
-                    placeholder={t('auth.password')}
-                    autoComplete="current-password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
+            <Input
+                type="password"
+                name="password"
+                id="login-password"
+                label={t('auth.password')}
+                placeholder=""
+                autoComplete="current-password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+            />
 
-                {error && <div style={{ color: '#ff3347', textAlign: 'center', fontSize: '14px' }}>{error}</div>}
+            {error && (
+                <div className="socnet-auth-msg error">
+                    {error}
+                </div>
+            )}
 
-                <button className="btn" disabled={loading}>
-                    {loading ? t('auth.login_title') : t('auth.signin')}
-                </button>
-            </form>
+            <button className="socnet-btn" disabled={loading} style={{ width: '100%', marginTop: '5px' }}>
+                {loading ? t('common.loading') : t('auth.signin')}
+            </button>
 
-            <p style={{ marginTop: '15px', textAlign: 'center' }}>
-                {t('auth.not_have_account')} <Link to="/register" style={{ color: '#1d9bf0' }}>{t('auth.signup')}</Link>
-            </p>
-        </>
+            <div className="socnet-auth-footer">
+                {t('auth.not_have_account')} <Link to="/register" className="socnet-link">{t('auth.signup')}</Link>
+            </div>
+        </form>
     );
 }

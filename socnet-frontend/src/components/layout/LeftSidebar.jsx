@@ -4,49 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { APP_NAME } from "../../config";
 import { AuthContext } from "../../context/AuthContext";
 
-
-const UserNav = ({ username, getLinkClass }) => {
-    const { t } = useTranslation();
-
-    return (
-        <>
-            <Link to={`/${username}`} className={getLinkClass(`/${username}`)}>
-                {t('common.profile')}
-            </Link>
-
-            <Link to="/messages" className={getLinkClass("/messages")}>
-                {t('sidebar.left.messages')}
-            </Link>
-
-            <Link to="/friends" className={getLinkClass("/friends")}>
-                {t('common.friends')}
-            </Link>
-
-            <Link to="/settings" className={getLinkClass("/settings")}>
-                {t('sidebar.left.settings')}
-            </Link>
-        </>
-    );
-};
-
-const GuestNav = ({ getLinkClass }) => {
-    const { t } = useTranslation();
-
-    return (
-        <>
-            <div style={{ padding: '10px 0', color: '#71767b', fontSize: '13px' }}>
-                {t('sidebar.guest.view_like_guest')}
-            </div>
-            <Link to="/login" className={getLinkClass("/login")}>
-                {t('auth.signin')}
-            </Link>
-            <Link to="/register" className={getLinkClass("/register")}>
-                {t('auth.signup')}
-            </Link>
-        </>
-    );
-};
-
 const LeftSidebar = ({ isOpen }) => {
     const { t } = useTranslation();
     const { logout, user } = useContext(AuthContext);
@@ -55,7 +12,7 @@ const LeftSidebar = ({ isOpen }) => {
 
     const getLinkClass = (path) => {
         const isActive = location.pathname === path;
-        return `nav-link ${isActive ? "active" : ""}`;
+        return `socnet-nav-item ${isActive ? "active" : ""}`;
     };
 
     const handleLogout = () => {
@@ -64,48 +21,63 @@ const LeftSidebar = ({ isOpen }) => {
     };
 
     return (
-        <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-            <div>
-                <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h1>{APP_NAME}</h1>
-                </Link>
-            </div>
+        <aside className={`socnet-sidebar-left ${isOpen ? 'mobile-open' : ''}`}>
+            <Link to="/" className="socnet-logo">
+                {APP_NAME}
+            </Link>
 
-            <nav>
-                <Link to="/" className={getLinkClass("/")}>
-                    {t('sidebar.left.home')}
-                </Link>
-
+            <nav className="socnet-nav-list">
                 {user ? (
-                    <UserNav username={user.username} getLinkClass={getLinkClass} />
+                    <>
+                        <Link to="/" className={getLinkClass("/")}>
+                            {t('sidebar.left.home')}
+                        </Link>
+                        <Link to={`/${user.username}`} className={getLinkClass(`/${user.username}`)}>
+                            {t('common.profile')}
+                        </Link>
+                        <Link to="/messages" className={getLinkClass("/messages")}>
+                            {t('sidebar.left.messages')}
+                        </Link>
+                        <Link to="/friends" className={getLinkClass("/friends")}>
+                            {t('common.friends')}
+                        </Link>
+                        <Link to="/settings" className={getLinkClass("/settings")}>
+                            {t('sidebar.left.settings')}
+                        </Link>
+                    </>
                 ) : (
-                    <GuestNav getLinkClass={getLinkClass} />
+                    <>
+                        <Link to="/login" className={getLinkClass("/login")}>
+                            {t('auth.signin')}
+                        </Link>
+                        <Link to="/register" className={getLinkClass("/register")}>
+                            {t('auth.signup')}
+                        </Link>
+                    </>
                 )}
             </nav>
 
-            {user ? (
-                <div className="sidebar-user-block">
-                    <Link to={`/${user.username}`} className="mini-user-info">
+            {user && (
+                <div className="socnet-sidebar-profile">
+                    <Link to={`/${user.username}`} className="socnet-mini-profile-link">
                         <img
-                            src={user?.avatar}
+                            src={user?.avatar || "https://via.placeholder.com/28"}
                             alt="avatar"
-                            className="mini-avatar"
+                            className="socnet-mini-avatar"
                         />
-                        <div className="mini-user-text">
-                            <span className="mini-name">{user.first_name}</span>
-                            <span className="mini-nick">@{user.username}</span>
+                        <div className="socnet-mini-name">
+                            {user.first_name || user.username}
                         </div>
                     </Link>
-
-                    <button onClick={handleLogout} className="btn-logout">
+                    <button onClick={handleLogout} className="socnet-logout-btn">
                         {t('auth.signout')}
                     </button>
                 </div>
-            ) : (
-                <div className="sidebar-user-block">
-                    <span style={{ fontSize: '12px', color: '#71767b' }}>
-                        {t('sidebar.guest.get_full_access')}
-                    </span>
+            )}
+
+            {!user && (
+                <div className="socnet-sidebar-profile" style={{ fontSize: '11px', color: '#777' }}>
+                    {t('sidebar.guest.view_like_guest')}
                 </div>
             )}
         </aside>

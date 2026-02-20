@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../api/axios';
 import { notifySuccess, notifyConfirmAction, notifyError } from "../components/Notify"
 import { validateImageFile } from "../services/upload";
 import { mapPost } from '../services/mappers';
+import PostService from '../services/post.service';
 
 export const useUserWall = (profileUser) => {
     const { t } = useTranslation();
     const [posts, setPosts] = useState([]);
+    const [countPosts, setCountPosts] = useState(0);
+    const [isPageLoading, setIsPageLoading] = useState(true);
 
     // для створення
     const [content, setContent] = useState('');
@@ -29,31 +31,33 @@ export const useUserWall = (profileUser) => {
 
     // Завантаження постів
     const fetchPosts = async (pageNumber = 1) => {
-        if (!profileUser?.username)
-            return;
+        if (!profileUser?.username) return;
 
-        if (pageNumber > 1)
+        if (pageNumber > 1) {
             setIsLoadingMore(true);
+        } else {
+            setIsPageLoading(true);
+        }
 
         try {
-            const response = await api.get(`/users/${profileUser.username}/posts?page=${pageNumber}`);
+            const res = await PostService.getUserPosts(profileUser.username, pageNumber);
 
-            const processedPosts = response.data.data.map(mapPost);
+            const processedPosts = res.data.map(mapPost);
 
             // якщо це перша сторінка - замінюємо пости, ні - в кінець
             // з фільтрацією щоб уникнути повторів ключів під час рендеру
-            if (pageNumber === 1) {
+            if (pageNumber === 1)
                 setPosts(processedPosts);
-            } else {
+            else
                 setPosts(prev => {
                     const uniqueNewPosts = processedPosts.filter(
                         newPost => !prev.some(existingPost => existingPost.id === newPost.id)
                     );
                     return [...prev, ...uniqueNewPosts];
                 });
-            }
 
-            const meta = response.data.meta;
+            const meta = res.meta;
+            setCountPosts(res.meta.total);
             setHasMore(meta.current_page < meta.last_page);
         } catch (err) {
             if (err.response && err.response.status === 403)
@@ -61,7 +65,10 @@ export const useUserWall = (profileUser) => {
             else
                 notifyError(t('error.loading_post'));
         } finally {
-            setIsLoadingMore(false);
+            if (pageNumber === 1)
+                setIsPageLoading(false);
+            else
+                setIsLoadingMore(false);
         }
     };
 
@@ -69,6 +76,8 @@ export const useUserWall = (profileUser) => {
     useEffect(() => {
         setPage(1);
         setHasMore(true);
+        setPosts([]);
+        setIsPageLoading(true);
         fetchPosts(1);
     }, [profileUser?.username]);
 
@@ -91,9 +100,7 @@ export const useUserWall = (profileUser) => {
 
         setImageState(file);
         setPreviewState(URL.createObjectURL(file));
-
-        if (setImageState === setEditImage)
-            setDeleteExistingImage(false);
+        if (setImageState === setEditImage) setDeleteExistingImage(false);
     };
 
     const handleDrop = (e) => {
@@ -131,15 +138,10 @@ export const useUserWall = (profileUser) => {
             notifyError(t('post.empty_post'));
             return;
         }
-        const formData = new FormData();
-        if (content) formData.append('content', content);
-        if (image) formData.append('image', image);
-
         try {
-            const res = await api.post('/posts', formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
-            setPosts([mapPost(res.data), ...posts]);
+            const newPost = await PostService.create({ image, content });
+            setPosts([newPost, ...posts]);
+            setCountPosts(countPosts + 1);
             setContent('');
             setImage(null);
             setPreview(null);
@@ -184,24 +186,13 @@ export const useUserWall = (profileUser) => {
             notifyError(t('post.empty_post'));
             return;
         }
-        const formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('content', editContent);
-
-        // якщо вибрали нову картинку
-        if (editImage)
-            formData.append('image', editImage);
-
-        // якщо натиснули хрестик на старій картинці
-        if (deleteExistingImage)
-            formData.append('delete_image', '1');
-
         try {
-            const res = await api.post(`/posts/${postId}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+            const updatedPostData = await PostService.update(postId, {
+                content: editContent,
+                image: editImage,
+                deleteImage: deleteExistingImage
             });
-
-            setPosts(posts.map(p => p.id === postId ? mapPost(res.data) : p));
+            setPosts(posts.map(p => p.id === postId ? updatedPostData : p));
             notifySuccess(t('success.changes_saved'));
             cancelEditing();
         } catch (error) {
@@ -213,15 +204,16 @@ export const useUserWall = (profileUser) => {
         const isConfirmed = await notifyConfirmAction(t('post.delete_post'));
         if (!isConfirmed) return;
         try {
-            await api.delete(`/posts/${postId}`);
+            await PostService.delete(postId);
             setPosts(posts.filter(p => p.id !== postId));
+            setCountPosts(countPosts - 1);
         } catch (error) {
             notifyError(t('error.deleting'));
         }
     };
 
     return {
-        posts,
+        posts, countPosts,
         content, setContent, image, preview, isDragging,
         handleDragOver, handleDragLeave, handleDrop, handlePaste, handleFileSelect, handleSubmit, removeImage, removeEditImage,
         editingPostId,
@@ -231,5 +223,6 @@ export const useUserWall = (profileUser) => {
         startEditing, cancelEditing, saveEdit,
         handleDelete,
         hasMore, isLoadingMore, loadMore,
+        isPageLoading
     };
 };

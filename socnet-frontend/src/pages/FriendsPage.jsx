@@ -1,4 +1,4 @@
-import LabeledInput from "../components/UI/LabeledInput";
+import Input from "../components/UI/Input";
 import FriendCard from "../components/friends/FriendCard";
 import { useFriendsLogic } from "../hooks/useFriendsLogic";
 
@@ -17,13 +17,13 @@ export default function FriendsPage() {
         );
 
     return (
-        <div className="vk-friends-page">
-            <h1 className="vk-friends-title">{t('friends.your_contacts')}</h1>
-            <div className="vk-friends-tabs">
+        <div className="socnet-friends-page">
+            <h1 className="socnet-friends-title">{t('friends.your_contacts')}</h1>
+            <div className="socnet-friends-tabs">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
-                        className={`vk-friends-tab ${activeTab === tab.id ? 'active' : ''}`}
+                        className={`socnet-friends-tab ${activeTab === tab.id ? 'active' : ''}`}
                         onClick={() => handleTabChange(tab.id)}
                     >
                         {tab.label}
@@ -31,28 +31,28 @@ export default function FriendsPage() {
                 ))}
             </div>
 
-            <div className="vk-friends-search-wrapper">
-                <LabeledInput
+            <div className="socnet-friends-search-wrapper">
+                <Input
                     placeholder={activeTab === 'all' ? t('friends.search_people') : t('friends.list_filter')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && activeTab === 'all' && handleSearchSubmit()}
-                    className="vk-friends-search-input"
+                    className="socnet-friends-search-input"
                 />
                 {activeTab === 'all' && (
-                    <button className="vk-friends-search-btn" onClick={handleSearchSubmit}>
+                    <button className="socnet-friends-search-btn" onClick={handleSearchSubmit}>
                         {t('common.find')}
                     </button>
                 )}
             </div>
 
-            <div className="vk-friends-list">
+            <div className="socnet-friends-list">
                 {loading ? (
-                    <div className="vk-friends-loading">{t('common.loading')}</div>
+                    <div className="socnet-friends-loading">{t('common.loading')}</div>
                 ) : (
                     <>
                         {displayUsers.length === 0 && (
-                            <div className="vk-friends-empty">
+                            <div className="socnet-friends-empty">
                                 {t('friends.list_empty')}
                             </div>
                         )}

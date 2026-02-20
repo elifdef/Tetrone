@@ -90,17 +90,17 @@ export default function HomePage() {
     const loaderRef = useIntersectionObserver(loadMore, hasMore, isLoadingMore);
 
     const EmptyState = () => (
-        <div className="vk-feed-empty">
+        <div className="socnet-feed-empty">
             <h3>{t('common.welcome')}!</h3>
             {activeTab === 'feed' ? (
                 <>
                     <p>{t('feed.my_feed_empty')}</p>
-                    <div className="vk-feed-actions">
-                        <Link to="/friends?tab=all" className="vk-btn-small" style={{ textDecoration: 'none', color: '#fff' }}>
+                    <div className="socnet-feed-actions">
+                        <Link to="/friends?tab=all" className="socnet-btn-small" style={{ textDecoration: 'none', color: '#fff' }}>
                             {t('feed.find_friends')}
                         </Link>
-                        <button className="vk-btn-small" onClick={() => handleTabChange('global')}>
-                            {t('feed.watch_global_feed')}
+                        <button className="socnet-btn-small" onClick={() => handleTabChange('global')}>
+                            {t('feed.view_global_feed')}
                         </button>
                     </div>
                 </>
@@ -111,11 +111,11 @@ export default function HomePage() {
     );
 
     const ErrorStateUI = () => (
-        <div className="vk-feed-empty">
+        <div className="socnet-feed-empty">
             <h3>{t('error.connection')}</h3>
             <p>{t('error.loading_post')}</p>
-            <div className="vk-feed-actions">
-                <button className="vk-btn-small" onClick={() => window.location.reload()}>
+            <div className="socnet-feed-actions">
+                <button className="socnet-btn-small" onClick={() => window.location.reload()}>
                     {t('common.reload_page')}
                 </button>
             </div>
@@ -123,26 +123,26 @@ export default function HomePage() {
     );
 
     return (
-        <div className="vk-feed-page">
-            <div className="vk-feed-tabs">
+        <div className="socnet-feed-page">
+            <div className="socnet-feed-tabs">
                 <button
-                    className={`vk-feed-tab ${activeTab === 'feed' ? 'active' : ''}`}
+                    className={`socnet-feed-tab ${activeTab === 'feed' ? 'active' : ''}`}
                     onClick={() => handleTabChange('feed')}>
                     {t('feed.my_feed')}
                 </button>
                 <button
-                    className={`vk-feed-tab ${activeTab === 'global' ? 'active' : ''}`}
+                    className={`socnet-feed-tab ${activeTab === 'global' ? 'active' : ''}`}
                     onClick={() => handleTabChange('global')}>
                     {t('feed.global_feed')}
                 </button>
             </div>
 
             {loading && page === 1 ? (
-                <div className="vk-feed-loading">
+                <div className="socnet-feed-loading">
                     {t('common.loading')}...
                 </div>
             ) : (
-                <div className="vk-feed-list">
+                <div className="socnet-feed-list">
                     {error && page === 1 ? (
                         <ErrorStateUI />
                     ) : posts.length > 0 ? (
@@ -167,7 +167,7 @@ export default function HomePage() {
                                 <div style={{ padding: '10px', textAlign: 'center' }}>
                                     <span style={{ color: '#bd4c4c', fontSize: '12px' }}>{t('error.connection')}</span>
                                     <br />
-                                    <button className="vk-btn-small" style={{ marginTop: '5px' }} onClick={() => fetchFeed()}>
+                                    <button className="socnet-btn-small" style={{ marginTop: '5px' }} onClick={() => fetchFeed()}>
                                         Спробувати ще раз
                                     </button>
                                 </div>

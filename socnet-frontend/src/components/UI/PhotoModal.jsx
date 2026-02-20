@@ -17,6 +17,18 @@ export default function PhotoModal({ isOpen, image, post, onClose, onUpdate }) {
         setModalPost(post);
     }, [post]);
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onClose]);
+
     const { handleLike } = usePostLike(modalPost);
 
     const handleModalLike = async () => {
@@ -58,17 +70,20 @@ export default function PhotoModal({ isOpen, image, post, onClose, onUpdate }) {
         return null;
 
     return (
-        <div className="vk-modal-overlay" onClick={onClose}>
-            <button className="vk-modal-close" onClick={onClose}>
+        <div className="socnet-modal-overlay" onClick={onClose}>
+            <button
+                className="socnet-modal-close"
+                onClick={onClose}
+            >
                 ✕
             </button>
 
-            <div className="vk-modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="vk-modal-image-wrapper">
-                    <img src={image} className="vk-modal-image" />
+            <div className="socnet-modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="socnet-modal-image-wrapper">
+                    <img src={image} className="socnet-modal-image" />
                 </div>
 
-                <div className="vk-modal-info">
+                <div className="socnet-modal-info">
                     <PostHeader
                         post={modalPost}
                         isOwner={false}
@@ -79,7 +94,7 @@ export default function PhotoModal({ isOpen, image, post, onClose, onUpdate }) {
                     />
 
                     <PostFooter
-                        style={{marginTop: '20px'}}
+                        style={{ marginTop: '20px' }}
                         postId={modalPost.id}
                         isLiked={modalPost.is_liked}
                         likesCount={modalPost.likes_count}

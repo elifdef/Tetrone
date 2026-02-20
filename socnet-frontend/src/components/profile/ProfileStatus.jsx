@@ -1,6 +1,6 @@
 export default function ProfileStatus({ bio }) {
     return (
-        <div className="vk-status-box">
+        <div className="socnet-status-box">
             {bio}
         </div>
     );

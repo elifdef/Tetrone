@@ -6,13 +6,16 @@ import { useTranslation } from 'react-i18next';
 export default function LoginPage() {
     const { t } = useTranslation();
     usePageTitle(t('auth.signin'));
+
     return (
-        <>
-            <div className="auth-container">
-                <h1>{t('auth.signin')}</h1>
+        <div className="socnet-auth-container">
+            <div className="socnet-auth-card">
+                <div className="socnet-auth-header">
+                    <h1 className="socnet-auth-title">{t('auth.signin')}</h1>
+                </div>
                 <LoginForm />
             </div>
             <Footer />
-        </>
+        </div>
     );
 }

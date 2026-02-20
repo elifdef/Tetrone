@@ -106,5 +106,13 @@ export const useProfileSettings = (isSetupMode = false) => {
         }
     };
 
-    return { formData, previewUser, canSubmit, handleChange, handleFileChange, handleSubmit };
+    return {
+        formData,
+        previewUser,
+        canSubmit,
+        handleChange,
+        handleFileChange,
+        handleSubmit,
+        avatarFile: formData.avatarFile
+    };
 };

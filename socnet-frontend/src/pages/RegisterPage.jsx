@@ -6,13 +6,16 @@ import { useTranslation } from 'react-i18next';
 export default function RegisterPage() {
     const { t } = useTranslation();
     usePageTitle(t('auth.signup'));
+
     return (
-        <>
-            <div className="auth-container">
-                <h1>{t('auth.signup')}</h1>
+        <div className="socnet-auth-container">
+            <div className="socnet-auth-card" style={{ maxWidth: '400px' }}>
+                <div className="socnet-auth-header">
+                    <h1 className="socnet-auth-title">{t('auth.signup')}</h1>
+                </div>
                 <RegisterForm />
             </div>
             <Footer />
-        </>
+        </div>
     );
 }

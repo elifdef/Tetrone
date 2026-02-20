@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 
-const GenderSelect = ({ value, onChange }) => {
+const GenderSelect = ({ value, onChange, label }) => {
     const { t } = useTranslation();
 
     return (
-        <div className="vk-form-group">
-            <label className="vk-form-label">{t('common.gender')}</label>
-            <div className="vk-settings-group">
-                <label className="vk-radio-label">
+        <div className="socnet-form-group">
+            <label className="socnet-form-label">{label}</label>
+            <div className="socnet-settings-group">
+                <label className="socnet-radio-label">
                     <input
                         type="radio"
                         name="gender"
@@ -18,7 +18,7 @@ const GenderSelect = ({ value, onChange }) => {
                     {t('common.gender_male')}
                 </label>
 
-                <label className="vk-radio-label">
+                <label className="socnet-radio-label">
                     <input
                         type="radio"
                         name="gender"

@@ -2,15 +2,15 @@ import { useTranslation } from 'react-i18next';
 import { useProfileSettings } from '../../hooks/useProfileSettings';
 import UserProfileCard from '../profile/UserProfileCard';
 
-import LabeledInput from '../UI/LabeledInput';
+import Input from '../UI/Input';
 import DateInput from '../UI/DateInput';
 import Button from '../UI/Button';
 import Label from '../UI/Label';
 import Textarea from '../UI/Textarea';
+import FileInput from '../UI/FileInput';
 
 import GenderSelect from './GenderSelect';
 import CountrySelect from './CountrySelect';
-import AvatarUpload from './AvatarUpload';
 
 const ProfileSettings = ({ isSetupMode = false }) => {
     const { t } = useTranslation();
@@ -21,18 +21,34 @@ const ProfileSettings = ({ isSetupMode = false }) => {
         canSubmit,
         handleChange,
         handleFileChange,
-        handleSubmit
+        handleSubmit,
+        avatarFile
     } = useProfileSettings(isSetupMode);
 
     const renderForm = () => (
-        <form onSubmit={handleSubmit} className="vk-settings-form" style={isSetupMode ? { border: 'none', padding: 0 } : {}}>
-
-            <div style={isSetupMode ? { padding: '15px', background: 'var(--theme-bg-page)', border: '1px solid var(--theme-border)', marginBottom: '15px' } : {}}>
-                <AvatarUpload onFileSelect={handleFileChange} />
+        <form onSubmit={handleSubmit} className="socnet-settings-form" style={isSetupMode ? { border: 'none', padding: 0 } : {}}>
+            <div className="socnet-form-group">
+                <Label>{t('common.avatar')}</Label>
+                <div style={{
+                    border: '1px solid var(--theme-input-border)',
+                    background: 'var(--theme-input-bg)',
+                    padding: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <FileInput
+                        onFileSelect={handleFileChange}
+                        btnText={t('common.browse') || "Огляд..."}
+                    />
+                    <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)' }}>
+                        {avatarFile ? avatarFile.name : t('common.no_file_selected') || "Файл не вибрано."}
+                    </span>
+                </div>
             </div>
 
-            <div className="vk-form-row">
-                <LabeledInput
+            <div className="socnet-form-row">
+                <Input
                     label={`${t('common.first_name')} *`}
                     name="first_name"
                     value={formData.first_name}
@@ -40,7 +56,7 @@ const ProfileSettings = ({ isSetupMode = false }) => {
                     maxLength={50}
                     required
                 />
-                <LabeledInput
+                <Input
                     label={t('common.last_name')}
                     name="last_name"
                     value={formData.last_name}
@@ -57,10 +73,16 @@ const ProfileSettings = ({ isSetupMode = false }) => {
                 required={isSetupMode}
             />
 
-            <GenderSelect value={formData.gender} onChange={handleChange} />
+            <GenderSelect
+                value={formData.gender}
+                onChange={handleChange}
+                required={isSetupMode}
+                label={`${t('common.gender')} *`}
+            />
+
             <CountrySelect value={formData.country} onChange={handleChange} />
 
-            <div className="vk-form-group">
+            <div className="socnet-form-group">
                 <Label>{t('settings.about_me')}</Label>
                 <Textarea
                     name="bio"
@@ -84,19 +106,19 @@ const ProfileSettings = ({ isSetupMode = false }) => {
 
     if (isSetupMode)
         return (
-            <div className="vk-setup-layout">
-                <div className="vk-setup-form-col">
+            <div className="socnet-setup-layout">
+                <div className="socnet-setup-form-col">
                     {renderForm()}
                 </div>
-                <div className="vk-setup-preview-col">
-                    <div className="vk-preview-label">{t('common.preview')}</div>
+                <div className="socnet-setup-preview-col">
+                    <div className="socnet-preview-label">{t('common.preview')}</div>
                     <UserProfileCard currentUser={previewUser} isPreview={true} />
                 </div>
             </div>
         );
 
     return (
-        <div className="vk-settings-regular">
+        <div className="socnet-settings-regular">
             <UserProfileCard currentUser={previewUser} isPreview={true} />
             {renderForm()}
         </div>

@@ -105,7 +105,7 @@ export const notifyConfirmAction = (message, btnYes = i18n.t('common.yes'), btnN
 export const notifyLoading = (message = "Обробка...") => {
     return toast((t) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <LoadingIcon width={20} height={20} fill="#fff" className="vk-spin" />
+            <LoadingIcon width={20} height={20} fill="#fff" className="socnet-spin" />
             <span>{message}</span>
         </div>
     ), {

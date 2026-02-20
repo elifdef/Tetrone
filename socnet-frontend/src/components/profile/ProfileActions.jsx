@@ -22,8 +22,8 @@ export default function ProfileActions({
 
     if (sameUser)
         return (
-            <div className="vk-actions">
-                <Link to="/settings" className="vk-btn">{t('profile.edit')}</Link>
+            <div className="socnet-actions">
+                <Link to="/settings" className="socnet-btn">{t('profile.edit')}</Link>
             </div>
         );
 
@@ -55,10 +55,10 @@ export default function ProfileActions({
     };
 
     return (
-        <div className="vk-actions">
-            <div className="vk-dropdown-wrapper" ref={menuRef}>
+        <div className="socnet-actions">
+            <div className="socnet-dropdown-wrapper" ref={menuRef}>
                 <button
-                    className="vk-btn vk-btn-dropdown-trigger"
+                    className="socnet-btn socnet-btn-dropdown-trigger"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     disabled={loading}
                 >
@@ -66,14 +66,14 @@ export default function ProfileActions({
                 </button>
 
                 {isMenuOpen && (
-                    <div className="vk-menu-list">
+                    <div className="socnet-menu-list">
                         {!isBlockedByMe && (
-                            <button className="vk-menu-item" onClick={() => { onFriendAction(); setIsMenuOpen(false); }}>
+                            <button className="socnet-menu-item" onClick={() => { onFriendAction(); setIsMenuOpen(false); }}>
                                 {getFriendActionLabel()}
                             </button>
                         )}
                         <button
-                            className={`vk-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
+                            className={`socnet-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
                             onClick={() => { onBlockAction(); setIsMenuOpen(false); }}
                         >
                             {isBlockedByMe

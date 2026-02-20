@@ -1,27 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 export const useIntersectionObserver = (callback, hasMore, isLoading) => {
-    const observerTarget = useRef(null);
+    // observer у ref щоб мати до нього доступ між рендерами
+    const observer = useRef();
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                //якщо елемент появиться на екрані є ще сторінки
-                if (entries[0].isIntersecting && hasMore && !isLoading) {
-                    callback();
-                }
-            },
-            { threshold: 0.1 } //спрацьовує коли елемент хоча б на 10% видно на екрані
-        );
+    // реакт викличе цю функцію як тільки нода появиться в дом
+    const lastElementRef = useCallback(node => {
+        if (isLoading) return;
+        if (observer.current) observer.current.disconnect();
 
-        if (observerTarget.current) {
-            observer.observe(observerTarget.current);
-        }
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore)
+                callback();
+        });
 
-        return () => {
-            if (observerTarget.current) observer.unobserve(observerTarget.current);
-        };
-    }, [callback, hasMore, isLoading]);
+        if (node) observer.current.observe(node);
+    }, [isLoading, hasMore, callback]);
 
-    return observerTarget;
+    return lastElementRef;
 };

@@ -12,7 +12,7 @@ export default function CreatePostForm({
 
     return (
         <div
-            className={`vk-wall-input ${isDragging ? 'drag-active' : ''}`}
+            className={`socnet-wall-input ${isDragging ? 'drag-active' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -26,18 +26,18 @@ export default function CreatePostForm({
             ></Textarea>
 
             {preview && (
-                <div className="vk-post-preview">
+                <div className="socnet-post-preview">
                     <img src={preview} alt="Preview" />
                     <button onClick={removeImage}>×</button>
                 </div>
             )}
 
-            <div className="vk-wall-actions">
-                <label className="vk-attach-btn" title={t('wall.attach_photo')}>
+            <div className="socnet-wall-actions">
+                <label className="socnet-attach-btn" title={t('wall.attach_photo')}>
                     <input type="file" hidden onChange={handleFileSelect} accept="image/*" />
                     <ImageAttach width={20} height={20} />
                 </label>
-                <button className="vk-btn-small" onClick={handleSubmit}>
+                <button className="socnet-btn-small" onClick={handleSubmit}>
                     {t('wall.send_btn')}
                 </button>
             </div>

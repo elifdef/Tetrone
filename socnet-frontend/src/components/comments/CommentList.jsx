@@ -9,7 +9,7 @@ export default function CommentList({ loading, comments, currentUser, onDelete, 
         return <div className="no-comments">{noCommentsText}</div>;
 
     return (
-        <div className="vk-comments-list">
+        <div className="socnet-comments-list">
             {comments.map(comment => (
                 <CommentItem
                     key={comment.id}

@@ -5,11 +5,10 @@ import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import WallHeader from './WallHeader';
 import CreatePostForm from './CreatePostForm';
 import WallPostList from './WallPostList';
-import { useTranslation } from 'react-i18next';
+import WallLoader from './WallLoader';
 
 export default function UserWall({ profileUser, isOwnProfile }) {
     const { user: authUser } = useContext(AuthContext);
-    const { t } = useTranslation();
     const wallData = useUserWall(profileUser);
 
     const loaderRef = useIntersectionObserver(
@@ -19,9 +18,9 @@ export default function UserWall({ profileUser, isOwnProfile }) {
     );
 
     return (
-        <div className="vk-wall">
+        <div className="socnet-wall">
             <WallHeader
-                postsCount={wallData.posts.length}
+                postsCount={wallData.countPosts}
             />
 
             {isOwnProfile && (
@@ -56,21 +55,14 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 handleDelete={wallData.handleDelete}
             />
 
-            {wallData.hasMore && (
-                <div
-                    ref={loaderRef}
-                    style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '12px' }}
-                >
-                    {wallData.isLoadingMore ? t('common.loading') + '...' : ''}
-                </div>
-            )}
 
-            {!wallData.hasMore && wallData.posts.length > 0 && (
-                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '11px' }}>
-                    {t('wall.no_posts')}
-
-                </div>
-            )}
+            <WallLoader
+                isPageLoading={wallData.isPageLoading}
+                isLoadingMore={wallData.isLoadingMore}
+                hasMore={wallData.hasMore}
+                postsCount={wallData.countPosts}
+                loaderRef={loaderRef}
+            />
         </div>
     );
 }

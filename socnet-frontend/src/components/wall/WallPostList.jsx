@@ -12,11 +12,8 @@ export default function WallPostList({
     saveEdit, cancelEditing,
     startEditing, handleDelete
 }) {
-    if (posts.length === 0)
-        return <div className="vk-wall-empty">{i18n.t('wall.empty_wall')}</div>
-
     return (
-        <div className="vk-post-list">
+        <div className="socnet-post-list">
             {posts.map(post => (
                 <div key={post.id}>
                     {editingPostId === post.id ? (

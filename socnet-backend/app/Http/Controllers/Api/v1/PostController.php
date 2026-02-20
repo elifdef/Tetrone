@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Friendship;
@@ -40,7 +41,16 @@ class PostController extends Controller
         return PostResource::collection($posts);
     }
 
-    // показати один пост по його id
+    /**
+     * Повертає дані окремого поста по його ID(String).
+     *
+     * Метод перевіряє чи не заблокований.
+     * Також підвантажує кількість лайків, коментарів і дані автора.
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
+     */
     public function show(Request $request, Post $post)
     {
         $currentUser = $request->user();
@@ -51,7 +61,7 @@ class PostController extends Controller
         $post->load('user');
         $post->loadCount(['likes', 'comments']);
 
-        return new PostResource($post);
+        return (new PostResource($post))->resolve();
     }
 
     // Створити пост

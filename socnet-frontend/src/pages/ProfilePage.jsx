@@ -67,14 +67,15 @@ export default function ProfilePage() {
         return (
             <div style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
                 <h2>{t('profile.not_setup')}</h2>
-                <p>{t('profile.not_setup_desc', {name: profile.username})}</p>
+                <p>{t('profile.not_setup_desc', { name: profile.username })}</p>
             </div>
         );
 
     return (
         <div style={{ padding: '20px' }}>
             <UserProfileCard currentUser={profile} />
-            <UserWall profileUser={profile} isOwnProfile={isOwnProfile} />
+            {(profile.friendship_status !== "blocked_by_target"
+                && <UserWall profileUser={profile} isOwnProfile={isOwnProfile} />)}
         </div>
     );
 }

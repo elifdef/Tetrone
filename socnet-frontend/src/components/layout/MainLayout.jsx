@@ -15,7 +15,7 @@ export default function MainLayout() {
     return (
         <>
             {user && <EmailVerificationBanner user={user} />}
-            
+
             <button className="mobile-menu-btn" onClick={toggleMenu}>
                 {isMobileMenuOpen ? '✖' : '☰'}
             </button>
@@ -23,16 +23,11 @@ export default function MainLayout() {
             {isMobileMenuOpen && (
                 <div className="mobile-menu-overlay" onClick={closeMenu}></div>
             )}
-
-            <div className="app-container">
+            <div className="socnet-app-layout">
                 <LeftSidebar isOpen={isMobileMenuOpen} closeMenu={closeMenu} />
-                
-                <main className="main-content">
-                    <div style={{ minHeight: '80vh' }}>
-                        <Outlet />
-                    </div>
+                <main className="socnet-main-content">
+                    <Outlet />
                 </main>
-                
                 <RightSidebar />
             </div>
             <Footer />

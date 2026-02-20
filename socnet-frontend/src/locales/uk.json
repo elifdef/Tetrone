@@ -30,7 +30,8 @@
     "server_down_desc_old": "На стороні сервера виникла помилка. Будь ласка, спробуйте пізніше.",
     "deleting": "Помилка видалення",
     "email_invalid_link": "Посилання недійсне або застаріле.",
-    "page_not_found": "Сторінку не знайдено"
+    "page_not_found": "Сторінку не знайдено",
+    "email_not_confirm": "Ця дія недоступна через непідтверджену електронну пошту."
   },
 
   "success": {
@@ -78,7 +79,10 @@
     "gender_female": "Жіноча",
     "birthday": "Дата народження",
     "preview": "Попередній перегляд",
-    "back": "← Назад"
+    "back": "← Назад",
+    "browse": "Огляд...",
+    "no_file_selected": "Файл не вибрано.",
+    "upload": "Завантажити"
   },
 
   "auth": {
@@ -93,7 +97,9 @@
     "password_confirmation": "Підтвердження пароля",
     "not_have_account": "Немає акаунта?",
     "already_have_account": "Вже є акаунт?",
-    "you_have_registered": "Ви зареєструвалися"
+    "you_have_registered": "Ви зареєструвалися",
+    "password_requirements": "Мін. 8 символів, 1 велика та 1 мала літера, 1 цифра, 1 спецсимвол.",
+    "password_too_weak": "Пароль занадто слабкий."
   },
 
   "sidebar": {
@@ -227,7 +233,8 @@
     "posts_count_one": "{{count}} запис",
     "posts_count_few": "{{count}} записи",
     "posts_count_many": "{{count}} записів",
-    "no_posts": "Більше постів немає"
+    "no_posts": "На стіні ще немає дописів.",
+    "no_more_posts": "Більше дописів немає."
   },
 
   "friends": {

@@ -30,7 +30,7 @@ export default function PostItem({ post, onEdit, onDelete, isOwner }) {
     };
 
     return (
-        <div className="vk-post">
+        <div className="socnet-post">
             <PostHeader
                 post={postData}
                 isOwner={isOwner}

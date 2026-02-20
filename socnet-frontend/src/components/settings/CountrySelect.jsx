@@ -42,12 +42,12 @@ const CountrySelect = ({ value, onChange }) => {
     };
 
     return (
-        <div className="vk-form-group" ref={dropdownRef}>
-            <label className="vk-form-label">{t('common.country')}</label>
+        <div className="socnet-form-group" ref={dropdownRef}>
+            <label className="socnet-form-label">{t('common.country')}</label>
 
             <div style={{ position: 'relative' }}>
                 <div
-                    className="vk-form-select vk-custom-select"
+                    className="socnet-form-select socnet-custom-select"
                     onClick={() => setIsOpen(!isOpen)}
                     style={{
                         display: 'flex',
@@ -71,10 +71,10 @@ const CountrySelect = ({ value, onChange }) => {
                 </div>
 
                 {isOpen && (
-                    <ul className="vk-custom-dropdown-list">
+                    <ul className="socnet-custom-dropdown-list">
                         <li
                             onClick={() => handleSelect(null)}
-                            className="vk-custom-dropdown-item not-selected"
+                            className="socnet-custom-dropdown-item not-selected"
                         >
                             {t('settings.not_selected')}
                         </li>
@@ -83,7 +83,7 @@ const CountrySelect = ({ value, onChange }) => {
                             <li
                                 key={c.code}
                                 onClick={() => handleSelect(c.code)}
-                                className={`vk-custom-dropdown-item ${value === c.code ? 'selected' : ''}`}
+                                className={`socnet-custom-dropdown-item ${value === c.code ? 'selected' : ''}`}
                             >
                                 <span className={`fi fi-${c.code.toLowerCase()}`} style={{ borderRadius: '2px' }}></span>
                                 <span>{c.name}</span>

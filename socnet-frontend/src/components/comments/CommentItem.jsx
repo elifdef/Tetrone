@@ -6,34 +6,34 @@ export default function CommentItem({ comment, currentUser, onDelete }) {
     const formatDate = useDateFormatter();
 
     return (
-        <div className="vk-comment-item">
-            <Link to={`/${comment.user.username}`} className="vk-comment-img-link">
+        <div className="socnet-comment-item">
+            <Link to={`/${comment.user.username}`} className="socnet-comment-img-link">
                 <img
                     src={comment.user.avatar}
                     alt={comment.user.username}
-                    className="vk-comment-avatar"
+                    className="socnet-comment-avatar"
                 />
             </Link>
 
-            <div className="vk-comment-content">
-                <div className="vk-comment-header">
-                    <Link to={`/${comment.user.username}`} className="vk-comment-author">
+            <div className="socnet-comment-content">
+                <div className="socnet-comment-header">
+                    <Link to={`/${comment.user.username}`} className="socnet-comment-author">
                         {comment.user.first_name} {comment.user.last_name}
                     </Link>
 
-                    <span className="vk-comment-date">
+                    <span className="socnet-comment-date">
                         {formatDate(comment.created_at)}
                     </span>
                 </div>
 
-                <div className="vk-comment-text">
+                <div className="socnet-comment-text">
                     {comment.content}
                 </div>
             </div>
 
             {isOwner && (
                 <button
-                    className="vk-comment-delete"
+                    className="socnet-comment-delete"
                     onClick={() => onDelete(comment.id)}
                 >
                     ✕

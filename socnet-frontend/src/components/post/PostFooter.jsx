@@ -9,7 +9,7 @@ export default function PostFooter({ postId, isLiked, likesCount, commentsCount,
     const Comment = () => {
         const IconComponent = commentsCount > 0 ? CommentIcon : NoCommentIcon;
         return (
-            <Link to={`/post/${postId}`} className="vk-comment-btn">
+            <Link to={`/post/${postId}`} className="socnet-comment-btn">
                 <IconComponent width={16} height={16} />
                 {commentsCount}
             </Link>
@@ -20,7 +20,7 @@ export default function PostFooter({ postId, isLiked, likesCount, commentsCount,
         const IconComponent = isLiked > 0 ? LikeIcon : NoLikeIcon;
         return (
             <button
-                className={`vk-like-btn ${isLiked ? 'liked' : ''}`}
+                className={`socnet-like-btn ${isLiked ? 'liked' : ''}`}
                 onClick={onLike}>
                 <IconComponent width={16} height={16} />
                 {likesCount}
@@ -29,7 +29,7 @@ export default function PostFooter({ postId, isLiked, likesCount, commentsCount,
     }
 
     return (
-        <div className="vk-post-footer" style={style}>
+        <div className="socnet-post-footer" style={style}>
             <Like />
             <Comment />
         </div>

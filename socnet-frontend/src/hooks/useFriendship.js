@@ -11,6 +11,8 @@ export const useFriendship = () => {
             await api.post('/friends/add', { username });
             return { success: true, message: t('friends.request_sent') };
         } catch (err) {
+            if (err.response?.status === 403)
+                return { success: false, message: t('error.email_not_confirm') }
             return { success: false, message: err.response?.data?.message || t('common.error') };
         }
     }, []);
@@ -20,7 +22,9 @@ export const useFriendship = () => {
             await api.post('/friends/accept', { username });
             return { success: true, message: t('friends.accept_request') };
         } catch (err) {
-            return { success: false, message: err.response?.data?.message ||  t('common.error') };
+            if (err.response?.status === 403)
+                return { success: false, message: t('error.email_not_confirm') }
+            return { success: false, message: err.response?.data?.message || t('common.error') };
         }
     }, []);
 
@@ -29,7 +33,9 @@ export const useFriendship = () => {
             await api.delete(`/friends/${username}`);
             return { success: true, message: t('friends.removed_from_friends') };
         } catch (err) {
-            return { success: false, message: err.response?.data?.message ||  t('common.error') };
+            if (err.response?.status === 403)
+                return { success: false, message: t('error.email_not_confirm') }
+            return { success: false, message: err.response?.data?.message || t('common.error') };
         }
     }, []);
 
@@ -38,7 +44,9 @@ export const useFriendship = () => {
             await api.post('/friends/block', { username });
             return { success: true, message: t('friends.user_blocked') };
         } catch (err) {
-            return { success: false, message: err.response?.data?.message ||  t('common.error') };
+            if (err.response?.status === 403)
+                return { success: false, message: t('error.email_not_confirm') }
+            return { success: false, message: err.response?.data?.message || t('common.error') };
         }
     }, []);
 
@@ -47,7 +55,9 @@ export const useFriendship = () => {
             await api.delete(`/friends/blocked/${username}`);
             return { success: true, message: t('friends.user_unblocked') };
         } catch (err) {
-            return { success: false, message: err.response?.data?.message ||  t('common.error') };
+            if (err.response?.status === 403)
+                return { success: false, message: t('error.email_not_confirm') }
+            return { success: false, message: err.response?.data?.message || t('common.error') };
         }
     }, []);
 

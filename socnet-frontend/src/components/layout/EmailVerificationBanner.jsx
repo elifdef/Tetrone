@@ -24,6 +24,7 @@ const EmailVerificationBanner = ({ user }) => {
 
     return (
         <div className="email-verify-block">
+            {t('banner.email.text')}
             <button
                 onClick={handleResend}
                 disabled={loading}>

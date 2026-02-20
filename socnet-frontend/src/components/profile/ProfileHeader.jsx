@@ -21,13 +21,13 @@ export default function ProfileHeader({ user }) {
     };
 
     return (
-        <div className="vk-name-row">
-            <h2 className="vk-name">
+        <div className="socnet-name-row">
+            <h2 className="socnet-name">
                 {user.first_name} {user.last_name}
-                <span className="vk-nick"> @{user.username}</span>
+                <span className="socnet-nick"> @{user.username}</span>
             </h2>
 
-            <span className={`vk-status ${user.is_online ? 'online' : 'offline'}`}>
+            <span className={`socnet-status ${user.is_online ? 'online' : 'offline'}`}>
                 {getStatusText()}
             </span>
         </div>

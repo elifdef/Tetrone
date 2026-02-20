@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api/axios";
 import PostItem from "../components/post/PostItem";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { AuthContext } from "../context/AuthContext";
-import { mapPost } from "../services/mappers";
 import CommentsSection from "../components/comments/CommentsSection";
 import { useTranslation } from 'react-i18next';
+import postService from "../services/post.service";
 
 export default function PostPage() {
     const { t } = useTranslation();
@@ -20,13 +19,18 @@ export default function PostPage() {
     usePageTitle(t('common.post'));
 
     useEffect(() => {
-        api.get(`/posts/${id}`)
-            .then(res => setPost(mapPost(res.data.data)))
-            .catch(err => {
+        const fetchPosts = async (id) => {
+            try {
+                const res = await postService.get(id);
+                setPost(res);
+            } catch (err) {
                 setError(err.response?.status === 404 ? t('post.not_found') : t('error.connection'));
-            })
-            .finally(() => setLoading(false));
-    }, [id]);
+            } finally {
+                setLoading(false)
+            };
+        }
+        fetchPosts(id);
+    }, [id])
 
     const handleCommentCountChange = (amount) => {
         setPost(prev => {
@@ -45,12 +49,12 @@ export default function PostPage() {
 
     if (error)
         return (
-            <div className="vk-feed-empty">
+            <div className="socnet-feed-empty">
                 <h3>{error}</h3>
                 <p>{t('error.loading_post')}</p>
-                <div className="vk-feed-actions">
+                <div className="socnet-feed-actions">
                     <button
-                        className="vk-btn-small"
+                        className="socnet-btn-small"
                         onClick={() => window.location.reload()}
                     >
                         {t('common.reload_page')}

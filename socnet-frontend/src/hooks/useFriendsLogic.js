@@ -101,6 +101,8 @@ export const useFriendsLogic = () => {
                     ? setUsers(prev => prev.filter(u => u.username !== username))
                     : fetchUsers('all', searchQuery.toLowerCase());
             }
+            else 
+                notifyError(res?.message);
         } catch (e) {
             notifyError(t('common.error'));
         }

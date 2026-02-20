@@ -23,7 +23,7 @@ export default function CommentsSection({ postId, onCountChange }) {
     };
 
     return (
-        <div className="vk-comments-container">
+        <div className="socnet-comments-container">
             <CommentForm
                 user={user}
                 text={text}

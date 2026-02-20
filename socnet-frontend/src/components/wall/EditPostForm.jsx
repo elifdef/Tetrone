@@ -11,10 +11,10 @@ export default function EditPostForm({
     const { t } = useTranslation();
 
     return (
-        <div className="vk-post">
-            <div className="vk-edit-mode">
+        <div className="socnet-post">
+            <div className="socnet-edit-mode">
                 <Textarea
-                    className="vk-edit-textarea"
+                    className="socnet-edit-textarea"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     onPaste={(e) => handlePaste(e, 'edit')}
@@ -22,21 +22,21 @@ export default function EditPostForm({
                 />
 
                 {editPreview && (
-                    <div className="vk-post-preview">
+                    <div className="socnet-post-preview">
                         <img src={editPreview} />
                         <button onClick={removeEditImage}>×</button>
                     </div>
                 )}
 
-                <div className="vk-edit-actions">
-                    <label className="vk-btn-small" style={{ marginRight: 5, background: '#8292a4', cursor: 'pointer' }}>
+                <div className="socnet-edit-actions">
+                    <label className="socnet-btn-small" style={{ marginRight: 5, background: '#8292a4', cursor: 'pointer' }}>
                         {t('common.photo')}
                         <input type="file" hidden onChange={handleEditFileSelect} />
                     </label>
 
-                    <button className="vk-btn-small" onClick={() => saveEdit(post.id)}>{t('common.save')}</button>
+                    <button className="socnet-btn-small" onClick={() => saveEdit(post.id)}>{t('common.save')}</button>
                     <button
-                        className="vk-btn-small"
+                        className="socnet-btn-small"
                         style={{ background: 'transparent', color: '#777', border: '1px solid #ccc', marginLeft: 5 }}
                         onClick={cancelEditing}
                     >
