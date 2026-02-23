@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export const calculatePasswordStrength = (password) => {
+const calculatePasswordStrength = (password) => {
     let score = 0;
     if (!password) return score;
 

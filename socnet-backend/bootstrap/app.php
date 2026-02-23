@@ -7,9 +7,9 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Http\Middleware\UpdateLastSeen;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Http\Middleware\UpdateLastSeen;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // змушує Laravel віддавати JSON помилки
         $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e)
         {
-            if ($request->is('api/*'))
+            if ($request->is('api', 'api/*'))
             {
                 return true;
             }
@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // при неавторизованому
         $exceptions->render(function (AuthenticationException $e, Request $request)
         {
-            if ($request->is('api/*'))
+            if ($request->is('api/*') || $request->expectsJson())
             {
                 return response()->json([
                     'status' => false,
@@ -49,22 +49,35 @@ return Application::configure(basePath: dirname(__DIR__))
         // при знайденому маршруту
         $exceptions->render(function (NotFoundHttpException $e, Request $request)
         {
-            if ($request->is('api/*'))
+            if ($request->is('api', 'api/*') || $request->expectsJson())
             {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Record not found.'
+                    'message' => 'Record or endpoint not found.'
                 ], 404);
+            }
+        });
+
+        // доступ до чогось заборонено
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request)
+        {
+            if ($request->is('api/*') || $request->expectsJson())
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => $e->getMessage() ?: 'This action is unauthorized.'
+                ], 403);
             }
         });
 
         // при ліміті запитів
         $exceptions->render(function (ThrottleRequestsException $e, Request $request)
         {
-            if ($request->is('api/*') || $request->wantsJson())
+            if ($request->is('api/*') || $request->expectsJson())
             {
                 return response()->json([
-                    'message' => 'Too many attempts. Try later',
+                    'status' => false,
+                    'message' => 'Too many attempts. Try again later.',
                     'seconds_remaining' => $e->getHeaders()['Retry-After'] ?? null
                 ], 429);
             }
@@ -73,23 +86,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // при помилці відправки пошти
         $exceptions->render(function (TransportException $e, Request $request)
         {
-            if ($request->is('api/*'))
-            {
-                return response()->json([
-                    'message' => 'Error on the part of the email service.'
-                ], 500);
-            }
-        });
-
-        // якщо користувач не підтвердив пошту
-        $exceptions->render(function (HttpException $e, Request $request)
-        {
-            if ($request->is('api/*'))
+            if ($request->is('api/*') || $request->expectsJson())
             {
                 return response()->json([
                     'status' => false,
-                    'message' => "You can't do this without email confirmation."
-                ], 403);
+                    'message' => 'Error on the part of the email service.'
+                ], 500);
             }
         });
 
