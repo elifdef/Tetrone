@@ -5,7 +5,6 @@ import { AuthContext } from "../context/AuthContext";
 import { useFriendship } from "../hooks/useFriendship";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { notifySuccess, notifyError, notifyConfirmAction } from '../components/Notify';
-import { mapUser } from "../services/mappers";
 import { useTranslation } from 'react-i18next';
 
 export const useFriendsLogic = () => {
@@ -54,7 +53,7 @@ export const useFriendsLogic = () => {
 
             const res = await api.get(endpoint, { signal: controller.signal });
             const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
-            setUsers(data.map(mapUser));
+            setUsers(data);
 
         } catch (err) {
             if (err.name !== "CanceledError") {

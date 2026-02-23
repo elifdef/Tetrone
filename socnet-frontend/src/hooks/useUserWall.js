@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifySuccess, notifyConfirmAction, notifyError } from "../components/Notify"
 import { validateImageFile } from "../services/upload";
-import { mapPost } from '../services/mappers';
 import PostService from '../services/post.service';
 
 export const useUserWall = (profileUser) => {
@@ -42,7 +41,7 @@ export const useUserWall = (profileUser) => {
         try {
             const res = await PostService.getUserPosts(profileUser.username, pageNumber);
 
-            const processedPosts = res.data.map(mapPost);
+            const processedPosts = res.data;
 
             // якщо це перша сторінка - замінюємо пости, ні - в кінець
             // з фільтрацією щоб уникнути повторів ключів під час рендеру

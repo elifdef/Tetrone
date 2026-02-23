@@ -7,7 +7,6 @@ import NotFoundPage from "./NotFoundPage";
 import UserProfileCard from "../components/profile/UserProfileCard";
 import UserWall from "../components/wall/UserWall";
 import { usePageTitle } from "../hooks/usePageTitle";
-import { mapUser } from "../services/mappers";
 import ErrorState from "../components/common/ErrorState";
 
 export default function ProfilePage() {
@@ -28,7 +27,7 @@ export default function ProfilePage() {
         setServerError(false);
         setLoading(true);
         api.get(`/users/${username}`)
-            .then(res => setProfile(mapUser(res.data)))
+            .then(res => setProfile(res.data))
             .catch(err => {
                 err.response && err.response.status === 404
                     ? setNotFound(true)

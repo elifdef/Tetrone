@@ -102,7 +102,6 @@ body {
     color: var(--theme-text-main);
     font-size: 11px;
     box-sizing: border-box;
-    margin-bottom: 10px;
 }
 
 .socnet-form-input:focus,
@@ -212,8 +211,6 @@ input:-webkit-autofill:active {
 }
 
 .socnet-feature-visual {
-    width: 120px;
-    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -222,6 +219,10 @@ input:-webkit-autofill:active {
     color: var(--theme-text-muted);
     font-size: 10px;
     font-weight: bold;
+}
+
+.socnet-feature-visual img {
+    width: 30em;
 }
 
 .socnet-cta-block {
@@ -251,6 +252,11 @@ input:-webkit-autofill:active {
     width: 100%;
     max-width: 350px;
     box-sizing: border-box;
+    max-width: 400px;
+}
+
+.socnet-auth-card .socnet-form-input {
+    margin-bottom: 10px;
 }
 
 .socnet-auth-header {
@@ -1164,7 +1170,6 @@ input:-webkit-autofill:active {
 /* новини */
 .socnet-feed-tabs {
     display: flex;
-    /* gap: 5px; */
     padding-bottom: 5px;
 }
 
@@ -1203,6 +1208,12 @@ input:-webkit-autofill:active {
     text-align: center;
     padding: 20px;
     color: var(--theme-text-muted);
+}
+
+.socnet-loading-block {
+    color: #777;
+    padding: 20;
+    text-align: center;
 }
 
 .socnet-feed-empty {
@@ -1413,6 +1424,12 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
+.not-setup-profile {
+    text-align: center;
+    margin-top: 50;
+    color: #888;
+}
+
 .not-found-icon {
     margin-bottom: 20px;
 }
@@ -1444,6 +1461,31 @@ input:-webkit-autofill:active {
 
 .not-found-btn:hover {
     background-color: #5181b8;
+}
+
+.email-verify-block {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 1px solid #ffeeba;
+    font-size: 14px;
+}
+
+.email-verify-block button {
+    margin-left: 15px;
+    padding: 5px 10px;
+    background-color: #856404;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.verify-container {
+    text-align: center;
+    margin-top: 50px;
 }
 
 /* модалка */

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import { notifyConfirmAction, notifyError } from "../components/Notify";
-import { mapComment } from "../services/mappers";
 import { useTranslation } from 'react-i18next';
 
 export const useComments = (postId) => {
@@ -17,7 +16,7 @@ export const useComments = (postId) => {
         api.get(`/posts/${postId}/comments`)
             .then(res => {
                 if (isMounted) {
-                    const comments = res.data.data.map(mapComment);
+                    const comments = res.data.data;
                     setComments(comments);
                 }
             })
@@ -36,7 +35,7 @@ export const useComments = (postId) => {
 
         try {
             const res = await api.post(`/posts/${postId}/comments`, { content: text });
-            setComments(prev => [mapComment(res.data), ...prev]);
+            setComments(prev => [res.data, ...prev]);
             setText("");
             return true;
         } catch (err) {

@@ -1,5 +1,4 @@
 import PostAPI from "../api/post.api";
-import { mapPost } from "./mappers";
 
 class PostService {
     async create(data) {
@@ -9,12 +8,12 @@ class PostService {
         if (data.image) formData.append('image', data.image);
 
         const res = await PostAPI.post(formData);
-        return mapPost(res.data);
+        return res.data;
     }
 
     async get(id) {
         const res = await PostAPI.get(id);
-        return mapPost(res.data);
+        return res.data;
     }
 
     async update(id, data) {
@@ -31,7 +30,7 @@ class PostService {
 
     async delete(id) {
         const res = await PostAPI.delete(id);
-        return mapPost(res);
+        return res;
     }
 
     async getUserPosts(username, pageNumber = 1) {

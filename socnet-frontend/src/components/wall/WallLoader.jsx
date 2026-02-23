@@ -26,7 +26,7 @@ const WallLoader = ({
         return <div style={style}>{t('common.loading')}...</div>;
 
     if (postsCount === 0 && !isLoadingMore)
-        return <div style={style}>{t('wall.no_posts')}</div>;
+        return <div style={style}>{t('wall.empty_wall')}</div>;
 
     return (
         <div style={{ width: '100%' }}>

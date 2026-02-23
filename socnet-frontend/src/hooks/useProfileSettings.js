@@ -33,10 +33,13 @@ export const useProfileSettings = (isSetupMode = false) => {
 
     const canSubmit = useMemo(() => {
         if (isSetupMode) {
-            return isChanged && formData.first_name.trim() !== '' && formData.birth_date !== '';
+            return isChanged
+                && formData.first_name.trim() !== ''
+                && formData.birth_date !== ''
+                && String(formData.gender) !== '0';
         }
         return isChanged;
-    }, [isChanged, isSetupMode, formData.first_name, formData.birth_date]);
+    }, [isChanged, isSetupMode, formData.first_name, formData.birth_date, formData.gender]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

@@ -10,23 +10,37 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Friendship;
 use App\Services\FileStorageService;
 use App\Http\Resources\PostResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PostController extends Controller
 {
     protected $fileService;
 
+    /**
+     * Ініціалізація додаткового сервісу для завантаження файлів.
+     * Тут враховано тип завантажуваного файлу і куди.
+     *
+     * @param FileStorageService $fileService
+     */
     public function __construct(FileStorageService $fileService)
     {
         $this->fileService = $fileService;
     }
 
-    // Отримати пости конкретного юзера
-    public function index(Request $request, string $username)
+    /**
+     * Повертає список даних постів конкретного користувача по його юзернейму.
+     * Якщо власник поста заблокував нас, то ми не бачимо цей список.
+     *
+     * @param Request $request
+     * @param string $username
+     * @return JsonResponse|AnonymousResourceCollection
+     */
+    public function index(Request $request, string $username): JsonResponse|AnonymousResourceCollection
     {
         $targetUser = User::where('username', $username)->firstOrFail();
         $currentUser = $request->user('sanctum');
 
-        if ($currentUser && $this->isBlockedByTarget($currentUser->id, $targetUser->id))
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
             return response()->json([
                 'message' => 'Access denied.',
                 'data' => []
@@ -43,19 +57,18 @@ class PostController extends Controller
 
     /**
      * Повертає дані окремого поста по його ID(String).
-     *
-     * Метод перевіряє чи не заблокований.
      * Також підвантажує кількість лайків, коментарів і дані автора.
+     * Якщо власник поста заблокував нас, то ми не бачимо цей пост.
      *
      * @param Request $request
      * @param Post $post
-     * @return JsonResponse
+     * @return JsonResponse|array
      */
-    public function show(Request $request, Post $post)
+    public function show(Request $request, Post $post): JsonResponse|array
     {
-        $currentUser = $request->user();
+        $currentUser = $request->user('sanctum');
 
-        if ($currentUser && $this->isBlockedByTarget($currentUser->id, $post->user_id))
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $post->user_id))
             return response()->json(['message' => 'Forbidden'], 403);
 
         $post->load('user');
@@ -64,8 +77,14 @@ class PostController extends Controller
         return (new PostResource($post))->resolve();
     }
 
-    // Створити пост
-    public function store(Request $request)
+    /**
+     * Зберігає дані для поста в БД.
+     * Повертає новий пост.
+     *
+     * @param Request $request
+     * @return array|JsonResponse
+     */
+    public function store(Request $request): array|JsonResponse
     {
         $request->validate([
             'content' => 'nullable|string|max:2048',
@@ -89,11 +108,17 @@ class PostController extends Controller
             'content' => $request->input('content'),
             'image' => $path
         ]);
-        return response()->json($post->load('user:id,username,first_name,last_name,avatar'));
+        return (new PostResource($post))->resolve();
     }
 
-    // Видалити пост
-    public function destroy(Post $post, Request $request)
+    /**
+     * Видалення поста.
+     *
+     * @param Post $post
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function destroy(Post $post, Request $request): JsonResponse
     {
         // видаляти може тільки власник
         if ($request->user()->id !== $post->user_id)
@@ -106,8 +131,15 @@ class PostController extends Controller
         return response()->json(['message' => 'Post deleted']);
     }
 
-    // Оновлення поста
-    public function update(Request $request, Post $post)
+    /**
+     * Оновлення поста.
+     * Повертає змінений пост.
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse|array
+     */
+    public function update(Request $request, Post $post): JsonResponse|array
     {
         // редагувати може тільки власник
         if ($request->user()->id !== $post->user_id)
@@ -124,6 +156,7 @@ class PostController extends Controller
         if ($request->has('content'))
             $data['content'] = $request->input('content');
 
+        // якщо потрібно видалити картинку
         if ($request->boolean('delete_image') && !$request->hasFile('image'))
         {
             if ($post->image)
@@ -131,6 +164,7 @@ class PostController extends Controller
             $data['image'] = null;
         }
 
+        // якщо потрібно змінити картинку: стара видаляється -> нова завантажується
         if ($request->hasFile('image'))
         {
             if ($post->image)
@@ -146,22 +180,17 @@ class PostController extends Controller
         }
 
         $post->update($data);
-        return response()->json($post->load('user:id,username,first_name,last_name,avatar'));
+        return (new PostResource($post))->resolve();
     }
 
-    // перевірка для того щоб А не міг бачити пости Б якщо Б заблокував А
-    // але гості можуть бачити)00)) тому це обходиться приватною вкладкою
-    private function isBlockedByTarget(int $viewerId, int $targetId): bool
-    {
-        if ($viewerId === $targetId) return false;
-        return Friendship::where('user_id', $targetId)
-            ->where('friend_id', $viewerId)
-            ->where('status', Friendship::STATUS_BLOCKED)
-            ->exists();
-    }
-
-    // стрічка новин з постами НАШИХ друзів
-    public function feed(Request $request)
+    /**
+     * Повертає пагінований список з постами НАШИХ друзів.
+     * Також у цьому списку є і наші публікації.
+     *
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     */
+    public function feed(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
         $friendIds = $user->getAllFriendIds();
@@ -176,8 +205,15 @@ class PostController extends Controller
         return PostResource::collection($posts);
     }
 
-    // глобальна стрічка з ВСІМА постами
-    public function globalFeed(Request $request)
+    /**
+     * Повертає пагінований список з ВСІМА постами.
+     * Також враховано: якщо нас заблокували, то ми не бачимо пости блокувальника.
+     * Якщо ми заблокували, то ми не бачимо пости заблокованого.
+     *
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     */
+    public function globalFeed(Request $request): AnonymousResourceCollection
     {
         $user = $request->user('sanctum');
 

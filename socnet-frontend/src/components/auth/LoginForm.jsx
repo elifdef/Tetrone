@@ -30,7 +30,6 @@ export default function LoginForm() {
                 name="email"
                 id="login-email"
                 label={t('auth.email')}
-                placeholder="email@example.com"
                 autoComplete="username"
                 value={formData.email}
                 onChange={handleChange}

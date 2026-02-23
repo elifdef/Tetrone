@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import { usePageTitle } from "../hooks/usePageTitle";
 import PostItem from "../components/post/PostItem";
-import { mapPost } from "../services/mappers";
 import { notifyError } from "../components/Notify";
 import { useTranslation } from 'react-i18next';
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
@@ -46,7 +45,7 @@ export default function HomePage() {
                 const endpoint = activeTab === 'global' ? '/feed/global' : '/feed';
                 const res = await api.get(`${endpoint}?page=${page}`, { signal: newController.signal });
 
-                const newPosts = res.data.data.map(mapPost);
+                const newPosts = res.data.data;
                 const meta = res.data.meta;
 
                 setPosts(prev => {
@@ -159,7 +158,7 @@ export default function HomePage() {
 
                             {!hasMore && (
                                 <div style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '11px' }}>
-                                    {t('wall.no_posts')}
+                                    {t('wall.no_more_posts')}
                                 </div>
                             )}
 

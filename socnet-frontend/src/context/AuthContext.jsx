@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
-import { mapUser } from "../services/mappers";
 import { getSystemLanguage } from "../i18n";
 
 export const AuthContext = createContext();
@@ -20,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
             api.get('/me', { signal: controller.signal })
                 .then(res => {
-                    setUser(mapUser(res.data));
+                    setUser(res.data);
                     setLoading(false);
                 })
                 .catch((err) => {

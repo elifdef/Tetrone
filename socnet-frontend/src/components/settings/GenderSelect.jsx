@@ -14,6 +14,7 @@ const GenderSelect = ({ value, onChange, label }) => {
                         value="1"
                         checked={Number(value) === 1}
                         onChange={onChange}
+                        required
                     />
                     {t('common.gender_male')}
                 </label>
@@ -25,6 +26,7 @@ const GenderSelect = ({ value, onChange, label }) => {
                         value="2"
                         checked={Number(value) === 2}
                         onChange={onChange}
+                        required
                     />
                     {t('common.gender_female')}
                 </label>

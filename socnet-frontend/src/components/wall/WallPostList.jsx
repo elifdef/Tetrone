@@ -1,7 +1,5 @@
 import PostItem from '../post/PostItem';
 import EditPostForm from './EditPostForm';
-import { mapPost } from '../../services/mappers';
-import i18n from "../../i18n";
 
 export default function WallPostList({
     posts, authUser,
@@ -30,7 +28,7 @@ export default function WallPostList({
                         />
                     ) : (
                         <PostItem
-                            post={mapPost(post)}
+                            post={post}
                             isOwner={authUser && authUser.id === post.user.id}
                             onEdit={startEditing}
                             onDelete={handleDelete}

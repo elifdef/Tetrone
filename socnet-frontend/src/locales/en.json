@@ -135,19 +135,25 @@
 
   "main": {
     "title": "Welcome to {{name}}",
-    "subtitle": "A nice place for your thoughts.",
-    "blocks": [
-      {
+    "subtitle": "A small corner of the internet where there is no AI slop.",
+    "blocks": {
+      "share": {
         "title": "Share your moments",
-        "description": "Share your thoughts, photos, and ideas. Find like-minded people and create your own news feed.",
-        "img_alt": "Post image"
+        "description": "Share your thoughts, photos, and ideas. Find like-minded people and create your own news feed."
       },
-      {
+      "connect": {
         "title": "Stay connected",
-        "description": "Communicate with friends, comment on posts, and talk in real time.",
-        "img_alt": "Talking image"
+        "description": "Communicate with friends, comment on posts, and talk in real time."
+      },
+      "personalize": {
+        "title": "Express yourself",
+        "description": "Create a unique profile that reflects your personality. Add a bio, upload your best photos, and stand out from the crowd."
+      },
+      "friends": {
+        "title": "Build your community",
+        "description": "Find your friends and meet new people. Grow your network to always keep track of what your close ones are up to."
       }
-    ],
+    },
 
     "join": {
       "header": "Ready to join?",
@@ -228,7 +234,7 @@
     "title": "Wall",
     "write_post": "Write a post...",
     "send_btn": "Share",
-    "empty_wall": "There are no posts on the wall yet.",
+    "empty_wall": "There are no posts yet.",
     "attach_photo": "Attach a photo",
     "posts_count_one": "{{count}} post",
     "posts_count_other": "{{count}} posts",

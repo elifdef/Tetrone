@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
 {
@@ -12,25 +13,36 @@ class CommentController extends Controller
     public function index(Post $post)
     {
         $comments = $post->comments()
-            ->with('user:id,username,first_name,last_name,avatar')
+            ->with('user')
             ->latest() // нові зверху
             ->paginate(20);
 
-        return response()->json($comments);
+        return CommentResource::collection($comments);
     }
 
-    // створити коментар
+// створити коментар
     public function store(Request $request, Post $post)
     {
+        $currentUser = $request->user('sanctum');
+
+        if ($currentUser) {
+            // автор поста заблокував коментатора
+            $blockedByAuthor = $currentUser->isBlockedByTarget($currentUser->id, $post->user_id);
+            // коментатор заблокував автора поста
+            $blockedByCommenter = $currentUser->isBlockedByTarget($post->user_id, $currentUser->id);
+
+            if ($blockedByAuthor || $blockedByCommenter)
+                return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $request->validate(['content' => 'required|string|max:1000']);
 
         $comment = $post->comments()->create([
             'content' => $request->input('content'),
-            'user_id' => $request->user()->id
+            'user_id' => $currentUser->id
         ]);
 
-        return response()->json(
-            $comment->load('user:id,username,first_name,last_name,avatar'), 201);
+        return new CommentResource($comment->load('user'));
     }
 
     // видалити коментар

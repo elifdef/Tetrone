@@ -41,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    const defaultAvatar = "/defaultAvatar.jpg"; // bill gates mugshot
     const GENDER_MALE = 1;
     const GENDER_FEMALE = 2;
 
@@ -56,6 +57,23 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'is_setup_complete' => 'boolean',
         ];
+    }
+
+    /**
+     * Перевірка для того, щоб заблокований не може бачити пости блокувальника.
+     * Але гості можуть бачити)00)) Тому це обходиться приватною вкладкою.
+     *
+     * @param int $viewerId
+     * @param int $targetId
+     * @return bool
+     */
+    public function isBlockedByTarget(int $viewerId, int $targetId): bool
+    {
+        if ($viewerId === $targetId) return false;
+        return Friendship::where('user_id', $targetId)
+            ->where('friend_id', $viewerId)
+            ->where('status', Friendship::STATUS_BLOCKED)
+            ->exists();
     }
 
     // заявки які Я кинув

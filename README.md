@@ -8,7 +8,7 @@
 - Бекенд: PHP 8.5.1 (Laravel 12)
 - Фронтенд: Javascript (React 19.2.3)
 
-Що зроблено (станом на 03.02.2026):
+Що зроблено (станом на 23.02.2026):
 -  Реєстрація Користувача [100%]
 -  Вхід в Систему [100%]
 -  Вихід з Системи [100%]
@@ -22,19 +22,26 @@
 -  Список Друзів [100%]
 -  Статуси Дружби [100%]
 
-## Перед запуском
-Бекенд:
+# Перед запуском
+## Backend:
 - Встановити останню версію [PHP VS17 x64 Thread Safe](https://www.php.net/downloads.php). 
 - Перемістити папку з PHP в корінь будь якого диску і добавити змінну в Path вказавши шлях до компілятора PHP
-- встановити [Composer](https://getcomposer.org/download/)
+- встановити [Composer](https://getcomposer.org/download/) (як .exe файл)
+- Створити .env файл і вказати дані для БД і пошти
+### Виконати команди: 
+- `composer install`
+- `php artisan key:generate`
+- `php artisan migrate:fresh`
+- `php artisan storage:link`
 
-Фронтенд:
+## Frontend:
 - Встановити останню версію [Node.js](https://nodejs.org/uk/download)
-- Встановити всі бібліотеки які в папці `socnet-frontend`
+- Встановити всі бібліотеки через `npm install`
  
 ## Запуск
-- Бекенд: `php artisan serve`
-- Фронтенд: `npm run dev`
+Бекенд: `php artisan serve`
+
+Фронтенд: `npm run dev`
 
 ## Майбутні можливості
 1.	Система коментування постів. [100%]

@@ -48,21 +48,25 @@ const ProfileSettings = ({ isSetupMode = false }) => {
             </div>
 
             <div className="socnet-form-row">
-                <Input
-                    label={`${t('common.first_name')} *`}
-                    name="first_name"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    maxLength={50}
-                    required
-                />
-                <Input
-                    label={t('common.last_name')}
-                    name="last_name"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    maxLength={50}
-                />
+                <div className="socnet-form-group">
+                    <Input
+                        label={`${t('common.first_name')} *`}
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                        maxLength={50}
+                        required
+                    />
+                </div>
+                <div className="socnet-form-group">
+                    <Input
+                        label={t('common.last_name')}
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleChange}
+                        maxLength={50}
+                    />
+                </div>
             </div>
 
             <DateInput

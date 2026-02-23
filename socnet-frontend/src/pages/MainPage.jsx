@@ -2,24 +2,34 @@ import { Link } from "react-router-dom";
 import Footer from "../components/layout/Footer";
 import { APP_NAME } from "../config";
 import { usePageTitle } from "../hooks/usePageTitle";
-import { useTranslation } from 'react-i18next';
-
-const FeatureBlock = ({ title, description, imageAlt, isReversed, color }) => (
-    <div className={`socnet-feature-block ${isReversed ? 'reversed' : ''}`}>
-        <div className="socnet-feature-text">
-            <h2>{title}</h2>
-            <p>{description}</p>
-        </div>
-        <div className="socnet-feature-visual" style={{ borderLeft: `3px solid ${color}` }}>
-            <span style={{ color: color }}>[{imageAlt}]</span>
-        </div>
-    </div>
-);
+import { useTranslation } from "react-i18next";
+import FeatureBlock from "../components/landing/FeatureBlock";
 
 export default function MainPage() {
     const { t } = useTranslation();
     usePageTitle();
-    const features = t('main.blocks', { returnObjects: true });
+    const features = [
+        {
+            id: 'share',
+            file: 'moments.png',
+            translationKey: 'main.blocks.share'
+        },
+        {
+            id: 'connect',
+            file: 'post.png',
+            translationKey: 'main.blocks.connect'
+        },
+        {
+            id: 'personalize',
+            file: 'personalize.png',
+            translationKey: 'main.blocks.personalize'
+        },
+        {
+            id: 'friends',
+            file: 'friends.png',
+            translationKey: 'main.blocks.friends'
+        }
+    ];
 
     return (
         <div className="socnet-landing-wrapper">
@@ -44,9 +54,10 @@ export default function MainPage() {
                 {features.map((feature, index) => (
                     <FeatureBlock
                         key={index}
-                        title={feature.title}
-                        description={feature.description}
-                        imageAlt={feature.img_alt}
+                        title={t(`${feature.translationKey}.title`)}
+                        description={t(`${feature.translationKey}.description`)}
+                        image={feature.file}
+                        imageAlt={t(`${feature.translationKey}.title`)}
                         isReversed={index % 2 !== 0}
                         color={(() => {
                             const r = Math.floor(Math.random() * 256);

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Friendship;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,9 +25,9 @@ class PublicUserResource extends JsonResource
                 'username' => $this->username,
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
-                'avatar' => null,
+                'avatar' => User::defaultAvatar,
                 'bio' => null,
-                'gender'=> null,
+                'gender' => null,
                 'birth_date' => null,
                 'created_at' => null,
                 'is_setup_complete' => true,
@@ -41,7 +42,7 @@ class PublicUserResource extends JsonResource
             'email' => $this->when($currentUser && $currentUser->id === $this->id, $this->email),
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'avatar' => $this->avatar,
+            'avatar' => $this->avatar ? asset('storage/' . $this->avatar) : User::defaultAvatar,
             'bio' => $this->bio,
             'gender' => $this->gender,
             'created_at' => $this->created_at,
