@@ -19,6 +19,7 @@ const getStrengthColor = (score) => score ? 'var(--theme-btn-bg)' : 'transparent
 const PasswordStrengthBar = ({ password, onScoreChange }) => {
     const { t } = useTranslation();
     const score = useMemo(() => calculatePasswordStrength(password), [password]);
+    
     useEffect(() => {
         if (onScoreChange) {
             onScoreChange(score);
@@ -28,20 +29,17 @@ const PasswordStrengthBar = ({ password, onScoreChange }) => {
     if (!password) return null;
 
     return (
-        <div style={{ marginTop: '-5px', marginBottom: '10px' }}>
-            <div style={{
-                height: '4px',
-                background: 'var(--theme-border)',
-                overflow: 'hidden'
-            }}>
-                <div style={{
-                    height: '100%',
-                    width: `${(score / 5) * 100}%`,
-                    background: getStrengthColor(score),
-                    transition: 'width 0.3s ease, background 0.3s ease'
-                }}></div>
+        <div className="socnet-password-strength-wrapper">
+            <div className="socnet-password-strength-track">
+                <div 
+                    className="socnet-password-strength-bar"
+                    style={{
+                        width: `${(score / 5) * 100}%`,
+                        backgroundColor: getStrengthColor(score)
+                    }}
+                ></div>
             </div>
-            <div style={{ fontSize: '10px', color: 'var(--theme-text-muted)', marginTop: '4px', lineHeight: '1.3' }}>
+            <div className="socnet-password-strength-text">
                 {t('auth.password_requirements')}
             </div>
         </div>

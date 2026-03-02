@@ -1,9 +1,7 @@
 import { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-
 import MainLayout from "../components/layout/MainLayout";
-
 import SettingsPage from '../pages/SettingsPage';
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -15,8 +13,9 @@ import FriendsPage from "../pages/FriendsPage";
 import PostPage from "../pages/PostPage";
 import EmailVerifyPage from "../pages/EmailVerifyPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import { AdminPage } from '../pages/AdminPage';
+import AdminPage from '../pages/AdminPage';
 import SupportPage from "../pages/SupportPage"
+import RulesPage from "../pages/RulesPage";
 import ModerationPage from "../pages/ModerationPage"
 import { GuestGuard, AuthGuard, SetupGuard } from "./Guards";
 import AdminUserInfo from "../components/admin/AdminUserInfo";
@@ -40,10 +39,12 @@ export default function AppRoutes() {
             </Route>
 
             <Route element={<MainLayout />}>
-
                 {/* публічні сторінки */}
                 <Route path="/:username" element={<ProfilePage />} />
                 <Route path="/post/:id" element={<PostPage />} />
+
+                {/* правила */}
+                <Route path="/rules" element={<RulesPage />} />
 
                 {/* маршрути для користувачів які ввійшли */}
                 <Route element={<AuthGuard />}>

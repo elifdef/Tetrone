@@ -1,6 +1,6 @@
 const Textarea = ({ label, className = "", ...props }) => {
     return (
-        <div style={{ marginBottom: '10px' }}>
+        <>
             {label && (
                 <label className="socnet-form-label" htmlFor={props.id}>
                     {label}
@@ -10,7 +10,7 @@ const Textarea = ({ label, className = "", ...props }) => {
                 className={`socnet-form-textarea ${className}`}
                 {...props}
             />
-        </div>
+        </>
     );
 };
 

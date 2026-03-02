@@ -89,7 +89,7 @@ export default function HomePage() {
                 <>
                     <p>{t('feed.my_feed_empty')}</p>
                     <div className="socnet-feed-actions">
-                        <Link to="/friends?tab=all" className="socnet-btn-small" style={{ textDecoration: 'none', color: '#fff' }}>
+                        <Link to="/friends?tab=all" className="socnet-btn-small">
                             {t('feed.find_friends')}
                         </Link>
                         <button className="socnet-btn-small" onClick={() => handleTabChange('global')}>

@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
     if (serverError)
         return (
-            <div style={{ padding: 20 }}>
+            <div className="socnet-profile-error-wrapper">
                 <ErrorState
                     title={t('error.connection')}
                     description={t('error.loading', { resource: t('common.profile').toLowerCase() })}
@@ -50,7 +50,7 @@ export default function ProfilePage() {
         );
 
     if (loading)
-        return <div style={{ color: '#777', padding: 20, textAlign: 'center' }}>{t('common.loading')}</div>;
+        return <div className="socnet-empty-state">{t('common.loading')}</div>;
 
     if (!profile)
         return null;
@@ -64,17 +64,18 @@ export default function ProfilePage() {
     // якщо це ЧУЖИЙ профіль і він НЕ готовий 
     if (!profile.is_setup_complete)
         return (
-            <div style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+            <div className="not-setup-profile">
                 <h2>{t('profile.not_setup')}</h2>
                 <p>{t('profile.not_setup_desc', { name: profile.username })}</p>
             </div>
         );
 
-    return (<>
-        <UserProfileCard currentUser={profile} />
-        {(profile.friendship_status !== "blocked_by_target" && !profile.is_banned) && (
-            <UserWall profileUser={profile} isOwnProfile={isOwnProfile} />
-        )}
-    </>
+    return (
+        <>
+            <UserProfileCard currentUser={profile} />
+            {(profile.friendship_status !== "blocked_by_target" && !profile.is_banned) && (
+                <UserWall profileUser={profile} isOwnProfile={isOwnProfile} />
+            )}
+        </>
     );
 }

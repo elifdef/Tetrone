@@ -45,27 +45,21 @@ const CountrySelect = ({ value, onChange }) => {
         <div className="socnet-form-group" ref={dropdownRef}>
             <label className="socnet-form-label">{t('common.country')}</label>
 
-            <div style={{ position: 'relative' }}>
+            <div className="socnet-custom-select-wrapper">
                 <div
-                    className="socnet-form-select socnet-custom-select"
+                    className={`socnet-form-select socnet-custom-select ${isOpen ? 'open' : ''}`}
                     onClick={() => setIsOpen(!isOpen)}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        gap: '10px',
-                        borderColor: isOpen ? 'var(--theme-link)' : 'var(--theme-input-border)'
-                    }}
                 >
                     {selectedCountry ? (
                         <>
-                            <span className={`fi fi-${selectedCountry.code.toLowerCase()}`} style={{ borderRadius: '2px' }}></span>
+                            <span className={`fi fi-${selectedCountry.code.toLowerCase()} socnet-flag`}></span>
                             <span>{selectedCountry.name}</span>
                         </>
                     ) : (
-                        <span style={{ color: 'var(--theme-text-muted)' }}>{t('settings.not_selected')}</span>
+                        <span className="socnet-select-placeholder">{t('settings.not_selected')}</span>
                     )}
-                    <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--theme-text-muted)' }}>
+                    
+                    <span className="socnet-select-arrow">
                         {isOpen ? '▲' : '▼'}
                     </span>
                 </div>
@@ -85,7 +79,7 @@ const CountrySelect = ({ value, onChange }) => {
                                 onClick={() => handleSelect(c.code)}
                                 className={`socnet-custom-dropdown-item ${value === c.code ? 'selected' : ''}`}
                             >
-                                <span className={`fi fi-${c.code.toLowerCase()}`} style={{ borderRadius: '2px' }}></span>
+                                <span className={`fi fi-${c.code.toLowerCase()} socnet-flag`}></span>
                                 <span>{c.name}</span>
                             </li>
                         ))}

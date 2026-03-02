@@ -93,7 +93,8 @@
     "edit": "Edit",
     "support": "Support",
     "moderator": "Moderator",
-    "admin": "Admin"
+    "admin": "Admin",
+    "rules": "Rules"
   },
 
   "auth": {
@@ -141,7 +142,8 @@
   },
 
   "footer": {
-    "text": "All rights reserved."
+    "text": "All rights reserved.",
+    "for_dev": "For developers"
   },
 
   "main": {
@@ -304,7 +306,7 @@
   "admin": {
     "control_panel": "Control panel",
     "users_management": "Users Management",
-    "moderation_posts": "Moderation of posts",
+    "moderation_posts": "Posts moderation",
     "search_user": "Search user",
     "search_placeholder": "Enter email or username...",
     "filter_user_posts": "Filter by user (leave blank for global feed)",
@@ -316,11 +318,11 @@
     "error_load_user": "Failed to load user data",
     "error_action": "Action execution error",
     "loading_dossier": "Loading dossier...",
-    "email_label": "Email:",
-    "registered_at": "Registered:",
-    "last_active": "Last active:",
+    "email_label": "Email",
+    "registered_at": "Registered",
+    "last_active": "Last active",
     "never": "Never",
-    "account_status": "Account status:",
+    "account_status": "Account status",
     "status_banned": "BANNED",
     "status_banned_full": "Banned",
     "status_active": "Active",
@@ -328,13 +330,13 @@
     "status_muted": "(Muted)",
     "status_muted_full": "Read-only (Mute)",
     "content_stats": "Content statistics",
-    "posts_written": "Posts written:",
-    "comments_left": "Comments left:",
-    "likes_given": "Likes given:",
+    "posts_written": "Posts written",
+    "comments_left": "Comments left",
+    "likes_given": "Likes given",
     "posts_count": "Posts: {{count}}",
     "moderator_actions": "Moderator actions",
     "delete_reason": "Please explain the reason for deletion.",
-    "action_reason_prompt": "Please specify the reason for this action:",
+    "action_reason_prompt": "Please specify the reason for this action",
     "action_reason_placeholder": "Specify the reason (e.g., Spam in comments)",
     "reason_not_specified": "Reason not specified",
     "confirm_status_change": "Are you sure you want to change the status ({{action}})?",
@@ -360,7 +362,7 @@
   "banned": {
     "title": "Account Blocked",
     "message": "Dear {{name}}, your account (@{{username}}) has been temporarily or permanently suspended from the platform.",
-    "reason_label": "Reason for blocking:",
+    "reason_label": "Reason for blocking",
     "appeal_btn": "Submit Appeal",
     "appeal_alert": "The appeal function will be available later (Under construction)"
   }

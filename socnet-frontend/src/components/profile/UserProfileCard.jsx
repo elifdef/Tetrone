@@ -49,7 +49,7 @@ export default function UserProfileCard({ currentUser, isPreview = false }) {
                 </div>
 
                 <div className="socnet-right-col">
-                    <ProfileHeader user={currentUser} />
+                    <ProfileHeader user={currentUser} isPreview={isPreview} />
 
                     <ProfileStatus bio={displayBio} />
 

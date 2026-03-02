@@ -65,13 +65,17 @@ export default function AdminUserInfo() {
     return (
         <div className="admin-dossier-wrapper">
             <div className="socnet-card-wrapper admin-dossier-card">
-                <h2>ID {user.id}: {user.first_name} {user.last_name} (@{user.username})</h2>
+                <h2><a href={`/${user.username}`} className="socnet-link">@{user.username}</a></h2>
                 <div className="admin-dossier-row">
                     <div className="admin-dossier-col">
-                        <p><strong>{t('admin.email_label')}</strong> {user.email}</p>
-                        <p><strong>{t('admin.registered_at')}</strong> {formatDate(user.created_at)}</p>
-                        <p><strong>{t('admin.last_active')}</strong> {user.last_seen ? formatDate(user.last_seen) : t('admin.never')}</p>
-                        <p><strong>{t('admin.account_status')}</strong>
+                        <p><strong>ID:</strong> {user.id}</p>
+                        <p><strong>{t('admin.email_label')}:</strong> {user.email}</p>
+                        <p><strong>{t('common.first_name')}:</strong> {user.first_name}</p>
+                        <p><strong>{t('common.last_name')}:</strong> {user?.last_name}</p>
+                        <p><strong>{t('admin.registered_at')}:</strong> {formatDate(user.created_at)}</p>
+                        <p><strong>{t('admin.last_active')}:</strong> {user.last_seen ? formatDate(user.last_seen) : t('admin.never')}</p>
+                        <p><strong>{t('common.role')}:</strong> {user.role}</p>
+                        <p><strong>{t('admin.account_status')}:</strong>
                             {user.is_banned
                                 ? <span className="admin-status-red"> {t('admin.status_banned')}</span>
                                 : <span className="admin-status-green"> {t('admin.status_active')}</span>}
@@ -81,9 +85,9 @@ export default function AdminUserInfo() {
 
                     <div className="admin-stats-box">
                         <h4>{t('admin.content_stats')}</h4>
-                        <p>{t('admin.posts_written')} <strong>{user.posts_count || 0}</strong></p>
-                        <p>{t('admin.comments_left')} <strong>{user.comments_count || 0}</strong></p>
-                        <p>{t('admin.likes_given')} <strong>{user.likes_count || 0}</strong></p>
+                        <p>{t('admin.posts_written')}: <strong>{user.posts_count || 0}</strong></p>
+                        <p>{t('admin.comments_left')}: <strong>{user.comments_count || 0}</strong></p>
+                        <p>{t('admin.likes_given')}: <strong>{user.likes_count || 0}</strong></p>
                     </div>
                 </div>
 
@@ -91,6 +95,7 @@ export default function AdminUserInfo() {
                     <h4>{t('admin.moderator_actions')}</h4>
                     <div className="admin-btn-group">
                         <Button
+                        className="admin-btn-warning"
                             variant={user.is_muted ? 'primary' : 'save'}
                             onClick={() => handleToggleAction('mute', user.is_muted)}
                         >

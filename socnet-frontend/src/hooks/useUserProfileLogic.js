@@ -21,9 +21,7 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
     const displayAvatar = currentUser?.avatar;
 
     const getDisplayBio = () => {
-        if (isBanned) {
-            return <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>{t('profile.banned_status')}</span>;
-        }
+        if (isBanned) return t('profile.banned_status');
 
         if (isBlockedByTarget) {
             return t('profile.restricted_profile_' + (currentUser?.gender === 2 ? "f" : "m"), { name: currentUser.first_name })
@@ -31,9 +29,7 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
 
         if (currentUser?.bio) return currentUser.bio;
 
-        return isPreview
-            ? t('profile.your_status')
-            : <span style={{ color: '#999' }}>{t('profile.status_not_set')}</span>;
+        return isPreview ? t('profile.your_status') : t('profile.status_not_set');
     };
 
     const getField = (value, formatter = null) => {

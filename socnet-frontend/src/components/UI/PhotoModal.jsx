@@ -89,12 +89,11 @@ export default function PhotoModal({ isOpen, image, post, onClose, onUpdate }) {
                         isOwner={false}
                     />
 
-                    <PostContent style={{ paddingLeft: "60px" }}
+                    <PostContent
                         content={modalPost.content}
                     />
 
                     <PostFooter
-                        style={{ marginTop: '20px' }}
                         postId={modalPost.id}
                         isLiked={modalPost.is_liked}
                         likesCount={modalPost.likes_count}

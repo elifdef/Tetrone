@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 
-export default function ProfileHeader({ user }) {
+export default function ProfileHeader({ user, isPreview }) {
     const { t } = useTranslation();
     const formatDate = useDateFormatter();
 
@@ -20,16 +20,22 @@ export default function ProfileHeader({ user }) {
         return t('profile.status.last_seen_n', { time: dateStr });
     };
 
+    const getStatusBlock = () => {
+        if (isPreview) return;
+        return (
+            <span className={`socnet-status ${user.is_online ? 'online' : 'offline'}`}>
+                {getStatusText()}
+            </span>
+        )
+    }
+
     return (
         <div className="socnet-name-row">
             <h2 className="socnet-name">
                 {user.first_name} {user.last_name}
                 <span className="socnet-nick"> @{user.username}</span>
             </h2>
-
-            <span className={`socnet-status ${user.is_online ? 'online' : 'offline'}`}>
-                {getStatusText()}
-            </span>
+            {getStatusBlock()}
         </div>
     );
 }

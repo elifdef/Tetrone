@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import { useTranslation } from 'react-i18next';
 import Input from "../UI/Input";
 import PasswordStrengthBar from "../UI/PasswordStrengthBar";
+
 export default function RegisterForm() {
     const { t } = useTranslation();
     const [formData, setFormData] = useState({
@@ -38,7 +39,9 @@ export default function RegisterForm() {
                 text: (
                     <span>
                         {t('auth.you_have_registered')}<br />
-                        <Link to="/login" className="socnet-link" style={{ fontWeight: 'bold' }}>{t('auth.signin')}</Link>
+                        <Link to="/login" className="socnet-link socnet-auth-msg-link">
+                            {t('auth.signin')}
+                        </Link>
                     </span>
                 ),
                 type: "success"
@@ -54,9 +57,10 @@ export default function RegisterForm() {
 
     if (msg.type === "success") {
         return (
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-                <div className="socnet-auth-msg success" style={{ border: 'none', background: 'transparent' }}>
-                    <div style={{ fontSize: '30px', marginBottom: '10px' }}></div>
+            <div className="socnet-auth-success-wrapper">
+                <div className="socnet-auth-msg success socnet-auth-success-hero">
+                    <div className="socnet-auth-success-icon">
+                    </div>
                     {msg.text}
                 </div>
             </div>
@@ -87,8 +91,8 @@ export default function RegisterForm() {
                 required
             />
 
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <div style={{ flex: 1 }}>
+            <div className="socnet-form-row">
+                <div className="socnet-form-group">
                     <Input
                         type="password"
                         name="password"
@@ -101,7 +105,7 @@ export default function RegisterForm() {
                     />
                 </div>
 
-                <div style={{ flex: 1 }}>
+                <div className="socnet-form-group">
                     <Input
                         type="password"
                         name="password_confirmation"
@@ -114,10 +118,12 @@ export default function RegisterForm() {
                     />
                 </div>
             </div>
+
             <PasswordStrengthBar
                 password={formData.password}
                 onScoreChange={setPasswordScore}
             />
+
             {msg.type === "error" && (
                 <div className="socnet-auth-msg error">
                     {msg.text}
@@ -125,10 +131,9 @@ export default function RegisterForm() {
             )}
 
             <button
-                className="socnet-btn"
+                className="socnet-btn socnet-btn-block"
                 type="submit"
                 disabled={loading || (formData.password && passwordScore < 5)}
-                style={{ width: '100%', marginTop: '10px' }}
             >
                 {loading ? t('common.loading') : t('auth.signup')}
             </button>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthForms } from "../../hooks/useAuthForms";
 import { useTranslation } from 'react-i18next';
-import Input from "../UI/Input"
+import Input from "../UI/Input";
 
 export default function LoginForm() {
     const { t } = useTranslation();
@@ -54,7 +54,10 @@ export default function LoginForm() {
                 </div>
             )}
 
-            <button className="socnet-btn" disabled={loading} style={{ width: '100%', marginTop: '5px' }}>
+            <button
+                className="socnet-btn socnet-btn-block"
+                disabled={loading}
+            >
                 {loading ? t('common.loading') : t('auth.signin')}
             </button>
 

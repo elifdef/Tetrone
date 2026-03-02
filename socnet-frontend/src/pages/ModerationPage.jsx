@@ -10,21 +10,21 @@ const ModerationPage = ({ currentUser }) => {
     const { t } = useTranslation();
 
     const activeTab = searchParams.get('act') || 'posts';
-    usePageTitle(t('common.moderator'));
+    usePageTitle(t('common.moderator_panel'));
 
     const tabs = [
         { id: 'posts', label: t('admin.moderation_posts') },
         { id: 'users', label: t('admin.users_management') }
     ];
 
-    const handleTabChange = (tabId) => setSearchParams({ act: tabId });
+    const handleTabChange = (tabId) => { setSearchParams({ act: tabId }); usePageTitle(tabs[tabId]); }
 
     return (
         <div className="socnet-card-wrapper">
-            <h2 className="socnet-section-title">{t('common.moderator')}</h2>
+            <h2 className="socnet-section-title">{t('common.moderator_panel')}</h2>
             <AdminTabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
 
-            <div style={{ marginTop: '15px' }}>
+            <div>
                 {activeTab === 'posts' && <PostsManager currentUser={currentUser} />}
                 {activeTab === 'users' && <UsersManager canBan={true} />}
             </div>

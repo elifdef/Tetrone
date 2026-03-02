@@ -84,7 +84,7 @@ export const PostsManager = ({ currentUser }) => {
     const handleEdit = (postId) => { alert("under construction"); };
 
     return (
-        <div>
+        <>
             <form onSubmit={handleSearch} className="admin-search-bar" style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
                     <Input
@@ -143,6 +143,6 @@ export const PostsManager = ({ currentUser }) => {
                     </div>
                 ))}
             </InfiniteScrollList>
-        </div>
+        </>
     );
 };

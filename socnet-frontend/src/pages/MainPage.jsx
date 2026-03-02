@@ -44,7 +44,7 @@ export default function MainPage() {
                     <Link to="/register" className="socnet-btn socnet-landing-btn-big">
                         {t('main.join.signup_btn')}
                     </Link>
-                    <Link to="/login" className="socnet-btn socnet-landing-btn-big" style={{ background: 'transparent', color: 'var(--theme-link)' }}>
+                    <Link to="/login" className="socnet-btn socnet-btn-ghost socnet-landing-btn-big">
                         {t('main.join.signin_btn')}
                     </Link>
                 </div>
@@ -70,10 +70,10 @@ export default function MainPage() {
             </div>
 
             <div className="socnet-cta-block">
-                <h2 style={{ fontSize: '16px', color: 'var(--theme-text-main)', marginBottom: '10px' }}>
+                <h2 className="socnet-cta-title">
                     {t('main.join.header')}
                 </h2>
-                <p style={{ fontSize: '11px', color: 'var(--theme-text-muted)', marginBottom: '20px' }}>
+                <p className="socnet-cta-desc">
                     {t('main.join.description')}
                 </p>
 

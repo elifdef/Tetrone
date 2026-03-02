@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { APP_NAME } from "../../config";
 import "flag-icons/css/flag-icons.min.css";
 
@@ -19,30 +20,37 @@ export default function Footer() {
 
     return (
         <footer className="socnet-footer">
-            <div className="socnet-footer-languages">
-                {SUPPORTED_LANGUAGES.map((lang, index) => (
-                    <div key={lang.code} className="socnet-footer-lang-item">
-                        <span
-                            className={`socnet-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
-                            onClick={() => changeLanguage(lang.code)}
-                            title={lang.name}
-                        >
-                            <span className={`fi fi-${lang.countryCode}`}></span>
-                        </span>
-                        {index < SUPPORTED_LANGUAGES.length - 1 && (
-                            <span className="socnet-lang-separator">|</span>
-                        )}
-                    </div>
+            <div className="socnet-footer-row">
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                    <span
+                        key={lang.code}
+                        className={`socnet-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
+                        onClick={() => changeLanguage(lang.code)}
+                        title={lang.name}
+                    >
+                        <span className={`fi fi-${lang.countryCode}`}></span>
+                    </span>
                 ))}
-                <span className="socnet-lang-separator">|</span>
+            </div>
 
-                <span className="socnet-lang-all">
-                    all languages »
+            <div className="socnet-footer-row">
+                <Link to="/rules" className="socnet-footer-link">
+                    {t('common.rules')}
+                </Link>
+                <Link to="https://github.com/elifdef/social-network" className="socnet-footer-link">
+                    Github
+                </Link>
+                <Link to="/developers" className="socnet-footer-link">
+                    {t('footer.for_dev')}
+                </Link>
+            </div>
+
+            <div className="socnet-footer-row">
+                <span className="socnet-footer-text">
+                    {APP_NAME} © 2025 - 2026. {t('footer.text')}
                 </span>
             </div>
-            <div className="socnet-footer-copyright">
-                © 2025 - 2026 {APP_NAME}. {t('footer.text')}
-            </div>
+
         </footer>
     );
 }

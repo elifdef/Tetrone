@@ -42,11 +42,10 @@ export default function ActionModal({
             onClose();
         }}>
             <div
-                className="socnet-modal-content"
-                style={{ maxWidth: '400px', minHeight: 'auto', padding: '20px', margin: 'auto' }}
+                className="socnet-modal-dialog"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div style={{ fontWeight: 'bold', marginBottom: '15px', color: 'var(--theme-text-main)', fontSize: '14px' }}>
+                <div className="socnet-modal-message">
                     {message}
                 </div>
 
@@ -56,27 +55,25 @@ export default function ActionModal({
                         type="text"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        className="socnet-form-input"
-                        style={{ marginBottom: '15px' }}
+                        className="socnet-form-input socnet-modal-input"
                         placeholder={placeholder}
                     />
                 )}
 
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <div className="socnet-modal-actions">
                     <button
-                        className="socnet-btn"
-                        style={{ minWidth: '80px' }}
+                        className="socnet-btn socnet-modal-btn"
                         onClick={() => {
                             onResolve(type === 'prompt' ? inputValue : true);
                             onClose();
                         }}
-                        disabled={!inputValue.trim()}
+                        disabled={type === 'prompt' && !inputValue.trim()}
                     >
                         {btnSubmit}
                     </button>
+
                     <button
-                        className="socnet-btn"
-                        style={{ minWidth: '80px', background: 'transparent', color: 'var(--theme-link)', borderColor: 'var(--theme-border)' }}
+                        className="socnet-btn socnet-btn-ghost socnet-modal-btn"
                         onClick={() => {
                             onResolve(type === 'prompt' ? null : false);
                             onClose();

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import Textarea from "../UI/Textarea"
+import Textarea from "../UI/Textarea";
+import Button from "../UI/Button";
 
 export default function EditPostForm({
     post,
@@ -23,25 +24,29 @@ export default function EditPostForm({
 
                 {editPreview && (
                     <div className="socnet-post-preview">
-                        <img src={editPreview} />
-                        <button onClick={removeEditImage}>×</button>
+                        <img src={editPreview} alt="Preview" />
+                        <button className="socnet-preview-close" onClick={removeEditImage}>
+                            ×
+                        </button>
                     </div>
                 )}
 
                 <div className="socnet-edit-actions">
-                    <label className="socnet-btn-small" style={{ marginRight: 5, background: '#8292a4', cursor: 'pointer' }}>
+                    <label className="socnet-btn-small socnet-btn-attach">
                         {t('common.photo')}
-                        <input type="file" hidden onChange={handleEditFileSelect} />
+                        <input type="file" hidden accept="image/*" onChange={handleEditFileSelect} />
                     </label>
 
-                    <button className="socnet-btn-small" onClick={() => saveEdit(post.id)}>{t('common.save')}</button>
-                    <button
-                        className="socnet-btn-small"
-                        style={{ background: 'transparent', color: '#777', border: '1px solid #ccc', marginLeft: 5 }}
+                    <Button className="socnet-btn-small" onClick={() => saveEdit(post.id)}>
+                        {t('common.save')}
+                    </Button>
+
+                    <Button
+                        className="socnet-btn-small socnet-btn-cancel"
                         onClick={cancelEditing}
                     >
                         {t('common.cancel')}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

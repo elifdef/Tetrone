@@ -315,6 +315,19 @@ input:-webkit-autofill:active {
     margin-top: 20px;
 }
 
+.socnet-cta-title {
+    font-size: 16px;
+    color: var(--theme-text-main);
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.socnet-cta-desc {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+    margin-bottom: 20px;
+}
+
 /* сторінки входу/реєстрації */
 .socnet-auth-card {
     background: var(--theme-bg-box);
@@ -371,6 +384,29 @@ input:-webkit-autofill:active {
     color: var(--theme-text-muted);
     padding-top: 10px;
     border-top: 1px solid var(--theme-border);
+}
+
+.socnet-auth-success-wrapper {
+    text-align: center;
+    padding: 20px;
+}
+
+.socnet-auth-success-hero {
+    border: none !important;
+    background: transparent !important;
+}
+
+.socnet-auth-success-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.socnet-btn-block {
+    width: 100%;
+}
+
+.socnet-auth-msg-link {
+    font-weight: bold;
 }
 
 /* структури сторінок */
@@ -1036,6 +1072,31 @@ input:-webkit-autofill:active {
     opacity: 1;
 }
 
+.socnet-post-page-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+.socnet-back-btn {
+    border: none;
+    background: none;
+    color: var(--theme-link);
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.socnet-back-btn:hover {
+    text-decoration: underline;
+}
+
+.socnet-post-comments-wrapper {
+    border-top: 1px solid var(--theme-border);
+}
+
 .socnet-action-icon {
     background: transparent;
     border: none;
@@ -1070,6 +1131,62 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: flex-start;
     padding-bottom: 10px;
+}
+
+.socnet-edit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-top: 8px;
+}
+
+.socnet-btn-attach {
+    background: #8292a4;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+}
+
+.socnet-btn-attach:hover {
+    background: #6f7f91;
+}
+
+.socnet-btn-cancel {
+    background: transparent !important;
+    color: var(--theme-text-muted) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+.socnet-btn-cancel:hover {
+    background: var(--theme-bg-page) !important;
+    color: var(--theme-text-main) !important;
+}
+
+.socnet-preview-close {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--theme-error);
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.socnet-preview-close:hover {
+    opacity: 0.8;
 }
 
 /* коментарі */
@@ -1532,10 +1649,14 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
+.socnet-profile-error-wrapper {
+    padding: 20px;
+}
+
 .not-setup-profile {
     text-align: center;
-    margin-top: 50;
-    color: #888;
+    margin-top: 50px;
+    color: var(--theme-text-muted);
 }
 
 .not-found-icon {
@@ -1710,6 +1831,31 @@ input:-webkit-autofill:active {
     gap: 10px;
     color: var(--theme-text-main);
     transition: background 0.1s;
+}
+
+.socnet-custom-select-wrapper {
+    position: relative;
+}
+
+.socnet-custom-select {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.socnet-custom-select.open {
+    border-color: var(--theme-link);
+}
+
+.socnet-select-placeholder {
+    color: var(--theme-text-muted);
+}
+
+.socnet-select-arrow {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--theme-text-muted);
 }
 
 .socnet-custom-dropdown-item.not-selected {
@@ -1965,27 +2111,46 @@ input:-webkit-autofill:active {
 
 /* Футер */
 .socnet-footer {
-    padding: 20px 0;
+    padding: 30px 15px;
     text-align: center;
+    border-top: 1px solid var(--theme-border);
+    margin-top: 40px;
 }
 
-.socnet-footer-languages {
+.socnet-footer-row {
     display: flex;
-    gap: 12px;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
-.socnet-footer-lang-item {
-    display: flex;
-    align-items: center;
+.socnet-footer-row:last-child {
+    margin-bottom: 0;
+}
+
+.socnet-footer-link {
+    font-size: 12px;
+    color: var(--theme-link);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.socnet-footer-link:hover {
+    text-decoration: underline;
+}
+
+.socnet-footer-text {
+    font-size: 11px;
+    color: var(--theme-text-muted);
 }
 
 .socnet-lang-btn {
     cursor: pointer;
     font-size: 16px;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
+    opacity: 0.4;
+    transition: opacity 0.2s;
     display: flex;
     align-items: center;
 }
@@ -1997,28 +2162,6 @@ input:-webkit-autofill:active {
 .socnet-lang-btn.active {
     opacity: 1;
     cursor: default;
-}
-
-.socnet-lang-separator {
-    color: var(--theme-border);
-    margin-left: 12px;
-    font-size: 12px;
-}
-
-.socnet-lang-all {
-    font-size: 11px;
-    color: var(--theme-link);
-    cursor: pointer;
-}
-
-.socnet-lang-all:hover {
-    text-decoration: underline;
-}
-
-.socnet-footer-copyright {
-    margin-top: 15px;
-    font-size: 11px;
-    color: var(--theme-text-muted);
 }
 
 .mobile-menu-btn,
@@ -2151,6 +2294,144 @@ input:-webkit-autofill:active {
 
 .admin-feed-wrapper .socnet-post-header {
     flex-wrap: wrap;
+}
+
+/* модалкиз інпутом */
+.socnet-modal-dialog {
+    max-width: 400px;
+    width: 100%;
+    min-height: auto;
+    padding: 20px;
+    margin: auto;
+    background-color: var(--theme-bg-box);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.socnet-modal-message {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--theme-text-main);
+    font-size: 14px;
+}
+
+.socnet-modal-input {
+    margin-bottom: 15px;
+}
+
+.socnet-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.socnet-modal-btn {
+    min-width: 80px;
+}
+
+.socnet-btn-ghost {
+    background: transparent !important;
+    color: var(--theme-link) !important;
+    border-color: var(--theme-border) !important;
+}
+
+.socnet-btn-ghost:hover {
+    background: var(--theme-bg-page) !important;
+}
+
+/* вічний скрол */
+.socnet-infinite-scroll-msg {
+    padding: 20px;
+    text-align: center;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+}
+
+.socnet-infinite-error-box {
+    padding: 10px;
+    text-align: center;
+}
+
+.socnet-error-text {
+    color: var(--theme-error);
+    font-size: 12px;
+}
+
+.socnet-btn-retry {
+    margin-top: 10px;
+}
+
+.socnet-btn-retry-small {
+    margin-top: 5px;
+}
+
+/* перевірка безпеки пароля */
+.socnet-password-strength-wrapper {
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.socnet-password-strength-track {
+    height: 4px;
+    background: var(--theme-border);
+    overflow: hidden;
+}
+
+.socnet-password-strength-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.socnet-password-strength-text {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+/* сторінка з правилами сайту */
+.socnet-rules-page {
+    margin: 20px auto;
+}
+
+.socnet-rules-header {
+    font-size: 18px;
+    color: var(--theme-link);
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.socnet-rule-block {
+    margin-bottom: 20px;
+}
+
+.socnet-rule-title {
+    font-size: 14px;
+    color: var(--theme-text-main);
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.socnet-rule-text {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+}
+
+.socnet-rule-sublist {
+    margin-top: 10px;
+    margin-bottom: 0;
+    padding-left: 25px;
+}
+
+.socnet-rule-sublist-item {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 /* для телефонів */

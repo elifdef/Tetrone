@@ -9,7 +9,7 @@ export default function RegisterPage() {
 
     return (
         <div className="socnet-fullscreen-center">
-            <div className="socnet-auth-card" style={{ maxWidth: '400px' }}>
+            <div className="socnet-auth-card">
                 <div className="socnet-auth-header">
                     <h1 className="socnet-auth-title">{t('auth.signup')}</h1>
                 </div>

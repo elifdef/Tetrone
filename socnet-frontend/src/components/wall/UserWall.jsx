@@ -19,14 +19,13 @@ export default function UserWall({ profileUser, isOwnProfile }) {
             {isOwnProfile && (<CreatePostForm onSubmitSuccess={wallData.createPost} />)}
 
             <InfiniteScrollList
-                className=""
                 itemsCount={wallData.posts.length}
                 isLoadingInitial={wallData.isPageLoading}
                 isLoadingMore={wallData.isLoadingMore}
                 hasMore={wallData.hasMore}
                 onLoadMore={wallData.loadMore}
                 emptyState={
-                    <div className="socnet-empty-state with-card" style={{ marginTop: '15px' }}>
+                    <div className="socnet-empty-state with-card">
                         {t('wall.no_posts_yet')}
                     </div>
                 }

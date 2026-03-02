@@ -26,13 +26,14 @@ export default function InfiniteScrollList({
         );
     }
 
+    // помилка при першому завантаженні (коли список порожній)
     if (error && itemsCount === 0) {
         return (
             <div className="socnet-empty-state with-card">
                 <h3>{t('error.connection')}</h3>
                 {onRetry && (
-                    <button className="socnet-btn-small" style={{ marginTop: '10px' }} onClick={onRetry}>
-                        {t('common.reload_page',)}
+                    <button className="socnet-btn-small socnet-btn-retry" onClick={onRetry}>
+                        {t('common.reload_page')}
                     </button>
                 )}
             </div>
@@ -53,26 +54,29 @@ export default function InfiniteScrollList({
         <div className={className}>
             {children}
 
+            {/* підвантаження наступної сторінки */}
             {hasMore && !error && (
-                <div ref={loaderRef} style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)' }}>
+                <div ref={loaderRef} className="socnet-infinite-scroll-msg">
                     {isLoadingMore ? t('common.loading') + '...' : ''}
                 </div>
             )}
 
+            {/* кінець списку */}
             {!hasMore && itemsCount > 0 && (
-                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--theme-text-muted)', fontSize: '11px' }}>
+                <div className="socnet-infinite-scroll-msg">
                     {endMessage || t('wall.no_more_posts')}
                 </div>
             )}
 
+            {/* помилка при підвантаженні наступної сторінки */}
             {error && itemsCount > 0 && (
-                <div style={{ padding: '10px', textAlign: 'center' }}>
-                    <span style={{ color: '#bd4c4c', fontSize: '12px' }}>
+                <div className="socnet-infinite-error-box">
+                    <span className="socnet-error-text">
                         {t('error.connection')}
                     </span>
                     <br />
                     {onRetry && (
-                        <button className="socnet-btn-small" style={{ marginTop: '5px' }} onClick={onRetry}>
+                        <button className="socnet-btn-small socnet-btn-retry-small" onClick={onRetry}>
                             {t('common.reload_page')}
                         </button>
                     )}

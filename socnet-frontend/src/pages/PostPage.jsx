@@ -45,7 +45,7 @@ export default function PostPage() {
     };
 
     if (loading)
-        return (<div style={{ padding: 20 }}>{t('common.loading')}</div>);
+        return <div className="socnet-empty-state">{t('common.loading')}</div>;
 
     if (error)
         return (
@@ -64,17 +64,19 @@ export default function PostPage() {
         );
 
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: 50 }}>
+        <div className="socnet-post-page-wrapper">
             {user && (
                 <button
                     onClick={() => navigate(-1)}
-                    style={{ border: 'none', background: 'none', color: '#2a5885', cursor: 'pointer', marginBottom: 10 }}
-                >{t('common.back')}</button>
+                    className="socnet-back-btn"
+                >
+                    {t('common.back')}
+                </button>
             )}
 
             <PostItem post={post} />
 
-            <div style={{ borderTop: '1px solid var(--theme-border)' }}>
+            <div className="socnet-post-comments-wrapper">
                 <CommentsSection
                     postId={post.id}
                     onCountChange={handleCommentCountChange}

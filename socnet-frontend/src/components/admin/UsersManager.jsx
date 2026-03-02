@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import adminAPI from '../../api/admin.api';
 import { userRole } from '../../config';
 import { notifySuccess, notifyError } from "../common/Notify";
+import { AuthContext } from "../../context/AuthContext";
 import { useModal } from '../../context/ModalContext';
 import { usePageTitle } from "../../hooks/usePageTitle";
 
@@ -28,8 +29,8 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
 
 const UserCard = ({ user, handleMute, handleBan, canBan }) => {
     const { t } = useTranslation();
-    const isAdmin = user.role === userRole.Admin;
-
+    const { user: currentAdmin } = useContext(AuthContext);
+    const isAdmin = currentAdmin.role === userRole.Admin;
     return (
         <div className="admin-user-card">
             <img src={user.avatar} alt="avatar" className="admin-user-avatar" />
@@ -53,7 +54,7 @@ const UserCard = ({ user, handleMute, handleBan, canBan }) => {
                 </div>
             </div>
 
-            {user.role < userRole.Moderator && (
+            {user.role <= userRole.Moderator && (
                 <div className="admin-user-actions">
                     <button
                         className={`admin-btn admin-btn-warning ${user.is_muted ? 'active' : ''}`}
