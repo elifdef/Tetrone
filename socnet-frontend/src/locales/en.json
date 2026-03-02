@@ -94,7 +94,8 @@
     "support": "Support",
     "moderator": "Moderator",
     "admin": "Admin",
-    "rules": "Rules"
+    "rules": "Rules",
+    "notifications": "Notifications"
   },
 
   "auth": {
@@ -359,11 +360,25 @@
     "reason": "Reason",
     "no_violations": "User has no violations yet"
   },
+
   "banned": {
     "title": "Account Blocked",
-    "message": "Dear {{name}}, your account (@{{username}}) has been temporarily or permanently suspended from the platform.",
+    "message": "{{name}}, your account (@{{username}}) has been temporarily or permanently suspended from the platform.",
     "reason_label": "Reason for blocking",
     "appeal_btn": "Submit Appeal",
     "appeal_alert": "The appeal function will be available later (Under construction)"
+  },
+
+  "notifications": {
+    "my_notifications": "My Notifications",
+    "empty": "You have no notifications yet.",
+    "mark_read": "Click to mark as read",
+    "liked_male": "liked",
+    "liked_female": "liked",
+    "commented_male": "commented on",
+    "commented_female": "commented on",
+    "your_post": "your post",
+    "friend_request_male": "wants to add you as a friend",
+    "friend_request_female": "wants to add you as a friend"
   }
 }

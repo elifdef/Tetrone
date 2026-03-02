@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
 
@@ -14,7 +15,10 @@ class CommentController extends Controller
     {
         $comments = $post->comments()
             ->with('user')
-            ->whereHas('user', function ($query) {$query->where('is_banned', false);})
+            ->whereHas('user', function ($query)
+            {
+                $query->where('is_banned', false);
+            })
             ->latest() // нові зверху
             ->paginate(20);
 
@@ -26,7 +30,8 @@ class CommentController extends Controller
     {
         $currentUser = $request->user('sanctum');
 
-        if ($currentUser) {
+        if ($currentUser)
+        {
             // автор поста заблокував коментатора
             $blockedByAuthor = $currentUser->isBlockedByTarget($currentUser->id, $post->user_id);
             // коментатор заблокував автора поста
@@ -42,6 +47,9 @@ class CommentController extends Controller
             'content' => $request->input('content'),
             'user_id' => $currentUser->id
         ]);
+
+        if ($post->user_id !== $request->user()->id)
+            $post->user->notify(new NewCommentNotification($request->user(), $post, $comment));
 
         return (new CommentResource($comment->load('user')))->resolve();
     }

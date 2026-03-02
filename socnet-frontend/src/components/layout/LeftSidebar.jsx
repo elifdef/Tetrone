@@ -3,10 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { APP_NAME, userRole } from "../../config";
 import { AuthContext } from "../../context/AuthContext";
+import { NotificationContext } from "../../context/NotificationContext"; 
 
 const LeftSidebar = ({ isOpen }) => {
     const { t } = useTranslation();
     const { logout, user } = useContext(AuthContext);
+    const { unreadCount } = useContext(NotificationContext);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -19,6 +21,8 @@ const LeftSidebar = ({ isOpen }) => {
         logout();
         navigate('/');
     };
+
+    const displayCount = unreadCount > 99 ? '99+' : unreadCount;
 
     return (
         <aside className={`socnet-sidebar-left ${isOpen ? 'mobile-open' : ''}`}>
@@ -40,6 +44,10 @@ const LeftSidebar = ({ isOpen }) => {
                         </Link>
                         <Link to="/friends" className={getLinkClass("/friends")}>
                             {t('common.friends')}
+                        </Link>
+                        <Link to="/notifications" className={getLinkClass("/notifications")}>
+                            {t('common.notifications')}
+                            {unreadCount > 0 && (<span className="socnet-badge">{displayCount}</span>)}
                         </Link>
                         <Link to="/settings" className={getLinkClass("/settings")}>
                             {t('sidebar.left.settings')}

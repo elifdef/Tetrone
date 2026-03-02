@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Str;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Notification;
+
+class NewLikeNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    // щоб не тормозити відповідь сервера
+
+    public $liker;
+    public $post;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct(User $liker, Post $post)
+    {
+        $this->liker = $liker;
+        $this->post = $post;
+    }
+
+    /**
+     * куди відправляти сповіщення в БД і в вебсокети
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['database', 'broadcast'];
+    }
+
+    /**
+     * Що записуємо в таблицю notifications (колонка data)
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        $snippet = $this->post->content ? Str::limit(strip_tags($this->post->content), 40) : null;
+
+        return [
+            'type' => 'new_like',
+            'user_id' => $this->liker->id,
+            'user_username' => $this->liker->username,
+            'user_first_name' => $this->liker->first_name,
+            'user_last_name' => $this->liker->last_name,
+            'user_avatar' => $this->liker->avatar_url,
+            'user_gender' => $this->liker->gender,
+            'post_id' => $this->post->id,
+            'post_snippet' => $snippet,
+        ];
+    }
+
+    // Що летить по вебсокетах на фронтенд миттєво
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage($this->toArray($notifiable));
+    }
+}

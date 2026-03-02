@@ -20,6 +20,7 @@ import ModerationPage from "../pages/ModerationPage"
 import { GuestGuard, AuthGuard, SetupGuard } from "./Guards";
 import AdminUserInfo from "../components/admin/AdminUserInfo";
 import { userRole } from "../config";
+import NotificationsPage from "../pages/NotificationsPage";
 
 export default function AppRoutes() {
     const { user } = useContext(AuthContext);
@@ -53,6 +54,7 @@ export default function AppRoutes() {
                     <Route path="/messages" element={<div>messageTemplate</div>} />
                     <Route path="/email-verify/:id/:hash" element={<EmailVerifyPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
 
                     {user?.role >= userRole.Support && (
                         <Route path="/support" element={<SupportPage />} />

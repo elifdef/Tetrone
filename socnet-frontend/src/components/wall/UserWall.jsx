@@ -26,7 +26,7 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 onLoadMore={wallData.loadMore}
                 emptyState={
                     <div className="socnet-empty-state with-card">
-                        {t('wall.no_posts_yet')}
+                        {t('wall.no_posts')}
                     </div>
                 }
             >
