@@ -3,7 +3,6 @@
     "email_send_letter": "A confirmation email has been sent.",
     "verification_email": "Verifying your email..."
   },
-
   "error": {
     "email_send": "Error sending email.",
     "loading": "Error loading {{resource}}",
@@ -32,15 +31,14 @@
     "large_file": "The file is too large. Maximum size: {{size}} MB.",
     "max_files": "You can attach up to 10 images.",
     "file_too_large": "Some files exceed {{size}} MB in size.",
-    "error_load_stats": "Error loading statistics"
+    "load_stats": "Error loading statistics",
+    "loading_reposts": "Error loading reposts."
   },
-
   "success": {
     "changes_saved": "Changes saved.",
     "password_changed": "Password has been changed",
     "email_confirm": "Email has been verified."
   },
-
   "common": {
     "welcome": "Welcome",
     "loading": "Loading...",
@@ -107,7 +105,6 @@
     "repost": "Repost",
     "reposts": "Reposts"
   },
-
   "auth": {
     "signin": "Sign in",
     "signup": "Sign up",
@@ -124,26 +121,22 @@
     "password_requirements": "Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.",
     "password_too_weak": "Password is too weak."
   },
-
   "sidebar": {
     "left": {
       "home": "Home",
       "messages": "Messages",
       "settings": "Settings"
     },
-
     "right": {
       "title": "First time here?",
       "description": "Create an account to add friends, write posts, like & comment!",
       "btn_text": "Let's go"
     },
-
     "guest": {
       "view_like_guest": "You are viewing the site as a guest.",
       "get_full_access": "Log in to get full access."
     }
   },
-
   "banner": {
     "email": {
       "text": "Your email has not been confirmed. Some features may not be available.",
@@ -151,12 +144,10 @@
       "sending": "Sending..."
     }
   },
-
   "footer": {
     "text": "All rights reserved.",
     "for_dev": "For developers"
   },
-
   "main": {
     "title": "Welcome to {{name}}",
     "subtitle": "A small corner of the internet where there is no AI slop.",
@@ -178,7 +169,6 @@
         "description": "Find your friends and meet new people. Grow your network to always keep track of what your close ones are up to."
       }
     },
-
     "join": {
       "header": "Ready to join?",
       "description": "Create an account now and become part of our community.",
@@ -186,7 +176,6 @@
       "signin_btn": "Sign in"
     }
   },
-
   "first_setup": {
     "title": "First profile setup",
     "no_data": "Please enter your first name and birthday",
@@ -194,12 +183,10 @@
     "upload_avatar": "Upload an avatar",
     "save_and_finish": "Save and finish"
   },
-
   "page_404": {
     "invalid_page": "You may have followed an invalid link\nor user has been deleted.",
     "return_home": "Return to home page"
   },
-
   "post": {
     "like": "Like",
     "comment": "Comment",
@@ -214,13 +201,11 @@
     "repost_success": "",
     "add_repost_comment": ""
   },
-
   "comment": {
     "no_comments": "There are no comments yet.",
     "create_comment": "Write a comment...",
     "remove_comment": "Remove comment?"
   },
-
   "profile": {
     "online": "Online",
     "offline": "Offline",
@@ -244,7 +229,6 @@
       "cancel_request": "Cancel request",
       "add_friends": "Add to friends"
     },
-
     "status": {
       "last_seen_m": "last seen {{time}}",
       "last_seen_f": "last seen {{time}}",
@@ -254,13 +238,11 @@
       "at": "at"
     }
   },
-
   "date": {
     "today_at": "Today at {{time}}",
     "yesterday_at": "Yesterday at {{time}}",
     "at": "at"
   },
-
   "wall": {
     "title": "Wall",
     "write_post": "Write a post...",
@@ -272,7 +254,6 @@
     "no_posts": "No posts yet.",
     "no_more_posts": "No more posts to show."
   },
-
   "friends": {
     "your_contacts": "Your contacts",
     "requests": "Requests",
@@ -291,7 +272,6 @@
     "user_unblocked": "User unblocked",
     "remove_friends": "Remove from friends"
   },
-
   "feed": {
     "my_feed": "My feed",
     "global_feed": "Global feed",
@@ -300,7 +280,6 @@
     "find_friends": "Find friends",
     "view_global_feed": "View global feed"
   },
-
   "settings": {
     "profile_settings": "Profile settings",
     "about_me": "About me",
@@ -319,7 +298,6 @@
     "delete_warning": "This action cannot be undone. You will permanently lose your profile, photos, posts, and messages.",
     "same_info": "Well, Well, Well... mommy’s little hacker wants to play programmer. Look at this genius who watched 5 minutes of BroCode videos and now thinks he’s a developer. Go clean your room or take out the trash — do something useful for once."
   },
-
   "admin": {
     "control_panel": "Control panel",
     "users_management": "Users Management",
@@ -389,7 +367,6 @@
     "users_online": "Online Now",
     "no_one_online": "There are no users online right now."
   },
-
   "banned": {
     "title": "Account Blocked",
     "message": "{{name}}, your account (@{{username}}) has been temporarily or permanently suspended from the platform.",
@@ -397,7 +374,6 @@
     "appeal_btn": "Submit Appeal",
     "appeal_alert": "The appeal function will be available later (Under construction)"
   },
-
   "notifications": {
     "my_notifications": "My Notifications",
     "empty": "You have no notifications yet.",
@@ -416,23 +392,19 @@
     "repost_male": "shared your post.",
     "repost_female": "shared your post."
   },
-
   "activity": {
     "likes": {
       "empty": "You haven't liked any posts yet."
     },
-
     "comments": {
       "empty": "You haven't left any comments yet.",
       "you_commented_on": "You commented on the",
       "of_user": "by"
     },
-
     "reposts": {
       "empty": "You haven't repost any posts yet."
     }
   },
-
   "rules": {
     "page_title": "Rules",
     "header": "Site Rules",

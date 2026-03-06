@@ -11,10 +11,11 @@ export const ModalProvider = ({ children }) => {
         isOpen: false,
         type: null,
         message: '',
-        defaultText: '',
+        placeholder: '',
         btnSubmit: '',
         btnCancel: '',
         resolve: null,
+        emptyInput: false
     });
 
     const openConfirm = useCallback((message, btnYes = i18n.t('common.yes'), btnNo = i18n.t('common.no')) => {
@@ -23,9 +24,9 @@ export const ModalProvider = ({ children }) => {
         });
     }, []);
 
-    const openPrompt = useCallback((message, defaultText = '', btnSubmit = i18n.t('common.yes'), btnCancel = i18n.t('common.no')) => {
+    const openPrompt = useCallback((message, placeholder = '', emptyInput = false, btnSubmit = i18n.t('common.yes'), btnCancel = i18n.t('common.no')) => {
         return new Promise((resolve) => {
-            setModalState({ isOpen: true, type: 'prompt', message, defaultText, btnSubmit, btnCancel, resolve });
+            setModalState({ isOpen: true, type: 'prompt', message, placeholder, btnSubmit, btnCancel, resolve, emptyInput });
         });
     }, []);
 
@@ -42,7 +43,7 @@ export const ModalProvider = ({ children }) => {
                 onClose={handleClose}
                 type={modalState.type}
                 message={modalState.message}
-                defaultText={modalState.defaultText}
+                placeholder={modalState.placeholder}
                 btnSubmit={modalState.btnSubmit}
                 btnCancel={modalState.btnCancel}
                 onResolve={modalState.resolve}

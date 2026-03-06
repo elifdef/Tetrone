@@ -22,7 +22,7 @@ export default function AdminDashboard() {
             .then(res => setStats(res.data))
             .catch(err => {
                 console.error(err);
-                notifyError(t('admin.error_load_stats'));
+                notifyError(t('error.load_stats'));
             })
             .finally(() => setLoading(false));
     };
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="admin-server-info-row">
-                        <span className="socnet-label">PHP {t('admin.version')}:</span>
+                        <span className="socnet-label">{t('admin.version')} PHP:</span>
                         <span className="socnet-value">{stats.server.php_version}</span>
                     </div>
                     <div className="admin-server-info-row">

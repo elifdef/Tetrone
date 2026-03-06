@@ -103,6 +103,10 @@ export default function HomePage() {
         </div>
     );
 
+    const handleRepostSuccess = (newPost) => {
+        setPosts(prevPosts => [newPost, ...prevPosts]);
+    };
+
     return (
         <div className="socnet-feed-page">
             <div className="socnet-tabs">
@@ -128,7 +132,7 @@ export default function HomePage() {
                 emptyState={<EmptyState />}
             >
                 {posts.map(post => (
-                    <PostItem key={post.id} post={post} />
+                    <PostItem key={post.id} post={post} onRepostSuccess={handleRepostSuccess}/>
                 ))}
             </InfiniteScrollList>
         </div>

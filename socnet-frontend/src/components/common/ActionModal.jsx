@@ -9,7 +9,8 @@ export default function ActionModal({
     defaultText = '',
     btnSubmit,
     btnCancel,
-    onResolve
+    onResolve,
+    emptyInput,
 }) {
     const [inputValue, setInputValue] = useState(defaultText);
 
@@ -67,7 +68,7 @@ export default function ActionModal({
                             onResolve(type === 'prompt' ? inputValue : true);
                             onClose();
                         }}
-                        disabled={type === 'prompt' && !inputValue.trim()}
+                        disabled={(type === 'prompt' && !inputValue.trim()) && emptyInput}
                     >
                         {btnSubmit}
                     </button>

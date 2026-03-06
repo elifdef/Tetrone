@@ -40,7 +40,7 @@ export default function PostFooter({
     }
 
     const Like = () => {
-        const IconComponent = likesCount > 0 || isLiked ? LikeIcon : NoLikeIcon;
+        const IconComponent = isLiked ? LikeIcon : NoLikeIcon;
 
         if (readonly) {
             return (

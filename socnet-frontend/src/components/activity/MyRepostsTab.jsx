@@ -43,6 +43,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
                 }
             })
             .catch(err => {
+                notifyError(t('error.loading_reposts'))
                 if (isMounted) setError(true);
             })
             .finally(() => {

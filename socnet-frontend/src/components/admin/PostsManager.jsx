@@ -10,6 +10,7 @@ import Button from '../UI/Button';
 import Input from '../UI/Input';
 import PostContent from '../post/PostContent';
 import PostFooter from '../post/PostFooter';
+import PostItem from '../post/PostItem'; // 🔥 Додали для відображення репостів
 import InfiniteScrollList from '../common/InfiniteScrollList';
 import { userRole } from '../../config';
 
@@ -112,36 +113,79 @@ export const PostsManager = ({ currentUser }) => {
                     </div>
                 }
             >
-                {posts.map(post => (
-                    <div key={post.id} className="socnet-post">
-                        <div className="socnet-post-header">
-                            <Link to={`/${post.user?.username}`}>
-                                <img src={post.user?.avatar} alt="author" className="socnet-post-avatar" />
-                            </Link>
-                            <div className="socnet-post-meta">
-                                <Link to={`/${post.user?.username}`} className="socnet-post-author" target="_blank">
-                                    {post.user?.first_name} {post.user?.last_name}
+                {posts.map(post => {
+                    // Перевіряємо, чи написаний пост на чужій стіні
+                    const showTargetUser = post.target_user && post.target_user.username !== post.user?.username;
+
+                    return (
+                        <div key={post.id} className="socnet-post">
+                            <div className="socnet-post-header">
+                                <Link to={`/${post.user?.username}`} target="_blank">
+                                    <img src={post.user?.avatar} alt="author" className="socnet-post-avatar" />
                                 </Link>
-                                <span className="socnet-post-date">
-                                    ID: {post.id} • {formatDate(post.created_at)}
-                                </span>
+                                <div className="socnet-post-meta">
+                                    <div className="socnet-post-authors-row">
+                                        <Link to={`/${post.user?.username}`} className="socnet-post-author" target="_blank">
+                                            {post.user?.first_name} {post.user?.last_name}
+                                        </Link>
+
+                                        {/* 🔥 Кому написали */}
+                                        {showTargetUser && (
+                                            <span className="socnet-post-target-text">
+                                                {' '}{t('post.wrote_on_wall', { context: post.user?.gender === 2 ? 'female' : 'male' })}{' '}
+                                                <Link to={`/${post.target_user.username}`} className="socnet-post-author target" target="_blank">
+                                                    {post.target_user.first_name} {post.target_user.last_name}
+                                                </Link>
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="socnet-post-date">
+                                        ID: {post.id} • {formatDate(post.created_at)}
+                                    </span>
+                                </div>
+
+                                <div className="socnet-post-actions-top" style={{ opacity: 1 }}>
+                                    {isAdmin && (
+                                        <button className="socnet-action-icon" onClick={() => handleEdit(post.id)} title={t('common.edit')}>✎</button>
+                                    )}
+                                    <button className="socnet-post-delete" onClick={() => handleDelete(post.id)} title={t('common.delete')}>✖</button>
+                                </div>
                             </div>
 
-                            <div className="socnet-post-actions-top" style={{ opacity: 1 }}>
-                                {isAdmin && (
-                                    <button className="socnet-action-icon" onClick={() => handleEdit(post.id)} title={t('common.edit')}>✎</button>
-                                )}
-                                <button className="socnet-post-delete" onClick={() => handleDelete(post.id)} title={t('common.delete')}>✖</button>
+                            {/* 🔥 Контент (галерея тепер працює через attachments всередині PostContent) */}
+                            <PostContent content={post.content} post={post} onUpdate={() => { }} />
+
+                            {/* 🔥 Репости */}
+                            {post.is_repost && (
+                                <div className="socnet-repost-branch">
+                                    {post.original_post_id && post.original_post ? (
+                                        <PostItem
+                                            post={post.original_post}
+                                            isInner={true}
+                                            readonly={true} // Оригінал теж тільки для читання
+                                        />
+                                    ) : (
+                                        <div className="socnet-deleted-stub">
+                                            {t('post.original_deleted')}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className="admin-footer-wrapper">
+                                {/* 🔥 Футер у режимі "Тільки статистика" */}
+                                <PostFooter
+                                    postId={post.id}
+                                    isLiked={false} // Модератор не бачить "свій" лайк, тільки загальну кількість
+                                    likesCount={post.likes_count || 0}
+                                    commentsCount={post.comments_count || 0}
+                                    repostsCount={post.reposts_count || 0} // Додали репости
+                                    readonly={true} // Блокує кліки і робить іконки тьмянішими
+                                />
                             </div>
                         </div>
-
-                        <PostContent content={post.content} image={post.image} post={post} onUpdate={() => { }} />
-
-                        <div className="admin-footer-wrapper">
-                            <PostFooter postId={post.id} isLiked={true} likesCount={post.likes_count || 0} commentsCount={post.comments_count || 0} onLike={() => { }} />
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </InfiniteScrollList>
         </>
     );

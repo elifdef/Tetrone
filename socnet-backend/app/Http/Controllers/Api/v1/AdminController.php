@@ -115,14 +115,28 @@ class AdminController extends Controller
     {
         Gate::authorize('delete-any-content');
 
-        $query = Post::with('user')->withCount(['likes', 'comments'])->latest();
+        $relations = [
+            'user',
+            'targetUser',
+            'attachments',
+            'originalPost.user',
+            'originalPost.attachments',
+            'originalPost.originalPost.user',
+            'originalPost.originalPost.attachments'
+        ];
+
+        $query = Post::with($relations)->withCount(['likes', 'comments', 'reposts'])->latest();
+
         if ($request->has('username') && !empty($request->username))
+        {
             $query->whereHas('user', function ($q) use ($request)
             {
                 $q->where('username', $request->username);
             });
+        }
 
         $posts = $query->paginate(config('posts.max_paginate', 20));
+
         return PostResource::collection($posts);
     }
 }

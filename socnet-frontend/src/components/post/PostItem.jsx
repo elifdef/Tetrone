@@ -55,15 +55,14 @@ export default function PostItem({
         if (readonly) return;
 
         const content = await openPrompt(
-            t('post.add_repost_comment'),
-            ""
+            t('common.repost'), t('common.comment'), true
         );
 
         if (content === null) return;
 
         setIsReposting(true);
         try {
-            const targetId = postData.id;
+            const targetId = postData.is_repost ? postData.original_post_id : postData.id;
 
             const response = await api.post('/posts', {
                 content: content.trim() !== '' ? content : null,
@@ -77,8 +76,9 @@ export default function PostItem({
                 reposts_count: (prev.reposts_count || 0) + 1
             }));
 
-            if (onRepostSuccess && response.data)
+            if (onRepostSuccess && response.data) {
                 onRepostSuccess(response.data);
+            }
 
         } catch (err) {
             notifyError(t('error.repost_failed'));

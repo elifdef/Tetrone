@@ -6,6 +6,7 @@ use App\Models\Like;
 use App\Models\Post;
 use App\Notifications\NewLikeNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class LikeController extends Controller
 {
@@ -23,7 +24,7 @@ class LikeController extends Controller
             $existingLike->delete();
             $liked = false;
 
-            // якщо юзер забрав лайк видаляєм сповіщення з бази
+            // якщо юзер забрав лайк видаляєм сповіщення з бази (щоб воно зникло з меню)
             if ($post->user_id !== $user->id)
             {
                 $post->user->notifications()
@@ -32,7 +33,8 @@ class LikeController extends Controller
                     ->where('data->post_id', $post->id)
                     ->delete();
             }
-        } else {
+        } else
+        {
             Like::create([
                 'user_id' => $user->id,
                 'post_id' => $post->id
@@ -41,15 +43,14 @@ class LikeController extends Controller
 
             if ($post->user_id !== $user->id)
             {
-                $alreadyNotified = $post->user->notifications()
-                    ->where('type', NewLikeNotification::class)
-                    ->where('data->user_id', $user->id)
-                    ->where('data->post_id', $post->id)
-                    ->exists();
+                // захист від спаму поставив лайк - забрав лайк
+                $spamCacheKey = "like_spam_user_{$user->id}_post_{$post->id}";
 
-                // якщо сповіщення ще немає
-                if (!$alreadyNotified)
+                if (!Cache::has($spamCacheKey))
+                {
                     $post->user->notify(new NewLikeNotification($user, $post));
+                    Cache::put($spamCacheKey, true, now()->addDay());
+                }
             }
         }
 

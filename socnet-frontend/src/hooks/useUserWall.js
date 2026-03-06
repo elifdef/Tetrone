@@ -70,7 +70,8 @@ export const useUserWall = (profileUser) => {
 
     const createPost = async (content, images) => {
         try {
-            const newPost = await PostService.create({ images, content, target_user_id: profileUser.id
+            const newPost = await PostService.create({
+                images, content, target_user_id: profileUser.id
             });
 
             setPosts([newPost, ...posts]);

@@ -50,6 +50,7 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                     handleDelete={wallData.handleDelete}
                     onRepostSuccess={wallData.handleRepostSuccess}
                     profileUser={profileUser}
+                    handleRepostSuccess={wallData.handleRepostSuccess}
                 />
             </InfiniteScrollList>
         </div>
