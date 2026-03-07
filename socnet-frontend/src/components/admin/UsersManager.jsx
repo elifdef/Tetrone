@@ -6,21 +6,25 @@ import { notifySuccess, notifyError } from "../common/Notify";
 import { AuthContext } from "../../context/AuthContext";
 import { useModal } from '../../context/ModalContext';
 import { usePageTitle } from "../../hooks/usePageTitle";
+import Button from '../UI/Button';
+import Input from '../UI/Input';
 
 const UserSearchForm = ({ search, setSearch, handleSearch }) => {
     const { t } = useTranslation();
 
     return (
-        <form onSubmit={handleSearch} className="admin-search-bar">
-            <label className="socnet-form-label">{t('admin.search_user')}</label>
-            <input
-                type="text"
-                className="socnet-form-input"
-                placeholder={t('admin.search_placeholder')}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-            />
-            <button type="submit" className="socnet-btn">{t('common.find')}</button>
+        <form onSubmit={handleSearch} className="admin-search-bar admin-user-search">
+            <div className="admin-post-search-input">
+                <Input
+                    label={t('admin.search_user')}
+                    type="text"
+                    className="socnet-form-input"
+                    placeholder={t('admin.search_placeholder')}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
+            <Button type="submit">{t('common.find')}</Button>
         </form>
     );
 };
@@ -148,7 +152,7 @@ export const UsersManager = ({ canBan = true }) => {
     };
 
     return (
-        <div>
+        <>
             <UserSearchForm
                 search={search}
                 setSearch={setSearch}
@@ -173,6 +177,6 @@ export const UsersManager = ({ canBan = true }) => {
                     )}
                 </div>
             )}
-        </div>
+        </>
     );
 };

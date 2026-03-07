@@ -7,7 +7,7 @@ const NotificationAvatar = ({ src, isSystem }) => {
     if (isSystem) {
         return (
             <div className="socnet-toast-avatar system-toast-avatar">
-                <ShieldIcon className="system-toast-icon" />
+                <ShieldIcon width={64} height={64} className="system-toast-icon" />
             </div>
         );
     }

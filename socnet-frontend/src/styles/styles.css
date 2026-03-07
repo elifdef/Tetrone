@@ -8,7 +8,6 @@
     --theme-btn-bg: #6383a8;
     --theme-btn-hover: #516b8a;
     --theme-btn-text: #ffffff;
-
     --theme-header-bg: #2b2b2b;
     --theme-input-bg: #222;
     --theme-input-border: #555;
@@ -30,24 +29,6 @@
     --theme-success: #4bb34b;
 }
 
-/* кастомний скролбар */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--theme-bg-page);
-}
-
-::-webkit-scrollbar-thumb {
-    background: #444;
-    border: 2px solid var(--theme-bg-page);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #666;
-}
-
 * {
     font-family: tahoma, verdana, arial, sans-serif;
 }
@@ -58,7 +39,24 @@ body {
     margin: 0;
 }
 
-/* базові елементи */
+/* кастомний скролбар */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--theme-bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--theme-input-border);
+    border: 2px solid var(--theme-bg-page);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-muted);
+}
+
 .socnet-link {
     color: var(--theme-link);
     text-decoration: none;
@@ -69,6 +67,20 @@ body {
     text-decoration: underline;
 }
 
+.socnet-text-success {
+    color: #10b981;
+}
+
+.socnet-text-warning {
+    color: #f59e0b;
+}
+
+.socnet-text-error {
+    color: #ef4444;
+}
+
+
+/* базові елементи */
 .socnet-btn {
     display: inline-block;
     padding: 6px 12px;
@@ -90,6 +102,53 @@ body {
 .socnet-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.socnet-btn-small {
+    background: var(--theme-link);
+    color: white;
+    border: none;
+    padding: 4px 15px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.socnet-btn-small:hover {
+    opacity: 0.9;
+}
+
+.socnet-btn-ghost {
+    background: transparent !important;
+    color: var(--theme-link) !important;
+    border-color: var(--theme-border) !important;
+}
+
+.socnet-btn-ghost:hover {
+    background: var(--theme-bg-page) !important;
+}
+
+.socnet-btn-cancel {
+    background: transparent !important;
+    color: var(--theme-text-muted) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+.socnet-btn-cancel:hover {
+    background: var(--theme-bg-page) !important;
+    color: var(--theme-text-main) !important;
+}
+
+.socnet-btn-block {
+    width: 100%;
+}
+
+.socnet-btn-full-width {
+    width: 100%;
+}
+
+.socnet-btn-auto-width {
+    width: auto;
 }
 
 .socnet-form-input,
@@ -139,6 +198,20 @@ input:-webkit-autofill:active {
     border: 1px solid var(--theme-input-border);
 }
 
+.socnet-date-input-dark {
+    color-scheme: dark;
+}
+
+.socnet-file-input-wrapper {
+    display: inline-block;
+}
+
+.socnet-hidden-input {
+    display: none;
+}
+
+
+/* основний контент сайту */
 .socnet-fullscreen-center {
     display: flex;
     flex-direction: column;
@@ -150,7 +223,199 @@ input:-webkit-autofill:active {
     box-sizing: border-box;
 }
 
-/*таби */
+.socnet-app-layout {
+    display: flex;
+    justify-content: center;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+
+.socnet-main-content {
+    width: 70%;
+    flex-shrink: 1;
+    min-width: 0;
+    padding-top: 15px;
+}
+
+.socnet-card-wrapper,
+.socnet-friends-page,
+.socnet-feed-page,
+.socnet-settings-page {
+    font-size: 11px;
+    color: var(--theme-text-main);
+    background-color: var(--theme-bg-page);
+    padding: 20px;
+    border: 1px solid var(--theme-border);
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    overflow: visible;
+    margin: 0 auto;
+}
+
+[data-theme="light"] .socnet-card-wrapper,
+[data-theme="light"] .socnet-friends-page,
+[data-theme="light"] .socnet-feed-page,
+[data-theme="light"] .socnet-settings-page {
+    background-color: var(--theme-bg-box);
+}
+
+.socnet-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: nowrap;
+    overflow: visible !important;
+}
+
+.socnet-left-col {
+    width: 200px;
+    flex-shrink: 0;
+    position: relative !important;
+    z-index: 50 !important;
+    overflow: visible !important;
+}
+
+.socnet-right-col {
+    flex-grow: 1;
+    min-width: 0;
+    padding-right: 5px;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* лівий сайдбар */
+.socnet-sidebar-left {
+    width: 10%;
+    min-width: 170px;
+    flex-shrink: 0;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.socnet-logo {
+    display: block;
+    font-weight: bold;
+    font-size: 20px;
+    color: var(--theme-text-main);
+    text-decoration: none;
+    margin-bottom: 25px;
+    padding-left: 10px;
+}
+
+.socnet-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.socnet-nav-list hr {
+    width: 100%;
+}
+
+.socnet-nav-item {
+    display: block;
+    padding: 6px 10px;
+    color: var(--theme-text-main);
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.1s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.socnet-nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .socnet-nav-item:hover {
+    background: #E1E5EB;
+}
+
+.socnet-nav-item.active {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: bold;
+}
+
+[data-theme="light"] .socnet-nav-item.active {
+    background: #E1E5EB;
+}
+
+/* правий сайдбар */
+.socnet-sidebar-right {
+    width: 20%;
+    min-width: 200px;
+    flex-shrink: 0;
+    padding: 15px 0;
+    display: block;
+}
+
+/* футер */
+.socnet-footer {
+    padding: 30px 15px;
+    text-align: center;
+    border-top: 1px solid var(--theme-border);
+    margin-top: 40px;
+}
+
+.socnet-footer-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.socnet-footer-row:last-child {
+    margin-bottom: 0;
+}
+
+.socnet-footer-link {
+    font-size: 12px;
+    color: var(--theme-link);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.socnet-footer-link:hover {
+    text-decoration: underline;
+}
+
+.socnet-footer-text {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+}
+
+.socnet-lang-btn {
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.socnet-lang-btn:hover {
+    opacity: 0.8;
+}
+
+.socnet-lang-btn.active {
+    opacity: 1;
+    cursor: default;
+}
+
+/* таби */
 .socnet-tabs {
     display: flex;
     gap: 5px;
@@ -198,49 +463,162 @@ input:-webkit-autofill:active {
     opacity: 0.8;
 }
 
-.socnet-relative-card {
-    position: relative;
-    padding-right: 40px;
+/* меню дій та дропдауни */
+.socnet-btn-dropdown-trigger::after {
+    content: ' ▼';
+    font-size: 8px;
+    vertical-align: middle;
 }
 
-.socnet-absolute-actions {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
-}
-
-.socnet-absolute-actions .socnet-action-icon:hover {
-    color: var(--theme-error, #e64646);
-}
-
-/* порожні списки */
-.socnet-empty-state {
-    text-align: center;
-    color: var(--theme-text-muted);
-    padding: 30px 20px;
-    font-size: 13px;
+.socnet-dropdown-wrapper {
+    position: relative !important;
     width: 100%;
+    z-index: 100 !important;
+}
+
+.socnet-actions {
+    margin-top: 15px !important;
+    position: relative !important;
+    z-index: 100 !important;
+    overflow: visible !important;
+}
+
+.socnet-actions .socnet-btn {
+    width: 100%;
+    padding: 0px 0px 10px;
+    padding-block: 5px;
+    font-weight: normal;
+}
+
+.socnet-btn-dropdown-trigger {
+    width: 100%;
+    color: #45688E;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 6px;
+    display: block;
+}
+
+.socnet-btn-dropdown-trigger:hover {
+    background: #45688E;
+}
+
+.socnet-menu-list {
+    position: absolute !important;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    border-top: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999 !important;
+}
+
+.socnet-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--theme-bg-box);
+    border: none;
+    border-top: 1px solid var(--theme-border);
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--theme-text-main);
     box-sizing: border-box;
 }
 
-.socnet-empty-state.with-card {
-    background: var(--theme-bg-box);
-    margin-top: 15px;
-    white-space: pre-line;
-    margin: 20px auto;
-    max-width: 500px;
+.socnet-menu-item:hover {
+    background: var(--theme-bg-page);
 }
 
-.socnet-empty-state h3 {
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    color: var(--theme-link);
+.socnet-menu-item.danger {
+    color: var(--theme-error);
 }
 
-.socnet-empty-state p {
+/* кастомний випадаючий список для вибору країн */
+.socnet-custom-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-link);
+    border-top: none;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
     margin: 0;
-    line-height: 1.4;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.socnet-custom-dropdown-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-text-main);
+    transition: background 0.1s;
+}
+
+.socnet-custom-select-wrapper {
+    position: relative;
+}
+
+.socnet-custom-select {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.socnet-custom-select.open {
+    border-color: var(--theme-link);
+}
+
+.socnet-select-placeholder {
+    color: var(--theme-text-muted);
+}
+
+.socnet-select-arrow {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--theme-text-muted);
+}
+
+.socnet-custom-dropdown-item.not-selected {
+    color: var(--theme-text-muted);
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.socnet-custom-dropdown-item:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.socnet-custom-dropdown-item.selected {
+    background-color: var(--theme-btn-hover);
+}
+
+.socnet-custom-dropdown-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.socnet-custom-dropdown-list::-webkit-scrollbar-track {
+    background: var(--theme-bg-box);
+}
+
+.socnet-custom-dropdown-list::-webkit-scrollbar-thumb {
+    background: var(--theme-border);
+}
+
+.socnet-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-muted);
 }
 
 /* лендінг */
@@ -405,6 +783,10 @@ input:-webkit-autofill:active {
     color: var(--theme-success);
 }
 
+.socnet-auth-msg-link {
+    font-weight: bold;
+}
+
 .socnet-auth-footer {
     margin-top: 15px;
     text-align: center;
@@ -429,59 +811,168 @@ input:-webkit-autofill:active {
     margin-bottom: 10px;
 }
 
-.socnet-btn-block {
-    width: 100%;
+/* cторінка першого налаштування */
+.socnet-setup-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 15px;
 }
 
-.socnet-auth-msg-link {
-    font-weight: bold;
-}
-
-/* структури сторінок */
-.socnet-card-wrapper,
-.socnet-friends-page,
-.socnet-feed-page,
-.socnet-settings-page {
-    font-size: 11px;
-    color: var(--theme-text-main);
-    background-color: var(--theme-bg-page);
-    padding: 20px;
+.socnet-setup-header {
+    background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
-    width: 100%;
-    max-width: 800px;
-    box-sizing: border-box;
-    overflow: visible;
-    margin: 0 auto;
+    padding: 20px;
+    border-bottom: 1px solid var(--theme-border);
+    margin-bottom: 0;
 }
 
-[data-theme="light"] .socnet-card-wrapper,
-[data-theme="light"] .socnet-friends-page,
-[data-theme="light"] .socnet-feed-page,
-[data-theme="light"] .socnet-settings-page {
-    background-color: var(--theme-bg-box);
+.socnet-setup-title {
+    font-size: 18px;
+    color: var(--theme-link);
+    margin: 0 0 5px 0;
 }
 
-.socnet-container {
+.socnet-setup-subtitle {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+    margin: 0;
+}
+
+.socnet-setup-layout {
     display: flex;
-    gap: 15px;
-    flex-wrap: nowrap;
-    overflow: visible !important;
+    align-items: flex-start;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    border-top: none;
 }
 
-.socnet-left-col {
-    width: 200px;
-    flex-shrink: 0;
-    position: relative !important;
-    z-index: 50 !important;
-    overflow: visible !important;
-}
-
-.socnet-right-col {
-    flex-grow: 1;
+.socnet-setup-form-col {
+    flex: 1;
     min-width: 0;
-    padding-right: 5px;
-    position: relative !important;
-    z-index: 10 !important;
+    padding: 20px;
+    border-right: 1px solid var(--theme-border);
+}
+
+.socnet-setup-preview-col {
+    width: 300px;
+    flex-shrink: 0;
+    padding: 20px;
+    background: var(--theme-bg-page);
+}
+
+.socnet-preview-label {
+    text-align: center;
+    color: var(--theme-text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.socnet-setup-preview-col .socnet-card-wrapper {
+    padding: 10px;
+}
+
+.socnet-setup-preview-col .socnet-container {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.socnet-setup-preview-col .socnet-left-col {
+    width: 100%;
+}
+
+.socnet-setup-preview-col .socnet-right-col {
+    width: 100%;
+    padding-right: 0;
+}
+
+.socnet-setup-preview-col .socnet-status-box {
+    margin-bottom: 5px;
+}
+
+/* підтвердження пошти та 404 */
+.email-verify-block {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 1px solid #ffeeba;
+    font-size: 14px;
+}
+
+.email-verify-block button {
+    margin-left: 15px;
+    padding: 5px 10px;
+    background-color: #856404;
+    color: white;
+    border: none;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.verify-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.not-found-content {
+    text-align: center;
+    background: var(--theme-bg-box);
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.socnet-profile-error-wrapper {
+    padding: 20px;
+}
+
+.not-setup-profile {
+    text-align: center;
+    margin-top: 50px;
+    color: var(--theme-text-muted);
+}
+
+.not-found-icon {
+    margin-bottom: 20px;
+}
+
+.not-found-title {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.not-found-text {
+    font-size: 15px;
+    color: #656565;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    white-space: pre-line;
+}
+
+.not-found-btn {
+    display: inline-block;
+    background-color: var(--theme-link);
+    color: white;
+    text-decoration: none;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.not-found-btn:hover {
+    background-color: #5181b8;
+}
+
+
+/* профіль */
+.socnet-photo-box {
+    position: relative;
+    z-index: 10;
+    overflow: visible !important;
 }
 
 .socnet-avatar {
@@ -493,6 +984,11 @@ input:-webkit-autofill:active {
     object-fit: cover;
 }
 
+.socnet-avatar-blocked {
+    opacity: 0.6;
+    filter: grayscale(100%);
+}
+
 .socnet-name-row {
     border-bottom: 1px solid var(--theme-border);
     padding-bottom: 5px;
@@ -501,451 +997,6 @@ input:-webkit-autofill:active {
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-}
-
-.socnet-staff-top-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #EEE5B8;
-    padding: 8px 15px;
-    margin-bottom: 10px;
-    font-size: 11px;
-}
-
-.staff-banner-left {
-    display: flex;
-    align-items: center;
-}
-
-.staff-banner-left .staff-name {
-    font-weight: bold;
-    color: #2b2b2b;
-}
-
-.socnet-verified-badge {
-    display: flex;
-    align-items: center;
-    margin-left: 6px;
-    cursor: help;
-}
-
-/* адмін панель */
-.admin-dossier-card {
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.admin-dossier-row {
-    display: flex;
-    gap: 20px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-}
-
-.admin-dossier-col {
-    flex: 1;
-    min-width: 250px;
-}
-
-.admin-stats-box {
-    flex: 1;
-    min-width: 250px;
-    background-color: var(--theme-bg-secondary);
-    border: 2px solid var(--theme-bg-box);
-    padding: 15px;
-}
-
-.admin-status-red {
-    color: var(--theme-error);
-    font-weight: bold;
-}
-
-.admin-status-green {
-    color: #4caf50;
-    font-weight: bold;
-}
-
-.admin-status-orange {
-    color: #ff9800;
-    font-weight: bold;
-}
-
-.admin-actions-box {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid var(--theme-border, #ddd);
-}
-
-.admin-reason-input {
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.admin-btn-group {
-    display: flex;
-    gap: 10px;
-}
-
-.admin-btn-ban {
-    background-color: var(--theme-error) !important;
-    color: white !important;
-}
-
-.admin-btn-ban:hover {
-    opacity: 0.8;
-}
-
-.admin-btn-unban {
-    background-color: #4caf50 !important;
-    color: white !important;
-}
-
-.admin-btn-unban:hover {
-    background-color: #388e3c !important;
-}
-
-.admin-tables-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.admin-table-card {
-    flex: 1;
-    padding: 20px;
-    min-width: 300px;
-}
-
-.admin-table {
-    width: 100%;
-    text-align: left;
-    margin-top: 10px;
-    border-collapse: collapse;
-}
-
-.admin-table th,
-.admin-table td {
-    padding: 8px;
-    border-bottom: 1px solid var(--theme-border, #eee);
-}
-
-.admin-badge {
-    padding: 4px 8px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.admin-badge-positive {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-}
-
-.admin-badge-negative {
-    background-color: #ffebee;
-    color: #c62828;
-}
-
-/* забанений профіль */
-.banned-card {
-    background-color: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    padding: 40px;
-}
-
-.banned-avatar {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 20px;
-    object-fit: cover;
-    border: 1px solid var(--theme-border);
-}
-
-.banned-title {
-    color: var(--theme-error);
-    margin-bottom: 10px;
-    font-size: 26px;
-    font-weight: bold;
-}
-
-.banned-message {
-    font-size: 14px;
-    color: var(--theme-text-muted);
-    margin-bottom: 20px;
-    line-height: 1.5;
-}
-
-.banned-reason-box {
-    background-color: var(--theme-bg-page);
-    padding: 15px;
-    margin-bottom: 25px;
-    border: 1px solid var(--theme-error);
-}
-
-.banned-reason-label {
-    color: var(--theme-error);
-    margin: 0 0 5px 0;
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.banned-reason-text {
-    margin: 0;
-    font-weight: bold;
-    color: var(--theme-text-main);
-    font-size: 14px;
-}
-
-.banned-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.banned-btn-appeal {
-    background-color: transparent;
-    color: var(--theme-text-main);
-    border: 1px solid var(--theme-border);
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.banned-btn-appeal:hover {
-    background-color: var(--theme-bg-page);
-}
-
-.admin-appeals-stats-container {
-    margin-bottom: 20px;
-}
-
-.admin-appeal-quote {
-    margin-top: 5px;
-}
-
-.admin-appeal-response-box {
-    margin-top: 15px;
-    margin-bottom: 0;
-}
-
-.admin-stats-container {
-    margin-bottom: 20px;
-}
-
-.admin-report-comment-target {
-    display: flex;
-    flex-direction: column;
-}
-
-.admin-report-quote {
-    margin-top: 10px;
-}
-
-.admin-report-response-box {
-    margin-top: 15px;
-    margin-bottom: 0;
-}
-
-.admin-post-search {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    margin-bottom: 15px;
-}
-
-.admin-post-search-input {
-    flex: 1;
-}
-
-.admin-post-actions-visible {
-    opacity: 1 !important;
-}
-
-.banned-appeal-pending-box {
-    margin-top: 15px;
-    text-align: center;
-    background-color: var(--theme-bg-hover, #f0f2f5);
-}
-
-.banned-appeal-pending-text {
-    color: var(--theme-link, #6383a8);
-}
-
-.banned-actions-vertical {
-    flex-direction: column;
-    gap: 15px;
-}
-
-.banned-appeal-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.banned-appeal-form-title {
-    margin-bottom: 0;
-}
-
-.banned-appeal-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.banned-default-buttons {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-
-.banned-btn-flex {
-    flex: 1;
-}
-
-.system-toast-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--theme-bg-page);
-    border: 1px solid var(--theme-border);
-}
-
-.toast-avatar-img {
-    object-fit: cover;
-}
-
-.socnet-notification-avatar.system-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-}
-
-.socnet-toast-wrapper {
-    font-size: 12px !important;
-    color: #FFFFFF !important;
-    background: #2b2b2b !important;
-    border: 1px solid #C0CAD5 !important;
-    padding: 10px 15px !important;
-}
-
-.socnet-toast-inner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.report-modal-title {
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.report-modal-actions {
-    margin-top: 20px;
-}
-
-.nav-link-support {
-    color: #3498db;
-}
-
-.nav-link-moderator {
-    color: #2ecc71;
-}
-
-.nav-link-admin {
-    color: #ffd700;
-}
-
-.socnet-sidebar-guest-notice {
-    font-size: 11px;
-    color: #777;
-    text-align: center;
-}
-
-.socnet-like-btn.readonly,
-.socnet-comment-btn.readonly,
-.socnet-repost-btn.readonly {
-    cursor: default;
-    opacity: 0.7;
-}
-
-.socnet-like-btn.readonly:hover,
-.socnet-comment-btn.readonly:hover,
-.socnet-repost-btn.readonly:hover {
-    background-color: transparent;
-}
-
-.profile-country-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.socnet-settings-form-setup {
-    border: none;
-    padding: 0;
-}
-
-.admin-table-empty-row {
-    text-align: center;
-}
-
-.socnet-avatar-upload-box {
-    border: 1px solid var(--theme-input-border);
-    background: var(--theme-input-bg);
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.socnet-avatar-file-name {
-    font-size: 11px;
-    color: var(--theme-text-muted);
-}
-
-.socnet-btn-full-width {
-    width: 100%;
-}
-
-.socnet-avatar-blocked {
-    opacity: 0.6;
-    filter: grayscale(100%);
-}
-
-.socnet-text-success {
-    color: #10b981;
-}
-
-.socnet-text-warning {
-    color: #f59e0b;
-}
-
-.socnet-date-input-dark {
-    color-scheme: dark;
-}
-
-.socnet-file-input-wrapper {
-    display: inline-block;
-}
-
-.socnet-hidden-input {
-    display: none;
-}
-
-.socnet-btn-auto-width {
-    width: auto;
-}
-
-.socnet-text-error {
-    color: #ef4444;
 }
 
 .socnet-name {
@@ -1014,106 +1065,100 @@ input:-webkit-autofill:active {
     flex: 1;
 }
 
-.socnet-btn-more {
-    background: #444;
-    color: #ccc;
-    border: none;
-    cursor: pointer;
-    padding: 0 12px;
-    font-weight: bold;
-    font-size: 18px;
-    margin-left: 5px;
+.socnet-staff-top-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #EEE5B8;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+
+.staff-banner-left {
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
-.socnet-btn-more:hover {
-    background: #555;
+.staff-banner-left .staff-name {
+    font-weight: bold;
+    color: #2b2b2b;
+}
+
+.socnet-verified-badge {
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+    cursor: help;
+}
+
+.socnet-badge {
+    display: inline-block;
+    background-color: var(--theme-error);
     color: #fff;
-}
-
-/* Меню дій та дропдауни */
-.socnet-btn-dropdown-trigger::after {
-    content: ' ▼';
-    font-size: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 5px;
+    margin-left: 6px;
+    line-height: 1;
     vertical-align: middle;
 }
 
-.socnet-dropdown-wrapper {
-    position: relative !important;
-    width: 100%;
-    z-index: 100 !important;
-}
-
-.socnet-actions {
-    margin-top: 15px !important;
-    position: relative !important;
-    z-index: 100 !important;
-    overflow: visible !important;
-}
-
-.socnet-actions .socnet-btn {
-    width: 100%;
-    padding: 0px 0px 10px;
-    padding-block: 5px;
-    font-weight: normal;
-}
-
-.socnet-btn-dropdown-trigger {
-    width: 100%;
-    color: #45688E;
-    text-align: center;
-    position: relative;
-    cursor: pointer;
-    font-size: 11px;
-    padding: 6px;
-    display: block;
-}
-
-.socnet-btn-dropdown-trigger:hover {
-    background: #45688E;
-}
-
-.socnet-menu-list {
-    position: absolute !important;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    border-top: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 9999 !important;
-}
-
-.socnet-menu-item {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 8px 10px;
-    background: var(--theme-bg-box);
-    border: none;
+/* міні-профіль в сайдбарі */
+.socnet-sidebar-profile {
+    margin-top: auto;
+    padding-top: 15px;
     border-top: 1px solid var(--theme-border);
-    cursor: pointer;
-    font-size: 11px;
+}
+
+.socnet-mini-profile-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.socnet-mini-avatar {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    object-fit: cover;
+    background: #333;
+}
+
+.socnet-mini-name {
+    font-size: 12px;
     color: var(--theme-text-main);
-    box-sizing: border-box;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
 }
 
-.socnet-menu-item:hover {
-    background: var(--theme-bg-page);
+.socnet-logout-btn {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    transition: all 0.2s;
 }
 
-.socnet-menu-item.danger {
-    color: var(--theme-error);
+.socnet-logout-btn:hover {
+    background: #331111;
+    color: #ff5555;
+    border-color: #ff5555;
 }
 
-.socnet-photo-box {
-    position: relative;
-    z-index: 10;
-    overflow: visible !important;
+.socnet-sidebar-guest-notice {
+    font-size: 11px;
+    color: #777;
+    text-align: center;
 }
+
 
 /* стіна ім. Дурова */
 .socnet-wall {
@@ -1161,20 +1206,6 @@ input:-webkit-autofill:active {
     margin-top: 5px;
 }
 
-.socnet-btn-small {
-    background: var(--theme-link);
-    color: white;
-    border: none;
-    padding: 4px 15px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.socnet-btn-small:hover {
-    opacity: 0.9;
-}
-
 .socnet-attach-btn {
     cursor: pointer;
     color: #8292a4;
@@ -1193,7 +1224,6 @@ input:-webkit-autofill:active {
     color: var(--theme-link);
 }
 
-/* пости */
 .socnet-post-list {
     margin-top: 10px;
 }
@@ -1246,22 +1276,14 @@ input:-webkit-autofill:active {
     margin-top: -30px;
 }
 
-.socnet-post-footer {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 10px 15px;
-    margin-top: 5px;
-}
-
-.socnet-post-image {
-    margin-top: 10px;
-}
-
 .socnet-post-text {
     white-space: pre-wrap;
     word-break: break-word;
     word-wrap: normal;
+}
+
+.socnet-post-image {
+    margin-top: 10px;
 }
 
 .socnet-post-image img {
@@ -1270,65 +1292,18 @@ input:-webkit-autofill:active {
     display: block;
 }
 
-.socnet-post-delete {
-    margin-left: auto;
-    background: transparent;
-    border: none;
-    color: var(--theme-input-border);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.socnet-post-delete:hover {
-    color: #8e9ba8;
-}
-
-.socnet-post-preview {
-    position: relative;
-    display: inline-block;
-    margin: 5px 0 5px 0;
-    border: 1px solid var(--theme-border);
-    padding: 2px;
-    background: var(--theme-bg-box);
-}
-
-.socnet-post-preview img {
-    height: 60px;
-    display: block;
-}
-
-.socnet-post-preview button {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--theme-link);
-    color: white;
-    border: 1px solid white;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    font-size: 10px;
-    line-height: 14px;
-    padding: 0;
-}
-
-.socnet-post-actions-top {
-    margin-left: auto;
+.socnet-post-footer {
     display: flex;
-    gap: 5px;
-    opacity: 0;
-    transition: opacity 0.2s;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 15px;
+    margin-top: 5px;
 }
 
-.socnet-post:hover .socnet-post-actions-top {
-    opacity: 1;
-}
-
-.socnet-post-page-wrapper {
-    max-width: 600px;
-    margin: 0 auto;
-    padding-bottom: 50px;
+.socnet-post-footer-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
 /* галерея у пості */
@@ -1366,6 +1341,11 @@ input:-webkit-autofill:active {
 
 .socnet-post-preview {
     position: relative;
+    display: inline-block;
+    margin: 5px 0 5px 0;
+    border: 1px solid var(--theme-border);
+    padding: 2px;
+    background: var(--theme-bg-box);
 }
 
 .socnet-post-preview img {
@@ -1375,7 +1355,7 @@ input:-webkit-autofill:active {
 }
 
 .socnet-post-preview.existing img {
-    border: 2px solid var(--theme-primary, #4CAF50);
+    border: 2px solid var(--theme-success);
 }
 
 .socnet-post-preview.new img {
@@ -1403,25 +1383,29 @@ input:-webkit-autofill:active {
     background: rgba(255, 0, 0, 0.8);
 }
 
-.socnet-back-btn {
+.socnet-preview-close {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--theme-error);
+    color: white;
     border: none;
-    background: none;
-    color: var(--theme-link);
+    width: 20px;
+    height: 20px;
     cursor: pointer;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0;
-    font-size: 13px;
-    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
 }
 
-.socnet-back-btn:hover {
-    text-decoration: underline;
+.socnet-preview-close:hover {
+    opacity: 0.8;
 }
 
-.socnet-post-comments-wrapper {
-    border-top: 1px solid var(--theme-border);
-}
-
+/* редагування та дії */
 .socnet-action-icon {
     background: transparent;
     border: none;
@@ -1430,18 +1414,44 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     padding: 6px;
-    color: var(--theme-text-muted, #666);
+    color: var(--theme-text-muted);
     transition: all 0.2s ease;
 }
 
 .socnet-action-icon:hover {
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-    color: var(--theme-text, #fff);
+    color: var(--theme-text-main);
 }
 
 .socnet-action-icon[title="Видалити"]:hover {
     background-color: rgba(255, 0, 0, 0.1);
     color: #ff4444;
+}
+
+.socnet-post-actions-top {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.socnet-post:hover .socnet-post-actions-top {
+    opacity: 1;
+}
+
+.socnet-post-delete {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--theme-input-border);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.socnet-post-delete:hover {
+    color: #8e9ba8;
 }
 
 .socnet-edit-mode {
@@ -1458,13 +1468,6 @@ input:-webkit-autofill:active {
     margin-bottom: 5px;
     background: var(--theme-input-bg);
     color: var(--theme-text-main);
-}
-
-.socnet-edit-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-bottom: 10px;
 }
 
 .socnet-edit-actions {
@@ -1490,40 +1493,53 @@ input:-webkit-autofill:active {
     background: #6f7f91;
 }
 
-.socnet-btn-cancel {
-    background: transparent !important;
-    color: var(--theme-text-muted) !important;
-    border: 1px solid var(--theme-border) !important;
+/* репост */
+.socnet-repost-wrapper {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
 }
 
-.socnet-btn-cancel:hover {
-    background: var(--theme-bg-page) !important;
-    color: var(--theme-text-main) !important;
+.socnet-repost-wrapper .socnet-post-actions {
+    display: none;
 }
 
-.socnet-preview-close {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--theme-error);
-    color: white;
-    border: none;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    font-size: 14px;
-    line-height: 1;
+.socnet-repost-branch {
+    margin-top: 12px;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 2px solid var(--theme-border);
 }
 
-.socnet-preview-close:hover {
-    opacity: 0.8;
+.socnet-deleted-stub {
+    padding: 15px;
+    margin-top: 10px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-size: 13px;
+    text-align: center;
+    font-style: italic;
 }
 
-/* коментарі */
+.socnet-repost-limit-msg {
+    padding: 12px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-style: italic;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.socnet-post-page-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+
+/* коментарі і лайки */
 .socnet-like-btn,
 .socnet-comment-btn,
 .socnet-repost-btn {
@@ -1554,6 +1570,20 @@ input:-webkit-autofill:active {
 .socnet-like-btn svg,
 .socnet-comment-btn svg {
     display: block;
+}
+
+.socnet-like-btn.readonly,
+.socnet-comment-btn.readonly,
+.socnet-repost-btn.readonly {
+    cursor: default;
+    opacity: 0.7;
+}
+
+.socnet-like-btn.readonly:hover,
+.socnet-comment-btn.readonly:hover,
+.socnet-repost-btn.readonly:hover {
+    background-color: transparent;
+    text-decoration: none;
 }
 
 .socnet-comments-container {
@@ -1734,9 +1764,9 @@ input:-webkit-autofill:active {
 
 .socnet-friends-search-btn {
     background: var(--theme-btn-bg);
-    border: 1px solid var(--theme-border);
-    color: var(--theme-text-main);
-    font-size: 11px;
+    border: 2px solid var(--theme-border);
+    color: #fff;
+    font-size: 12px;
     font-weight: bold;
     padding: 4px 10px;
     cursor: pointer;
@@ -1832,7 +1862,8 @@ input:-webkit-autofill:active {
     font-size: 10px;
 }
 
-/* новини */
+
+/* лента постів */
 .socnet-feed-list {
     display: flex;
     flex-direction: column;
@@ -1845,11 +1876,313 @@ input:-webkit-autofill:active {
     justify-content: center;
 }
 
+.socnet-empty-state {
+    text-align: center;
+    color: var(--theme-text-muted);
+    padding: 30px 20px;
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.socnet-empty-state.with-card {
+    background: var(--theme-bg-box);
+    margin-top: 15px;
+    white-space: pre-line;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.socnet-empty-state h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: var(--theme-link);
+}
+
+.socnet-empty-state p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.socnet-infinite-scroll-msg {
+    padding: 20px;
+    text-align: center;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+}
+
+.socnet-infinite-error-box {
+    padding: 10px;
+    text-align: center;
+}
+
+.socnet-error-text {
+    color: var(--theme-error);
+    font-size: 12px;
+}
+
+.socnet-btn-retry {
+    margin-top: 10px;
+}
+
+.socnet-btn-retry-small {
+    margin-top: 5px;
+}
+
+/* сповіщення (сторінка) */
+.socnet-notification-list {
+    margin: 0 -20px -20px -20px;
+}
+
+.socnet-notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--theme-border);
+    gap: 15px;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.socnet-notification-item:last-child {
+    border-bottom: none;
+}
+
+.socnet-notification-item.unread {
+    background-color: rgba(91, 155, 213, 0.1);
+    cursor: pointer;
+}
+
+[data-theme="light"] .socnet-notification-item.unread {
+    background-color: #EDF0F5;
+}
+
+.socnet-notification-item.unread:hover {
+    background-color: rgba(91, 155, 213, 0.15);
+}
+
+.socnet-notification-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-notification-avatar.system-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--theme-link);
+    background-color: var(--theme-bg-page);
+}
+
+.system-toast-icon {
+    color: var(--theme-link);
+}
+
+.socnet-notification-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.socnet-notification-date {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    margin-top: 4px;
+}
+
+.socnet-notification-snippet {
+    color: var(--theme-text-muted);
+    font-style: italic;
+    margin-top: 5px;
+    border-left: 2px solid var(--theme-border);
+    padding-left: 8px;
+}
+
+.socnet-notification-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--theme-link);
+    margin-top: 15px;
+}
+
+/* сповіщення */
+.socnet-toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.socnet-toast {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 250px;
+    animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.socnet-toast-avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.system-toast-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--theme-bg-page);
+    border: 1px solid var(--theme-border);
+}
+
+.toast-avatar-img {
+    object-fit: cover;
+}
+
+.socnet-toast-content {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+.socnet-toast-name {
+    font-weight: bold;
+    color: var(--theme-link);
+}
+
+.socnet-toast-text {
+    color: var(--theme-text-main);
+}
+
+.socnet-toast-snippet {
+    color: #777;
+    font-style: italic;
+    margin-top: 3px;
+}
+
+.socnet-toast-wrapper {
+    font-size: 12px !important;
+    color: #FFFFFF !important;
+    background: #2b2b2b !important;
+    border: 1px solid #C0CAD5 !important;
+    padding: 10px 15px !important;
+}
+
+.socnet-toast-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* активність */
+.socnet-activity-card {
+    padding: 16px;
+    border-bottom: 1px solid var(--theme-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.socnet-activity-card:last-child {
+    border-bottom: none;
+}
+
+.socnet-activity-op {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--theme-text-muted);
+}
+
+.socnet-activity-op-avatar {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+}
+
+.socnet-activity-op-name {
+    font-weight: bold;
+    color: var(--theme-text-main);
+}
+
+.socnet-activity-reply {
+    display: flex;
+    gap: 10px;
+    margin-left: 36px;
+    position: relative;
+}
+
+.socnet-activity-reply::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: -12px;
+    bottom: 12px;
+    width: 2px;
+    background-color: var(--theme-border);
+}
+
+.socnet-activity-reply-avatar {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+}
+
+.socnet-activity-bubble-wrapper {
+    flex: 1;
+}
+
+.socnet-activity-bubble {
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--theme-text-main);
+    margin-bottom: 8px;
+}
+
+.socnet-activity-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.socnet-activity-link {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.socnet-load-more-btn {
+    margin-top: 15px;
+}
+
+.socnet-activity-date {
+    margin: 0 !important;
+}
+
+
 /* налаштування */
 .socnet-settings-form {
     padding: 10px;
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
+}
+
+.socnet-settings-form-setup {
+    border: none;
+    padding: 0;
 }
 
 .socnet-form-group {
@@ -1974,84 +2307,122 @@ input:-webkit-autofill:active {
     color: white;
 }
 
-/* 404 */
-.not-found-content {
-    text-align: center;
-    background: var(--theme-bg-box);
-    padding: 40px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
+.socnet-avatar-upload-box {
+    border: 1px solid var(--theme-input-border);
+    background: var(--theme-input-bg);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.socnet-profile-error-wrapper {
-    padding: 20px;
-}
-
-.not-setup-profile {
-    text-align: center;
-    margin-top: 50px;
+.socnet-avatar-file-name {
+    font-size: 11px;
     color: var(--theme-text-muted);
 }
 
-.not-found-icon {
-    margin-bottom: 20px;
+/* перевірка безпеки пароля */
+.socnet-password-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
 }
 
-.not-found-title {
-    font-size: 22px;
-    font-weight: 500;
+.socnet-password-wrapper .socnet-form-input {
+    padding-right: 35px;
+}
+
+.socnet-password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 40%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.socnet-password-toggle:hover {
+    color: var(--theme-link);
+}
+
+.socnet-password-strength-wrapper {
+    margin-top: -5px;
     margin-bottom: 10px;
 }
 
-.not-found-text {
-    font-size: 15px;
-    color: #656565;
+.socnet-password-strength-track {
+    height: 4px;
+    background: var(--theme-border);
+    overflow: hidden;
+}
+
+.socnet-password-strength-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.socnet-password-strength-text {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+/* правила сайту */
+.socnet-rules-page {
+    margin: 20px auto;
+}
+
+.socnet-rules-header {
+    font-size: 18px;
+    color: var(--theme-link);
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.socnet-rule-block {
+    margin-bottom: 20px;
+}
+
+.socnet-rule-title {
+    font-size: 14px;
+    color: var(--theme-text-main);
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.socnet-rule-text {
+    font-size: 12px;
+    color: var(--theme-text-muted);
     line-height: 1.5;
-    margin-bottom: 25px;
+    margin: 0;
     white-space: pre-line;
 }
 
-.not-found-btn {
-    display: inline-block;
-    background-color: var(--theme-link);
-    color: white;
-    text-decoration: none;
-    padding: 8px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s;
+.socnet-rule-sublist {
+    margin-top: 10px;
+    margin-bottom: 0;
+    padding-left: 25px;
 }
 
-.not-found-btn:hover {
-    background-color: #5181b8;
+.socnet-rule-sublist-item {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
-.email-verify-block {
-    background-color: #fff3cd;
-    color: #856404;
-    padding: 10px 20px;
-    text-align: center;
-    border-bottom: 1px solid #ffeeba;
-    font-size: 14px;
-}
 
-.email-verify-block button {
-    margin-left: 15px;
-    padding: 5px 10px;
-    background-color: #856404;
-    color: white;
-    border: none;
-    cursor: pointer;
-    opacity: 1;
-}
-
-.verify-container {
-    text-align: center;
-    margin-top: 50px;
-}
-
-/* модалка */
+/* модальні вікна */
 .socnet-modal-overlay {
     position: fixed;
     top: 0;
@@ -2067,11 +2438,21 @@ input:-webkit-autofill:active {
 }
 
 .socnet-modal-content {
-    width: 100%;
-    max-width: 50%;
+    width: 90%;
+    max-width: 600px;
     margin-bottom: 50px;
     position: relative;
     background-color: var(--theme-bg-box);
+}
+
+.socnet-modal-dialog {
+    max-width: 400px;
+    width: 100%;
+    min-height: auto;
+    padding: 20px;
+    margin: auto;
+    background-color: var(--theme-bg-box);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .socnet-modal-image-wrapper {
@@ -2140,383 +2521,50 @@ input:-webkit-autofill:active {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* кастомний випадаючий список для вибору країн */
-.socnet-custom-dropdown-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 250px;
-    overflow-y: auto;
-    background: var(--theme-input-bg);
-    border: 1px solid var(--theme-link);
-    border-top: none;
-    z-index: 1000;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.socnet-custom-dropdown-item {
-    padding: 8px 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--theme-text-main);
-    transition: background 0.1s;
-}
-
-.socnet-custom-select-wrapper {
-    position: relative;
-}
-
-.socnet-custom-select {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    gap: 10px;
-}
-
-.socnet-custom-select.open {
-    border-color: var(--theme-link);
-}
-
-.socnet-select-placeholder {
-    color: var(--theme-text-muted);
-}
-
-.socnet-select-arrow {
-    margin-left: auto;
-    font-size: 10px;
-    color: var(--theme-text-muted);
-}
-
-.socnet-custom-dropdown-item.not-selected {
-    color: var(--theme-text-muted);
-    border-bottom: 1px solid var(--theme-border);
-}
-
-.socnet-custom-dropdown-item:hover {
-    background-color: var(--theme-bg-page);
-}
-
-.socnet-custom-dropdown-item.selected {
-    background-color: var(--theme-btn-hover);
-}
-
-.socnet-custom-dropdown-list::-webkit-scrollbar {
-    width: 8px;
-}
-
-.socnet-custom-dropdown-list::-webkit-scrollbar-track {
-    background: var(--theme-bg-box);
-}
-
-.socnet-custom-dropdown-list::-webkit-scrollbar-thumb {
-    background: var(--theme-border);
-}
-
-.socnet-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-text-muted);
-}
-
-/* cторінка першого налаштування */
-.socnet-setup-wrapper {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 15px;
-}
-
-.socnet-setup-header {
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    padding: 20px;
-    border-bottom: 1px solid var(--theme-border);
-    margin-bottom: 0;
-}
-
-.socnet-setup-title {
-    font-size: 18px;
-    color: var(--theme-link);
-    margin: 0 0 5px 0;
-}
-
-.socnet-setup-subtitle {
-    font-size: 12px;
-    color: var(--theme-text-muted);
-    margin: 0;
-}
-
-.socnet-setup-layout {
-    display: flex;
-    align-items: flex-start;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    border-top: none;
-}
-
-.socnet-setup-form-col {
-    flex: 1;
-    min-width: 0;
-    padding: 20px;
-    border-right: 1px solid var(--theme-border);
-}
-
-.socnet-setup-preview-col {
-    width: 300px;
-    flex-shrink: 0;
-    padding: 20px;
-    background: var(--theme-bg-page);
-}
-
-.socnet-preview-label {
-    text-align: center;
-    color: var(--theme-text-muted);
-    font-size: 10px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-}
-
-.socnet-setup-preview-col .socnet-card-wrapper {
-    padding: 10px;
-}
-
-.socnet-setup-preview-col .socnet-container {
-    flex-direction: column;
-    gap: 10px;
-}
-
-.socnet-setup-preview-col .socnet-left-col {
-    width: 100%;
-}
-
-.socnet-setup-preview-col .socnet-right-col {
-    width: 100%;
-    padding-right: 0;
-}
-
-.socnet-setup-preview-col .socnet-status-box {
-    margin-bottom: 5px;
-}
-
-/* сайдбари */
-.socnet-app-layout {
-    display: flex;
-    justify-content: center;
-    max-width: 1280px;
-    width: 100%;
-    margin: 0 auto;
-    gap: 20px;
-    padding: 0 15px;
-    box-sizing: border-box;
-    min-height: 100vh;
-}
-
-/* лівий */
-.socnet-sidebar-left {
-    width: 10%;
-    min-width: 170px;
-    flex-shrink: 0;
-    padding: 15px 0;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-.socnet-badge {
-    display: inline-block;
-    background-color: var(--theme-error);
-    color: #fff;
-    font-size: 10px;
+.socnet-modal-message {
     font-weight: bold;
-    padding: 2px 5px;
-    margin-left: 6px;
-    line-height: 1;
-    vertical-align: middle;
-}
-
-.socnet-logo {
-    display: block;
-    font-weight: bold;
-    font-size: 20px;
+    margin-bottom: 15px;
     color: var(--theme-text-main);
-    text-decoration: none;
-    margin-bottom: 25px;
-    padding-left: 10px;
+    font-size: 14px;
 }
 
-.socnet-nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.socnet-nav-list hr {
-    width: 100%;
-}
-
-.socnet-nav-item {
-    display: block;
-    padding: 6px 10px;
-    color: var(--theme-text-main);
-    text-decoration: none;
-    font-size: 13px;
-    transition: background 0.1s;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.socnet-nav-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="light"] .socnet-nav-item:hover {
-    background: #E1E5EB;
-}
-
-.socnet-nav-item.active {
-    background: rgba(255, 255, 255, 0.1);
-    font-weight: bold;
-}
-
-[data-theme="light"] .socnet-nav-item.active {
-    background: #E1E5EB;
-}
-
-/* Міні-профіль */
-.socnet-sidebar-profile {
-    margin-top: auto;
-    padding-top: 15px;
-    border-top: 1px solid var(--theme-border);
-}
-
-.socnet-mini-profile-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
-.socnet-mini-avatar {
-    width: 28px;
-    height: 28px;
-    margin-right: 8px;
-    object-fit: cover;
-    background: #333;
-}
-
-.socnet-mini-name {
-    font-size: 12px;
-    color: var(--theme-text-main);
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100px;
-}
-
-.socnet-logout-btn {
-    background: transparent;
-    border: none;
-    color: #aaa;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 0;
-    text-align: left;
-    transition: all 0.2s;
-}
-
-.socnet-logout-btn:hover {
-    background: #331111;
-    color: #ff5555;
-    border-color: #ff5555;
-}
-
-/* основний контент */
-.socnet-main-content {
-    width: 70%;
-    flex-shrink: 1;
-    min-width: 0;
-    padding-top: 15px;
-}
-
-/* правий */
-.socnet-sidebar-right {
-    width: 20%;
-    min-width: 200px;
-    flex-shrink: 0;
-    padding: 15px 0;
-    display: block;
-}
-
-/* Футер */
-.socnet-footer {
-    padding: 30px 15px;
-    text-align: center;
-    border-top: 1px solid var(--theme-border);
-    margin-top: 40px;
-}
-
-.socnet-footer-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+.socnet-modal-input {
     margin-bottom: 15px;
 }
 
-.socnet-footer-row:last-child {
-    margin-bottom: 0;
-}
-
-.socnet-footer-link {
-    font-size: 12px;
-    color: var(--theme-link);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.socnet-footer-link:hover {
-    text-decoration: underline;
-}
-
-.socnet-footer-text {
-    font-size: 11px;
-    color: var(--theme-text-muted);
-}
-
-.socnet-lang-btn {
-    cursor: pointer;
-    font-size: 16px;
-    opacity: 0.4;
-    transition: opacity 0.2s;
+.socnet-modal-actions {
     display: flex;
-    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
-.socnet-lang-btn:hover {
-    opacity: 0.8;
+.socnet-modal-btn {
+    min-width: 80px;
 }
 
-.socnet-lang-btn.active {
-    opacity: 1;
-    cursor: default;
+.report-modal-title {
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
-.mobile-menu-btn,
-.mobile-menu-overlay {
-    display: none;
+.report-modal-actions {
+    margin-top: 20px;
 }
+
 
 /* адмін панель */
+.nav-link-support {
+    color: #3498db;
+}
+
+.nav-link-moderator {
+    color: #2ecc71;
+}
+
+.nav-link-admin {
+    color: #ffd700;
+}
+
 .admin-search-bar {
     display: flex;
     gap: 10px;
@@ -2525,6 +2573,18 @@ input:-webkit-autofill:active {
     background: var(--theme-bg-box);
     padding: 15px;
     border: 1px solid var(--theme-border);
+}
+
+.admin-post-search,
+.admin-user-search {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 15px;
+}
+
+.admin-post-search-input {
+    flex: 1;
 }
 
 .admin-user-card {
@@ -2580,11 +2640,37 @@ input:-webkit-autofill:active {
     color: #d39e00;
 }
 
+.admin-status-red {
+    color: var(--theme-error);
+    font-weight: bold;
+}
+
+.admin-status-green {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.admin-status-orange {
+    color: #ff9800;
+    font-weight: bold;
+}
+
 .admin-user-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
     min-width: 150px;
+}
+
+.admin-actions-box {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--theme-border, #ddd);
+}
+
+.admin-reason-input {
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 .admin-btn {
@@ -2603,11 +2689,7 @@ input:-webkit-autofill:active {
     color: #d39e00;
 }
 
-.admin-btn-warning:hover {
-    background: #d39e00;
-    color: #fff;
-}
-
+.admin-btn-warning:hover,
 .admin-btn-warning.active {
     background: #d39e00;
     color: #fff;
@@ -2619,450 +2701,106 @@ input:-webkit-autofill:active {
     color: var(--theme-error);
 }
 
-.admin-btn-danger:hover {
-    background: var(--theme-error);
-    color: #fff;
-}
-
+.admin-btn-danger:hover,
 .admin-btn-danger.active {
     background: var(--theme-error);
     color: #fff;
 }
 
-.admin-feed-wrapper .socnet-post-content {
-    margin-top: 10px;
-    padding-left: 0;
+.admin-btn-group {
+    display: flex;
+    gap: 10px;
 }
 
-.admin-feed-wrapper .socnet-post-actions-top {
-    position: static;
-    margin-top: -10px;
+.admin-btn-ban {
+    background-color: var(--theme-error) !important;
+    color: white !important;
 }
 
-.admin-feed-wrapper .socnet-post-header {
+.admin-btn-ban:hover {
+    opacity: 0.8;
+}
+
+.admin-btn-unban {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.admin-btn-unban:hover {
+    background-color: #388e3c !important;
+}
+
+.admin-dossier-card {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-dossier-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
     flex-wrap: wrap;
 }
 
-/* модалкиз інпутом */
-.socnet-modal-dialog {
-    max-width: 400px;
-    width: 100%;
-    min-height: auto;
-    padding: 20px;
-    margin: auto;
-    background-color: var(--theme-bg-box);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.socnet-modal-message {
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: var(--theme-text-main);
-    font-size: 14px;
-}
-
-.socnet-modal-input {
-    margin-bottom: 15px;
-}
-
-.socnet-modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.socnet-modal-btn {
-    min-width: 80px;
-}
-
-.socnet-btn-ghost {
-    background: transparent !important;
-    color: var(--theme-link) !important;
-    border-color: var(--theme-border) !important;
-}
-
-.socnet-btn-ghost:hover {
-    background: var(--theme-bg-page) !important;
-}
-
-/* вічний скрол */
-.socnet-infinite-scroll-msg {
-    padding: 20px;
-    text-align: center;
-    color: var(--theme-text-muted);
-    font-size: 11px;
-}
-
-.socnet-infinite-error-box {
-    padding: 10px;
-    text-align: center;
-}
-
-.socnet-error-text {
-    color: var(--theme-error);
-    font-size: 12px;
-}
-
-.socnet-btn-retry {
-    margin-top: 10px;
-}
-
-.socnet-btn-retry-small {
-    margin-top: 5px;
-}
-
-/* перевірка безпеки пароля */
-.socnet-password-strength-wrapper {
-    margin-top: -5px;
-    margin-bottom: 10px;
-}
-
-.socnet-password-strength-track {
-    height: 4px;
-    background: var(--theme-border);
-    overflow: hidden;
-}
-
-.socnet-password-strength-bar {
-    height: 100%;
-    transition: width 0.3s ease, background-color 0.3s ease;
-}
-
-.socnet-password-strength-text {
-    font-size: 10px;
-    color: var(--theme-text-muted);
-    margin-top: 4px;
-    line-height: 1.3;
-}
-
-/* сторінка з правилами сайту */
-.socnet-rules-page {
-    margin: 20px auto;
-}
-
-.socnet-rules-header {
-    font-size: 18px;
-    color: var(--theme-link);
-    border-bottom: 1px solid var(--theme-border);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    margin-top: 0;
-}
-
-.socnet-rule-block {
-    margin-bottom: 20px;
-}
-
-.socnet-rule-title {
-    font-size: 14px;
-    color: var(--theme-text-main);
-    margin-bottom: 5px;
-    margin-top: 0;
-}
-
-.socnet-rule-text {
-    font-size: 12px;
-    color: var(--theme-text-muted);
-    line-height: 1.5;
-    margin: 0;
-    white-space: pre-line;
-}
-
-.socnet-rule-sublist {
-    margin-top: 10px;
-    margin-bottom: 0;
-    padding-left: 25px;
-}
-
-.socnet-rule-sublist-item {
-    font-size: 12px;
-    color: var(--theme-text-muted);
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-/* перегляд пароля */
-.socnet-password-wrapper {
-    position: relative;
-    width: 100%;
-    display: block;
-}
-
-.socnet-password-wrapper .socnet-form-input {
-    padding-right: 35px;
-}
-
-.socnet-password-toggle {
-    position: absolute;
-    right: 8px;
-    top: 40%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: var(--theme-text-muted);
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-}
-
-.socnet-password-toggle:hover {
-    color: var(--theme-link);
-}
-
-/* сторінка сповіщень */
-.socnet-notification-list {
-    margin: 0 -20px -20px -20px;
-}
-
-.socnet-notification-item {
-    display: flex;
-    align-items: flex-start;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--theme-border);
-    gap: 15px;
-    transition: background 0.2s;
-    position: relative;
-}
-
-.socnet-notification-item:last-child {
-    border-bottom: none;
-}
-
-.socnet-notification-item.unread {
-    background-color: rgba(91, 155, 213, 0.1);
-    cursor: pointer;
-}
-
-[data-theme="light"] .socnet-notification-item.unread {
-    background-color: #EDF0F5;
-}
-
-.socnet-notification-item.unread:hover {
-    background-color: rgba(91, 155, 213, 0.15);
-}
-
-.socnet-notification-avatar {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border: 1px solid var(--theme-border);
-}
-
-.socnet-notification-content {
+.admin-dossier-col {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    font-size: 11px;
-    line-height: 1.4;
+    min-width: 250px;
 }
 
-.socnet-notification-date {
-    font-size: 10px;
-    color: var(--theme-text-muted);
-    margin-top: 4px;
-}
-
-.socnet-notification-snippet {
-    color: var(--theme-text-muted);
-    font-style: italic;
-    margin-top: 5px;
-    border-left: 2px solid var(--theme-border);
-    padding-left: 8px;
-}
-
-.socnet-notification-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--theme-link);
-    margin-top: 15px;
-}
-
-/* активність */
-.socnet-activity-card {
-    padding: 16px;
-    border-bottom: 1px solid var(--theme-border);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.socnet-activity-card:last-child {
-    border-bottom: none;
-}
-
-.socnet-activity-op {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--theme-text-muted);
-}
-
-.socnet-activity-op-avatar {
-    width: 24px;
-    height: 24px;
-    object-fit: cover;
-}
-
-.socnet-activity-op-name {
-    font-weight: bold;
-    color: var(--theme-text-main);
-}
-
-.socnet-activity-reply {
-    display: flex;
-    gap: 10px;
-    margin-left: 36px;
-    position: relative;
-}
-
-.socnet-activity-reply::before {
-    content: '';
-    position: absolute;
-    left: -24px;
-    top: -12px;
-    bottom: 12px;
-    width: 2px;
-    background-color: var(--theme-border);
-}
-
-.socnet-activity-reply-avatar {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
-}
-
-.socnet-activity-bubble-wrapper {
+.admin-stats-box {
     flex: 1;
-}
-
-.socnet-activity-bubble {
-    background-color: var(--theme-bg-hover);
-    padding: 10px 14px;
-    font-size: 14px;
-    color: var(--theme-text-main);
-    margin-bottom: 8px;
-}
-
-.socnet-activity-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.socnet-activity-link {
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.socnet-load-more-btn {
-    margin-top: 15px;
-}
-
-.socnet-activity-date {
-    margin: 0 !important;
-}
-
-/* сповіщення */
-.socnet-toast-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.socnet-toast {
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    padding: 10px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    width: 250px;
-    animation: slideInLeft 0.3s ease-out forwards;
-}
-
-.socnet-toast-avatar {
-    width: 32px;
-    height: 32px;
-}
-
-.socnet-toast-content {
-    display: flex;
-    flex-direction: column;
-    font-size: 11px;
-    line-height: 1.3;
-}
-
-.socnet-toast-name {
-    font-weight: bold;
-    color: var(--theme-link);
-}
-
-.socnet-toast-text {
-    color: var(--theme-text-main);
-}
-
-.socnet-toast-snippet {
-    color: #777;
-    font-style: italic;
-    margin-top: 3px;
-}
-
-/* репост */
-.socnet-repost-wrapper {
-    margin-top: 12px;
-    padding: 12px;
-    border: 1px solid var(--theme-border);
-    background-color: var(--theme-bg-hover);
-}
-
-.socnet-repost-wrapper .socnet-post-actions {
-    display: none;
-}
-
-.socnet-repost-branch {
-    margin-top: 12px;
-    margin-left: 16px;
-    padding-left: 16px;
-    border-left: 2px solid var(--theme-border);
-}
-
-.socnet-deleted-stub {
+    min-width: 250px;
+    background-color: var(--theme-bg-secondary);
+    border: 2px solid var(--theme-bg-box);
     padding: 15px;
-    margin-top: 10px;
-    background-color: var(--theme-bg-page);
-    color: var(--theme-text-muted);
-    font-size: 13px;
-    text-align: center;
-    font-style: italic;
 }
 
-.socnet-post-footer-actions {
+.admin-tables-row {
     display: flex;
-    gap: 15px;
-    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.socnet-repost-limit-msg {
-    padding: 12px;
-    background-color: var(--theme-bg-page);
-    color: var(--theme-text-muted);
-    font-style: italic;
-    font-size: 11px;
-    text-align: center;
+.admin-table-card {
+    flex: 1;
+    padding: 20px;
+    min-width: 300px;
+}
+
+.admin-table {
+    width: 100%;
+    text-align: left;
     margin-top: 10px;
+    border-collapse: collapse;
 }
 
-/* аналітика сайту */
+.admin-table th,
+.admin-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--theme-border, #eee);
+}
+
+.admin-table-empty-row {
+    text-align: center;
+}
+
+.admin-badge {
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.admin-badge-positive {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.admin-badge-negative {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* дашборд */
 .admin-stats-row {
     margin-bottom: 20px;
 }
@@ -3143,7 +2881,6 @@ input:-webkit-autofill:active {
     flex-direction: column;
 }
 
-/* Метрики сервера */
 .admin-server-metric {
     margin-bottom: 15px;
 }
@@ -3253,6 +2990,164 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 5px var(--theme-success);
 }
 
+/* модерація постів/скарг */
+.admin-feed-wrapper .socnet-post-content {
+    margin-top: 10px;
+    padding-left: 0;
+}
+
+.admin-feed-wrapper .socnet-post-actions-top {
+    position: static;
+    margin-top: -10px;
+}
+
+.admin-feed-wrapper .socnet-post-header {
+    flex-wrap: wrap;
+}
+
+.admin-post-actions-visible {
+    opacity: 1 !important;
+}
+
+.admin-appeals-stats-container,
+.admin-stats-container {
+    margin-bottom: 20px;
+}
+
+.admin-appeal-quote,
+.admin-report-quote {
+    margin-top: 5px;
+}
+
+.admin-appeal-response-box,
+.admin-report-response-box {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.admin-report-comment-target {
+    display: flex;
+    flex-direction: column;
+}
+
+/* сторінка заблокованого юзера */
+.banned-card {
+    background-color: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 40px;
+}
+
+.banned-avatar {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.banned-title {
+    color: var(--theme-error);
+    margin-bottom: 10px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.banned-message {
+    font-size: 14px;
+    color: var(--theme-text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.banned-reason-box {
+    background-color: var(--theme-bg-page);
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid var(--theme-error);
+}
+
+.banned-reason-label {
+    color: var(--theme-error);
+    margin: 0 0 5px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.banned-reason-text {
+    margin: 0;
+    font-weight: bold;
+    color: var(--theme-text-main);
+    font-size: 14px;
+}
+
+.banned-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.banned-actions-vertical {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.banned-btn-appeal {
+    background-color: transparent;
+    color: var(--theme-text-main);
+    border: 1px solid var(--theme-border);
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.banned-btn-appeal:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.banned-appeal-pending-box {
+    margin-top: 15px;
+    text-align: center;
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.banned-appeal-pending-text {
+    color: var(--theme-link);
+}
+
+.banned-appeal-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.banned-appeal-form-title {
+    margin-bottom: 0;
+}
+
+.banned-appeal-buttons,
+.banned-default-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.banned-btn-flex {
+    flex: 1;
+}
+
+.mobile-menu-btn,
+.mobile-menu-overlay {
+    display: none;
+}
+
 /* для телефонів */
 @media (max-width: 768px) {
     .socnet-app-layout {
@@ -3260,6 +3155,7 @@ input:-webkit-autofill:active {
         padding: 0;
     }
 
+    /* сайдбари */
     .socnet-sidebar-left {
         width: 100%;
         min-width: auto;
@@ -3271,12 +3167,16 @@ input:-webkit-autofill:active {
         background: var(--theme-bg-box);
         border-bottom: 1px solid var(--theme-border);
         padding: 10px;
-        transform: translateY(-100%);
-        transition: transform 0.3s;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
     }
 
     .socnet-sidebar-left.mobile-open {
-        transform: translateY(0);
+        transform: translateX(0);
+    }
+
+    .socnet-sidebar-right {
+        display: none !important;
     }
 
     .socnet-main-content {
@@ -3284,10 +3184,7 @@ input:-webkit-autofill:active {
         padding: 60px 10px 10px 10px;
     }
 
-    .socnet-sidebar-right {
-        display: none !important;
-    }
-
+    /* контейнери */
     .socnet-container {
         flex-direction: column;
         gap: 10px;
@@ -3300,6 +3197,7 @@ input:-webkit-autofill:active {
         max-width: none;
     }
 
+    /* профіль */
     .socnet-avatar {
         width: 100%;
         max-width: 300px;
@@ -3312,6 +3210,7 @@ input:-webkit-autofill:active {
         gap: 10px;
     }
 
+    /* налаштування/форми */
     .socnet-form-row {
         flex-direction: column;
         gap: 15px;
@@ -3339,6 +3238,7 @@ input:-webkit-autofill:active {
         width: 150px;
     }
 
+    /* стрічка та пости */
     .socnet-feed-page {
         max-width: 100% !important;
         margin: 0 !important;
@@ -3379,6 +3279,7 @@ input:-webkit-autofill:active {
         opacity: 1;
     }
 
+    /* друзі */
     .friend-card {
         flex-direction: column;
         align-items: center;
@@ -3400,6 +3301,7 @@ input:-webkit-autofill:active {
         text-align: center;
     }
 
+    /* коментарі */
     .socnet-comment-item {
         flex-direction: column;
     }
@@ -3408,6 +3310,7 @@ input:-webkit-autofill:active {
         margin-bottom: 5px;
     }
 
+    /* модалки */
     .socnet-modal-overlay {
         align-items: flex-start;
     }
@@ -3447,6 +3350,7 @@ input:-webkit-autofill:active {
         padding: 10px 15px;
     }
 
+    /* лендінг */
     .socnet-feature-block,
     .socnet-feature-block.reversed {
         flex-direction: column;
@@ -3458,6 +3362,7 @@ input:-webkit-autofill:active {
         height: 100px;
     }
 
+    /* мобільне меню */
     .mobile-menu-btn {
         display: block;
         position: fixed;
@@ -3483,17 +3388,32 @@ input:-webkit-autofill:active {
         background-color: rgba(0, 0, 0, 0.6);
         z-index: 1400;
     }
-}
 
-@keyframes slideInLeft {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
+    .socnet-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
     }
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    .socnet-tabs::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .admin-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table {
+        min-width: 500px;
+    }
+
+    .socnet-post-text,
+    .socnet-comment-text {
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 }
 
@@ -3529,5 +3449,10 @@ input:-webkit-autofill:active {
 
     .socnet-setup-preview-col .socnet-left-col {
         width: 100%;
+    }
+
+    .admin-server-metric-header {
+        flex-direction: column;
+        gap: 5px;
     }
 }

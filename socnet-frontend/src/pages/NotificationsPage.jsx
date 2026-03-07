@@ -12,7 +12,7 @@ const ListAvatar = ({ src, isSystem }) => {
     if (isSystem) {
         return (
             <div className="socnet-notification-avatar system-avatar">
-                <ShieldIcon/> 
+                <ShieldIcon width={64} height={64} /> 
             </div>
         );
     }

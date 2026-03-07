@@ -117,14 +117,14 @@ export const PostsManager = ({ currentUser }) => {
                 }
             >
                 {posts.map(post => {
-                    // Перевіряємо, чи написаний пост на чужій стіні
+                    // перевіряємо чи написаний пост на чужій стіні
                     const showTargetUser = post.target_user && post.target_user.username !== post.user?.username;
 
                     return (
                         <div key={post.id} className="socnet-post">
                             <div className="socnet-post-header">
                                 <Link to={`/${post.user?.username}`} target="_blank">
-                                    <img src={post.user?.avatar} alt="author" className="socnet-post-avatar" />
+                                    <img src={post.user?.avatar} alt={post.user?.username} className="socnet-post-avatar" />
                                 </Link>
                                 <div className="socnet-post-meta">
                                     <div className="socnet-post-authors-row">
