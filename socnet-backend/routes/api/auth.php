@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\AppealController;
 use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\VerificationController;
 use Illuminate\Http\Request;
@@ -17,6 +18,12 @@ Route::middleware(['auth:sanctum'])->group(function ()
 {
     // Вихід (12 запитів/мін)
     Route::post('sign-out', [AuthController::class, 'logout'])->middleware('throttle:12,1');
+
+    Route::middleware('auth:sanctum')->group(function ()
+    {
+        Route::get('/appeals/status', [AppealController::class, 'checkStatus']);
+        Route::post('/appeals', [AppealController::class, 'store']);
+    });
 
     Route::post('/user/ping', fn() => response()->noContent());
 

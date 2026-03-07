@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import { usePageTitle } from "../hooks/usePageTitle";
@@ -6,6 +6,7 @@ import PostItem from "../components/post/PostItem";
 import { notifyError } from "../components/common/Notify";
 import { useTranslation } from 'react-i18next';
 import InfiniteScrollList from "../components/common/InfiniteScrollList";
+import { AuthContext } from "../context/AuthContext";
 
 export default function HomePage() {
     const { t } = useTranslation();
@@ -19,6 +20,7 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const abortControllerRef = useRef(null);
+    const { user: authUser } = useContext(AuthContext);
 
     const handleTabChange = (tab) => {
         if (activeTab === tab) return;
@@ -132,7 +134,13 @@ export default function HomePage() {
                 emptyState={<EmptyState />}
             >
                 {posts.map(post => (
-                    <PostItem key={post.id} post={post} onRepostSuccess={handleRepostSuccess}/>
+                    <PostItem
+                        key={post.id}
+                        post={post}
+                        currentUserId={authUser?.id}
+                        isOwner={authUser?.id === post.user?.id}
+                        onRepostSuccess={handleRepostSuccess}
+                    />
                 ))}
             </InfiniteScrollList>
         </div>

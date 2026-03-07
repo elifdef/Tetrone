@@ -1,6 +1,7 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { useUserProfileLogic } from "../../hooks/useUserProfileLogic";
 import { AuthContext } from "../../context/AuthContext";
+import ReportModal from "../common/ReportModal";
 import { userRole } from "../../config";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileActions from "./ProfileActions";
@@ -20,6 +21,7 @@ export default function UserProfileCard({ currentUser, isPreview = false }) {
         displayAvatar, displayBio, displayBirth, displayCountry, displayGender,
         handleFriendshipAction, handleBlockAction
     } = useUserProfileLogic(currentUser, isPreview);
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     const isStaff = currentUser.role >= userRole.Support;
 
@@ -44,6 +46,7 @@ export default function UserProfileCard({ currentUser, isPreview = false }) {
                             onFriendAction={handleFriendshipAction}
                             onBlockAction={handleBlockAction}
                             isBanned={isBanned}
+                            onReportAction={() => setIsReportModalOpen(true)}
                         />
                     )}
                 </div>
@@ -64,6 +67,14 @@ export default function UserProfileCard({ currentUser, isPreview = false }) {
                     )}
                 </div>
             </div>
+            {currentUser && (
+                <ReportModal
+                    isOpen={isReportModalOpen}
+                    onClose={() => setIsReportModalOpen(false)}
+                    targetType="user"
+                    targetId={currentUser.id}
+                />
+            )}
         </div>
     );
 }

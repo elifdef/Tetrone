@@ -39,6 +39,7 @@ export default function WallPostList({
                                 post={post}
                                 isOwner={isAuthor || isWallOwner} // видалити може автор або власник стіни
                                 onEdit={isAuthor ? startEditing : null} // редагувати - ТІЛЬКИ автор
+                                currentUserId={authUser?.id}
                                 onDelete={handleDelete}
                                 onRepostSuccess={handleRepostSuccess}
                             />

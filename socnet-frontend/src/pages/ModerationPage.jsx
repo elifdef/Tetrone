@@ -4,6 +4,7 @@ import { usePageTitle } from "../hooks/usePageTitle";
 import { AdminTabs } from '../components/admin/AdminTabs';
 import { PostsManager } from '../components/admin/PostsManager';
 import { UsersManager } from '../components/admin/UsersManager';
+import AdminReports from '../components/admin/AdminReports';
 
 const ModerationPage = ({ currentUser }) => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -13,7 +14,8 @@ const ModerationPage = ({ currentUser }) => {
     usePageTitle(t('common.moderator_panel'));
 
     const tabs = [
-        { id: 'posts', label: t('admin.moderation_posts') },
+        { id: 'reports', label: t('admin.reports_tab') },
+        { id: 'posts', label: t('common.posts') },
         { id: 'users', label: t('admin.users_management') }
     ];
 
@@ -27,6 +29,7 @@ const ModerationPage = ({ currentUser }) => {
             <div>
                 {activeTab === 'posts' && <PostsManager currentUser={currentUser} />}
                 {activeTab === 'users' && <UsersManager canBan={true} />}
+                {activeTab === 'reports' && <AdminReports/>}
             </div>
         </div>
     );

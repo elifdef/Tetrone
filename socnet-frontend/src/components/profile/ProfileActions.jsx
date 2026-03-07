@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function ProfileActions({
     sameUser, loading, status, isBlockedByMe, isBlockedByTarget,
-    onFriendAction, onBlockAction
+    onFriendAction, onBlockAction, onReportAction
 }) {
     const { t } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -72,6 +72,14 @@ export default function ProfileActions({
                                 {getFriendActionLabel()}
                             </button>
                         )}
+                        
+                        <button
+                            className="socnet-menu-item"
+                            onClick={() => { onReportAction(); setIsMenuOpen(false); }}
+                        >
+                            {t('reports.title')}
+                        </button>
+
                         <button
                             className={`socnet-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
                             onClick={() => { onBlockAction(); setIsMenuOpen(false); }}

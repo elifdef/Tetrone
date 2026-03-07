@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\v1\Admin\DashboardController;
 use App\Http\Controllers\Api\v1\AdminController;
 use Illuminate\Support\Facades\Route;
 
-// Додали not_banned
 Route::middleware(['auth:sanctum', 'not_banned'])->group(function ()
 {
     Route::prefix('admin')->group(function ()
@@ -20,5 +19,10 @@ Route::middleware(['auth:sanctum', 'not_banned'])->group(function ()
 
         // статистика
         Route::get('/dashboard', [DashboardController::class, 'getStats']);
+
+        // апеляція
+        Route::get('/appeals', [AdminController::class, 'getAppeals']);
+        Route::post('/appeals/{appeal}/resolve', [AdminController::class, 'resolveAppeal']);
+        Route::post('/appeals/{appeal}/reject', [AdminController::class, 'rejectAppeal']);
     });
 });

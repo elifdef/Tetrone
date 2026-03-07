@@ -14,7 +14,9 @@ export const useNotificationText = () => {
         if (key.includes('NewFriendRequest')) key = 'new_friend_request';
         if (key.includes('NewWallPost') || key === 'wall_post') key = 'wall_post';
         if (key.includes('NewRepost') || key === 'repost') key = 'repost';
+        if (key.includes('ReportReviewed') || key === 'report_reviewed') key = 'report_reviewed';
 
+        const payload = data.data || data;
         const linkUrl = data.post_id ? `/post/${data.post_id}` : null;
 
         switch (key) {
@@ -53,6 +55,13 @@ export const useNotificationText = () => {
                     linkUrl
                 };
 
+            case 'report_reviewed':
+                return {
+                    actionText: t('notifications.report_reviewed_click'),
+                    linkText: '',
+                    linkUrl: null
+                };
+                
             default:
                 return { actionText: '', linkText: null, linkUrl: null };
         }

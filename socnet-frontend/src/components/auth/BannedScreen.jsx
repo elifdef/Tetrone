@@ -1,14 +1,51 @@
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
 import Button from '../UI/Button';
+import api from '../../api/axios';
+import { notifySuccess, notifyError } from '../common/Notify';
 
 export const BannedScreen = () => {
     const { user, logout } = useContext(AuthContext);
     const { t } = useTranslation();
 
-    const handleAppeal = () => {
-        alert(t('banned.appeal_alert'));
+    const [isAppealing, setIsAppealing] = useState(false);
+    const [appealText, setAppealText] = useState('');
+    const [hasPendingAppeal, setHasPendingAppeal] = useState(false);
+    const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!user) return;
+        
+        const checkStatus = async () => {
+            try {
+                const res = await api.get('/appeals/status');
+                setHasPendingAppeal(res.data.has_pending_appeal);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoadingStatus(false);
+            }
+        };
+
+        checkStatus();
+    }, [user]);
+
+    const handleAppealSubmit = async () => {
+        if (!appealText.trim()) return;
+        setIsSubmitting(true);
+
+        try {
+            await api.post('/appeals', { message: appealText });
+            notifySuccess(t('banned.appeal_success'));
+            setHasPendingAppeal(true);
+            setIsAppealing(false);
+        } catch (error) {
+            notifyError(error.response?.data?.message || t('banned.appeal_error'));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (!user) return null;
@@ -16,12 +53,6 @@ export const BannedScreen = () => {
     return (
         <div className="socnet-fullscreen-center">
             <div className="socnet-card-wrapper banned-card">
-                <img
-                    src="/banned-avatar.png"
-                    alt="Banned"
-                    className="banned-avatar"
-                />
-
                 <h1 className="banned-title">{t('banned.title')}</h1>
 
                 <p className="banned-message">
@@ -38,14 +69,63 @@ export const BannedScreen = () => {
                     </p>
                 </div>
 
-                <div className="banned-actions">
-                    <Button onClick={handleAppeal} className="banned-btn-appeal">
-                        {t('banned.appeal_btn')}
-                    </Button>
-                    <Button onClick={logout} className="admin-btn-danger">
-                        {t('auth.signout')}
-                    </Button>
-                </div>
+                {isLoadingStatus ? (
+                    <div className="socnet-empty-state">{t('common.loading')}</div>
+                ) : (
+                    <>
+                        {hasPendingAppeal ? (
+                            <div className="socnet-info-block" style={{ marginTop: '15px', textAlign: 'center', backgroundColor: 'var(--theme-bg-hover)' }}>
+                                <span className="socnet-value" style={{ color: 'var(--theme-link)' }}>
+                                    {t('banned.appeal_pending')}
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="banned-actions" style={{ flexDirection: 'column', gap: '15px' }}>
+                                
+                                {isAppealing ? (
+                                    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        <h4 className="banned-reason-label" style={{ marginBottom: 0 }}>
+                                            {t('banned.appeal_form_title')}
+                                        </h4>
+                                        <textarea
+                                            className="socnet-form-textarea"
+                                            rows="4"
+                                            value={appealText}
+                                            onChange={(e) => setAppealText(e.target.value)}
+                                            placeholder={t('banned.appeal_placeholder')}
+                                            disabled={isSubmitting}
+                                        />
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <Button 
+                                                onClick={handleAppealSubmit} 
+                                                disabled={isSubmitting || !appealText.trim()}
+                                                style={{ flex: 1 }}
+                                            >
+                                                {isSubmitting ? t('common.saving') : t('banned.appeal_submit')}
+                                            </Button>
+                                            <Button 
+                                                variant="secondary" 
+                                                onClick={() => setIsAppealing(false)}
+                                                disabled={isSubmitting}
+                                            >
+                                                {t('common.cancel')}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                                        <Button onClick={() => setIsAppealing(true)} className="banned-btn-appeal" style={{ flex: 1 }}>
+                                            {t('banned.appeal_btn')}
+                                        </Button>
+                                        <Button onClick={logout} className="admin-btn-danger">
+                                            {t('auth.signout')}
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

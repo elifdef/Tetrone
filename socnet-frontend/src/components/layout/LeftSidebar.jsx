@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { APP_NAME, userRole } from "../../config";
 import { AuthContext } from "../../context/AuthContext";
-import { NotificationContext } from "../../context/NotificationContext"; 
+import { NotificationContext } from "../../context/NotificationContext";
 
 const LeftSidebar = ({ isOpen }) => {
     const { t } = useTranslation();
@@ -56,7 +56,7 @@ const LeftSidebar = ({ isOpen }) => {
                             {t('sidebar.left.settings')}
                         </Link>
 
-                        {user.role >= userRole.Support && (
+                        {user.role === userRole.Support && (
                             <>
                                 <hr />
                                 <Link to="/support" className={getLinkClass("/support")} style={{ color: '#3498db' }}>
@@ -65,16 +65,22 @@ const LeftSidebar = ({ isOpen }) => {
                             </>
                         )}
 
-                        {user.role >= userRole.Moderator && (
-                            <Link to="/moderation" className={getLinkClass("/moderation")} style={{ color: '#2ecc71' }}>
-                                {t('common.moderator_panel')}
-                            </Link>
+                        {user.role === userRole.Moderator && (
+                            <>
+                                <hr />
+                                <Link to="/moderation" className={getLinkClass("/moderation")} style={{ color: '#2ecc71' }}>
+                                    {t('common.moderator_panel')}
+                                </Link>
+                            </>
                         )}
 
-                        {user.role >= userRole.Admin && (
-                            <Link to="/admin" className={getLinkClass("/admin")} style={{ color: '#ffd700' }}>
-                                {t('common.admin_panel')}
-                            </Link>
+                        {user.role === userRole.Admin && (
+                            <>
+                                <hr />
+                                <Link to="/admin" className={getLinkClass("/admin")} style={{ color: '#ffd700' }}>
+                                    {t('common.admin_panel')}
+                                </Link>
+                            </>
                         )}
                     </>
                 ) : (

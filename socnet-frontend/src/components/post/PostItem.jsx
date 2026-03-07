@@ -7,12 +7,14 @@ import api from "../../api/axios";
 import { notifyError, notifySuccess } from "../common/Notify";
 import { useTranslation } from 'react-i18next';
 import { useModal } from "../../context/ModalContext";
+import ReportModal from "../common/ReportModal";
 
 export default function PostItem({
     post,
     onEdit,
     onDelete,
     isOwner,
+    currentUserId,
     onLikeToggle,
     onRepostSuccess,
     isInner = false,
@@ -23,6 +25,7 @@ export default function PostItem({
     const { openPrompt } = useModal();
     const [postData, setPostData] = useState(post);
     const [isReposting, setIsReposting] = useState(false);
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     useEffect(() => {
         setPostData(post);
@@ -92,8 +95,10 @@ export default function PostItem({
             <PostHeader
                 post={postData}
                 isOwner={isOwner}
+                currentUserId={currentUserId}
                 onEdit={!isInner && !readonly ? onEdit : null}
                 onDelete={!isInner && !readonly ? onDelete : null}
+                onReport={!isInner && !readonly ? () => setIsReportModalOpen(true) : null}
             />
 
             <PostContent
@@ -138,6 +143,13 @@ export default function PostItem({
                     readonly={readonly}
                 />
             )}
+
+            <ReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                targetType="post"
+                targetId={postData.id}
+            />
         </div>
     );
 }

@@ -183,8 +183,7 @@ input:-webkit-autofill:active {
 }
 
 [data-theme="light"] .socnet-tab.active {
-    background-color: #E5EBF1;
-    color: #000;
+    color: #fff;
 }
 
 .socnet-tab-count {

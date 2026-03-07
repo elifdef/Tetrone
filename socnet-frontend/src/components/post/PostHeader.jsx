@@ -3,12 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import EditIcon from '../../assets/edit.svg?react';
 import DeleteIcon from '../../assets/delete.svg?react';
+import FlagIcon from '../../assets/flag.svg?react';
 
-export default function PostHeader({ post, isOwner, onEdit, onDelete }) {
+export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, currentUserId }) {
     const { t } = useTranslation();
     const formatDate = useDateFormatter();
     const { username: currentProfileUsername } = useParams();
     const showTargetUser = post.target_user && post.target_user.username !== currentProfileUsername;
+    const isAuthor = currentUserId ? currentUserId == post.user?.id : isOwner;
+
+    const canEdit = onEdit && isAuthor;             // редагує ТІЛЬКИ автор
+    const canDelete = onDelete && isOwner;          // видаляє автор АБО власник стіни
+    const canReport = onReport && !isAuthor;        // скаржиться будь-хто КРІМ автора
+
+    const showActions = canEdit || canDelete || canReport;
 
     return (
         <div className="socnet-post-header">
@@ -22,12 +30,10 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete }) {
 
             <div className="socnet-post-meta">
                 <div className="socnet-post-authors-row">
-                    {/* хто написав */}
                     <Link to={`/${post.user.username}`} className="socnet-post-author">
                         {post.user.first_name} {post.user.last_name}
                     </Link>
 
-                    {/* кому написали */}
                     {showTargetUser && (
                         <span className="socnet-post-target-text">
                             {' '}{t('post.wrote_on_wall', { context: post.user.gender === 2 ? 'female' : 'male' })}{' '}
@@ -43,14 +49,19 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete }) {
                 </Link>
             </div>
 
-            {isOwner && (onEdit || onDelete) && (
+            {showActions && (
                 <div className="socnet-post-actions-top">
-                    {onEdit && (
+                    {canReport && (
+                        <button className="socnet-action-icon" onClick={() => onReport(post.id)} title={t('reports.title')}>
+                            <FlagIcon width={16} height={16} />
+                        </button>
+                    )}
+                    {canEdit && (
                         <button className="socnet-action-icon" onClick={() => onEdit(post)} title={t('common.edit')}>
                             <EditIcon width={16} height={16} />
                         </button>
                     )}
-                    {onDelete && (
+                    {canDelete && (
                         <button className="socnet-action-icon" onClick={() => onDelete(post.id)} title={t('common.delete')}>
                             <DeleteIcon width={16} height={16} />
                         </button>

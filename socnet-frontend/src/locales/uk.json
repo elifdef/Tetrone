@@ -106,7 +106,7 @@
     "likes": "Лайки",
     "repost": "Репост",
     "reposts": "Репости",
-    "":""
+    "": ""
   },
   "auth": {
     "signin": "Увійти",
@@ -369,14 +369,47 @@
     "version": "Версія",
     "ram_usage": "Пам'ять (RAM)",
     "users_online": "Зараз онлайн",
-    "no_one_online": "Наразі немає користувачів онлайн."
+    "no_one_online": "Наразі немає користувачів онлайн.",
+    "reports_tab": "Скарги",
+    "stats_total": "Всього скарг",
+    "stats_pending": "Очікують",
+    "stats_resolved": "Задоволено",
+    "stats_rejected": "Відхилено",
+    "report_from": "Від кого:",
+    "report_target": "На кого/що:",
+    "report_reason": "Причина:",
+    "report_details": "Деталі від користувача:",
+    "admin_response": "Відповідь модератора:",
+    "btn_resolve": "Схвалити скаргу",
+    "btn_reject": "Відхилити скаргу",
+    "prompt_resolve_title": "Задовольнити скаргу",
+    "prompt_reject_title": "Відхилити скаргу",
+    "prompt_placeholder": "Введіть пояснення для користувача...",
+    "empty_reports": "Скарг у цій категорії немає.",
+    "target_post": "Пост від {{date}}",
+    "target_comment": "Коментар від {{date}}",
+    "target_deleted": "Видалений контент (ID: {{id}})",
+    "appeals_tab": "Апеляції",
+    "stats_approved": "Схвалено",
+    "appeal_from": "Апеляція від:",
+    "appeal_message": "Текст апеляції:",
+    "btn_approve_appeal": "Розблокувати",
+    "btn_reject_appeal": "Відхилити апеляцію",
+    "prompt_approve_appeal": "Схвалити апеляцію",
+    "prompt_reject_appeal": "Відхилити апеляцію",
+    "empty_appeals": "Апеляцій у цій категорії немає."
   },
   "banned": {
     "title": "Акаунт заблоковано",
     "message": "{{name}}, ваш акаунт (@{{username}}) було тимчасово або назавжди відсторонено від використання платформи.",
     "reason_label": "Причина блокування",
     "appeal_btn": "Подати апеляцію",
-    "appeal_alert": "Функція апеляції буде доступна пізніше (У розробці)"
+    "appeal_form_title": "Подання апеляції",
+    "appeal_placeholder": "Поясніть, чому ви вважаєте блокування помилковим або розкажіть, як ви виправилися...",
+    "appeal_submit": "Надіслати на розгляд",
+    "appeal_pending": "Ваша апеляція розглядається. Очікуйте на рішення.",
+    "appeal_success": "Апеляцію успішно надіслано!",
+    "appeal_error": "Помилка відправки апеляції. Спробуйте пізніше."
   },
   "notifications": {
     "my_notifications": "Мої сповіщення",
@@ -394,7 +427,8 @@
     "wall_post_male": "залишив запис на вашій стіні.",
     "wall_post_female": "залишила запис на вашій стіні.",
     "repost_male": "поділився вашим записом.",
-    "repost_female": "поділилась вашим записом."
+    "repost_female": "поділилась вашим записом.",
+    "report_reviewed_click": "Вашу скаргу розглянуто. Натисніть, щоб переглянути деталі."
   },
   "activity": {
     "likes": {
@@ -438,5 +472,31 @@
         ]
       }
     ]
+  },
+  "reports": {
+    "title": "Поскаржитись",
+    "reason_label": "Оберіть причину",
+    "details_label": "Додаткові деталі (необов'язково)",
+    "details_placeholder": "Опишіть проблему детальніше...",
+    "submit_btn": "Надіслати скаргу",
+    "success": "Вашу скаргу успішно надіслано. Дякуємо!",
+    "error_load_reasons": "Не вдалося завантажити список причин.",
+    "review_result_title": "Результат розгляду скарги",
+    "status_label": "Рішення:",
+    "status_deleted": "Контент порушує правила і видалений",
+    "status_kept": "Порушень не виявлено, контент залишено",
+    "moderator_label": "Модератор:",
+    "content_label": "Ви скаржилися на:",
+    "moderator_response": "Коментар модератора:",
+    "system_moderator": "Система / Анонімний модератор",
+    "content_unavailable": "Контент недоступний або був видалений.",
+    "reasons": {
+      "spam": "Спам або реклама",
+      "fake_info": "Неправдива інформація (Фейк)",
+      "ai_generated": "AI slop",
+      "insult": "Образи або мова ворожнечі",
+      "illegal": "Заборонені матеріали",
+      "other": "Інше"
+    }
   }
 }

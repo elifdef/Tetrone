@@ -1,10 +1,96 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useDateFormatter } from "../hooks/useDateFormatter";
 import { NotificationContext } from "../context/NotificationContext";
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useNotificationText } from '../hooks/useNotificationText';
+import ReportResultModal from '../components/common/ReportResultModal';
+
+const ListAvatar = ({ src, isSystem }) => {
+    if (isSystem) {
+        return (
+            <div className="socnet-notification-avatar">
+                <svg viewBox='0 0 24 24' fill='var(--theme-link)'>
+                    <path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z' />
+                </svg>
+            </div>
+        );
+    }
+
+    return <img src={src} className="socnet-notification-avatar" alt="avatar" />;
+};
+
+const NotificationListItem = ({ notif, handleNotificationClick, getNotificationData, formatDate }) => {
+    const { t } = useTranslation();
+    const isUnread = !notif.read_at;
+    const data = notif.data || {};
+    const { actionText, linkText, linkUrl } = getNotificationData(notif.type, data);
+    const isSystem = notif.type?.includes('ReportReviewed') || data.type === 'report_reviewed';
+    const senderName = isSystem ? t('common.moderator') : `${data.user_first_name} ${data.user_last_name || ''}`.trim();
+    const snippetText = data.admin_response || data.post_snippet;
+
+    return (
+        <div
+            className={`socnet-notification-item ${isUnread ? 'unread' : ''}`}
+            onClick={() => handleNotificationClick(notif, data, isSystem)}
+        >
+            {isSystem ? (
+                <div onClick={(e) => e.stopPropagation()}>
+                    <ListAvatar isSystem={true} />
+                </div>
+            ) : (
+                <Link to={`/${data.user_username}`} onClick={(e) => e.stopPropagation()}>
+                    <ListAvatar src={data.user_avatar} isSystem={false} />
+                </Link>
+            )}
+
+            <div className="socnet-notification-content">
+                <div>
+                    {isSystem ? (
+                        <span className="socnet-comment-author">
+                            {senderName}
+                        </span>
+                    ) : (
+                        <Link
+                            to={`/${data.user_username}`}
+                            className="socnet-comment-author"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {senderName}
+                        </Link>
+                    )}
+                    {' '}
+                    <span>
+                        {actionText}
+                        {actionText && linkText ? ' ' : ''}
+                        {linkUrl && linkText ? (
+                            <Link to={linkUrl} className="socnet-link" onClick={(e) => e.stopPropagation()}>
+                                {linkText}
+                            </Link>
+                        ) : (
+                            linkText
+                        )}
+                    </span>
+                </div>
+
+                {snippetText && (
+                    <div className="socnet-notification-snippet">
+                        "{snippetText}"
+                    </div>
+                )}
+
+                <div className="socnet-notification-date">
+                    {formatDate(notif.created_at)}
+                </div>
+            </div>
+
+            {isUnread && (
+                <div className="socnet-notification-dot" title={t('notifications.mark_read')}></div>
+            )}
+        </div>
+    );
+};
 
 export default function NotificationsPage() {
     const { t } = useTranslation();
@@ -14,15 +100,21 @@ export default function NotificationsPage() {
 
     usePageTitle(t('notifications.my_notifications'));
 
-    const handleNotificationClick = (notif) => {
+    const [selectedReport, setSelectedReport] = useState(null);
+
+    const handleNotificationClick = (notif, payload, isSystemReport) => {
         if (!notif.read_at) markAsRead(notif.id);
+
+        if (isSystemReport) {
+            setSelectedReport(payload);
+        }
     };
 
     return (
         <div className="socnet-card-wrapper">
-            <h1 className="socnet-section-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <h1 className="socnet-section-title socnet-wall-header">
                 <span>{t('notifications.my_notifications')}</span>
-                {unreadCount > 0 && <span>+{unreadCount}</span>}
+                {unreadCount > 0 && <span className="socnet-wall-count">+{unreadCount}</span>}
             </h1>
 
             {notifications.length === 0 ? (
@@ -31,64 +123,22 @@ export default function NotificationsPage() {
                 </div>
             ) : (
                 <div className="socnet-notification-list">
-                    {notifications.map((notif) => {
-                        const isUnread = !notif.read_at;
-                        const data = notif.data || {};
-                        const { actionText, linkText, linkUrl } = getNotificationData(notif.type, data);
-
-                        return (
-                            <div
-                                key={notif.id}
-                                className={`socnet-notification-item ${isUnread ? 'unread' : ''}`}
-                                onClick={() => handleNotificationClick(notif)}
-                            >
-                                <Link to={`/${data.user_username}`} onClick={(e) => e.stopPropagation()}>
-                                    <img src={data.user_avatar} className="socnet-notification-avatar" alt={data.user_username} />
-                                </Link>
-
-                                <div className="socnet-notification-content">
-                                    <div>
-                                        <Link
-                                            to={`/${data.user_username}`}
-                                            className="socnet-link"
-                                            style={{ fontWeight: 'bold' }}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            {data.user_first_name} {data.user_last_name}
-                                        </Link>
-                                        {' '}
-                                        <span>
-                                            {actionText}
-                                            {actionText && linkText ? ' ' : ''}
-                                            {linkUrl && linkText ? (
-                                                <Link to={linkUrl} className="socnet-link" onClick={(e) => e.stopPropagation()}>
-                                                    {linkText}
-                                                </Link>
-                                            ) : (
-                                                linkText
-                                            )}
-                                        </span>
-                                    </div>
-
-                                    {data.post_snippet && (
-                                        <div className="socnet-notification-snippet">
-                                            "{data.post_snippet}"
-                                        </div>
-                                    )}
-
-                                    <div className="socnet-notification-date">
-                                        {formatDate(notif.created_at)}
-                                    </div>
-                                </div>
-
-                                {isUnread && (
-                                    <div className="socnet-notification-dot" title={t('notifications.mark_read')}></div>
-                                )}
-                            </div>
-                        );
-                    })}
+                    {notifications.map((notif) => (
+                        <NotificationListItem
+                            key={notif.id}
+                            notif={notif}
+                            handleNotificationClick={handleNotificationClick}
+                            getNotificationData={getNotificationData}
+                            formatDate={formatDate}
+                        />
+                    ))}
                 </div>
             )}
+
+            <ReportResultModal
+                payload={selectedReport}
+                onClose={() => setSelectedReport(null)}
+            />
         </div>
     );
 }

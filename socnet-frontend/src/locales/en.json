@@ -434,5 +434,31 @@
         ]
       }
     ]
+  },
+  "reports": {
+    "title": "Report Content",
+    "reason_label": "Select a reason",
+    "details_label": "Additional details (optional)",
+    "details_placeholder": "Describe the issue in more detail...",
+    "submit_btn": "Submit Report",
+    "success": "Your report has been submitted successfully. Thank you!",
+    "error_load_reasons": "Failed to load report reasons.",
+    "review_result_title": "Report Review Result",
+    "status_label": "Decision:",
+    "status_deleted": "Content violates rules and has been deleted",
+    "status_kept": "No violations found, content remains",
+    "moderator_label": "Moderator:",
+    "content_label": "You reported:",
+    "moderator_response": "Moderator's comment:",
+    "system_moderator": "System / Anonymous Moderator",
+    "content_unavailable": "Content is unavailable or has been deleted.",
+    "reasons": {
+      "spam": "Spam or advertising",
+      "fake_info": "False information (Fake)",
+      "ai_generated": "AI slop",
+      "insult": "Insults or hate speech",
+      "illegal": "Illegal materials",
+      "other": "Other"
+    }
   }
 }
