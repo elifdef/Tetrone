@@ -24,7 +24,7 @@ export const validateGenericFile = (file) => {
     const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 
     if (forbiddenExtensions.includes(ext)) {
-        notifyError(i18n.t('error.forbidden_file_type'));
+        notifyError(i18n.t('error.not_allowed_types'));
         return false;
     }
 

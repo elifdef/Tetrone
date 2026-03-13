@@ -1410,6 +1410,7 @@ input:-webkit-autofill:active {
     display: flex;
     gap: 15px;
     align-items: center;
+    padding-top: 15px;
 }
 
 /* галерея у пості */
@@ -2750,6 +2751,231 @@ input:-webkit-autofill:active {
     margin-top: 20px;
 }
 
+.socnet-modal-image-wrapper {
+    margin-bottom: 15px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    min-height: 200px;
+}
+
+.socnet-modal-video {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
+    outline: none;
+}
+
+.socnet-modal-image {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
+}
+
+.socnet-modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    font-size: 30px;
+    width: 40px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+.socnet-modal-nav-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.socnet-modal-nav-btn.left {
+    left: 0;
+}
+
+.socnet-modal-nav-btn.right {
+    right: 0;
+}
+
+.socnet-modal-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+    z-index: 10;
+    font-weight: bold;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.socnet-modal-fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+}
+
+.socnet-modal-close-fullscreen {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.socnet-modal-close-fullscreen:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.socnet-modal-fullscreen-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.socnet-modal-media-section {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.socnet-modal-sidebar-section {
+    width: 350px;
+    background: var(--theme-bg-box);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--theme-border);
+}
+
+.socnet-modal-sidebar-scroll {
+    overflow-y: auto;
+    padding: 20px;
+    height: 100%;
+}
+
+.socnet-modal-fullscreen-image,
+.socnet-modal-fullscreen-video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.socnet-modal-fullscreen-youtube {
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 16 / 9;
+}
+
+.socnet-modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    font-size: 40px;
+    width: 60px;
+    height: 80px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.socnet-modal-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.socnet-modal-nav-btn.left {
+    left: 0;
+}
+
+.socnet-modal-nav-btn.right {
+    right: 0;
+}
+
+.socnet-modal-counter {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .socnet-modal-fullscreen-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .socnet-modal-media-section {
+        height: 60vh;
+        flex: none;
+    }
+
+    .socnet-modal-sidebar-section {
+        width: 100%;
+        height: auto;
+        min-height: 40vh;
+        border-left: none;
+    }
+
+    .socnet-modal-close-fullscreen {
+        top: 10px;
+        right: 10px;
+    }
+}
+
+.socnet-feed-video-wrapper {
+    position: relative;
+}
+
+.socnet-feed-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 10;
+    background: transparent;
+}
 
 /* адмін панель */
 .nav-link-support {

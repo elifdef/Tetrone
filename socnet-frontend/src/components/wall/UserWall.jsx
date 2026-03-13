@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
-import { useUserWall } from '../../hooks/useUserWall';
+import { useUserWall } from './hooks/useUserWall';
 import WallHeader from './WallHeader';
 import CreatePostForm from './CreatePostForm';
 import WallPostList from './WallPostList';
@@ -35,21 +35,12 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 <WallPostList
                     posts={wallData.posts}
                     authUser={authUser}
+                    profileUser={profileUser}
                     editingPostId={wallData.editingPostId}
-                    editContent={wallData.editContent}
-                    setEditContent={wallData.setEditContent}
-                    existingMedia={wallData.existingMedia}
-                    newEditPreviews={wallData.newEditPreviews}
-                    handleEditFileSelect={wallData.handleEditFileSelect}
-                    handlePaste={wallData.handlePaste}
-                    removeExistingMedia={wallData.removeExistingMedia}
-                    removeNewEditImage={wallData.removeNewEditImage}
                     saveEdit={wallData.saveEdit}
                     cancelEditing={wallData.cancelEditing}
                     startEditing={wallData.startEditing}
                     handleDelete={wallData.handleDelete}
-                    onRepostSuccess={wallData.handleRepostSuccess}
-                    profileUser={profileUser}
                     handleRepostSuccess={wallData.handleRepostSuccess}
                 />
             </InfiniteScrollList>

@@ -31,6 +31,7 @@
     "large_file": "Файл занадто великий. Максимальний розмір: {{size}} МБ.",
     "max_files": "Можна прикріпити не більше 10 зображень.",
     "file_too_large": "Розмір деяких файлів перевищує {{size}} МБ.",
+    "not_allowed_types":"Не можна прикріплювати виконувані файли.",
     "error_load_stats": "Помилка завантаження статистики",
     "loading_likes": "Помилка при завантаження лайкнутих постів.",
     "loading_reposts": "Помилка під час завантаження репостів.",
@@ -80,8 +81,8 @@
     "yes": "Так",
     "no": "Ні",
     "gender": "Стать",
-    "gender_male": "Чоловіча",
-    "gender_female": "Жіноча",
+    "male": "Чоловіча",
+    "female": "Жіноча",
     "birthday": "Дата народження",
     "date": "Дата",
     "preview": "Попередній перегляд",
@@ -136,11 +137,6 @@
     "left": {
       "home": "Головна",
       "settings": "Налаштування"
-    },
-    "right": {
-      "title": "Вперше тут?",
-      "description": "Створіть акаунт, щоб додавати друзів, писати пости, ставити вподобайки та коментувати!",
-      "btn_text": "Почати"
     },
     "guest": {
       "view_like_guest": "Ви переглядаєте сайт як гість.",
@@ -256,15 +252,20 @@
   "wall": {
     "title": "Стіна",
     "write_post": "Написати пост...",
-    "send_btn": "Опублікувати",
+    "send_btn": "Написати",
     "empty_wall": "Ще немає постів.",
-    "attach_photo": "Додати фото",
     "posts_count_one": "{{count}} пост",
     "posts_count_few": "{{count}} поста",
     "posts_count_many": "{{count}} постів",
     "no_posts": "На стіні ще немає постів.",
     "no_more_posts": "Більше постів немає.",
-    "posts_count_other": "{{count}} публікацій"
+    "posts_count_other": "{{count}} публікацій",
+    "attach_photo": "Прикріпити фото",
+    "attach_video": "Прикріпити відео",
+    "attach_audio": "Прикріпити аудіо",
+    "attach_document": "Прикріпити файл",
+    "formatting":"Форматування тексту",
+    "drop_files_here":"Відпустіть щоб додати файли"
   },
   "friends": {
     "your_contacts": "Ваші контакти",
@@ -446,8 +447,7 @@
     "commented_male": "прокоментував",
     "commented_female": "прокоментувала",
     "your_post": "ваш пост",
-    "friend_request_male": "хоче додати вас у друзі",
-    "friend_request_female": "хоче додати вас у друзі",
+    "friend_request": "хоче додати вас у друзі",
     "reposted_male": "поділився",
     "reposted_female": "поділилася",
     "wall_post_male": "залишив запис на вашій стіні.",

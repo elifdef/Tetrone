@@ -4,10 +4,6 @@ import EditPostForm from './EditPostForm';
 export default function WallPostList({
     posts, authUser, profileUser,
     editingPostId,
-    editContent, setEditContent,
-    existingMedia, newEditPreviews,
-    removeExistingMedia, removeNewEditImage,
-    handleEditFileSelect, handlePaste,
     saveEdit, cancelEditing,
     startEditing, handleDelete, handleRepostSuccess
 }) {
@@ -23,22 +19,14 @@ export default function WallPostList({
                         {editingPostId === post.id ? (
                             <EditPostForm
                                 post={post}
-                                editContent={editContent}
-                                setEditContent={setEditContent}
-                                existingMedia={existingMedia}
-                                newEditPreviews={newEditPreviews}
-                                removeExistingMedia={removeExistingMedia}
-                                removeNewEditImage={removeNewEditImage}
-                                handleEditFileSelect={handleEditFileSelect}
-                                handlePaste={handlePaste}
                                 saveEdit={saveEdit}
                                 cancelEditing={cancelEditing}
                             />
                         ) : (
                             <PostItem
                                 post={post}
-                                isOwner={isAuthor || isWallOwner} // видалити може автор або власник стіни
-                                onEdit={isAuthor ? startEditing : null} // редагувати - ТІЛЬКИ автор
+                                isOwner={isAuthor || isWallOwner}
+                                onEdit={isAuthor ? startEditing : null}
                                 currentUserId={authUser?.id}
                                 onDelete={handleDelete}
                                 onRepostSuccess={handleRepostSuccess}

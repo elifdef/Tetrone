@@ -22,7 +22,7 @@ const VideoPlayer = React.memo(function VideoPlayer({
         loop: { active: false },
         speed: { selected: 1, options: [0.5, 1, 1.25, 1.5, 2, 3, 4] },
         loadSprite: true,
-        autopause: true,
+        autopause: false,
         i18n: {
             restart: t('video.restart'),
             rewind: t('video.rewind'),
@@ -74,7 +74,7 @@ const VideoPlayer = React.memo(function VideoPlayer({
                         if (videoElement && !videoElement.paused) videoElement.pause();
 
                         const iframeElement = wrapper.querySelector('iframe');
-                        if (iframeElement) {
+                        if (iframeElement && iframeElement.contentWindow) {
                             iframeElement.contentWindow.postMessage(JSON.stringify({
                                 event: 'command',
                                 func: 'pauseVideo'

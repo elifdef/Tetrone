@@ -16,7 +16,7 @@ const GenderSelect = ({ value, onChange, label }) => {
                         onChange={onChange}
                         required
                     />
-                    {t('common.gender_male')}
+                    {t('common.male')}
                 </label>
 
                 <label className="socnet-radio-label">
@@ -28,7 +28,7 @@ const GenderSelect = ({ value, onChange, label }) => {
                         onChange={onChange}
                         required
                     />
-                    {t('common.gender_female')}
+                    {t('common.female')}
                 </label>
             </div>
         </div>

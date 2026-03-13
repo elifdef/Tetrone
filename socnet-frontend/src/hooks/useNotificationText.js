@@ -1,12 +1,17 @@
 import { useTranslation } from 'react-i18next';
+import { useGender } from './useGender';
 
 export const useNotificationText = () => {
     const { t } = useTranslation();
+    const { getGenderMap } = useGender(null);
+    const genderTextMap = getGenderMap(t);
 
     const getNotificationData = (typeKey, data) => {
         if (!data) return { actionText: '', linkText: null, linkUrl: null };
 
-        const gender = data.user_gender === 2 ? 'female' : 'male';
+        const genderId = data.user_gender || 1;
+        const phrase = genderTextMap[genderId];
+
         let key = typeKey || '';
 
         if (key.includes('NewLike')) key = 'new_like';
@@ -23,21 +28,21 @@ export const useNotificationText = () => {
         switch (key) {
             case 'new_like':
                 return {
-                    actionText: t(`notifications.liked_${gender}`),
+                    actionText: phrase.liked,
                     linkText: t('notifications.your_post'),
                     linkUrl
                 };
 
             case 'new_comment':
                 return {
-                    actionText: t(`notifications.commented_${gender}`),
+                    actionText: phrase.commented,
                     linkText: t('notifications.your_post'),
                     linkUrl
                 };
 
             case 'new_friend_request':
                 return {
-                    actionText: t(`notifications.friend_request_${gender}`),
+                    actionText: t('notifications.friend_request'),
                     linkText: null,
                     linkUrl: null
                 };
@@ -45,14 +50,14 @@ export const useNotificationText = () => {
             case 'wall_post':
                 return {
                     actionText: '',
-                    linkText: t(`notifications.wall_post_${gender}`),
+                    linkText: phrase.wall_post, // "залишив(-ла) запис на вашій стіні."
                     linkUrl
                 };
 
             case 'repost':
                 return {
                     actionText: '',
-                    linkText: t(`notifications.repost_${gender}`),
+                    linkText: phrase.repost, // "поділився(-лась) вашим записом."
                     linkUrl
                 };
 
@@ -62,17 +67,20 @@ export const useNotificationText = () => {
                     linkText: '',
                     linkUrl: null
                 };
+
             case 'new_message': {
                 let snippet = payload.message_text;
-                
+
                 if (!snippet && payload.file_type) {
-                    snippet = t(`notifications.sent_${payload.file_type}_${gender}`);
+                    if (payload.file_type === 'image') snippet = phrase.sent_image;
+                    else if (payload.file_type === 'video') snippet = phrase.sent_video;
+                    else snippet = phrase.sent_file;
                 }
 
                 payload.post_snippet = snippet;
 
                 return {
-                    actionText: t(`notifications.wrote_${gender}`),
+                    actionText: phrase.wrote,
                     linkText: null,
                     linkUrl: `/messages?dm=${payload.chat_slug}`
                 };

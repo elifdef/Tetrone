@@ -6,16 +6,22 @@ class PostService {
 
         if (data.content) formData.append('content', data.content);
         if (data.target_user_id) formData.append('target_user_id', data.target_user_id);
-        if (data.entities) formData.append('entities', data.entities);
+        if (data.original_post_id) formData.append('original_post_id', data.original_post_id);
+        if (data.entities) {
+            const entitiesStr = typeof data.entities === 'object' 
+                ? JSON.stringify(data.entities) 
+                : data.entities;
+            formData.append('entities', entitiesStr);
+        }
+        
         if (data.images && data.images.length > 0) {
             data.images.forEach((file, index) => {
-                formData.append(`images[${index}]`, file);
+                formData.append(`media[${index}]`, file);
             });
         }
 
         const response = await postAPI.post(formData);
-
-        return response.data;
+        return response.data?.data || response.data;
     }
 
     async update(id, data) {
@@ -23,12 +29,19 @@ class PostService {
         formData.append('_method', 'PUT');
 
         if (data.content) formData.append('content', data.content);
-        if (data.entities) formData.append('entities', data.entities);
+        if (data.entities) {
+            const entitiesStr = typeof data.entities === 'object' 
+                ? JSON.stringify(data.entities) 
+                : data.entities;
+            formData.append('entities', entitiesStr);
+        }
+        
         if (data.images && data.images.length > 0) {
             data.images.forEach((file, index) => {
-                formData.append(`images[${index}]`, file);
+                formData.append(`media[${index}]`, file);
             });
         }
+        
         if (data.deletedMedia && data.deletedMedia.length > 0) {
             data.deletedMedia.forEach((mediaId, index) => {
                 formData.append(`deleted_media[${index}]`, mediaId);
@@ -36,8 +49,7 @@ class PostService {
         }
 
         const response = await postAPI.put(id, formData);
-
-        return response.data;
+        return response.data?.data || response.data;
     }
 
     async get(id) {

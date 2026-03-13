@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             $queryParams = parse_url($backendUrl, PHP_URL_QUERY);
 
             // http://localhost:5173/email-verify/{id}/{hash}?expires=...&signature=...
-            return 'http://localhost:5173/email-verify/' .
+            $frontendUrl = env('FRONTEND_URL') . '/email-verify/' .
                 $notifiable->getKey() . '/' .
                 sha1($notifiable->getEmailForVerification()) .
                 '?' . $queryParams;

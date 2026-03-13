@@ -47,8 +47,8 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
     const displayCountry = getField(currentUser?.country);
     const displayBio = getDisplayBio();
     const displayGender = getField(currentUser?.gender, (g) => {
-        if (g === 1) return t('common.gender_male');
-        if (g === 2) return t('common.gender_female');
+        if (g === 1) return t('common.male');
+        if (g === 2) return t('common.female');
         return t('settings.not_selected');
     });
 

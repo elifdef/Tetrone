@@ -8,7 +8,7 @@ import api from '../../api/axios';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
-import PostContent from '../post/PostContent';
+import PostContent from '../post/content/PostContent';
 import PostFooter from '../post/PostFooter';
 import PostItem from '../post/PostItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';

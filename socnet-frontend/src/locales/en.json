@@ -31,6 +31,7 @@
     "large_file": "The file is too large. Maximum size: {{size}} MB.",
     "max_files": "You can attach up to 10 images.",
     "file_too_large": "Some files exceed {{size}} MB in size.",
+    "not_allowed_types": "You can't attach executable files.",
     "error_load_stats": "Error loading statistics",
     "loading_likes": "Error loading liked posts.",
     "loading_reposts": "Error loading reposts.",
@@ -80,8 +81,8 @@
     "yes": "Yes",
     "no": "No",
     "gender": "Gender",
-    "gender_male": "Male",
-    "gender_female": "Female",
+    "male": "Male",
+    "female": "Female",
     "birthday": "Birthday",
     "date": "Date",
     "preview": "Preview",
@@ -136,11 +137,6 @@
     "left": {
       "home": "Home",
       "settings": "Settings"
-    },
-    "right": {
-      "title": "First time here?",
-      "description": "Create an account to add friends, write posts, like & comment!",
-      "btn_text": "Let's go!"
     },
     "guest": {
       "view_like_guest": "You are viewing the site as a guest.",
@@ -258,13 +254,18 @@
     "write_post": "Write a post...",
     "send_btn": "Share",
     "empty_wall": "No posts yet.",
-    "attach_photo": "Attach a photo",
     "posts_count_one": "{{count}} post",
     "posts_count_other": "{{count}} posts",
     "posts_count_few": "{{count}} posts",
     "posts_count_many": "{{count}} posts",
     "no_posts": "No posts yet.",
-    "no_more_posts": "No more posts to show."
+    "no_more_posts": "No more posts to show.",
+    "attach_photo": "Attach a photo",
+    "attach_video": "Attach a video",
+    "attach_audio": "Attach a audio",
+    "attach_document": "Attach a document",
+    "formatting": "Formatting text",
+    "drop_files_here": "Drop here for add files."
   },
   "friends": {
     "your_contacts": "Your contacts",
@@ -446,8 +447,7 @@
     "commented_male": "commented on",
     "commented_female": "commented on",
     "your_post": "your post",
-    "friend_request_male": "wants to add you as a friend",
-    "friend_request_female": "wants to add you as a friend",
+    "friend_request": "wants to add you as a friend",
     "reposted_male": "shared",
     "reposted_female": "shared",
     "wall_post_male": "wrote on your wall.",
