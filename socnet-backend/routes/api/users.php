@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\PersonalizationController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -25,5 +26,8 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
         Route::put('/user/email', [UserController::class, 'updateEmail']);
         Route::put('/user/password', [UserController::class, 'updatePassword']);
         Route::get('/users', [UserController::class, 'index']);
+        // персоналізація
+        Route::get('/settings/personalization', [PersonalizationController::class, 'show']);
+        Route::put('/settings/personalization', [PersonalizationController::class, 'update']);
     });
 });

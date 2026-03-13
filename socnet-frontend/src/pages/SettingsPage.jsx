@@ -5,6 +5,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { useTranslation } from 'react-i18next';
 import ProfileSettings from '../components/settings/ProfileSettings';
 import SecuritySettings from '../components/settings/SecuritySettings';
+import PersonalizationSettings from '../components/settings/PersonalizationSettings';
 
 const SettingsPage = () => {
     const { t } = useTranslation();
@@ -14,6 +15,7 @@ const SettingsPage = () => {
 
     const getPageTitle = () => {
         if (activeTab === 'security') return t('common.security');
+        if (activeTab === 'personalization') return t('settings.personalization');
         return t('settings.profile_settings');
     };
     usePageTitle(getPageTitle());
@@ -31,6 +33,9 @@ const SettingsPage = () => {
                 <Link to="/settings?act=profile" className={getTabClass('profile')}>
                     {t('common.profile')}
                 </Link>
+                <Link to="/settings?act=personalization" className={getTabClass('personalization')}>
+                    {t('settings.personalization')}
+                </Link>
                 <Link to="/settings?act=security" className={getTabClass('security')}>
                     {t('common.security')}
                 </Link>
@@ -38,6 +43,7 @@ const SettingsPage = () => {
 
             <div className="settings-content">
                 {activeTab === 'profile' && <ProfileSettings />}
+                {activeTab === 'personalization' && <PersonalizationSettings />}
                 {activeTab === 'security' && <SecuritySettings />}
             </div>
         </div>

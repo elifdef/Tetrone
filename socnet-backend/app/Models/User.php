@@ -171,4 +171,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ModerationLog::class)->latest();
     }
+
+    /* генерація власного кольору для профілю */
+    public function personalization()
+    {
+        return $this->hasOne(UserPersonalization::class)->withDefault(function ($personalization, $user)
+        {
+            // Математична генерація унікального HSL-градієнта на основі ID
+            $id = $user->id ?? rand(1, 9999);
+            $hue1 = ($id * 137.5) % 360; // 137.5 - кут золотого перетину
+            $hue2 = ($hue1 + 60) % 360;  // Зсув на 60 градусів для красивого переходу
+
+            $personalization->banner_color = "linear-gradient(135deg, hsl({$hue1}, 70%, 50%), hsl({$hue2}, 80%, 50%))";
+            $personalization->banner_image = null;
+            $personalization->username_color = null;
+        });
+    }
 }

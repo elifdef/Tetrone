@@ -8,11 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminUserResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
@@ -31,6 +26,12 @@ class AdminUserResource extends JsonResource
             'posts_count' => $this->whenCounted('posts'),
             'comments_count' => $this->whenCounted('comments'),
             'likes_count' => $this->whenCounted('likes'),
+
+            'personalization' => [
+                'banner_color' => $this->personalization->banner_color,
+                'username_color' => $this->personalization->username_color,
+            ],
+
             'login_history' => $this->whenLoaded('loginHistories'),
             'moderation_logs' => $this->whenLoaded('moderationLogs', function ()
             {

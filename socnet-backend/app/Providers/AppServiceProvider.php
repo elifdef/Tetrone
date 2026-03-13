@@ -13,6 +13,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use App\Providers\TelescopeServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,9 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // якщо це локальне середовище розробки - завантажуємо Telescope
+        if ($this->app->environment('local')) {
+            $this->app->register(TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
-
     /**
      * Bootstrap any application services.
      */

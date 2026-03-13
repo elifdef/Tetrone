@@ -29,6 +29,8 @@ export default function PostItem({
         createRepost
     } = usePostActions(post, readonly, onLikeToggle, onRepostSuccess);
 
+    const originalAuthorColor = postData.original_post?.user?.personalization?.username_color;
+
     return (
         <div className={`socnet-post ${isInner ? 'socnet-post-inner' : ''} ${readonly ? 'socnet-post-readonly' : ''}`}>
 
@@ -49,7 +51,10 @@ export default function PostItem({
             />
 
             {postData.is_repost && (
-                <div className="socnet-repost-branch">
+                <div
+                    className="socnet-repost-branch"
+                    style={originalAuthorColor ? { borderLeftColor: originalAuthorColor } : {}}
+                >
                     {postData.original_post_id && postData.original_post && depth < 3 ? (
                         <PostItem
                             post={postData.original_post}

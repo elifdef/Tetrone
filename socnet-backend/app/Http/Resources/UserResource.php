@@ -8,11 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
@@ -39,6 +34,10 @@ class UserResource extends JsonResource
                     ->latest()
                     ->value('reason');
             }),
+            'personalization' => [
+                'banner_color' => $this->personalization->banner_color,
+                'username_color' => $this->personalization->username_color,
+            ],
         ];
     }
 }

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import isoCountries from "i18n-iso-countries";
-import { useDateFormatter } from "../../hooks/useDateFormatter";
+import { useDateFormatter } from "../../../hooks/useDateFormatter";
 
 export default function ProfileInfo({ user, displayBirth, displayCountry, displayGender, showFriendsBlock }) {
     const { t, i18n } = useTranslation();

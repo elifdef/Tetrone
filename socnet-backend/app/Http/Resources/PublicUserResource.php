@@ -8,18 +8,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PublicUserResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         $currentUser = $request->user('sanctum');
         $status = $this->getFriendshipStatusWith($currentUser);
 
+        $personalizationData = [
+            'banner_color' => $this->personalization->banner_color,
+            'username_color' => $this->personalization->username_color,
+        ];
+
         // якщо забанені
-        if ($this->is_banned) {
+        if ($this->is_banned)
+        {
             return [
                 'id' => $this->id,
                 'username' => $this->username,
@@ -34,6 +35,7 @@ class PublicUserResource extends JsonResource
                 'friendship_status' => $status,
                 'country' => null,
                 'is_banned' => true,
+                'personalization' => $personalizationData,
             ];
         }
 
@@ -54,8 +56,10 @@ class PublicUserResource extends JsonResource
                 'friendship_status' => $status,
                 'country' => null,
                 'is_banned' => (bool)$this->is_banned,
+                'personalization' => $personalizationData,
             ];
         }
+
         return [
             'id' => $this->id,
             'username' => $this->username,
@@ -73,9 +77,9 @@ class PublicUserResource extends JsonResource
             'role' => $this->role,
             'friendship_status' => $status,
             'is_banned' => (bool)$this->is_banned,
-
             'friends_count' => $this->getAllFriendIds()->count(),
-            'followers_count' => $this->receivedFriendships()->wherePivot('status', Friendship::STATUS_PENDING)->count()
+            'followers_count' => $this->receivedFriendships()->wherePivot('status', Friendship::STATUS_PENDING)->count(),
+            'personalization' => $personalizationData,
         ];
     }
 }

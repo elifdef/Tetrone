@@ -1,0 +1,187 @@
+.socnet-modern-wrapper {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    overflow: hidden;
+}
+
+.socnet-modern-banner {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.socnet-modern-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 20px;
+    margin-top: -60px;
+    position: relative;
+    z-index: 2;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.socnet-modern-header-main {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.socnet-modern-avatar-wrapper {
+    width: 130px;
+    height: 130px;
+    border: 6px solid var(--theme-bg-box);
+    background: var(--theme-bg-box);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.socnet-modern-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.socnet-modern-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    padding-bottom: 15px;
+    z-index: 2;
+}
+
+.socnet-modern-actions-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.socnet-modern-actions-group .socnet-dropdown-wrapper {
+    width: auto !important;
+}
+
+.socnet-modern-actions-group .modern-trigger {
+    width: auto !important;
+    padding: 6px 15px;
+}
+
+.socnet-modern-actions-group .modern-menu-list {
+    right: 0;
+    left: auto;
+    min-width: 180px;
+}
+
+.modern-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+}
+
+.modern-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.socnet-modern-body {
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.socnet-modern-name-row {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.socnet-modern-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.socnet-modern-nick {
+    font-size: 13px;
+    color: var(--theme-text-muted);
+    margin-top: 4px;
+}
+
+.socnet-modern-bio {
+    background: var(--theme-bg-page);
+    padding: 12px;
+    border: 1px solid var(--theme-border);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.socnet-modern-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.socnet-modern-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.socnet-modern-info-label {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.socnet-modern-info-val {
+    font-size: 13px;
+    color: var(--theme-text-main);
+}
+
+/* Знайти існуючий .socnet-modern-nick та замінити його на цей блок: */
+
+.socnet-modern-nick-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.socnet-modern-nick {
+    font-size: 13px;
+    color: var(--theme-text-muted);
+}
+
+.socnet-modern-status {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.socnet-modern-status.online {
+    color: var(--theme-success, #4bb34b);
+}
+
+.socnet-modern-status.offline {
+    color: var(--theme-text-muted);
+}
+
+.socnet-modern-online-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--theme-success, #4bb34b);
+    border-radius: 50%;
+    display: inline-block;
+}
