@@ -91,4 +91,11 @@ class Post extends Model
     {
         return $this->hasMany(PollVote::class);
     }
+
+    // Зв'язок для отримання голосів конкретного користувача
+    public function myPollVotes()
+    {
+        return $this->hasMany(PollVote::class)
+            ->where('user_id', auth('sanctum')->id());
+    }
 }

@@ -10,21 +10,14 @@ class PollResource extends JsonResource
     public function toArray(Request $request): array
     {
         $pollData = $this->entities['poll'] ?? [];
-        $user = $request->user('sanctum');
 
-        $pollResults = $this->pollVotes()
-            ->selectRaw('option_id, count(*) as count')
-            ->groupBy('option_id')
-            ->pluck('count', 'option_id');
+        $pollResults = $this->whenLoaded('pollVotes')
+            ? collect($this->pollVotes)->countBy('option_id')->toArray()
+            : [];
 
-        $votedOptionIds = [];
-        if ($user)
-        {
-            $votedOptionIds = $this->pollVotes()
-                ->where('user_id', $user->id)
-                ->pluck('option_id')
-                ->toArray();
-        }
+        $votedOptionIds = $this->whenLoaded('myPollVotes')
+            ? collect($this->myPollVotes)->pluck('option_id')->toArray()
+            : [];
 
         $hasVoted = count($votedOptionIds) > 0;
         $isQuiz = ($pollData['type'] ?? 'regular') === 'quiz';

@@ -20,6 +20,8 @@ class PostController extends Controller
         'user',
         'targetUser',
         'attachments',
+        'pollVotes',
+        'myPollVotes',
         'originalPost.user',
         'originalPost.attachments',
         'originalPost.originalPost.user',
@@ -53,21 +55,20 @@ class PostController extends Controller
             return response()->json(['status' => false, 'message' => 'The user has restricted your access.'], 403);
         }
 
-        // Беремо пости, де target_user_id = цей юзер АБО (user_id = цей юзер І target_user_id is null)
-        $query = Post::where(function ($q) use ($targetUser)
-        {
-            $q->where('target_user_id', $targetUser->id)
-                ->orWhere(function ($q2) use ($targetUser)
-                {
-                    $q2->where('user_id', $targetUser->id)->whereNull('target_user_id');
-                });
-        })
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts'])
-            ->whereHas('user', function ($query)
+        $query = Post::select('posts.*')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->where('users.is_banned', false)
+            ->where(function ($q) use ($targetUser)
             {
-                $query->where('is_banned', false);
-            });
+                $q->where('posts.target_user_id', $targetUser->id)
+                    ->orWhere(function ($q2) use ($targetUser)
+                    {
+                        $q2->where('posts.user_id', $targetUser->id)
+                            ->whereNull('posts.target_user_id');
+                    });
+            })
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts']);
 
         if ($currentUser)
         {
@@ -77,7 +78,7 @@ class PostController extends Controller
             }]);
         }
 
-        $posts = $query->latest()->paginate(config('posts.max_paginate'));
+        $posts = $query->latest('posts.created_at')->paginate(config('posts.max_paginate'));
 
         return PostResource::collection($posts);
     }
