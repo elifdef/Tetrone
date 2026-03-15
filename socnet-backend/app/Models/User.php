@@ -187,4 +187,10 @@ class User extends Authenticatable implements MustVerifyEmail
             $personalization->username_color = null;
         });
     }
+
+    /* активність користувача */
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
 }

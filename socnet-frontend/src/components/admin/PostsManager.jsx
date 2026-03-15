@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import adminAPI from '../../api/admin.api';
+import AdminService from '../../services/admin.service';
+import PostService from '../../services/post.service';
 import { notifySuccess, notifyError } from "../common/Notify";
 import { useModal } from '../../context/ModalContext';
-import api from '../../api/axios';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -15,6 +15,10 @@ import InfiniteScrollList from '../common/InfiniteScrollList';
 import { userRole } from '../../config';
 
 export const PostsManager = ({ currentUser }) => {
+    const { t } = useTranslation();
+    const { openPrompt } = useModal();
+    const formatDate = useDateFormatter();
+
     const [posts, setPosts] = useState([]);
     const [targetUser, setTargetUser] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -22,9 +26,6 @@ export const PostsManager = ({ currentUser }) => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
-    const { openPrompt } = useModal();
-    const { t } = useTranslation();
-    const formatDate = useDateFormatter();
     const isAdmin = currentUser.role === userRole.Admin;
 
     const fetchPosts = async (username = '', pageNum = 1, append = false) => {
@@ -32,23 +33,31 @@ export const PostsManager = ({ currentUser }) => {
         else setIsLoading(true);
 
         try {
-            const response = await adminAPI.getPosts(username, pageNum);
-            const newPosts = response.data || [];
+            const { items, meta } = await AdminService.getPosts(username, pageNum);
 
-            if (append) setPosts(prev => [...prev, ...newPosts]);
-            else setPosts(newPosts);
+            if (append) {
+                setPosts(prev => {
+                    const existingIds = new Set(prev.map(p => p.id));
+                    const uniqueItems = items.filter(p => !existingIds.has(p.id));
+                    return [...prev, ...uniqueItems];
+                });
+            } else {
+                setPosts(items);
+            }
 
-            setHasMore(newPosts.length === (response.meta?.per_page || 20));
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
         } catch (error) {
-            notifyError(t('common.error'))
-            console.error('Error', error);
+            notifyError(t('error.loading', { resource: 'posts' }));
+            console.error('Failed to load admin posts:', error.data?.message || error.message);
         } finally {
             if (append) setIsLoadingMore(false);
             else setIsLoading(false);
         }
     };
 
-    useEffect(() => { fetchPosts('', 1, false); }, []);
+    useEffect(() => {
+        fetchPosts('', 1, false);
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -75,11 +84,12 @@ export const PostsManager = ({ currentUser }) => {
         if (reason === null) return;
 
         try {
-            await api.delete(`/posts/${postId}`, { data: { reason: reason } });
-            setPosts(posts.filter(post => post.id !== postId));
+            await PostService.delete(postId, { reason });
+
+            setPosts(prev => prev.filter(post => post.id !== postId));
             notifySuccess(t('common.deleted'));
         } catch (error) {
-            notifyError(error.response?.data?.message || t('error.deleting'));
+            notifyError(error.data?.message || t('error.deleting'));
         }
     };
 
@@ -88,7 +98,7 @@ export const PostsManager = ({ currentUser }) => {
     };
 
     return (
-        <>
+        <div className="admin-posts-manager">
             <form onSubmit={handleSearch} className="admin-search-bar admin-post-search">
                 <div className="admin-post-search-input">
                     <Input
@@ -109,19 +119,22 @@ export const PostsManager = ({ currentUser }) => {
                 isLoadingMore={isLoadingMore}
                 hasMore={hasMore}
                 onLoadMore={loadMore}
+                error={false}
+                onRetry={() => fetchPosts(targetUser, page, false)}
                 emptyState={
                     <div className="socnet-empty-state with-card">
-                        <h3>{t('post.posts_not_found')}</h3>
-                        <p>{t('admin.posts.not_found_desc')}</p>
+                        <h3 className="socnet-empty-title">{t('post.posts_not_found')}</h3>
+                        <p className="socnet-empty-desc">{t('admin.posts.not_found_desc')}</p>
                     </div>
                 }
             >
                 {posts.map(post => {
-                    // перевіряємо чи написаний пост на чужій стіні
+                    const isFemale = post.user?.gender === 2;
+                    const wallKey = isFemale ? 'post.wrote_on_wall_female' : 'post.wrote_on_wall_male';
                     const showTargetUser = post.target_user && post.target_user.username !== post.user?.username;
 
                     return (
-                        <div key={post.id} className="socnet-post">
+                        <div key={post.id} className="socnet-post admin-moderation-post">
                             <div className="socnet-post-header">
                                 <Link to={`/${post.user?.username}`} target="_blank">
                                     <img src={post.user?.avatar} alt={post.user?.username} className="socnet-post-avatar" />
@@ -134,7 +147,7 @@ export const PostsManager = ({ currentUser }) => {
 
                                         {showTargetUser && (
                                             <span className="socnet-post-target-text">
-                                                {' '}{t(`post.wrote_on_wall_${post.user?.gender === 2 ? 'female' : 'male'}`)}{' '}
+                                                {` ${t(wallKey)} `}
                                                 <Link to={`/${post.target_user.username}`} className="socnet-post-author target" target="_blank">
                                                     {post.target_user.first_name} {post.target_user.last_name}
                                                 </Link>
@@ -142,7 +155,7 @@ export const PostsManager = ({ currentUser }) => {
                                         )}
                                     </div>
                                     <span className="socnet-post-date">
-                                        ID: {post.id} • {formatDate(post.created_at)}
+                                        {t('common.id')}: {post.id} • {formatDate(post.created_at)}
                                     </span>
                                 </div>
 
@@ -198,6 +211,6 @@ export const PostsManager = ({ currentUser }) => {
                     );
                 })}
             </InfiniteScrollList>
-        </>
+        </div>
     );
 };

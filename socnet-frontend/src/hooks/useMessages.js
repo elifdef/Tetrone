@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { chatApi } from '../api/messages.api';
+import chatService  from '../services/chat.service'; 
 import { notifyError, notifySuccess } from "../components/common/Notify";
 
 export const useMessages = (slug, echoInstance) => {
@@ -15,13 +15,14 @@ export const useMessages = (slug, echoInstance) => {
     const [targetIsTyping, setTargetIsTyping] = useState(false);
     const typingTimeoutRef = useRef(null);
 
+    // Підключення до каналу та прослуховування друкування
     useEffect(() => {
         if (!slug || !echoInstance) return;
 
         const channelName = `chat.${slug}`;
         const channel = echoInstance.private(channelName);
 
-        channel.listenForWhisper('typing', (e) => {
+        channel.listenForWhisper('typing', () => {
             setTargetIsTyping(true);
             if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
             typingTimeoutRef.current = setTimeout(() => {
@@ -50,8 +51,11 @@ export const useMessages = (slug, echoInstance) => {
         }
 
         try {
-            const { data } = await chatApi.getMessages(slug, currentPage);
-            const reversedData = [...data.data].reverse();
+            // Тепер chatService повертає { items, meta } завдяки нашому рефакторингу!
+            const { items, meta } = await chatService.getMessages(slug, currentPage);
+            
+            // Laravel віддає від новіших до старіших, тому перевертаємо для чату
+            const reversedData = [...items].reverse();
 
             if (isLoadMore) {
                 setMessages(prev => {
@@ -65,14 +69,19 @@ export const useMessages = (slug, echoInstance) => {
                 pageRef.current = 1;
             }
 
-            setHasMore(data.current_page < data.last_page);
+            // Використовуємо meta для перевірки наявності наступних сторінок
+            setHasMore(meta && meta.current_page < meta.last_page);
+            
         } catch (err) {
-            if (!silent) notifyError(err.response?.data?.message || t('messages.errors.load_failed'));
+            if (!silent) {
+                // Нова обробка помилок для fetchClient
+                notifyError(err.data?.message || err.message || t('messages.errors.load_failed'));
+            }
         } finally {
             setIsLoadingInitial(false);
             setIsLoadingMore(false);
         }
-    }, [slug]);
+    }, [slug, t]);
 
     const loadMoreMessages = () => {
         if (!isLoadingMore && hasMore) {
@@ -83,43 +92,53 @@ export const useMessages = (slug, echoInstance) => {
     const sendMessage = async (text, files = [], sharedPostId = null, replyToId = null) => {
         if (!text && files.length === 0 && !sharedPostId) return;
         try {
-            await chatApi.sendMessage(slug, text, files, sharedPostId, replyToId);
+            await chatService.sendMessage(slug, text, files, sharedPostId, replyToId);
             await fetchMessages({ silent: true });
         } catch (err) {
-            notifyError(err.response?.data?.message || t('messages.errors.send_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.send_failed'));
         }
     };
 
     const updateMessage = async (messageId, text, newFiles = [], deletedMedia = []) => {
         try {
-            await chatApi.updateMessage(slug, messageId, text, newFiles, deletedMedia);
+            await chatService.updateMessage(slug, messageId, text, newFiles, deletedMedia);
             await fetchMessages({ silent: true });
             notifySuccess(t('messages.success.updated'));
         } catch (err) {
-            notifyError(t('messages.errors.update_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.update_failed'));
         }
     };
 
     const deleteMessage = async (messageId) => {
         try {
-            await chatApi.deleteMessage(slug, messageId);
+            await chatService.deleteMessage(slug, messageId);
             setMessages(prev => prev.filter(msg => msg.id !== messageId));
         } catch (err) {
-            notifyError(t('messages.errors.delete_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.delete_failed'));
         }
     };
 
     const togglePin = async (messageId) => {
         try {
-            await chatApi.togglePin(slug, messageId);
+            await chatService.togglePin(slug, messageId);
             await fetchMessages({ silent: true });
         } catch (err) {
-            notifyError(t('messages.errors.pin_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.pin_failed'));
         }
     };
 
     return {
-        messages, isLoadingInitial, isLoadingMore, hasMore, targetIsTyping,
-        fetchMessages, loadMoreMessages, sendMessage, updateMessage, deleteMessage, togglePin, emitTyping
+        messages, 
+        isLoadingInitial, 
+        isLoadingMore, 
+        hasMore, 
+        targetIsTyping,
+        fetchMessages, 
+        loadMoreMessages, 
+        sendMessage, 
+        updateMessage, 
+        deleteMessage, 
+        togglePin, 
+        emitTyping
     };
 };

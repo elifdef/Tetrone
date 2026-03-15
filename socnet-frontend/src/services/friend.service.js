@@ -1,0 +1,44 @@
+import fetchClient from "../api/client";
+
+class FriendService {
+    async getList(tab, query = '', signal = null) {
+        let endpoint = '/friends';
+
+        switch (tab) {
+            case 'requests': endpoint = '/friends/requests'; break;
+            case 'subscriptions': endpoint = '/friends/sent'; break;
+            case 'blocked': endpoint = '/friends/blocked'; break;
+            case 'all': endpoint = `/users?search=${query}`; break;
+            default: endpoint = '/friends'; break;
+        }
+
+        const res = await fetchClient(endpoint, { signal });
+        return Array.isArray(res) ? res : (res.data || []);
+    }
+
+    async addFriend(username) {
+        return await fetchClient(`/friends/${username}`, { method: 'POST' });
+    }
+
+    async acceptRequest(username) {
+        return await fetchClient(`/friends/${username}/accept`, { method: 'POST' });
+    }
+
+    async removeFriend(username) {
+        return await fetchClient(`/friends/${username}`, { method: 'DELETE' });
+    }
+
+    async blockUser(username) {
+        return await fetchClient(`/friends/block/${username}`, {
+            method: 'POST'
+        });
+    }
+
+    async unblockUser(username) {
+        return await fetchClient(`/friends/blocked/${username}`, {
+            method: 'DELETE'
+        });
+    }
+}
+
+export default new FriendService();

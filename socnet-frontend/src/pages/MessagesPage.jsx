@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -9,7 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 import Messages from '../components/messages/Messages';
 import MessagesOld from '../components/messages/MessagesOld';
 import ActionModal from '../components/common/ActionModal';
-import { chatApi } from '../api/messages.api';
+import ChatService from '../services/chat.service';
 import ChatInfoModal from '../components/messages/ChatInfoModal';
 
 export default function MessagesPage() {
@@ -45,15 +45,19 @@ export default function MessagesPage() {
     }, [setUnreadMessagesCount, fetchChats]);
 
     useEffect(() => {
-        if (dmSlug) fetchMessages();
-        else { setText(''); setFiles([]); setEditingMessage(null); }
+        if (dmSlug) {
+            fetchMessages();
+        } else {
+            setText('');
+            setFiles([]);
+            setEditingMessage(null);
+        }
     }, [dmSlug, fetchMessages]);
 
     useEffect(() => {
         if (incomingMessage) {
             fetchChats();
 
-            // якщо повідомлення для поточного відкритого чату
             if (incomingMessage.chat_slug === dmSlug) {
                 fetchMessages({ silent: true });
             }
@@ -72,23 +76,32 @@ export default function MessagesPage() {
             } else {
                 await sendMessage(text, files, null, replyingTo ? replyingTo.id : null);
             }
-            setText(''); setFiles([]); setReplyingTo(null);
+            setText('');
+            setFiles([]);
+            setReplyingTo(null);
             fetchChats();
-        } catch (e) { }
+        } catch (err) {
+            console.error("Message send/update failed:", err.data?.message || err.message);
+        }
     };
 
     const handleCancelReplyEdit = () => {
         setEditingMessage(null);
         setReplyingTo(null);
-        setText(''); setFiles([]);
+        setText('');
+        setFiles([]);
     };
 
     const handleEditClick = (msg) => {
-        setEditingMessage(msg); setText(msg.text); setFiles([]);
+        setEditingMessage(msg);
+        setText(msg.text || '');
+        setFiles([]);
     };
 
     const handleCancelEdit = () => {
-        setEditingMessage(null); setText(''); setFiles([]);
+        setEditingMessage(null);
+        setText('');
+        setFiles([]);
     };
 
     const handleDeleteClick = (msgId) => setMessageToDelete(msgId);
@@ -102,17 +115,24 @@ export default function MessagesPage() {
     };
 
     const handleFileChange = (e) => {
-        if (e.target.files) setFiles(prev => [...prev, ...Array.from(e.target.files)].slice(0, 10));
+        if (e.target.files) {
+            setFiles(prev => [...prev, ...Array.from(e.target.files)].slice(0, 10));
+        }
     };
-    const handleRemoveFile = (indexToRemove) => setFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+
+    const handleRemoveFile = (indexToRemove) => {
+        setFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+    };
 
     const confirmDeleteChat = async (shouldDelete) => {
         if (shouldDelete && chatToDelete) {
             try {
-                await chatApi.deleteChat(chatToDelete, deleteForBoth);
+                await ChatService.deleteChat(chatToDelete, deleteForBoth);
                 setSearchParams({});
                 fetchChats();
-            } catch (e) { }
+            } catch (err) {
+                console.error("Chat deletion failed:", err.data?.message || err.message);
+            }
         }
         setChatToDelete(null);
         setDeleteForBoth(false);
@@ -121,29 +141,82 @@ export default function MessagesPage() {
     const activeChatObj = chats.find(c => c.slug === dmSlug);
 
     const childProps = {
-        isLoadingInitial, isLoadingMore, hasMore, onLoadMore: loadMoreMessages,
+        isLoadingInitial,
+        isLoadingMore,
+        hasMore,
+        onLoadMore: loadMoreMessages,
         onOpenInfo: () => setIsInfoModalOpen(true),
         onDeleteChatClick: () => setChatToDelete(dmSlug),
-        currentUser, chats, messages, activeChat: activeChatObj, dmSlug,
-        text, setText, files, editingMessage,
-        handleSend, handleSelectChat, handleBackToInbox,
-        handleEditClick, handleCancelEdit,
+        currentUser,
+        chats,
+        messages,
+        activeChat: activeChatObj,
+        dmSlug,
+        text,
+        setText,
+        files,
+        editingMessage,
+        handleSend,
+        handleSelectChat,
+        handleBackToInbox,
+        handleEditClick,
+        handleCancelEdit,
         handleDelete: handleDeleteClick,
-        replyingTo, setReplyingTo, togglePin, handleCancelReplyEdit,
-        handleFileChange, handleRemoveFile,
+        replyingTo,
+        setReplyingTo,
+        togglePin,
+        handleCancelReplyEdit,
+        handleFileChange,
+        handleRemoveFile,
         isTyping: targetIsTyping,
         onTyping: emitTyping,
     };
 
     return (
         <>
-            {localStorage.getItem('old_style') ? <MessagesOld {...childProps} /> : <Messages {...childProps} />}
+            {localStorage.getItem('old_style')
+                ? <MessagesOld {...childProps} />
+                : <Messages {...childProps} />
+            }
 
-            <ActionModal isOpen={!!messageToDelete} onClose={() => setMessageToDelete(null)} type="confirm" message={t('messages.delete_confirm')} btnSubmit={t('common.delete')} btnCancel={t('common.cancel')} onResolve={confirmDelete} />
+            <ActionModal
+                isOpen={!!messageToDelete}
+                onClose={() => setMessageToDelete(null)}
+                type="confirm"
+                message={t('messages.delete_confirm')}
+                btnSubmit={t('common.delete')}
+                btnCancel={t('common.cancel')}
+                onResolve={confirmDelete}
+            />
 
-            <ActionModal isOpen={!!chatToDelete} onClose={() => setChatToDelete(null)} type="confirm" message={<div><p>{t('messages.delete_chat_confirm')}</p><label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '15px', cursor: 'pointer' }}><input type="checkbox" checked={deleteForBoth} onChange={(e) => setDeleteForBoth(e.target.checked)} />{t('messages.delete_for_both')}</label></div>} btnSubmit={t('common.delete')} btnCancel={t('common.cancel')} onResolve={confirmDeleteChat} />
+            <ActionModal
+                isOpen={!!chatToDelete}
+                onClose={() => setChatToDelete(null)}
+                type="confirm"
+                message={
+                    <div className="socnet-delete-chat-modal">
+                        <p>{t('messages.delete_chat_confirm')}</p>
+                        <label className="socnet-checkbox-label">
+                            <input
+                                type="checkbox"
+                                checked={deleteForBoth}
+                                onChange={(e) => setDeleteForBoth(e.target.checked)}
+                            />
+                            {t('messages.delete_for_both')}
+                        </label>
+                    </div>
+                }
+                btnSubmit={t('common.delete')}
+                btnCancel={t('common.cancel')}
+                onResolve={confirmDeleteChat}
+            />
 
-            <ChatInfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} chat={activeChatObj} messages={messages} />
+            <ChatInfoModal
+                isOpen={isInfoModalOpen}
+                onClose={() => setIsInfoModalOpen(false)}
+                chat={activeChatObj}
+                messages={messages}
+            />
         </>
     );
 }

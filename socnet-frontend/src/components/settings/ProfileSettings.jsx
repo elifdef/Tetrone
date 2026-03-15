@@ -7,8 +7,7 @@ import DateInput from '../UI/DateInput';
 import Button from '../UI/Button';
 import Label from '../UI/Label';
 import Textarea from '../UI/Textarea';
-import FileInput from '../UI/FileInput';
-
+import ImageDropzone from './ImageDropzone';
 import GenderSelect from './GenderSelect';
 import CountrySelect from './CountrySelect';
 
@@ -32,15 +31,10 @@ const ProfileSettings = ({ isSetupMode = false }) => {
         >
             <div className="socnet-form-group">
                 <Label>{t('common.avatar')}</Label>
-                <div className="socnet-avatar-upload-box">
-                    <FileInput
-                        onFileSelect={handleFileChange}
-                        btnText={t('common.browse')}
-                    />
-                    <span className="socnet-avatar-file-name">
-                        {avatarFile ? avatarFile.name : t('common.no_file_selected')}
-                    </span>
-                </div>
+                <ImageDropzone
+                    onFileSelect={handleFileChange}
+                    fileName={avatarFile ? avatarFile.name : null}
+                />
             </div>
 
             <div className="socnet-form-row">

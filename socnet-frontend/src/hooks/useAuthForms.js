@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import AuthService from "../services/auth.service";
 import { AuthContext } from "../context/AuthContext";
 import { useTranslation } from 'react-i18next';
 
@@ -15,18 +15,23 @@ export const useAuthForms = () => {
     const loginUser = async (email, password) => {
         setLoading(true);
         setError(null);
+
         try {
-            const res = await api.post('/sign-in', { email, password });
-            const token = res.data.token;
-            const res2 = await api.get('/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const user = res2.data;
+            const res = await AuthService.signIn(email, password);
+            const token = res.token || res.data?.token;
+
+            if (!token) {
+                throw new Error("Token not received");
+            }
+
+            const user = await AuthService.getMe(token);
+
             login(token, user);
+
             navigate(!user.is_setup_complete ? '/setup-profile' : '/');
 
         } catch (err) {
-            setError(err.response?.data?.message || t('error.signin'));
+            setError(err.data?.message || err.message || t('error.signin'));
         } finally {
             setLoading(false);
         }
@@ -35,11 +40,12 @@ export const useAuthForms = () => {
     const registerUser = async (formData) => {
         setLoading(true);
         setError(null);
+
         try {
-            await api.post('/sign-up', formData);
+            await AuthService.signUp(formData);
             return true;
         } catch (err) {
-            setError(err.response?.data?.message || t('error.registration'));
+            setError(err.data?.message || err.message || t('error.registration'));
             return false;
         } finally {
             setLoading(false);
@@ -51,6 +57,6 @@ export const useAuthForms = () => {
         registerUser,
         loading,
         error,
-        setError 
+        setError
     };
 };

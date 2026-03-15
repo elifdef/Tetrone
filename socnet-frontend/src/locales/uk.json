@@ -116,7 +116,14 @@
     "edited": "Редаговано",
     "you": "Ви",
     "typing": "Пише",
-    "close": "Закрити"
+    "close": "Закрити",
+    "hours_short": "год",
+    "minutes_short": "хв",
+    "seconds_short": "сек",
+    "drag_and_drop": "Перетягніть сюди",
+    "or_paste": "або вставте",
+    "selected_file": "Вибраний файл",
+    "reset": "Скинути"
   },
   "auth": {
     "signin": "Увійти",
@@ -211,7 +218,9 @@
     "votes_count_few": "голоси",
     "votes_count_many": "голосів",
     "votes_count_other": "голосів",
-    "anonymous_poll": "Анонімне опитування"
+    "anonymous_poll": "Анонімне опитування",
+    "updated_avatar_male":"оновив аватар",
+    "updated_avatar_female":"оновила аватар"
   },
   "comment": {
     "no_comments": "Коментарів ще немає.",
@@ -318,15 +327,22 @@
     "same_info": "Яйяйяйяйяй мамкін хакер хоче погратись у програміста))0). Найшовся тут розумник який подивився 5 мінут відео від Хауді Хо і возомнив себе програмістом. Йди мамі допоможи почистити картоплю або прибери кімнату.",
     "same_info_old": "Ви не внесли жодних змін.",
     "personalization": "Персоналізація",
-    "personalization_title": "Персоналізація профілю",
-    "profile_theme": "Дизайн профілю",
-    "theme_modern": "Modern (Новий)",
-    "theme_classic": "Classic (Старий)",
     "username_color": "Колір нікнейма (HEX)",
     "color_placeholder": "#ffffff або пусто",
     "username_color_hint": "Цей колір буде використовуватись у профілі та для лінії репостів.",
     "banner_color": "Фон банера (CSS)",
-    "banner_placeholder": "Наприклад: red, #ff0000, або linear-gradient(...)"
+    "banner_placeholder": "Наприклад: red, #ff0000, або linear-gradient(...)",
+    "theme_light": "Світла тема",
+    "theme_dark": "Темна тема",
+    "color_format_hint": "#HEX або RGB",
+    "banner_image": "Зображення банера",
+    "upload_banner": "Завантажити фото",
+    "angle": "Кут",
+    "banner_hint": "Цей банер буде відображатися позаду вашого фото профілю",
+    "theme_modern": "Модерн",
+    "theme_classic": "Класичний",
+    "profile_theme": "Дизайн профілю",
+    "personalization_title": "Персоналізація"
   },
   "admin": {
     "control_panel": "Панель керування",
@@ -491,6 +507,13 @@
     },
     "reposts": {
       "empty": "Ви ще не репостнули жодного поста."
+    },
+    "stats": {
+      "title": "Статистика",
+      "total_time": "Загальний екранний час",
+      "description": "Це час, який ви провели активно користуючись сайтом.",
+      "history": "Історія за днями",
+      "empty": "Немає даних для відображення"
     }
   },
   "rules": {

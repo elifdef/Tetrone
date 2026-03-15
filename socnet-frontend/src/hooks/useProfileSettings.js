@@ -1,7 +1,7 @@
 import { useState, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from "../context/AuthContext";
-import api from '../api/axios';
+import UserService from '../services/user.service'; // Новий сервіс
 import { notifySuccess, notifyError, notifyLoading, dismissToast, notifyInfo } from "../components/common/Notify";
 import { validateImageFile } from "../utils/upload";
 
@@ -87,12 +87,12 @@ export const useProfileSettings = (isSetupMode = false) => {
         data.append('country', formData.country || '');
         data.append('gender', formData.gender || '0');
 
-        if (formData.avatarFile) data.append('avatar', formData.avatarFile);
+        if (formData.avatarFile) {
+            data.append('avatar', formData.avatarFile);
+        }
 
         try {
-            const res = await api.post(`/users/${user.username}`, data, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            await UserService.updateProfile(user.username, data);
 
             setUser(prev => ({ ...prev, ...previewUser, is_setup_complete: true }));
 
@@ -103,7 +103,7 @@ export const useProfileSettings = (isSetupMode = false) => {
                 setFormData(prev => ({ ...prev, avatarFile: null }));
             }
         } catch (error) {
-            notifyError(error.response?.data?.message || t('error.save_changes'));
+            notifyError(error.data?.message || error.message || t('error.save_changes'));
         } finally {
             dismissToast(toastId);
         }

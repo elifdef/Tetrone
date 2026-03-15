@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../../api/axios';
+import fetchClient from '../../api/client';
 import PostItem from '../post/PostItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';
 import { notifyError } from '../common/Notify';
@@ -25,11 +25,11 @@ export default function MyRepostsTab({ onCountUpdate }) {
         else setIsLoadingMore(true);
         setError(false);
 
-        api.get(`/activity/reposts?page=${page}`)
-            .then(res => {
+        fetchClient(`/activity/reposts?page=${page}`)
+            .then(data => {
                 if (isMounted) {
-                    const newReposts = res.data.data;
-                    const meta = res.data.meta;
+                    const newReposts = data.data;
+                    const meta = data.meta;
 
                     setReposts(prev => {
                         if (page === 1) return newReposts;
@@ -43,7 +43,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
                 }
             })
             .catch(err => {
-                notifyError(t('error.loading_reposts'))
+                notifyError(t('error.loading_reposts'));
                 if (isMounted) setError(true);
             })
             .finally(() => {
@@ -54,7 +54,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
             });
 
         return () => { isMounted = false; };
-    }, [page]);
+    }, [page, t]);
 
     useEffect(() => {
         const cleanup = fetchReposts();
@@ -72,7 +72,8 @@ export default function MyRepostsTab({ onCountUpdate }) {
         if (!isConfirmed) return;
 
         try {
-            await api.delete(`/posts/${postId}`);
+            await fetchClient(`/posts/${postId}`, { method: 'DELETE' });
+            
             setReposts(prev => prev.filter(p => p.id !== postId));
             if (onCountUpdate) onCountUpdate(-1);
 

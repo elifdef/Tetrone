@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 // публічні (12 запитів/мін)
 Route::middleware('throttle:12,1')->controller(AuthController::class)->group(function ()
@@ -25,9 +26,25 @@ Route::middleware(['auth:sanctum'])->group(function ()
         Route::post('/appeals', [AppealController::class, 'store']);
     });
 
-    Route::post('/user/ping', fn() => response()->noContent());
+    Route::post('/user/ping', function (Illuminate\Http\Request $request)
+    {
+        if ($request->input('active'))
+        {
+            $user = $request->user();
+            DB::table('user_activities')->upsert(
+                [
+                    'user_id' => $user->id,
+                    'date' => now()->toDateString(),
+                    'active_seconds' => 60
+                ],
+                ['user_id', 'date'],
+                ['active_seconds' => DB::raw('user_activities.active_seconds + 60')]
+            );
+        }
 
-    // підтвердження пошти
+        return response()->noContent();
+    });
+
     Route::prefix('email')->group(function ()
     {
         // відправка (6 листів/мін)
@@ -37,7 +54,8 @@ Route::middleware(['auth:sanctum'])->group(function ()
                 return response()->json(['message' => 'Already confirmed'], 204);
 
             $request->user()->sendEmailVerificationNotification();
-            return response()->json(['message' => 'Лист успішно відправлено.']);
+
+            return response()->json(['message' => 'Email sent successfully.']);
         })->middleware('throttle:6,1');
 
         // підтвердження (40 раз в мінуту)

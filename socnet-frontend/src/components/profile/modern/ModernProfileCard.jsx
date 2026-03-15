@@ -31,7 +31,7 @@ export default function ModernProfileCard({ currentUser, isPreview = false }) {
         <div className="socnet-modern-wrapper">
             {!isPreview && isStaff && !isBanned && <StaffBanner userRole={currentUser.role} />}
             
-            <Banner bannerColor={bannerBg} />
+            <Banner personalization={currentUser?.personalization} />
             
             <Header 
                 currentUser={currentUser} isPreview={isPreview} displayAvatar={displayAvatar}

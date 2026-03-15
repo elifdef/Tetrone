@@ -11,5 +11,6 @@ Route::middleware(['auth:sanctum', 'not_banned'])->group(function ()
         Route::get('/reposts', [ActivityController::class, 'reposts']);
         Route::get('/comments', [ActivityController::class, 'comments']);
         Route::get('/counts', [ActivityController::class, 'getCounts']);
+        Route::get('/screen-time', [ActivityController::class, 'screenTime']);
     });
 });

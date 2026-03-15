@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
 import Button from '../UI/Button';
-import api from '../../api/axios';
+import AppealService from '../../services/appeal.service';
 import { notifySuccess, notifyError } from '../common/Notify';
 
 export const BannedScreen = () => {
@@ -20,10 +20,10 @@ export const BannedScreen = () => {
 
         const checkStatus = async () => {
             try {
-                const res = await api.get('/appeals/status');
-                setHasPendingAppeal(res.data.has_pending_appeal);
+                const data = await AppealService.checkStatus();
+                setHasPendingAppeal(data.has_pending_appeal);
             } catch (error) {
-                console.error(error);
+                console.error("Failed to check appeal status:", error.data?.message || error.message);
             } finally {
                 setIsLoadingStatus(false);
             }
@@ -37,12 +37,13 @@ export const BannedScreen = () => {
         setIsSubmitting(true);
 
         try {
-            await api.post('/appeals', { message: appealText });
+            await AppealService.submitAppeal(appealText);
+            
             notifySuccess(t('banned.appeal_success'));
             setHasPendingAppeal(true);
             setIsAppealing(false);
         } catch (error) {
-            notifyError(error.response?.data?.message || t('banned.appeal_error'));
+            notifyError(error.data?.message || error.message || t('banned.appeal_error'));
         } finally {
             setIsSubmitting(false);
         }

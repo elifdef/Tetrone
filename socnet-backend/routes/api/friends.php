@@ -20,7 +20,7 @@ Route::middleware(['auth:sanctum', 'throttle:180,1', 'not_banned'])
             Route::post('add', 'sendRequest');              // додати друга
             Route::post('accept', 'acceptRequest');         // прийняти друга
             Route::delete('{username}', 'destroy');         // видалити друга
-            Route::post('block', 'block');                  // заблокувати
+            Route::post('block/{username}', 'block');       // заблокувати
             Route::delete('blocked/{username}', 'unblock'); // розблокувати
         });
     });

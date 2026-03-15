@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import api from '../../api/axios';
+import AdminService from '../../services/admin.service';
 import { notifyError } from '../common/Notify';
 import {
     LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -12,20 +12,22 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchStats();
+    const fetchStats = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await AdminService.getDashboardStats();
+            setStats(data);
+        } catch (err) {
+            console.error("Dashboard stats load failed:", err.data?.message || err.message);
+            notifyError(t('error.load_stats'));
+        } finally {
+            setLoading(false);
+        }
     }, [t]);
 
-    const fetchStats = () => {
-        setLoading(true);
-        api.get('/admin/dashboard')
-            .then(res => setStats(res.data))
-            .catch(err => {
-                console.error(err);
-                notifyError(t('error.load_stats'));
-            })
-            .finally(() => setLoading(false));
-    };
+    useEffect(() => {
+        fetchStats();
+    }, [fetchStats]);
 
     if (loading && !stats) {
         return <div className="socnet-empty-state">{t('common.loading')}</div>;
@@ -69,7 +71,10 @@ export default function AdminDashboard() {
                             <span>{stats.server.cpu_load}%</span>
                         </div>
                         <div className="admin-progress-track">
-                            <div className="admin-progress-bar cpu" style={{ width: `${Math.min(stats.server.cpu_load * 10, 100)}%` }}></div>
+                            <div
+                                className="admin-progress-bar cpu"
+                                style={{ '--progress-width': `${Math.min(stats.server.cpu_load * 10, 100)}%` }}
+                            ></div>
                         </div>
                     </div>
 
@@ -79,7 +84,10 @@ export default function AdminDashboard() {
                             <span>{stats.server.disk_percent}%</span>
                         </div>
                         <div className="admin-progress-track">
-                            <div className="admin-progress-bar disk" style={{ width: `${stats.server.disk_percent}%` }}></div>
+                            <div
+                                className="admin-progress-bar disk"
+                                style={{ '--progress-width': `${stats.server.disk_percent}%` }}
+                            ></div>
                         </div>
                     </div>
 
@@ -105,7 +113,7 @@ export default function AdminDashboard() {
                         <div className="admin-online-list">
                             {stats.realtime.users.map(user => (
                                 <Link key={user.id} to={`/${user.username}`} className="admin-online-user">
-                                    <img src={user.avatar} alt="avatar" className="admin-online-avatar" />
+                                    <img src={user.avatar} alt={user.username} className="admin-online-avatar" />
                                     <div className="admin-online-details">
                                         <span className="admin-online-name">{user.first_name} {user.last_name}</span>
                                         <span className="admin-online-nick">@{user.username}</span>
@@ -128,7 +136,14 @@ export default function AdminDashboard() {
                                 <XAxis dataKey="date" stroke="var(--theme-text-muted)" fontSize={10} tickMargin={10} />
                                 <YAxis stroke="var(--theme-text-muted)" fontSize={10} allowDecimals={false} />
                                 <Tooltip contentClassName="admin-chart-tooltip" wrapperClassName="admin-chart-tooltip-wrapper" />
-                                <Line type="monotone" dataKey="count" name={t('admin.dashboard.new_users')} stroke="var(--theme-success)" strokeWidth={3} activeDot={{ r: 6, fill: 'var(--theme-success)' }} />
+                                <Line
+                                    type="monotone"
+                                    dataKey="count"
+                                    name={t('admin.dashboard.new_users')}
+                                    stroke="var(--theme-success)"
+                                    strokeWidth={3}
+                                    activeDot={{ r: 6, fill: 'var(--theme-success)' }}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>

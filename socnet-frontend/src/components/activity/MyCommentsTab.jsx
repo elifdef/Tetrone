@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../../api/axios';
+import ActivityService from '../../services/activity.service';
+import CommentService from '../../services/comment.service';
 import ActivityCommentItem from './ActivityCommentItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';
 import { notifyError } from '../common/Notify';
@@ -18,50 +19,37 @@ export default function MyCommentsTab({ onCountUpdate }) {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState(false);
 
-    const fetchComments = useCallback(() => {
-        let isMounted = true;
-
+    const fetchComments = useCallback(async () => {
         if (page === 1) setIsLoadingInitial(true);
         else setIsLoadingMore(true);
         setError(false);
 
-        api.get(`/activity/comments?page=${page}`)
-            .then(res => {
-                if (isMounted) {
-                    const newComments = res.data.data;
-                    const meta = res.data.meta;
+        try {
+            const { items, meta } = await ActivityService.getMyComments(page);
 
-                    setComments(prev => {
-                        if (page === 1) return newComments;
+            setComments(prev => {
+                if (page === 1) return items;
 
-                        const uniqueNewComments = newComments.filter(
-                            newComment => !prev.some(existing => existing.id === newComment.id)
-                        );
-                        return [...prev, ...uniqueNewComments];
-                    });
-
-                    setHasMore(meta ? meta.current_page < meta.last_page : false);
-                }
-            })
-            .catch(err => {
-                if (isMounted) {
-                    notifyError(t('error.loading_comments'));
-                    setError(true);
-                }
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsLoadingInitial(false);
-                    setIsLoadingMore(false);
-                }
+                const existingIds = new Set(prev.map(c => c.id));
+                const uniqueNewComments = items.filter(c => !existingIds.has(c.id));
+                return [...prev, ...uniqueNewComments];
             });
 
-        return () => { isMounted = false; };
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
+        } catch (err) {
+            if (err.name !== "AbortError") {
+                notifyError(t('error.loading_comments'));
+                setError(true);
+                console.error("Failed to load comments:", err.data?.message || err.message);
+            }
+        } finally {
+            setIsLoadingInitial(false);
+            setIsLoadingMore(false);
+        }
     }, [page, t]);
 
     useEffect(() => {
-        const cleanup = fetchComments();
-        return cleanup;
+        fetchComments();
     }, [fetchComments]);
 
     const loadMore = useCallback(() => {
@@ -75,12 +63,11 @@ export default function MyCommentsTab({ onCountUpdate }) {
         if (!isConfirmed) return;
 
         try {
-            await api.delete(`/comments/${commentId}`);
+            await CommentService.delete(commentId);
             setComments(prev => prev.filter(c => c.id !== commentId));
             if (onCountUpdate) onCountUpdate(-1);
-
-        } catch (error) {
-            notifyError(t('error.deleting'));
+        } catch (err) {
+            notifyError(err.data?.message || t('error.deleting'));
         }
     };
 

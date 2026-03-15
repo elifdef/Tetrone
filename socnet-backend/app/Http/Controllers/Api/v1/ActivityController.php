@@ -104,4 +104,28 @@ class ActivityController extends Controller
 
         return CommentResource::collection($comments);
     }
+
+    /**
+     * Повертає скільки користувач насидів на сайті
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function screenTime(Request $request)
+    {
+        $user = $request->user();
+
+        $user->load('activities');
+
+        return response()->json([
+            'total_active_seconds' => $user->activities->sum('active_seconds'),
+            'history' => $user->activities->map(function ($act)
+            {
+                return [
+                    'date' => $act->date,
+                    'seconds' => $act->active_seconds,
+                ];
+            })->sortByDesc('date')->values()
+        ]);
+    }
 }

@@ -3,10 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useInbox } from "../../../hooks/useInbox";
 import { useDateFormatter } from "../../../hooks/useDateFormatter";
-
-import editIcon from "../../../assets/edit.svg";
-import msgIcon from "../../../assets/comment.svg";
-import flagIcon from "../../../assets/flag.svg";
+import PostService from "../../../services/post.service";
+import { notifyError } from "../../common/Notify";
+import PhotoModal from "../../../components/UI/PhotoModal";
 
 export default function Header({
     currentUser, isPreview, displayAvatar, isBlockedByTarget, isBanned,
@@ -23,11 +22,14 @@ export default function Header({
     const [isChatLoading, setIsChatLoading] = useState(false);
     const menuRef = useRef(null);
 
+    const [avatarPosts, setAvatarPosts] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+    const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setIsMenuOpen(false);
-            }
+            if (menuRef.current && !menuRef.current.contains(event.target)) setIsMenuOpen(false);
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -84,7 +86,31 @@ export default function Header({
         }
     };
 
+    const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned);
     const nameStyle = { color: customNameColor };
+
+    const handleAvatarClick = async () => {
+        if (!canViewAvatar || isLoadingAvatar) return;
+
+        setIsLoadingAvatar(true);
+        try {
+            const posts = await PostService.getUserAvatars(currentUser.username);
+            
+            if (posts && posts.length > 0) {
+                setAvatarPosts(posts);
+                setCurrentIndex(0);
+                setIsPhotoModalOpen(true);
+            }
+        } catch (error) {
+            console.error(error);
+            notifyError(t('error.connection'));
+        } finally {
+            setIsLoadingAvatar(false);
+        }
+    };
+
+    const nextAvatar = () => setCurrentIndex(prev => (prev + 1) % avatarPosts.length);
+    const prevAvatar = () => setCurrentIndex(prev => (prev - 1 + avatarPosts.length) % avatarPosts.length);
 
     return (
         <div className="socnet-modern-header">
@@ -93,7 +119,12 @@ export default function Header({
                     <img
                         src={displayAvatar}
                         alt="avatar"
-                        className={`socnet-modern-avatar ${(!isPreview && (isBlockedByTarget || isBanned)) ? 'socnet-avatar-blocked' : ''}`}
+                        className={`socnet-modern-avatar`}
+                        onClick={handleAvatarClick}
+                        style={{ 
+                            cursor: canViewAvatar ? 'pointer' : 'default',
+                            opacity: isLoadingAvatar ? 0.7 : 1 
+                        }}
                     />
                 </div>
 
@@ -111,7 +142,6 @@ export default function Header({
             <div className="socnet-modern-actions-group">
                 {sameUser && !isPreview && (
                     <Link to="/settings" className="socnet-btn-ghost modern-action-btn">
-                        <img src={editIcon} alt="edit" width="14" height="14" />
                         {t('common.edit')}
                     </Link>
                 )}
@@ -124,7 +154,6 @@ export default function Header({
                                 onClick={handleSendMessage}
                                 disabled={isChatLoading || loading}
                             >
-                                <img src={msgIcon} alt="msg" width="14" height="14" />
                                 {isChatLoading ? '...' : t('messages.send_message')}
                             </button>
                         )}
@@ -147,7 +176,6 @@ export default function Header({
                                     )}
 
                                     <button className="socnet-menu-item modern-menu-item" onClick={() => { onReportAction(); setIsMenuOpen(false); }}>
-                                        <img src={flagIcon} alt="report" width="12" height="12" />
                                         {t('reports.title')}
                                     </button>
 
@@ -163,6 +191,18 @@ export default function Header({
                     </>
                 )}
             </div>
+
+            {avatarPosts.length > 0 && (
+                <PhotoModal
+                    isOpen={isPhotoModalOpen}
+                    post={avatarPosts[currentIndex]}
+                    onClose={() => setIsPhotoModalOpen(false)}
+                    onNext={avatarPosts.length > 1 ? nextAvatar : null}
+                    onPrev={avatarPosts.length > 1 ? prevAvatar : null}
+                    listCurrent={currentIndex + 1}
+                    listTotal={avatarPosts.length}
+                />
+            )}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import api from "../../api/axios";
+import AdminService from "../../services/admin.service";
 import { notifySuccess, notifyError } from "../common/Notify";
 import { useModal } from "../../context/ModalContext";
 
@@ -17,11 +17,12 @@ export default function AdminAppeals() {
     const fetchAppeals = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/admin/appeals?status=${statusFilter}`);
-            setStats(res.data.stats);
-            setAppeals(res.data.appeals.data);
+            const { items, stats: statistics } = await AdminService.getAppeals(statusFilter);
+            setStats(statistics);
+            setAppeals(items);
         } catch (error) {
-            notifyError(t('common.error'));
+            notifyError(error.data?.message || t('common.error'));
+            console.error("Failed to load appeals:", error.data?.message || error.message);
         } finally {
             setLoading(false);
         }
@@ -45,18 +46,17 @@ export default function AdminAppeals() {
         if (responseText === null) return;
 
         try {
-            const endpoint = `/admin/appeals/${appealId}/${actionType}`;
-            await api.post(endpoint, { admin_response: responseText.trim() });
+            await AdminService.handleAppeal(appealId, actionType, responseText.trim());
 
             notifySuccess(t('common.saved'));
             fetchAppeals();
         } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+            notifyError(error.data?.message || t('common.error'));
         }
     };
 
     return (
-        <div>
+        <div className="admin-appeals-page">
             <div className="admin-dossier-row admin-appeals-stats-container">
                 <div className="admin-stats-box">
                     <div className="admin-stats-label">{t('admin.stats.total')}</div>
@@ -77,24 +77,15 @@ export default function AdminAppeals() {
             </div>
 
             <div className="socnet-tabs">
-                <button
-                    className={`socnet-tab ${statusFilter === 'pending' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('pending')}
-                >
-                    {t('admin.stats.pending')}
-                </button>
-                <button
-                    className={`socnet-tab ${statusFilter === 'approved' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('approved')}
-                >
-                    {t('admin.stats.approved')}
-                </button>
-                <button
-                    className={`socnet-tab ${statusFilter === 'rejected' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('rejected')}
-                >
-                    {t('admin.stats.rejected')}
-                </button>
+                {['pending', 'approved', 'rejected'].map(status => (
+                    <button
+                        key={status}
+                        className={`socnet-tab ${statusFilter === status ? 'active' : ''}`}
+                        onClick={() => setStatusFilter(status)}
+                    >
+                        {t(`admin.stats.${status}`)}
+                    </button>
+                ))}
             </div>
 
             {loading ? (
@@ -104,9 +95,8 @@ export default function AdminAppeals() {
             ) : (
                 <div className="socnet-feed-list">
                     {appeals.map((appeal) => (
-                        <div key={appeal.id} className="admin-user-card">
+                        <div key={appeal.id} className="admin-user-card admin-appeal-card">
                             <div className="admin-user-info">
-
                                 <div className="socnet-info-row">
                                     <span className="socnet-label">{t('admin.appeals.from')}</span>
                                     <span className="socnet-value">

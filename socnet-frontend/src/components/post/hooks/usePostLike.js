@@ -1,19 +1,16 @@
-import { useState, useContext } from "react";
-import api from "../../../api/axios";
-import { AuthContext } from "../../../context/AuthContext";
+import { useState } from "react";
+import PostService from "../../../services/post.service";
 import { notifyError } from "../../../components/common/Notify";
 import { useTranslation } from 'react-i18next';
 
 export const usePostLike = (post) => {
-    const { user } = useContext(AuthContext);
     const { t } = useTranslation();
-    const [isLiked, setIsLiked] = useState(post.is_liked);
-    const [likesCount, setLikesCount] = useState(post.likes_count);
+    const [isLiked, setIsLiked] = useState(post?.is_liked || false);
+    const [likesCount, setLikesCount] = useState(post?.likes_count || 0);
     const [isLiking, setIsLiking] = useState(false);
 
     const handleLike = async () => {
-        if (!post || isLiking)
-            return null;
+        if (!post || isLiking) return null;
 
         setIsLiking(true);
 
@@ -24,18 +21,21 @@ export const usePostLike = (post) => {
         setLikesCount(previousLiked ? previousCount - 1 : previousCount + 1);
 
         try {
-            const res = await api.post(`/posts/${post.id}/like`);
-            setLikesCount(res.data.likes_count);
-            setIsLiked(res.data.liked);
+            const data = await PostService.toggleLike(post.id);
+
+            setLikesCount(data.likes_count);
+            setIsLiked(data.liked);
+
             return {
-                liked: res.data.liked,
-                likes_count: res.data.likes_count
+                liked: data.liked,
+                likes_count: data.likes_count
             };
 
         } catch (error) {
             setIsLiked(previousLiked);
             setLikesCount(previousCount);
-            notifyError(t('error.connection'));
+
+            notifyError(error.data?.message || t('error.connection'));
             return null;
         } finally {
             setIsLiking(false);

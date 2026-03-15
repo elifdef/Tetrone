@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { reportAPI } from '../../api/reports.api';
+import ReportService from '../../services/report.service';
 import { notifySuccess, notifyError } from '../common/Notify';
 
 export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
@@ -16,11 +16,14 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
             const fetchReasons = async () => {
                 setIsLoadingReasons(true);
                 try {
-                    const data = await reportAPI.getReasons();
+                    const data = await ReportService.getReasons();
                     setReasons(data);
-                    if (data.length > 0) setSelectedReason(data[0]);
+                    if (data.length > 0) {
+                        setSelectedReason(data[0]);
+                    }
                 } catch (error) {
                     notifyError(t('reports.error_load_reasons'));
+                    console.error("Failed to load report reasons:", error.data?.message || error.message);
                 } finally {
                     setIsLoadingReasons(false);
                 }
@@ -44,7 +47,7 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
 
         setIsSubmitting(true);
         try {
-            await reportAPI.submitReport({
+            await ReportService.submitReport({
                 type: targetType,
                 id: targetId,
                 reason: selectedReason,
@@ -54,7 +57,7 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
             notifySuccess(t('reports.success'));
             handleClose();
         } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+            notifyError(error.data?.message || error.message || t('common.error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -75,7 +78,7 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
                     {t('reports.title')}
                 </h2>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="socnet-form">
                     {isLoadingReasons ? (
                         <div className="socnet-empty-state">{t('common.loading')}</div>
                     ) : (

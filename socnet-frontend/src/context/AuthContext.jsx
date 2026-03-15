@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect } from "react";
-import api from "../api/axios";
+import fetchClient from "../api/client";
 import { getSystemLanguage } from "../i18n";
 
 export const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
@@ -17,15 +18,16 @@ export const AuthProvider = ({ children }) => {
 
             const controller = new AbortController();
 
-            api.get('/me', { signal: controller.signal })
-                .then(res => {
-                    setUser(res.data);
+            fetchClient('/me', { signal: controller.signal })
+                .then(data => {
+                    setUser(data);
                     setLoading(false);
                 })
                 .catch((err) => {
-                    if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED')
+                    if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED' || err.name === 'AbortError')
                         return;
-                    if (err.response && err.response.status === 401) {
+
+                    if (err.status === 401) {
                         localStorage.removeItem('token');
                         setToken(null);
                         setUser(null);
@@ -41,12 +43,47 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
-    // для точного визначення статусу онлайна користувача
+    // трекер онлайну
     useEffect(() => {
         if (!user) return;
-        const sendOnline = () => { api.post('/user/ping').catch(() => { }); };
-        const interval = setInterval(sendOnline, 60000);
-        return () => clearInterval(interval);
+
+        let isOfflineSent = false; // захист від подвійного відправлення
+
+        const pingServer = () => {
+            if (document.visibilityState === 'visible') {
+                isOfflineSent = false; // Скидаємо прапорець, коли юзер повернувся
+                fetchClient('/user/ping', { method: 'POST', body: { active: true } })
+                    .catch(() => { });
+            }
+        };
+
+        const sendOfflineStatus = () => {
+            if (isOfflineSent) return; // Якщо вже відправили - ігноруємо
+            isOfflineSent = true;
+
+            fetchClient('/user/offline', { method: 'POST', keepalive: true })
+                .catch(() => { });
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                sendOfflineStatus();
+            } else if (document.visibilityState === 'visible') {
+                pingServer();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('beforeunload', sendOfflineStatus);
+
+        pingServer();
+        const interval = setInterval(pingServer, 60000);
+
+        return () => {
+            clearInterval(interval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('beforeunload', sendOfflineStatus);
+        };
     }, [user]);
 
     // для моментальної зміни статусу підтвердження пошти
@@ -75,7 +112,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        api.post('/sign-out').finally(() => {
+        fetchClient('/sign-out', { method: 'POST' }).finally(() => {
             localStorage.removeItem('token');
             setToken(null);
             setUser(null);

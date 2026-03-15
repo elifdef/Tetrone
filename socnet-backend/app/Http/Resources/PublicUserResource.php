@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Friendship;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,7 @@ class PublicUserResource extends JsonResource
         $status = $this->getFriendshipStatusWith($currentUser);
 
         $personalizationData = [
+            'banner_image' => asset("storage/".$this->personalization?->banner_image),
             'banner_color' => $this->personalization->banner_color,
             'username_color' => $this->personalization->username_color,
         ];
@@ -35,7 +37,7 @@ class PublicUserResource extends JsonResource
                 'friendship_status' => $status,
                 'country' => null,
                 'is_banned' => true,
-                'personalization' => $personalizationData,
+                'personalization' => null,
             ];
         }
 
@@ -47,7 +49,7 @@ class PublicUserResource extends JsonResource
                 'username' => $this->username,
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
-                'avatar' => $this->avatar_url,
+                'avatar' => User::defaultAvatar,
                 'bio' => null,
                 'gender' => null,
                 'birth_date' => null,
@@ -56,7 +58,7 @@ class PublicUserResource extends JsonResource
                 'friendship_status' => $status,
                 'country' => null,
                 'is_banned' => (bool)$this->is_banned,
-                'personalization' => $personalizationData,
+                'personalization' => null,
             ];
         }
 

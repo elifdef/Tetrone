@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table)
+        {
             $table->id();
             $table->string('username')->unique();
             $table->string('email')->unique();
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('avatar')->nullable();
+            $table->string('avatar_post_id')->nullable();
             $table->date('birth_date')->nullable();
             $table->tinyInteger('gender')->nullable()->default(null);
             $table->char('country', 2)->nullable();
@@ -35,7 +37,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+        Schema::create('password_reset_tokens', function (Blueprint $table)
+        {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();

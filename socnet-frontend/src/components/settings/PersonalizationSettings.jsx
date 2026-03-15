@@ -1,33 +1,50 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HexColorPicker } from 'react-colorful';
 import { AuthContext } from '../../context/AuthContext';
-import api from '../../api/axios';
+import PersonalizationService from '../../services/personalization.service';
 import { notifySuccess, notifyError } from '../common/Notify';
 import UserProfileCard from '../profile/UserProfileCard';
+import ImageDropzone from './ImageDropzone';
 
-const PopoverPicker = ({ color, onChange }) => {
+const PopoverPicker = ({ color, onChange, t }) => {
     const [isOpen, setIsOpen] = useState(false);
     const popoverRef = useRef(null);
 
     useEffect(() => {
         const close = (e) => {
-            if (popoverRef.current && !popoverRef.current.contains(e.target)) setIsOpen(false);
+            if (popoverRef.current && !popoverRef.current.contains(e.target)) {
+                setIsOpen(false);
+            }
         };
         document.addEventListener('mousedown', close);
         return () => document.removeEventListener('mousedown', close);
     }, []);
 
+    const safeHex = (color && color.startsWith('#')) ? color : '#ffffff';
+
     return (
-        <div style={{ position: 'relative' }} ref={popoverRef}>
+        <div className="socnet-picker-container" ref={popoverRef}>
             <div
                 className="socnet-custom-color-btn"
-                style={{ background: color || '#ffffff' }}
+                style={{ backgroundColor: color || '#ffffff' }}
                 onClick={() => setIsOpen(!isOpen)}
             />
             {isOpen && (
                 <div className="socnet-color-popover">
-                    <HexColorPicker color={color || '#ffffff'} onChange={onChange} />
+                    <HexColorPicker
+                        color={safeHex}
+                        onChange={onChange}
+                    />
+                    <div className="socnet-color-input-wrapper">
+                        <input
+                            type="text"
+                            className="socnet-input socnet-color-text-input"
+                            value={color || ''}
+                            onChange={(e) => onChange(e.target.value)}
+                            placeholder={t('settings.color_format_hint')}
+                        />
+                    </div>
                 </div>
             )}
         </div>
@@ -36,48 +53,78 @@ const PopoverPicker = ({ color, onChange }) => {
 
 export default function PersonalizationSettings() {
     const { t } = useTranslation();
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
     const [uiTheme, setUiTheme] = useState(localStorage.getItem('app_profile_theme') || 'modern');
+    const [isDarkTheme, setIsDarkTheme] = useState(localStorage.getItem('dark_theme') !== 'false');
+
+    const initialPersonalization = user?.personalization || {};
 
     const [settings, setSettings] = useState({
-        banner_color: '',
-        username_color: ''
+        banner_color: initialPersonalization.banner_color || '',
+        username_color: initialPersonalization.username_color || '',
+        banner_image: initialPersonalization.banner_image || null
     });
+
+    const [bannerFile, setBannerFile] = useState(null);
+    const [previewBannerImage, setPreviewBannerImage] = useState(initialPersonalization.banner_image || null);
 
     const [grad, setGrad] = useState({ deg: 135, c1: '#1e3a8a', c2: '#9333ea' });
 
+    const parseGradient = useCallback((bc) => {
+        if (!bc) return;
+        const colors = bc.match(/(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))/g);
+        const degMatch = bc.match(/(-?\d+)deg/);
+
+        if (colors && colors.length >= 2) {
+            setGrad({ deg: degMatch ? parseInt(degMatch[1]) : 135, c1: colors[0], c2: colors[1] });
+        } else if (colors && colors.length === 1) {
+            setGrad(prev => ({ ...prev, c1: colors[0], c2: colors[0] }));
+        }
+    }, []);
+
     useEffect(() => {
-        api.get('/settings/personalization')
-            .then(res => {
-                const bc = res.data.personalization.banner_color || '';
+        if (initialPersonalization.banner_color) {
+            parseGradient(initialPersonalization.banner_color);
+        }
+
+        PersonalizationService.getSettings()
+            .then(data => {
+                const resData = data.data || data;
+                const bc = resData.banner_color || '';
+
                 setSettings({
                     banner_color: bc,
-                    username_color: res.data.personalization.username_color || ''
+                    username_color: resData.username_color || '',
+                    banner_image: resData.banner_image || null
                 });
-
-                if (bc.includes('linear-gradient')) {
-                    const match = bc.match(/linear-gradient\((\d+)deg,\s*(#[0-9a-fA-F]{3,8}),\s*(#[0-9a-fA-F]{3,8})\)/);
-                    if (match) {
-                        setGrad({ deg: parseInt(match[1]), c1: match[2], c2: match[3] });
-                    } else {
-                        const colors = bc.match(/#[0-9a-fA-F]{3,8}/g);
-                        if (colors && colors.length >= 2) {
-                            setGrad(prev => ({ ...prev, c1: colors[0], c2: colors[1] }));
-                        }
-                    }
-                }
+                setPreviewBannerImage(resData.banner_image || null);
+                parseGradient(bc);
             })
-            .catch(() => notifyError(t('error.connection')))
+            .catch(err => {
+                notifyError(t('error.connection'));
+            })
             .finally(() => setIsLoading(false));
-    }, [t]);
+    }, [t, parseGradient, initialPersonalization.banner_color]);
 
-    const handleThemeChange = (newTheme) => {
+    const handleProfileThemeChange = (newTheme) => {
         setUiTheme(newTheme);
         localStorage.setItem('app_profile_theme', newTheme);
         window.dispatchEvent(new Event('theme_changed'));
+    };
+
+    const handleGlobalThemeToggle = () => {
+        const newVal = !isDarkTheme;
+        setIsDarkTheme(newVal);
+        localStorage.setItem('dark_theme', newVal ? 'true' : 'false');
+
+        if (!newVal) {
+            document.body.setAttribute('data-theme', 'light');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
     };
 
     const updateGradient = (deg, color1, color2) => {
@@ -88,13 +135,49 @@ export default function PersonalizationSettings() {
         }));
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setBannerFile(file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviewBannerImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveImage = () => {
+        setBannerFile(null);
+        setPreviewBannerImage(null);
+        setSettings(prev => ({ ...prev, banner_image: null }));
+    };
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await api.put('/settings/personalization', settings);
+            const formData = new FormData();
+
+            formData.append('username_color', settings.username_color || '');
+            formData.append('banner_color', settings.banner_color || '');
+
+            if (bannerFile) {
+                formData.append('banner_image', bannerFile);
+            } else if (previewBannerImage === null) {
+                formData.append('remove_banner_image', 'true');
+            }
+
+            const response = await PersonalizationService.updateSettings(formData);
+
+            const updatedData = response.data || response;
+            if (setUser && updatedData) {
+                setUser({ ...user, personalization: updatedData });
+            }
+
             notifySuccess(t('common.saved'));
         } catch (error) {
-            notifyError(t('error.connection'));
+            notifyError(error.data?.message || t('error.connection'));
         } finally {
             setIsSaving(false);
         }
@@ -104,37 +187,57 @@ export default function PersonalizationSettings() {
         ...user,
         personalization: {
             ...user.personalization,
-            ...settings
+            ...settings,
+            banner_image: previewBannerImage
         }
     } : null;
 
     if (isLoading) return <div className="socnet-loading">{t('common.loading')}</div>;
 
+    const themeSuffix = isDarkTheme ? 'dark' : 'light';
+
     return (
         <div className="socnet-settings-regular">
-            <div className="socnet-settings-preview-wrapper" style={{ marginBottom: '25px' }}>
+            <div className="socnet-settings-preview-wrapper">
                 <div className="socnet-preview-label">{t('common.preview')}</div>
                 <UserProfileCard currentUser={previewUser} isPreview={true} forceTheme={uiTheme} />
             </div>
 
             <div className="socnet-settings-form">
-                <h3>{t('settings.personalization_title')}</h3>
+                <div className="socnet-settings-header-row">
+                    <h3 className="socnet-settings-title">{t('settings.personalization_title')}</h3>
+
+                    <button
+                        className="socnet-btn-ghost socnet-theme-toggle-btn"
+                        onClick={handleGlobalThemeToggle}
+                    >
+                        {isDarkTheme ? t('settings.theme_light') : t('settings.theme_dark')}
+                    </button>
+                </div>
 
                 <div className="socnet-form-group">
                     <label className="socnet-label">{t('settings.profile_theme')}</label>
                     <div className="socnet-theme-selector-grid">
                         <div
                             className={`socnet-theme-card ${uiTheme === 'modern' ? 'active' : ''}`}
-                            onClick={() => handleThemeChange('modern')}
+                            onClick={() => handleProfileThemeChange('modern')}
                         >
-                            <img src="/images/theme-modern.png" alt="modern" />
+                            <img
+                                src={`/images/theme-modern-${themeSuffix}.png`}
+                                alt="modern"
+                                className="socnet-theme-img"
+                            />
                             <div className="socnet-theme-card-label">{t('settings.theme_modern')}</div>
                         </div>
                         <div
                             className={`socnet-theme-card ${uiTheme === 'classic' ? 'active' : ''}`}
-                            onClick={() => handleThemeChange('classic')}
+                            onClick={() => handleProfileThemeChange('classic')}
                         >
-                            <img src="/images/theme-classic.png" alt="classic" />
+                            <img
+                                src={`/images/theme-classic-${themeSuffix}.png`}
+                                alt="classic"
+                                className="socnet-theme-img"
+                            />
                             <div className="socnet-theme-card-label">{t('settings.theme_classic')}</div>
                         </div>
                     </div>
@@ -146,13 +249,7 @@ export default function PersonalizationSettings() {
                         <PopoverPicker
                             color={settings.username_color}
                             onChange={(color) => setSettings({ ...settings, username_color: color })}
-                        />
-                        <input
-                            type="text"
-                            className="socnet-input socnet-color-text-input"
-                            placeholder={t('settings.color_placeholder')}
-                            value={settings.username_color}
-                            onChange={(e) => setSettings({ ...settings, username_color: e.target.value })}
+                            t={t}
                         />
                         <button
                             className="socnet-btn-ghost"
@@ -164,37 +261,61 @@ export default function PersonalizationSettings() {
                     <small className="socnet-text-muted">{t('settings.username_color_hint')}</small>
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-label">{t('settings.banner_color')}</label>
+                {uiTheme === 'modern' && (
+                    <div className="socnet-form-group">
+                        <label className="socnet-label">{t('settings.banner_background')}</label>
 
-                    <div className="socnet-gradient-builder">
-                        <div
-                            className="socnet-gradient-preview"
-                            style={{ background: `linear-gradient(${grad.deg}deg, ${grad.c1}, ${grad.c2})` }}
-                        />
+                        <div className="socnet-banner-upload-box">
+                            <ImageDropzone
+                                onFileSelect={handleImageChange}
+                                previewImage={previewBannerImage}
+                                onRemove={handleRemoveImage}
+                            />
 
-                        <div className="socnet-gradient-controls">
-                            <div className="socnet-gradient-colors">
-                                <PopoverPicker color={grad.c1} onChange={(c) => updateGradient(grad.deg, c, grad.c2)} />
-                                <span className="socnet-gradient-icon">→</span>
-                                <PopoverPicker color={grad.c2} onChange={(c) => updateGradient(grad.deg, grad.c1, c)} />
-                            </div>
-
-                            <div className="socnet-gradient-angle">
-                                <label>{t('settings.angle')} ({grad.deg}°)</label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="360"
-                                    value={grad.deg}
-                                    onChange={(e) => updateGradient(e.target.value, grad.c1, grad.c2)}
-                                    className="socnet-range-slider"
-                                />
-                            </div>
+                            {previewBannerImage && (
+                                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                                    <button
+                                        type="button"
+                                        className="socnet-btn-ghost danger"
+                                        onClick={handleRemoveImage}
+                                    >
+                                        {t('common.delete')}
+                                    </button>
+                                </div>
+                            )}
                         </div>
+
+                            <div className="socnet-gradient-builder" style={{ marginTop: '15px' }}>
+                                <div
+                                    className="socnet-gradient-preview"
+                                    style={{ background: settings.banner_color || `linear-gradient(${grad.deg}deg, ${grad.c1}, ${grad.c2})` }}
+                                />
+
+                                <div className="socnet-gradient-controls">
+                                    <div className="socnet-gradient-colors">
+                                        <PopoverPicker color={grad.c1} onChange={(c) => updateGradient(grad.deg, c, grad.c2)} t={t} />
+                                        <span className="socnet-gradient-icon">→</span>
+                                        <PopoverPicker color={grad.c2} onChange={(c) => updateGradient(grad.deg, grad.c1, c)} t={t} />
+                                    </div>
+
+                                    <div className="socnet-gradient-angle">
+                                        <label className="socnet-angle-label">
+                                            {t('settings.angle')} ({grad.deg}°)
+                                        </label>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="360"
+                                            value={grad.deg}
+                                            onChange={(e) => updateGradient(e.target.value, grad.c1, grad.c2)}
+                                            className="socnet-range-slider"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        <small className="socnet-text-muted">{t('settings.banner_hint')}</small>
                     </div>
-                    <small className="socnet-text-muted">{t('settings.banner_hint')}</small>
-                </div>
+                )}
 
                 <button className="socnet-btn" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? t('common.loading') : t('common.save')}

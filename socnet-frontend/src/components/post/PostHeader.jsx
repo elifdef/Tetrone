@@ -9,14 +9,23 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
     const { t } = useTranslation();
     const formatDate = useDateFormatter();
     const { username: currentProfileUsername } = useParams();
-    const showTargetUser = post.target_user && post.target_user.username !== currentProfileUsername;
+
+    const isAvatarUpdate = post.entities?.is_avatar_update === true;
+
+    const showTargetUser = !isAvatarUpdate && post.target_user && post.target_user.username !== currentProfileUsername;
     const isAuthor = currentUserId ? currentUserId == post.user?.id : isOwner;
 
-    const canEdit = onEdit && isAuthor;             // редагує ТІЛЬКИ автор
+    // Редагує ТІЛЬКИ автор, і ТІЛЬКИ якщо це не системний пост (не оновлення аватарки)
+    const canEdit = onEdit && isAuthor && !isAvatarUpdate;
     const canDelete = onDelete && isOwner;          // видаляє автор АБО власник стіни
     const canReport = onReport && !isAuthor;        // скаржиться будь-хто КРІМ автора
 
     const showActions = canEdit || canDelete || canReport;
+
+    // Текст оновлення залежно від статі
+    const avatarUpdateText = post.user?.gender === 2
+        ? t('post.updated_avatar_female')
+        : t('post.updated_avatar_male');
 
     return (
         <div className="socnet-post-header">
@@ -33,6 +42,12 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
                     <Link to={`/${post.user.username}`} className="socnet-post-author">
                         {post.user.first_name} {post.user.last_name}
                     </Link>
+
+                    {isAvatarUpdate && (
+                        <span className="socnet-post-target-text">
+                            {' '}{avatarUpdateText}
+                        </span>
+                    )}
 
                     {showTargetUser && (
                         <span className="socnet-post-target-text">

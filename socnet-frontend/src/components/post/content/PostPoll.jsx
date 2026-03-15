@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../../../api/axios';
+import PostService from '../../../services/post.service';
 import { notifyError } from '../../common/Notify';
 import { Link } from 'react-router-dom';
 
@@ -65,16 +65,17 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
         setIsLoading(true);
         try {
-            const response = await api.post(`/posts/${postId}/poll/vote`, { option_ids: idsToSubmit });
-            setResults(response.data.results);
-            setVotedOptionIds(response.data.voted_option_ids);
-            setDraftOptionIds(response.data.voted_option_ids);
+            const data = await PostService.votePoll(postId, idsToSubmit);
 
-            if (response.data.quiz_data) {
-                setQuizData(response.data.quiz_data);
+            setResults(data.results);
+            setVotedOptionIds(data.voted_option_ids);
+            setDraftOptionIds(data.voted_option_ids);
+
+            if (data.quiz_data) {
+                setQuizData(data.quiz_data);
             }
         } catch (error) {
-            notifyError(error.response?.data?.message || t('error.connection'));
+            notifyError(error.data?.message || t('error.connection'));
             setDraftOptionIds(votedOptionIds);
         } finally {
             setIsLoading(false);
@@ -93,10 +94,10 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
         setIsLoadingVoters(true);
         try {
-            const response = await api.get(`/posts/${postId}/poll/voters`);
-            setVotersData(response.data.voters);
+            const voters = await PostService.getPollVoters(postId);
+            setVotersData(voters);
         } catch (error) {
-            notifyError(t('poll.error_voters'));
+            notifyError(error.data?.message || t('poll.error_voters'));
             setIsVotersModalOpen(false);
         } finally {
             setIsLoadingVoters(false);
@@ -106,11 +107,11 @@ export default function PostPoll({ poll, postId, isOwner }) {
     const closePoll = async () => {
         setIsLoading(true);
         try {
-            await api.post(`/posts/${postId}/poll/close`);
+            await PostService.closePoll(postId);
             setIsClosed(true);
             setIsCloseConfirmOpen(false);
         } catch (error) {
-            notifyError(error.response?.data?.message || t('error.connection'));
+            notifyError(error.data?.message || t('error.connection'));
         } finally {
             setIsLoading(false);
         }
@@ -131,7 +132,6 @@ export default function PostPoll({ poll, postId, isOwner }) {
                     const isVoted = votedOptionIds.includes(option.id);
                     const isSelected = draftOptionIds.includes(option.id);
                     const percent = getPercentage(option.id);
-                    // голосувати можна якщо не голосував (або можна змінити) І опитування НЕ закрите
                     const canVoteNow = (votedOptionIds.length === 0 || poll.can_change_vote) && !isClosed;
 
                     let quizClass = '';
@@ -193,7 +193,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
             )}
 
             {poll.is_multiple_choice && hasDraftChanges && !isClosed && (
-                <div className="socnet-poll-actions" style={{ justifyContent: 'flex-start' }}>
+                <div className="socnet-poll-actions socnet-poll-actions-start">
                     <button className="socnet-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>
                         {t('poll.submit_vote')}
                     </button>
@@ -205,8 +205,8 @@ export default function PostPoll({ poll, postId, isOwner }) {
                 </div>
             )}
 
-            <div className="socnet-poll-meta" style={{ justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="socnet-poll-meta socnet-poll-meta-spaced">
+                <div className="socnet-poll-meta-left">
                     <span>{totalVotes} {t('post.votes_count', { count: totalVotes })}</span>
                     {poll.is_anonymous && <><span className="dot">•</span><span>{t('post.anonymous_poll')}</span></>}
 
@@ -227,7 +227,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
             {isCloseConfirmOpen && (
                 <div className="socnet-modal-overlay" onClick={() => setIsCloseConfirmOpen(false)}>
-                    <div className="socnet-modal-dialog" style={{ maxWidth: '350px' }} onClick={e => e.stopPropagation()}>
+                    <div className="socnet-modal-dialog socnet-modal-dialog-sm" onClick={e => e.stopPropagation()}>
                         <div className="socnet-modal-text-confirm">
                             {t('poll.close_confirm_text')}
                         </div>

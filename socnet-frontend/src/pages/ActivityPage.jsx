@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import api from "../api/axios"
+import fetchClient from '../api/client';
 import LikedPostsTab from '../components/activity/LikedPostsTab';
 import MyCommentsTab from '../components/activity/MyCommentsTab';
 import MyRepostsTab from '../components/activity/MyRepostsTab';
+import ScreenTimeTab from '../components/activity/ScreenTimeTab';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function ActivityPage() {
@@ -18,6 +19,7 @@ export default function ActivityPage() {
             case 'likes': return `${baseTitle} | ${t('common.likes')}`;
             case 'comments': return `${baseTitle} | ${t('common.comments')}`;
             case 'reposts': return `${baseTitle} | ${t('common.reposts')}`;
+            case 'stats': return `${baseTitle} | ${t('activity.stats.title')}`;
             default: return baseTitle;
         }
     };
@@ -25,9 +27,9 @@ export default function ActivityPage() {
     usePageTitle(getPageTitle());
 
     useEffect(() => {
-        api.get('/activity/counts')
-            .then(res => setCounts(res.data))
-            .catch(err => console.error("Помилка завантаження лічильників", err));
+        fetchClient('/activity/counts')
+            .then(data => setCounts(data))
+            .catch(err => console.error("Failed to fetch activity counts", err));
     }, []);
 
     const updateCount = useCallback((type, delta) => {
@@ -47,6 +49,8 @@ export default function ActivityPage() {
                 return <MyCommentsTab onCountUpdate={(delta) => updateCount('comments', delta)} />;
             case 'reposts':
                 return <MyRepostsTab onCountUpdate={(delta) => updateCount('reposts', delta)} />;
+            case 'stats':
+                return <ScreenTimeTab />;
             default:
                 return <div className="socnet-empty-state">{t('error.page_not_found')}</div>;
         }
@@ -81,6 +85,13 @@ export default function ActivityPage() {
                 >
                     {t('common.reposts')}
                     <span className="socnet-tab-count">({counts.reposts})</span>
+                </Link>
+
+                <Link
+                    to="/activity/stats"
+                    className={`socnet-tab ${tab === 'stats' ? 'active' : ''}`}
+                >
+                    {t('activity.stats.title')}
                 </Link>
             </div>
 

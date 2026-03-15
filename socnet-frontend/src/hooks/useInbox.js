@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { chatApi } from '../api/messages.api';
+import ChatService from '../services/chat.service';
 import { notifyError } from '../components/common/Notify';
+
 export const useInbox = () => {
     const { t } = useTranslation();
     const [chats, setChats] = useState([]);
@@ -10,10 +11,10 @@ export const useInbox = () => {
     const fetchChats = useCallback(async () => {
         setIsLoading(true);
         try {
-            const { data } = await chatApi.getChats();
+            const data = await ChatService.getChats();
             setChats(data);
         } catch (err) {
-            notifyError(err.response?.data?.message || t('messages.errors.load_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.load_failed'));
         } finally {
             setIsLoading(false);
         }
@@ -21,10 +22,10 @@ export const useInbox = () => {
 
     const initChat = async (targetUserId) => {
         try {
-            const { data } = await chatApi.initChat(targetUserId);
+            const data = await ChatService.initChat(targetUserId);
             return data.chat_slug;
         } catch (err) {
-            notifyError(err.response?.data?.message || t('messages.errors.init_failed'));
+            notifyError(err.data?.message || err.message || t('messages.errors.init_failed'));
             throw err;
         }
     };

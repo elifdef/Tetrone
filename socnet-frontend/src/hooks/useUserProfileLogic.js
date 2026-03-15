@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useFriendship } from "./useFriendship";
+import FriendService from "../services/friend.service";
 import { notifyError, notifyInfo, notifySuccess } from "../components/common/Notify";
 import { useModal } from "../context/ModalContext";
 import { useTranslation } from 'react-i18next';
@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 export const useUserProfileLogic = (currentUser, isPreview = false) => {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
-    const { addFriend, removeFriend, acceptRequest, blockUser, unblockUser } = useFriendship();
     const { openConfirm } = useModal();
+
     const [status, setStatus] = useState(currentUser?.friendship_status || 'none');
     const [loading, setLoading] = useState(false);
 
@@ -24,8 +24,8 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
         if (isBanned) return t('profile.banned_status');
 
         if (isBlockedByTarget) {
-            // Використовуємо шаблонні рядки замість конкатенації
-            return t(`profile.restricted_profile_${currentUser?.gender === 2 ? "f" : "m"}`, { name: currentUser.first_name })
+            const genderSuffix = currentUser?.gender === 2 ? "f" : "m";
+            return t(`profile.restricted_profile_${genderSuffix}`, { name: currentUser.first_name });
         }
 
         if (currentUser?.bio) return currentUser.bio;
@@ -34,18 +34,15 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
     };
 
     const getField = (value, formatter = null) => {
-        if (isBlockedByTarget || isBanned)
-            return t('profile.hidden');
-
-        if (!value)
-            return t('profile.not_specified');
-
+        if (isBlockedByTarget || isBanned) return t('profile.hidden');
+        if (!value) return t('profile.not_specified');
         return formatter ? formatter(value) : value;
     };
 
     const displayBirth = getField(currentUser?.birth_date);
     const displayCountry = getField(currentUser?.country);
     const displayBio = getDisplayBio();
+
     const displayGender = getField(currentUser?.gender, (g) => {
         if (g === 1) return t('common.male');
         if (g === 2) return t('common.female');
@@ -57,28 +54,30 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
     }, [currentUser]);
 
     const handleFriendshipAction = async () => {
-        if (loading) return;
+        if (loading || !currentUser?.username) return;
         setLoading(true);
-        let result;
 
         try {
+            let res;
+            let nextStatus = status;
+
             switch (status) {
                 case 'none':
-                    result = await addFriend(currentUser.username);
-                    if (result.success) setStatus('pending_sent');
+                    res = await FriendService.addFriend(currentUser.username);
+                    if (res) nextStatus = 'pending_sent';
                     break;
                 case 'pending_sent':
-                    result = await removeFriend(currentUser.username); // Скасувати
-                    if (result.success) setStatus('none');
+                    res = await FriendService.removeFriend(currentUser.username);
+                    if (res) nextStatus = 'none';
                     break;
                 case 'pending_received':
-                    result = await acceptRequest(currentUser.username);
-                    if (result.success) setStatus('friends');
+                    res = await FriendService.acceptRequest(currentUser.username);
+                    if (res) nextStatus = 'friends';
                     break;
                 case 'friends':
-                    if (await openConfirm(t('friends.remove_friends') + "?")) {
-                        result = await removeFriend(currentUser.username);
-                        if (result.success) setStatus('none');
+                    if (await openConfirm(`${t('friends.remove_friends')}?`)) {
+                        res = await FriendService.removeFriend(currentUser.username);
+                        if (res) nextStatus = 'none';
                     } else {
                         setLoading(false);
                         return;
@@ -88,51 +87,43 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
                     break;
             }
 
-            if (result?.success) {
-                if (status === 'none') notifySuccess(result.message);
-            } else if (result) {
-                notifyError(result.message);
+            if (res) {
+                setStatus(nextStatus);
+                if (status === 'none') notifySuccess(res.message || t('common.success'));
             }
-        } catch (e) {
-            notifyError(t('common.error'));
+        } catch (err) {
+            notifyError(err.data?.message || t('common.error'));
         } finally {
             setLoading(false);
         }
     };
 
-    const handleBlockAction = async () => {
-        if (loading) return;
+const handleBlockAction = async () => {
+        if (loading || !currentUser?.username) return;
 
-        // якщо вже заблоковано - розблоковуємо
-        if (isBlockedByMe) {
-            setLoading(true);
-            const result = await unblockUser(currentUser.username);
-            if (result.success) {
+        try {
+            if (isBlockedByMe) {
+                setLoading(true);
+                const res = await FriendService.unblockUser(currentUser.username);
                 setStatus('none');
-                notifyInfo(t('friends.user_unblocked'));
+                notifyInfo(res.message || t('friends.user_unblocked'));
             } else {
-                notifyError(result.message);
+                const confirmed = await openConfirm(`${t('common.to_block')} @${currentUser.username}?`);
+                if (confirmed) {
+                    setLoading(true);
+                    const res = await FriendService.blockUser(currentUser.username);
+                    setStatus('blocked_by_me');
+                    notifyInfo(res.message || t('friends.user_blocked'));
+                }
             }
-            setLoading(false);
-            return;
-        }
-
-        // якщо ні - блокуємо
-        if (await openConfirm(`${t('common.to_block')} @${currentUser.username}?`)) {
-            setLoading(true);
-            const result = await blockUser(currentUser.username);
-            if (result.success) {
-                setStatus('blocked_by_me');
-                notifyInfo(t('friends.user_blocked'));
-            } else {
-                notifyError(result.message);
-            }
+        } catch (err) {
+            notifyError(err.data?.message || t('common.error'));
+        } finally {
             setLoading(false);
         }
     };
 
     return {
-        // стани
         status,
         loading,
         sameUser,
@@ -140,13 +131,11 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
         isBlockedByTarget,
         isBanned,
         isFriend,
-        // дані
         displayAvatar,
         displayBio,
         displayBirth,
         displayCountry,
         displayGender,
-        // функції дій
         handleFriendshipAction,
         handleBlockAction
     };

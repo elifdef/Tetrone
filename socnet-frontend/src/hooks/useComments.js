@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import api from "../api/axios";
+import CommentService from "../services/comment.service";
 import { notifyError } from "../components/common/Notify";
 import { useTranslation } from 'react-i18next';
 import { useModal } from "../context/ModalContext";
@@ -7,6 +7,7 @@ import { useModal } from "../context/ModalContext";
 export const useComments = (postId) => {
     const { t } = useTranslation();
     const { openConfirm } = useModal();
+
     const [comments, setComments] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -14,7 +15,7 @@ export const useComments = (postId) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState(false);
 
-    const fetchComments = useCallback(() => {
+    const fetchComments = useCallback(async () => {
         let isMounted = true;
 
         if (page === 1) setIsLoadingInitial(true);
@@ -22,45 +23,36 @@ export const useComments = (postId) => {
 
         setError(false);
 
-        api.get(`/posts/${postId}/comments?page=${page}`)
-            .then(res => {
-                if (isMounted) {
-                    const newComments = res.data.data;
-                    const meta = res.data.meta;
+        try {
+            const { items, meta } = await CommentService.getComments(postId, page);
 
-                    setComments(prev => {
-                        if (page === 1) return newComments;
+            if (isMounted) {
+                setComments(prev => {
+                    if (page === 1) return items;
 
-                        const uniqueNewComments = newComments.filter(
-                            newComment => !prev.some(existing => existing.id === newComment.id)
-                        );
+                    const existingIds = new Set(prev.map(c => c.id));
+                    const uniqueNewComments = items.filter(c => !existingIds.has(c.id));
+                    return [...prev, ...uniqueNewComments];
+                });
 
-                        return [...prev, ...uniqueNewComments];
-                    });
-
-                    setHasMore(meta.current_page < meta.last_page);
-                }
-            })
-            .catch(err => {
-                if (isMounted) {
-                    notifyError(t('error.loading_comments'))
-                    setError(true);
-                    if (page === 1) notifyError(err);
-                }
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsLoadingInitial(false);
-                    setIsLoadingMore(false);
-                }
-            });
-
-        return () => { isMounted = false; };
-    }, [postId, page]);
+                setHasMore(meta ? meta.current_page < meta.last_page : false);
+            }
+        } catch (err) {
+            if (isMounted) {
+                notifyError(t('error.loading_comments'));
+                setError(true);
+                console.error("Failed to load comments:", err.data?.message || err.message);
+            }
+        } finally {
+            if (isMounted) {
+                setIsLoadingInitial(false);
+                setIsLoadingMore(false);
+            }
+        }
+    }, [postId, page, t]);
 
     useEffect(() => {
-        const cleanup = fetchComments();
-        return cleanup;
+        fetchComments();
     }, [fetchComments]);
 
     const loadMore = useCallback(() => {
@@ -70,30 +62,30 @@ export const useComments = (postId) => {
     }, [isLoadingInitial, isLoadingMore, hasMore, error]);
 
     const addComment = async (content) => {
-        if (!content.trim())
-            return false;
+        if (!content.trim()) return false;
 
         try {
-            const res = await api.post(`/posts/${postId}/comments`, { content });
-            setComments(prev => [res.data, ...prev]);
+            const res = await CommentService.addComment(postId, content);
+            const newComment = res.data || res;
+
+            setComments(prev => [newComment, ...prev]);
             return true;
         } catch (err) {
-            notifyError(t('error.add_comment'));
+            notifyError(err.data?.message || t('error.add_comment'));
             return false;
         }
     };
 
     const removeComment = async (commentId) => {
         const isConfirmed = await openConfirm(t('comment.remove_comment'));
-        if (!isConfirmed)
-            return false;
+        if (!isConfirmed) return false;
 
         try {
-            await api.delete(`/comments/${commentId}`);
+            await CommentService.delete(commentId);
             setComments(prev => prev.filter(c => c.id !== commentId));
             return true;
         } catch (err) {
-            notifyError(t('error.deleting'));
+            notifyError(err.data?.message || t('error.deleting'));
             return false;
         }
     };
@@ -105,7 +97,7 @@ export const useComments = (postId) => {
         hasMore,
         error,
         fetchComments,
-        loadMore,      
+        loadMore,
         addComment,
         removeComment
     };

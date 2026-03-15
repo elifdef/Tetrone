@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../../api/axios';
+import ActivityService from '../../services/activity.service';
 import PostItem from '../post/PostItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';
 import { notifyError } from '../common/Notify';
@@ -15,50 +15,37 @@ export default function LikedPostsTab({ onCountUpdate }) {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState(false);
 
-    const fetchLikedPosts = useCallback(() => {
-        let isMounted = true;
-
+    const fetchLikedPosts = useCallback(async () => {
         if (page === 1) setIsLoadingInitial(true);
         else setIsLoadingMore(true);
         setError(false);
 
-        api.get(`/activity/liked?page=${page}`)
-            .then(res => {
-                if (isMounted) {
-                    const newPosts = res.data.data;
-                    const hasNextPage = res.data.meta ? res.data.meta.current_page < res.data.meta.last_page : !!res.data.next_page_url;
+        try {
+            const { items, meta } = await ActivityService.getLikedPosts(page);
 
-                    setPosts(prev => {
-                        if (page === 1) return newPosts;
+            setPosts(prev => {
+                if (page === 1) return items;
 
-                        const uniqueNewPosts = newPosts.filter(
-                            newPost => !prev.some(existing => existing.id === newPost.id)
-                        );
-                        return [...prev, ...uniqueNewPosts];
-                    });
-
-                    setHasMore(hasNextPage);
-                }
-            })
-            .catch(err => {
-                if (isMounted) {
-                    notifyError(t('error.loading_likes'));
-                    setError(true);
-                }
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsLoadingInitial(false);
-                    setIsLoadingMore(false);
-                }
+                const existingIds = new Set(prev.map(p => p.id));
+                const uniqueNewPosts = items.filter(newPost => !existingIds.has(newPost.id));
+                return [...prev, ...uniqueNewPosts];
             });
 
-        return () => { isMounted = false; };
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
+        } catch (err) {
+            if (err.name !== "AbortError") {
+                notifyError(t('error.loading_likes'));
+                setError(true);
+                console.error("Failed to load liked posts:", err.data?.message || err.message);
+            }
+        } finally {
+            setIsLoadingInitial(false);
+            setIsLoadingMore(false);
+        }
     }, [page, t]);
 
     useEffect(() => {
-        const cleanup = fetchLikedPosts();
-        return cleanup;
+        fetchLikedPosts();
     }, [fetchLikedPosts]);
 
     const loadMore = useCallback(() => {

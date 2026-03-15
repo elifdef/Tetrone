@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import api from '../api/axios';
+import UserService from '../services/user.service';
 import { AuthContext } from '../context/AuthContext';
 import { notifyError, notifySuccess } from "../components/common/Notify";
 import { useTranslation } from 'react-i18next';
@@ -28,10 +28,7 @@ export const useSecuritySettings = () => {
         setLoadingEmail(true);
 
         try {
-            const response = await api.put('/user/email', {
-                email: email,
-                password: passwordForEmail
-            });
+            const response = await UserService.updateEmail(email, passwordForEmail);
 
             setUser(prev => ({
                 ...prev,
@@ -40,15 +37,16 @@ export const useSecuritySettings = () => {
             }));
 
             setPasswordForEmail('');
-            notifySuccess(response.data.message);
+            notifySuccess(response.message || t('common.success'));
 
         } catch (error) {
-            if (error.response?.status === 422)
-                notifyError(error.response.data.message || t('error.validation'));
-            else if (error.response?.status === 403)
+            if (error.status === 422) {
+                notifyError(error.data?.message || t('error.validation'));
+            } else if (error.status === 403) {
                 notifyError(t('error.invalid_password'));
-            else
-                notifyError(t('error.change_email'));
+            } else {
+                notifyError(error.data?.message || t('error.change_email'));
+            }
         } finally {
             setLoadingEmail(false);
         }
@@ -57,37 +55,38 @@ export const useSecuritySettings = () => {
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
 
-        if (newPassword !== confirmPassword)
+        if (newPassword !== confirmPassword) {
             return notifyError(t('error.not_match_password'));
+        }
 
         setLoadingPass(true);
 
         try {
-            const response = await api.put('/user/password', {
-                current_password: currentPassword,
-                password: newPassword,
-                password_confirmation: confirmPassword
-            });
+            const response = await UserService.updatePassword(
+                currentPassword,
+                newPassword,
+                confirmPassword
+            );
 
-            if(response.status === 200)
-                notifySuccess(t('success.password_changed'));
+            notifySuccess(response.message || t('success.password_changed'));
 
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
 
         } catch (error) {
-            if (error.response?.status === 422) {
-                const errors = error.response.data.errors;
+            if (error.status === 422) {
+                const errors = error.data?.errors || {};
 
-                if (errors.current_password) 
+                if (errors.current_password) {
                     notifyError(errors.current_password[0]);
-                else if (errors.password) 
+                } else if (errors.password) {
                     notifyError(errors.password[0]);
-                else 
-                    notifyError(t('error.check_entered_data'));
+                } else {
+                    notifyError(error.data?.message || t('error.check_entered_data'));
+                }
             } else {
-                notifyError(t('error.change_password'));
+                notifyError(error.data?.message || t('error.change_password'));
             }
         } finally {
             setLoadingPass(false);
@@ -102,6 +101,7 @@ export const useSecuritySettings = () => {
         currentPassword, setCurrentPassword,
         newPassword, setNewPassword,
         confirmPassword, setConfirmPassword,
-        loadingPass, handleUpdatePassword, t
+        loadingPass, handleUpdatePassword,
+        t
     };
 };

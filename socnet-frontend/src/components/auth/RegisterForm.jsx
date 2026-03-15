@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../../api/axios";
 import { useTranslation } from 'react-i18next';
+import AuthService from "../../services/auth.service";
 import Input from "../UI/Input";
 import PasswordStrengthBar from "../UI/PasswordStrengthBar";
 
@@ -30,14 +30,16 @@ export default function RegisterForm() {
             return;
         }
 
-        setMsg({});
+        setMsg({ text: "", type: "" });
         setLoading(true);
 
         try {
-            await api.post('/sign-up', formData);
+            // Викликаємо метод сервісу
+            await AuthService.signUp(formData);
+            
             setMsg({
                 text: (
-                    <span>
+                    <span className="socnet-auth-success-text">
                         {t('auth.you_have_registered')}<br />
                         <Link to="/login" className="socnet-link socnet-auth-msg-link">
                             {t('auth.signin')}
@@ -46,9 +48,11 @@ export default function RegisterForm() {
                 ),
                 type: "success"
             });
+            
             setFormData({ username: "", email: "", password: "", password_confirmation: "" });
+            
         } catch (err) {
-            const errorText = err.response?.data?.message || t('error.registration');
+            const errorText = err.data?.message || t('error.registration');
             setMsg({ text: errorText, type: "error" });
         } finally {
             setLoading(false);
@@ -59,16 +63,17 @@ export default function RegisterForm() {
         return (
             <div className="socnet-auth-success-wrapper">
                 <div className="socnet-auth-msg success socnet-auth-success-hero">
-                    <div className="socnet-auth-success-icon">
+                    <div className="socnet-auth-success-icon" />
+                    <div className="socnet-auth-success-content">
+                        {msg.text}
                     </div>
-                    {msg.text}
                 </div>
             </div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="socnet-auth-form">
             <Input
                 type="text"
                 name="username"
@@ -139,7 +144,10 @@ export default function RegisterForm() {
             </button>
 
             <div className="socnet-auth-footer">
-                {t('auth.already_have_account')} <Link to="/login" className="socnet-link">{t('auth.signin')}</Link>
+                {t('auth.already_have_account')}{' '}
+                <Link to="/login" className="socnet-link">
+                    {t('auth.signin')}
+                </Link>
             </div>
         </form>
     );

@@ -87,15 +87,16 @@ class FriendshipController extends Controller
     }
 
     // блокування користувача
-    public function block(Request $request)
+    public function block(Request $request, string $username)
     {
-        $request->validate(['username' => 'required|string']);
-
-        $targetUser = User::where('username', $request->username)->firstOrFail();
+        $targetUser = User::where('username', $username)->firstOrFail();
         $me = $request->user();
 
         if ($me->id === $targetUser->id)
-            return response()->json(['message' => 'Cannot block yourself 1000-7'], 400);
+            return response()->json([
+                'status' => false,
+                'message' => 'Cannot block yourself 1000-7'
+            ], 400);
 
         // видаляємо будь-які старі відносини (дружбу або заявки)
         Friendship::between($me, $targetUser)->delete();

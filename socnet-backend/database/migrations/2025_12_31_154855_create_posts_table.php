@@ -37,6 +37,13 @@ return new class extends Migration
                 ->on('posts')
                 ->onDelete('set null');
         });
+
+        Schema::table('users', function (Blueprint $table)
+        {
+            $table->foreign('avatar_post_id')
+                ->references('id')->on('posts')
+                ->nullOnDelete();
+        });
     }
 
     /**
@@ -44,6 +51,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table)
+        {
+            $table->dropForeign(['avatar_post_id']);
+        });
+
         Schema::dropIfExists('posts');
     }
 };

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../../api/axios';
+import AuthService from '../../services/auth.service';
 import { notifyError, notifyInfo } from "../common/Notify";
 
 const EmailVerificationBanner = ({ user }) => {
-    if (!user || user.email_verified_at) 
+    if (!user || user.email_verified_at) {
         return null;
+    }
 
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
@@ -13,10 +14,10 @@ const EmailVerificationBanner = ({ user }) => {
     const handleResend = async () => {
         setLoading(true);
         try {
-            await api.post('/email/verification-notification');
+            await AuthService.resendVerification();
             notifyInfo(t('info.email_send_letter'));
         } catch (error) {
-            notifyError(t('error.email_send'));
+            notifyError(error.data?.message || t('error.email_send'));
         } finally {
             setLoading(false);
         }
@@ -24,10 +25,14 @@ const EmailVerificationBanner = ({ user }) => {
 
     return (
         <div className="email-verify-block">
-            {t('banner.email.text')}
+            <span className="email-verify-text">
+                {t('banner.email.text')}
+            </span>
             <button
+                className="email-verify-btn"
                 onClick={handleResend}
-                disabled={loading}>
+                disabled={loading}
+            >
                 {loading ? t('banner.email.sending') : t('banner.email.send')}
             </button>
         </div>

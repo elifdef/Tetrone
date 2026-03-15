@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import api from "../api/axios";
+import FeedService from "../services/feed.service";
 import { usePageTitle } from "../hooks/usePageTitle";
 import PostItem from "../components/post/PostItem";
 import { notifyError } from "../components/common/Notify";
@@ -11,14 +11,17 @@ import { AuthContext } from "../context/AuthContext";
 export default function HomePage() {
     const { t } = useTranslation();
     usePageTitle(t('common.posts'));
+
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'feed';
+
     const [error, setError] = useState(false);
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+
     const abortControllerRef = useRef(null);
     const { user: authUser } = useContext(AuthContext);
 
@@ -43,25 +46,29 @@ export default function HomePage() {
             if (page === 1) setLoading(true);
             else setIsLoadingMore(true);
 
-            const endpoint = activeTab === 'global' ? '/feed/global' : '/feed';
-            const res = await api.get(`${endpoint}?page=${page}`, { signal: newController.signal });
-
-            const newPosts = res.data.data;
-            const meta = res.data.meta;
+            const { items, meta } = await FeedService.getFeed(
+                activeTab,
+                page,
+                newController.signal
+            );
 
             setPosts(prev => {
-                if (page === 1) return newPosts;
-                const uniqueNewPosts = newPosts.filter(
+                if (page === 1) return items;
+                const uniqueNewPosts = items.filter(
                     newPost => !prev.some(existingPost => existingPost.id === newPost.id)
                 );
                 return [...prev, ...uniqueNewPosts];
             });
 
-            setHasMore(meta.current_page < meta.last_page);
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
+
         } catch (err) {
-            if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
+            if (err.name !== "AbortError") {
                 setError(true);
-                if (page === 1) notifyError(t('error.loading', { resource: "feed" }));
+                if (page === 1) {
+                    notifyError(t('error.loading', { resource: "feed" }));
+                }
+                console.error("Failed to fetch feed:", err.data?.message || err.message);
             }
         } finally {
             if (!newController.signal.aborted) {
@@ -123,6 +130,7 @@ export default function HomePage() {
                     {t('feed.global_feed')}
                 </button>
             </div>
+
             <InfiniteScrollList
                 itemsCount={posts.length}
                 isLoadingInitial={loading && page === 1}

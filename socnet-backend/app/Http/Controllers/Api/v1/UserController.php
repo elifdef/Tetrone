@@ -20,7 +20,7 @@ class UserController extends Controller
     }
 
     /**
-     * Вивід базових данних ВСІХ користувачів 
+     * Вивід базових данних ВСІХ користувачів
      * З пагінацією 20 юзерів на сторінку
      *
      * @param Request $request
@@ -106,13 +106,33 @@ class UserController extends Controller
 
         if ($request->hasFile('avatar'))
         {
+            $file = $request->file('avatar');
             $path = $this->fileService->upload(
-                file: $request->file('avatar'),
+                file: $file,
                 folder: $targetUser->username,
                 prefix: 'avatar'
             );
 
             $targetUser->avatar = $path;
+
+            // створюємо пост про оновлення аватарки
+            $post = $targetUser->posts()->create([
+                'target_user_id' => null,
+                'content' => null,
+                'entities' => ['is_avatar_update' => true],
+                'is_repost' => false
+            ]);
+
+            $post->attachments()->create([
+                'type' => 'image',
+                'file_path' => $path,
+                'sort_order' => 0,
+                'file_name' => basename($path),
+                'original_name' => $file->getClientOriginalName(),
+                'file_size' => $file->getSize()
+            ]);
+
+            $targetUser->avatar_post_id = $post->id;
         }
 
         if ($request->has('finish_setup') && $request->input('finish_setup'))

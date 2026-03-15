@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import adminAPI from '../../api/admin.api';
+import AdminService from '../../services/admin.service';
 import { userRole } from '../../config';
 import { notifySuccess, notifyError } from "../common/Notify";
 import { AuthContext } from "../../context/AuthContext";
@@ -32,14 +32,17 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
 const UserCard = ({ user, handleMute, handleBan, canBan }) => {
     const { t } = useTranslation();
     const { user: currentAdmin } = useContext(AuthContext);
-    const isAdmin = currentAdmin.role === userRole.Admin;
+    const isAdmin = currentAdmin?.role === userRole.Admin;
+
+    const profilePath = `/${isAdmin ? 'admin/users/' : ''}${user.username}`;
+
     return (
         <div className="admin-user-card">
-            <img src={user.avatar} alt="avatar" className="admin-user-avatar" />
+            <img src={user.avatar} alt={user.username} className="admin-user-avatar" />
 
             <div className="admin-user-info">
                 <a
-                    href={`/${isAdmin ? 'admin/users/' : ''}${user.username}`}
+                    href={profilePath}
                     className="admin-user-name"
                     target="_blank"
                     rel="noreferrer"
@@ -47,12 +50,14 @@ const UserCard = ({ user, handleMute, handleBan, canBan }) => {
                     {user.first_name} {user.last_name}
                 </a>
                 <div className="admin-user-meta">
-                    @{user.username} • {user.email} • {t('admin.user_info.posts_count', { count: user.posts_count || 0 })}
+                    {`@${user.username} • ${user.email} • ${t('admin.user_info.posts_count', { count: user.posts_count || 0 })}`}
                 </div>
                 <div className="admin-user-status">
-                    {user.is_banned ? <span className="admin-status-banned">{t('admin.user_info.status_banned_full')}</span>
-                        : user.is_muted ? <span className="admin-status-muted">{t('admin.read_only')}</span>
-                            : null}
+                    {user.is_banned ? (
+                        <span className="admin-status-banned">{t('admin.user_info.status_banned_full')}</span>
+                    ) : user.is_muted ? (
+                        <span className="admin-status-muted">{t('admin.read_only')}</span>
+                    ) : null}
                 </div>
             </div>
 
@@ -90,10 +95,11 @@ export const UsersManager = ({ canBan = true }) => {
     const fetchUsers = async (searchQuery = '') => {
         setIsLoading(true);
         try {
-            const data = await adminAPI.getUsers(searchQuery);
-            setUsers(data.data || []);
+            // Використовуємо наш новий AdminService
+            const { items } = await AdminService.getUsers(searchQuery);
+            setUsers(items);
         } catch (error) {
-            console.error(t('admin.error_load_users'), error);
+            console.error("Error loading users:", error.data?.message || error.message);
             notifyError(t('admin.error_load_users'));
         } finally {
             setIsLoading(false);
@@ -120,13 +126,16 @@ export const UsersManager = ({ canBan = true }) => {
         if (reason === null) return;
 
         try {
-            const res = await adminAPI.toggleMute(username, reason);
-            if (res.status) {
-                setUsers(users.map(u => u.username === username ? { ...u, is_muted: !currentStatus } : u));
-                notifySuccess(res.message || t('success.changes_saved'));
-            }
+            const res = await AdminService.toggleMute(username, reason);
+
+            // fetchClient вже повернув розпарсений об'єкт
+            setUsers(prevUsers =>
+                prevUsers.map(u => u.username === username ? { ...u, is_muted: !currentStatus } : u)
+            );
+            notifySuccess(res.message || t('success.changes_saved'));
+
         } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+            notifyError(error.data?.message || t('common.error'));
         }
     };
 
@@ -141,18 +150,20 @@ export const UsersManager = ({ canBan = true }) => {
         if (reason === null) return;
 
         try {
-            const res = await adminAPI.toggleBan(username, reason);
-            if (res.status) {
-                setUsers(users.map(u => u.username === username ? { ...u, is_banned: !currentStatus } : u));
-                notifySuccess(res.message || t('success.changes_saved'));
-            }
+            const res = await AdminService.toggleBan(username, reason);
+
+            setUsers(prevUsers =>
+                prevUsers.map(u => u.username === username ? { ...u, is_banned: !currentStatus } : u)
+            );
+            notifySuccess(res.message || t('success.changes_saved'));
+
         } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+            notifyError(error.data?.message || t('common.error'));
         }
     };
 
     return (
-        <>
+        <div className="admin-users-manager-wrapper">
             <UserSearchForm
                 search={search}
                 setSearch={setSearch}
@@ -173,10 +184,12 @@ export const UsersManager = ({ canBan = true }) => {
                         />
                     ))}
                     {users.length === 0 && (
-                        <div className="socnet-empty-state with-card">{t('admin.users_not_found')}</div>
+                        <div className="socnet-empty-state with-card">
+                            {t('admin.users_not_found')}
+                        </div>
                     )}
                 </div>
             )}
-        </>
+        </div>
     );
 };

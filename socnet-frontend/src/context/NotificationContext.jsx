@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { AuthContext } from './AuthContext';
-import api from '../api/axios';
+import fetchClient from '../api/client';
 import Notification from '../components/common/Notification';
 import { audioManager } from '../utils/audioManager';
 
@@ -22,12 +22,12 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            api.get('/notifications')
-                .then(res => {
-                    setNotifications(res.data.notifications);
-                    setUnreadCount(res.data.unread_count);
+            fetchClient('/notifications')
+                .then(data => {
+                    setNotifications(data.notifications);
+                    setUnreadCount(data.unread_count);
                 })
-                .catch(err => console.error("Error load notification: ", err));
+                .catch(err => console.error("Error loading notifications: ", err.data?.message || err.message));
         }
     }, [user]);
 
@@ -62,7 +62,7 @@ export const NotificationProvider = ({ children }) => {
             });
 
             channel.error((err) => {
-                console.error(`Error connect Socket: `, err);
+                console.error(`Error connecting to Socket: `, err);
             });
 
             channel.notification((notification) => {
@@ -70,18 +70,14 @@ export const NotificationProvider = ({ children }) => {
                 const isNewMessage = notification.type === 'new_message' || notification.type?.includes('NewMessage');
 
                 if (isNewMessage) {
-                    // звук нового повідомлення
                     audioManager.playMessageSound();
-
                     setIncomingMessage(notification);
                     const currentParams = new URLSearchParams(window.location.search);
 
-                    // якщо ми прямо зараз сидимо в цьому чаті - не показуємо спливаючу нотифікацію
                     if (currentParams.get('dm') === notification.chat_slug) {
                         return;
                     }
 
-                    // якщо на іншій сторінці - показуємо і збільшуємо лічильник
                     setActiveToasts(prev => [...prev, { ...notification, toastId }]);
                     setUnreadMessagesCount(prev => prev + 1);
                     return;
@@ -89,7 +85,11 @@ export const NotificationProvider = ({ children }) => {
 
                 const { id, type, ...customData } = notification;
                 const normalizedNotif = {
-                    id: id, type: type, read_at: null, created_at: new Date().toISOString(), data: customData
+                    id: id, 
+                    type: type, 
+                    read_at: null, 
+                    created_at: new Date().toISOString(), 
+                    data: customData
                 };
 
                 setNotifications(prev => [normalizedNotif, ...prev]);
@@ -112,18 +112,20 @@ export const NotificationProvider = ({ children }) => {
             };
 
         } catch (error) {
-            console.error("Error init Echo: ", error);
+            console.error("Error initializing Echo: ", error);
         }
 
     }, [user, token]);
 
     const markAsRead = (id) => {
-        api.post(`/notifications/${id}/read`).then(() => {
-            setUnreadCount(prev => Math.max(0, prev - 1));
-            setNotifications(prev =>
-                prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n)
-            );
-        });
+        fetchClient(`/notifications/${id}/read`, { method: 'POST' })
+            .then(() => {
+                setUnreadCount(prev => Math.max(0, prev - 1));
+                setNotifications(prev =>
+                    prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n)
+                );
+            })
+            .catch(err => console.error("Error marking notification as read: ", err.data?.message || err.message));
     };
 
     const removeToast = (toastId) => {

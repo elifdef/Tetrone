@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import api from "../../api/axios";
+import AdminService from "../../services/admin.service";
 import { notifySuccess, notifyError } from "../common/Notify";
 import { useModal } from "../../context/ModalContext";
 import { useDateFormatter } from "../../hooks/useDateFormatter";
@@ -10,6 +10,7 @@ export default function AdminReports() {
     const { t } = useTranslation();
     const { openPrompt } = useModal();
     const formatDate = useDateFormatter();
+
     const [reports, setReports] = useState([]);
     const [stats, setStats] = useState({ total: 0, pending: 0, resolved: 0, rejected: 0 });
     const [loading, setLoading] = useState(true);
@@ -18,11 +19,12 @@ export default function AdminReports() {
     const fetchReports = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/admin/reports?status=${statusFilter}`);
-            setStats(res.data.stats);
-            setReports(res.data.reports.data);
+            const { reports: items, stats: statistics } = await AdminService.getReports(statusFilter);
+            setStats(statistics);
+            setReports(items);
         } catch (error) {
             notifyError(t('common.error'));
+            console.error("Failed to fetch reports:", error.data?.message || error.message);
         } finally {
             setLoading(false);
         }
@@ -46,13 +48,12 @@ export default function AdminReports() {
         if (responseText === null) return;
 
         try {
-            const endpoint = `/admin/reports/${reportId}/${actionType}`;
-            await api.post(endpoint, { admin_response: responseText.trim() });
+            await AdminService.handleReport(reportId, actionType, responseText.trim());
 
             notifySuccess(t('common.saved'));
             fetchReports();
         } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+            notifyError(error.data?.message || t('common.error'));
         }
     };
 
@@ -102,7 +103,7 @@ export default function AdminReports() {
     };
 
     return (
-        <div>
+        <div className="admin-reports-page">
             <div className="admin-dossier-row admin-stats-container">
                 <div className="admin-stats-box">
                     <div className="admin-stats-label">{t('admin.stats.total')}</div>
@@ -123,24 +124,15 @@ export default function AdminReports() {
             </div>
 
             <div className="socnet-tabs">
-                <button
-                    className={`socnet-tab ${statusFilter === 'pending' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('pending')}
-                >
-                    {t('admin.stats.pending')}
-                </button>
-                <button
-                    className={`socnet-tab ${statusFilter === 'resolved' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('resolved')}
-                >
-                    {t('admin.stats.resolved')}
-                </button>
-                <button
-                    className={`socnet-tab ${statusFilter === 'rejected' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('rejected')}
-                >
-                    {t('admin.stats.rejected')}
-                </button>
+                {['pending', 'resolved', 'rejected'].map((status) => (
+                    <button
+                        key={status}
+                        className={`socnet-tab ${statusFilter === status ? 'active' : ''}`}
+                        onClick={() => setStatusFilter(status)}
+                    >
+                        {t(`admin.stats.${status}`)}
+                    </button>
+                ))}
             </div>
 
             {loading ? (
@@ -150,9 +142,8 @@ export default function AdminReports() {
             ) : (
                 <div className="socnet-feed-list">
                     {reports.map((report) => (
-                        <div key={report.id} className="admin-user-card">
+                        <div key={report.id} className="admin-user-card admin-report-card">
                             <div className="admin-user-info">
-
                                 <div className="socnet-info-row">
                                     <span className="socnet-label">{t('admin.reports.from')}</span>
                                     <span className="socnet-value">

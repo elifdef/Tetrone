@@ -7,7 +7,7 @@ import RichText from "../post/content/RichText";
 import { usePostMedia } from "../post/hooks/usePostMedia";
 import VideoPlayer from "./VideoPlayer";
 
-export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate }) {
+export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate, onNext, onPrev, listCurrent, listTotal }) {
     const [modalPost, setModalPost] = useState(post);
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -43,6 +43,7 @@ export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate })
 
     useEffect(() => {
         setModalPost(post);
+        setCurrentIndex(0);
     }, [post]);
 
     const handleNext = useCallback((e) => {
@@ -55,16 +56,31 @@ export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate })
         setCurrentIndex((prev) => (prev - 1 + mediaFiles.length) % mediaFiles.length);
     }, [mediaFiles.length]);
 
+    const hasExternalNav = !!(onNext && onPrev);
+    const showNav = mediaFiles.length > 1 || hasExternalNav;
+
+    const clickPrev = (e) => {
+        if (e) e.stopPropagation();
+        if (mediaFiles.length > 1) handlePrev(e);
+        else if (onPrev) onPrev(e);
+    };
+
+    const clickNext = (e) => {
+        if (e) e.stopPropagation();
+        if (mediaFiles.length > 1) handleNext(e);
+        else if (onNext) onNext(e);
+    };
+
     useEffect(() => {
         if (!isOpen) return;
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') onClose();
-            if (e.key === 'ArrowRight' && mediaFiles.length > 1) handleNext();
-            if (e.key === 'ArrowLeft' && mediaFiles.length > 1) handlePrev();
+            if (e.key === 'ArrowRight' && showNav) clickNext();
+            if (e.key === 'ArrowLeft' && showNav) clickPrev();
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, onClose, handleNext, handlePrev, mediaFiles.length]);
+    }, [isOpen, onClose, clickNext, clickPrev, showNav]);
 
     const { handleLike } = usePostLike(modalPost);
 
@@ -96,12 +112,12 @@ export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate })
             <div className="socnet-modal-fullscreen-layout" onClick={(e) => e.stopPropagation()}>
 
                 <div className="socnet-modal-media-section">
-                    {mediaFiles.length > 1 && (
+                    {showNav && (
                         <>
-                            <button className="socnet-modal-nav-btn left" onClick={handlePrev}>‹</button>
-                            <button className="socnet-modal-nav-btn right" onClick={handleNext}>›</button>
+                            <button className="socnet-modal-nav-btn left" onClick={clickPrev}>‹</button>
+                            <button className="socnet-modal-nav-btn right" onClick={clickNext}>›</button>
                             <div className="socnet-modal-counter">
-                                {currentIndex + 1} / {mediaFiles.length}
+                                {hasExternalNav ? `${listCurrent} / ${listTotal}` : `${currentIndex + 1} / ${mediaFiles.length}`}
                             </div>
                         </>
                     )}

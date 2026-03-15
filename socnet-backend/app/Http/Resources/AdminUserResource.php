@@ -46,6 +46,23 @@ class AdminUserResource extends JsonResource
                     ];
                 });
             }),
+            // статистика активності
+            'total_active_seconds' => $this->whenLoaded('activities', function ()
+            {
+                return $this->activities->sum('active_seconds');
+            }, 0),
+
+            // історія по днях
+            'activity_history' => $this->whenLoaded('activities', function ()
+            {
+                return $this->activities->map(function ($act)
+                {
+                    return [
+                        'date' => $act->date,
+                        'active_seconds' => $act->active_seconds,
+                    ];
+                });
+            }),
         ];
     }
 }

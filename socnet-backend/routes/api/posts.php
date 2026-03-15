@@ -34,6 +34,9 @@ Route::middleware(['auth:sanctum', 'throttle:180,1', 'not_banned'])->group(funct
         Route::put('/posts/{post}', [PostController::class, 'update']);
         Route::delete('/posts/{post}', [PostController::class, 'destroy']);
 
+        // пости де користувач оновив аватарку
+        Route::get('/users/{username}/avatars', [PostController::class, 'getUserAvatars']);
+
         // голосування в пості
         Route::post('/posts/{post}/poll/vote', [PollController::class, 'vote']);
         Route::get('/posts/{post}/poll/voters', [PollController::class, 'voters']);

@@ -439,4 +439,32 @@ class PostController extends Controller
             'message' => 'Post deleted.'
         ], 202);
     }
+
+    public function getUserAvatars(Request $request, string $username): JsonResponse
+    {
+        $targetUser = User::where('username', $username)->firstOrFail();
+        $currentUser = $request->user('sanctum');
+
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
+        {
+            return response()->json(['status' => false, 'message' => 'Access denied.'], 403);
+        }
+
+        $posts = Post::where('user_id', $targetUser->id)
+            ->where('entities->is_avatar_update', true)
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->latest()
+            ->get();
+
+        if ($currentUser)
+        {
+            $posts->loadExists(['likes as is_liked' => function ($query) use ($currentUser)
+            {
+                $query->where('user_id', $currentUser->id);
+            }]);
+        }
+
+        return response()->json(PostResource::collection($posts));
+    }
 }

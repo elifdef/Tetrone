@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import api from "../api/axios";
+import UserService from "../services/user.service";
 import { AuthContext } from "../context/AuthContext";
 import NotFoundPage from "./NotFoundPage";
 import UserProfileCard from "../components/profile/UserProfileCard";
@@ -23,21 +23,38 @@ export default function ProfilePage() {
     const [serverError, setServerError] = useState(false);
 
     useEffect(() => {
+        let isMounted = true;
+
         setNotFound(false);
         setServerError(false);
         setLoading(true);
-        api.get(`/users/${username}`)
-            .then(res => setProfile(res.data))
-            .catch(err => {
-                err.response && err.response.status === 404
-                    ? setNotFound(true)
-                    : setServerError(true);
+
+        UserService.getProfile(username)
+            .then(data => {
+                if (isMounted) {
+                    setProfile(data);
+                }
             })
-            .finally(() => setLoading(false));
+            .catch(err => {
+                if (isMounted) {
+                    if (err.status === 404) {
+                        setNotFound(true);
+                    } else {
+                        setServerError(true);
+                        console.error("Failed to load profile:", err.data?.message || err.message);
+                    }
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            });
+
+        return () => { isMounted = false; };
     }, [username]);
 
-    if (notFound)
-        return <NotFoundPage />;
+    if (notFound) return <NotFoundPage />;
 
     if (serverError)
         return (
@@ -49,11 +66,8 @@ export default function ProfilePage() {
             </div>
         );
 
-    if (loading)
-        return <div className="socnet-empty-state">{t('common.loading')}</div>;
-
-    if (!profile)
-        return null;
+    if (loading) return <div className="socnet-empty-state">{t('common.loading')}</div>;
+    if (!profile) return null;
 
     const isOwnProfile = authUser && authUser.username === profile.username;
 
