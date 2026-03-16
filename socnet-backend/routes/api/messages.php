@@ -18,4 +18,5 @@ Route::middleware(['auth:sanctum', 'not_banned', 'verified', 'not_muted'])
         Route::delete('/{slug}/message/{messageId}', [ChatController::class, 'destroyMessage']);
         Route::delete('/chat/{slug}', [ChatController::class, 'destroyChat']);
         Route::post('/{slug}/message/{id}/pin', [ChatController::class, 'togglePinMessage']);
+        Route::post('/{slug}/read', [ChatController::class, 'markAsRead']);
     });

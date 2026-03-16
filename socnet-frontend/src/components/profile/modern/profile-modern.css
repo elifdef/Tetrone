@@ -147,8 +147,6 @@
     color: var(--theme-text-main);
 }
 
-/* Знайти існуючий .socnet-modern-nick та замінити його на цей блок: */
-
 .socnet-modern-nick-row {
     display: flex;
     align-items: center;
@@ -181,6 +179,5 @@
     width: 6px;
     height: 6px;
     background-color: var(--theme-success, #4bb34b);
-    border-radius: 50%;
     display: inline-block;
 }

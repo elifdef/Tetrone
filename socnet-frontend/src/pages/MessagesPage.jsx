@@ -11,6 +11,7 @@ import MessagesOld from '../components/messages/MessagesOld';
 import ActionModal from '../components/common/ActionModal';
 import ChatService from '../services/chat.service';
 import ChatInfoModal from '../components/messages/ChatInfoModal';
+import { notifyError } from '../components/common/Notify';
 
 export default function MessagesPage() {
     const { t } = useTranslation();
@@ -64,6 +65,28 @@ export default function MessagesPage() {
         }
     }, [incomingMessage, dmSlug, fetchMessages, fetchChats]);
 
+    useEffect(() => {
+        const handlePaste = (e) => {
+            if (!dmSlug) return;
+
+            if (e.clipboardData && e.clipboardData.files.length > 0) {
+                const pastedFiles = Array.from(e.clipboardData.files);
+
+                setFiles(prev => {
+                    const combined = [...prev, ...pastedFiles];
+                    if (combined.length > 10) {
+                        notifyError(t('messages.max_files_exceeded'));
+                        return combined.slice(0, 10);
+                    }
+                    return combined;
+                });
+            }
+        };
+
+        window.addEventListener('paste', handlePaste);
+        return () => window.removeEventListener('paste', handlePaste);
+    }, [dmSlug, t]);
+
     const handleSelectChat = (slug) => setSearchParams({ dm: slug });
     const handleBackToInbox = () => setSearchParams({});
 
@@ -115,8 +138,19 @@ export default function MessagesPage() {
     };
 
     const handleFileChange = (e) => {
-        if (e.target.files) {
-            setFiles(prev => [...prev, ...Array.from(e.target.files)].slice(0, 10));
+        if (e.target.files && e.target.files.length > 0) {
+            const selectedFiles = Array.from(e.target.files);
+
+            setFiles(prev => {
+                const combined = [...prev, ...selectedFiles];
+                if (combined.length > 10) {
+                    notifyError(t('messages.max_files_exceeded'));
+                    return combined.slice(0, 10);
+                }
+                return combined;
+            });
+
+            e.target.value = null;
         }
     };
 
@@ -172,6 +206,15 @@ export default function MessagesPage() {
         onTyping: emitTyping,
     };
 
+    const handleScrollToMessage = (msgId) => {
+        const el = document.getElementById(`message-${msgId}`);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('socnet-tg-highlight-msg');
+            setTimeout(() => el.classList.remove('socnet-tg-highlight-msg'), 2000);
+        }
+    };
+
     return (
         <>
             {localStorage.getItem('old_style')
@@ -216,6 +259,9 @@ export default function MessagesPage() {
                 onClose={() => setIsInfoModalOpen(false)}
                 chat={activeChatObj}
                 messages={messages}
+                onScrollToMessage={handleScrollToMessage}
+                onDeleteChat={() => setChatToDelete(dmSlug)}
+                onBlockUser={() => console.log('Тут логіка блокування')}
             />
         </>
     );

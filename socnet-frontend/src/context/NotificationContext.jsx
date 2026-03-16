@@ -19,6 +19,7 @@ export const NotificationProvider = ({ children }) => {
     const [incomingMessage, setIncomingMessage] = useState(null);
 
     const [echoInstance, setEchoInstance] = useState(null);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     useEffect(() => {
         if (user) {
@@ -35,6 +36,8 @@ export const NotificationProvider = ({ children }) => {
         if (!user || !token) return;
 
         try {
+            const baseUrl = import.meta.env.VITE_API_URL.replace('/v1', '');
+
             const echo = new Echo({
                 broadcaster: 'reverb',
                 key: import.meta.env.VITE_REVERB_APP_KEY,
@@ -43,7 +46,7 @@ export const NotificationProvider = ({ children }) => {
                 wssPort: import.meta.env.VITE_REVERB_PORT,
                 forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
                 enabledTransports: ['ws', 'wss'],
-                authEndpoint: 'http://localhost:8000/api/broadcasting/auth',
+                authEndpoint: `${baseUrl}/broadcasting/auth`,
                 auth: {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -54,11 +57,12 @@ export const NotificationProvider = ({ children }) => {
 
             setEchoInstance(echo);
 
+            // ПІДКЛЮЧАЄМО ПРИВАТНИЙ КАНАЛ СПОВІЩЕНЬ
             const channelName = `App.Models.User.${user.id}`;
             const channel = echo.private(channelName);
 
             channel.subscribed(() => {
-                console.log(`Socket connected.`);
+                console.log(`Socket connected (Private).`);
             });
 
             channel.error((err) => {
@@ -85,10 +89,10 @@ export const NotificationProvider = ({ children }) => {
 
                 const { id, type, ...customData } = notification;
                 const normalizedNotif = {
-                    id: id, 
-                    type: type, 
-                    read_at: null, 
-                    created_at: new Date().toISOString(), 
+                    id: id,
+                    type: type,
+                    read_at: null,
+                    created_at: new Date().toISOString(),
                     data: customData
                 };
 
@@ -105,8 +109,27 @@ export const NotificationProvider = ({ children }) => {
                 });
             });
 
+            // ПІДКЛЮЧАЄМО PRESENCE КАНАЛ ДЛЯ ОНЛАЙН СТАТУСУ
+            echo.join('online')
+                .here((users) => {
+                    // Хто вже був онлайн, коли ми зайшли
+                    setOnlineUsers(users.map(u => u.id));
+                })
+                .joining((joiningUser) => {
+                    // Хтось щойно підключився до сокетів
+                    setOnlineUsers(prev => {
+                        if (!prev.includes(joiningUser.id)) return [...prev, joiningUser.id];
+                        return prev;
+                    });
+                })
+                .leaving((leavingUser) => {
+                    setOnlineUsers(prev => prev.filter(id => id !== leavingUser.id));
+                });
+
+
             return () => {
                 echo.leaveChannel(channelName);
+                echo.leave('online');
                 echo.disconnect();
                 setEchoInstance(null);
             };
@@ -133,7 +156,16 @@ export const NotificationProvider = ({ children }) => {
     };
 
     return (
-        <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, unreadMessagesCount, setUnreadMessagesCount, incomingMessage, echoInstance }}>
+        <NotificationContext.Provider value={{
+            notifications,
+            unreadCount,
+            markAsRead,
+            unreadMessagesCount,
+            setUnreadMessagesCount,
+            incomingMessage,
+            echoInstance,
+            onlineUsers
+        }}>
             {children}
             <div className="socnet-toast-container">
                 {activeToasts.map(toast => (

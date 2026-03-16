@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
+import { NotificationContext } from '../../context/NotificationContext';
 import Textarea from '../UI/Textarea';
 import Button from '../UI/Button';
 import MessageItemOld from './MessageItemOld';
@@ -22,6 +23,8 @@ export default function MessagesOld(props) {
     const [isAttachOpen, setIsAttachOpen] = useState(false);
     const attachMenuRef = useRef(null);
 
+    const { onlineUsers } = useContext(NotificationContext) || { onlineUsers: [] };
+
     const pinnedMessage = messages.find(m => m.is_pinned);
     const myAvatar = currentUser?.avatar;
     const myName = currentUser?.first_name;
@@ -30,7 +33,8 @@ export default function MessagesOld(props) {
         if (!lastSeenDate) return false;
         return (new Date() - new Date(lastSeenDate)) < 3 * 60 * 1000;
     };
-    const targetOnline = isOnline(activeChat?.target_user?.last_seen_at);
+
+    const targetOnline = onlineUsers?.includes(activeChat?.target_user?.id) || isOnline(activeChat?.target_user?.last_seen_at);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -96,25 +100,30 @@ export default function MessagesOld(props) {
     return (
         <div className="socnet-messages-old-container in-chat">
             <div className="socnet-messages-old-chat-header-complex">
-                <span className="socnet-messages-old-tab link" onClick={handleBackToInbox}>{t('common.back')}</span>
+                <span className="socnet-messages-old-tab link" onClick={handleBackToInbox}>← {t('common.back', 'Назад')}</span>
+
                 <div className="socnet-im-header-center" onClick={onOpenInfo}>
                     <span className="socnet-im-chat-title">
                         {activeChat.target_user?.first_name} {activeChat.target_user?.last_name}
-                        {targetOnline && !isTyping && <span className="socnet-im-online-square"></span>}
                     </span>
                     <span className="socnet-im-offline-text">
                         {isTyping ? (
                             <span className="socnet-typing-old">
-                                <svg className="typing-pencil" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                <svg className="typing-pencil-jerky" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                 {t('common.typing')}...
                             </span>
+                        ) : targetOnline ? (
+                            <span className="socnet-im-online-indicator">
+                                <span className="socnet-im-online-square"></span> {t('common.online')}
+                            </span>
                         ) : (
-                            !targetOnline && activeChat.target_user?.last_seen_at ? `${t('messages.was_online')} ${formatDate(activeChat.target_user.last_seen_at)}` : ""
+                            activeChat.target_user?.last_seen_at ? `${t('messages.was_online')} ${formatDate(activeChat.target_user.last_seen_at)}` : ""
                         )}
                     </span>
                 </div>
+
                 <div className="socnet-im-header-actions">
-                    <button onClick={onDeleteChatClick} className="socnet-text-danger" title={t('messages.delete_chat')}>🗑</button>
+                    <button onClick={onDeleteChatClick} className="socnet-btn-old-icon" title={t('messages.delete_chat')}>🗑</button>
                 </div>
             </div>
 
@@ -159,25 +168,40 @@ export default function MessagesOld(props) {
                         <div className="reply-preview-text">
                             {editingMessage ? '' : replyingTo.text}
                         </div>
-                        <button onClick={handleCancelReplyEdit}>✕</button>
+                        <button className="socnet-btn-old-icon" onClick={handleCancelReplyEdit}>✖</button>
                     </div>
                 )}
+
                 {files.length > 0 && (
                     <div className="socnet-selected-files">
                         {files.map((f, idx) => (
-                            <div key={idx} className="socnet-selected-file-item">{f.name} <button onClick={() => handleRemoveFile(idx)}>✕</button></div>
+                            <div key={idx} className="socnet-selected-file-item">
+                                {f.name} <button className="socnet-btn-old-icon" onClick={() => handleRemoveFile(idx)}>✖</button>
+                            </div>
                         ))}
                     </div>
                 )}
 
                 <div className="socnet-messages-old-composer-inner">
-                    <img src={myAvatar} alt="My Avatar" className="socnet-messages-old-avatar" />
+                    <img src={myAvatar} alt="My Avatar" className="socnet-messages-old-avatar composer-avatar" />
+
                     <div className="socnet-messages-old-composer-center">
-                        <Textarea className="socnet-messages-old-textarea" value={text} onChange={handleTextChange} onKeyDown={handleKeyDown} placeholder={t('messages.type_message')} />
+                        <Textarea
+                            className="socnet-messages-old-textarea"
+                            value={text}
+                            onChange={handleTextChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder={t('messages.type_message')}
+                        />
                         <div className="socnet-messages-old-composer-actions">
-                            <Button className="socnet-messages-old-send-btn" onClick={handleSend}>{editingMessage ? t('common.save') : t('messages.send')}</Button>
+                            <Button className="socnet-messages-old-send-btn" onClick={handleSend}>
+                                {editingMessage ? t('common.save') : t('messages.send', 'Надіслати')}
+                            </Button>
+
                             <div className="socnet-attach-wrapper" ref={attachMenuRef}>
-                                <span className="socnet-messages-old-attach-label" onClick={() => setIsAttachOpen(!isAttachOpen)}>{t('messages.attach')}</span>
+                                <span className="socnet-messages-old-attach-label" onClick={() => setIsAttachOpen(!isAttachOpen)}>
+                                    {t('messages.attach', 'Прикріпити')}
+                                </span>
                                 {isAttachOpen && (
                                     <div className="socnet-attach-dropdown">
                                         <label className="socnet-attach-dropdown-item"><span className="socnet-attach-icon">📸</span> {t('messages.attach_image')} <input type="file" accept="image/*" multiple className="socnet-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} /></label>
@@ -188,9 +212,9 @@ export default function MessagesOld(props) {
                             </div>
                         </div>
                     </div>
-                    <img src={activeChat.target_user?.avatar} alt="Target Avatar" className="socnet-messages-old-avatar" />
-                </div>
 
+                    <img src={activeChat.target_user?.avatar} alt="Target Avatar" className="socnet-messages-old-avatar composer-avatar" />
+                </div>
             </div>
         </div>
     );

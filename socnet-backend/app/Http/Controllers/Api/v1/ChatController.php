@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\MessagesReadEvent;
 use App\Http\Resources\UserBasicResource;
 use App\Models\Chat;
 use App\Models\ChatParticipant;
@@ -99,7 +100,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request, $slug)
     {
         $request->validate([
-            'text' => 'nullable|string|max:4096',
+            'text' => 'nullable|string|max:65536',
             'shared_post_id' => 'nullable|exists:posts,id',
             'reply_to_id' => 'nullable|exists:messages,id',
             'media' => 'nullable|array|max:10',
@@ -282,7 +283,8 @@ class ChatController extends Controller
                 'created_at' => $msg->created_at,
                 'is_edited' => $msg->is_edited,
                 'edited_at' => $msg->is_edited ? $msg->updated_at : null,
-                'isMine' => $msg->sender_id === Auth::id()
+                'isMine' => $msg->sender_id === Auth::id(),
+                'read_at' => $msg->read_at,
             ];
         });
 
@@ -356,19 +358,39 @@ class ChatController extends Controller
             return response()->json(['error' => 'Forbidden'], 403);
         }
 
-        $message->update(['is_pinned' => !$message->is_pinned]);
+        $isPinning = !$message->is_pinned;
 
-        $targetParticipant = $chat->participants()->where('user_id', '!=', $user->id)->first();
-        if ($targetParticipant)
+        if ($isPinning)
         {
-            $targetParticipant->user->notify(new NewMessageNotification(
-                $user,
-                $message,
-                $chat->slug,
-                $chat->encrypted_dek
-            ));
+            Message::where('chat_id', $chat->id)
+                ->where('is_pinned', true)
+                ->update(['is_pinned' => false]);
         }
 
+        $message->update(['is_pinned' => $isPinning]);
+
         return response()->json(['success' => true, 'is_pinned' => $message->is_pinned]);
+    }
+
+    public function markAsRead($slug, Request $request)
+    {
+        $chat = Chat::where('slug', $slug)->firstOrFail();
+        $user = $request->user();
+
+        $updatedCount = Message::where('chat_id', $chat->id)
+            ->where('sender_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        if ($updatedCount > 0)
+        {
+            $targetParticipant = $chat->participants()->where('user_id', '!=', $user->id)->first();
+            if ($targetParticipant)
+            {
+                broadcast(new MessagesReadEvent($chat->slug, $user->id, $targetParticipant->user_id));
+            }
+        }
+
+        return response()->json(['success' => true]);
     }
 }

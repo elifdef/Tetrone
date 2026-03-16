@@ -25,3 +25,12 @@ Broadcast::channel('chat.{slug}', function ($user, $slug)
     // дозволяємо підключення ТІЛЬКИ якщо юзер є учасником цього чату
     return $chat->participants()->where('user_id', $user->id)->exists();
 });
+
+// реал тайм чи онлайн чи ні
+Broadcast::channel('online', function ($user)
+{
+    if ($user)
+    {
+        return ['id' => $user->id, 'name' => $user->first_name];
+    }
+});
