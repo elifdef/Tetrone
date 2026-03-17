@@ -23,12 +23,21 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
+            // Завантажуємо сповіщення
             fetchClient('/notifications')
                 .then(data => {
                     setNotifications(data.notifications);
                     setUnreadCount(data.unread_count);
                 })
                 .catch(err => console.error("Error loading notifications: ", err.data?.message || err.message));
+
+            // Завантажуємо чати для підрахунку непрочитаних
+            fetchClient('/chat')
+                .then(chats => {
+                    const totalUnreadMsg = chats.reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+                    setUnreadMessagesCount(totalUnreadMsg);
+                })
+                .catch(err => console.error("Error loading chats for unread count: ", err));
         }
     }, [user]);
 
@@ -73,17 +82,31 @@ export const NotificationProvider = ({ children }) => {
                 const toastId = Date.now();
                 const isNewMessage = notification.type === 'new_message' || notification.type?.includes('NewMessage');
 
+                // Перевіряємо, чи дозволив юзер показувати тост/грати звук
+                const shouldShowToast = notification.show_toast !== false;
+
                 if (isNewMessage) {
-                    audioManager.playMessageSound();
                     setIncomingMessage(notification);
                     const currentParams = new URLSearchParams(window.location.search);
 
+                    // Якщо ми прямо зараз у цьому чаті - звук і тост не показуємо, 
+                    // просто оновлюємо повідомлення
                     if (currentParams.get('dm') === notification.chat_slug) {
                         return;
                     }
 
-                    setActiveToasts(prev => [...prev, { ...notification, toastId }]);
+                    // збільшуємо лічильник повідомлень ЗАВЖДИ
                     setUnreadMessagesCount(prev => prev + 1);
+
+                    if (shouldShowToast) {
+                        if (notification.sound && notification.sound !== 'none') {
+                            audioManager.playMessageSound(notification.sound);
+                        }
+                        setActiveToasts(prev => {
+                            const newToasts = [...prev, { ...notification, toastId }];
+                            return newToasts.slice(-3);
+                        });
+                    }
                     return;
                 }
 
@@ -96,9 +119,21 @@ export const NotificationProvider = ({ children }) => {
                     data: customData
                 };
 
+                // додаємо в список і збільшуємо лічильник
                 setNotifications(prev => [normalizedNotif, ...prev]);
                 setUnreadCount(prev => prev + 1);
-                setActiveToasts(prev => [...prev, { ...notification, toastId }]);
+
+                // якщо дозволено - показуємо тост і звук
+                if (shouldShowToast) {
+                    if (notification.sound && notification.sound !== 'none') {
+                        audioManager.playMessageSound(notification.sound);
+                    }
+
+                    setActiveToasts(prev => {
+                        const newToasts = [...prev, { ...notification, toastId }];
+                        return newToasts.slice(-3);
+                    });
+                }
             });
 
             channel.listen('.message_deleted', (event) => {

@@ -24,9 +24,8 @@ class NewMessageNotification extends Notification implements ShouldQueue
         $this->sender = $sender;
         $this->message = $message;
         $this->chatSlug = $chatSlug;
-        $this->chatDek = $chatDek; // зашифрований ключ чату
+        $this->chatDek = $chatDek;
     }
-
 
     public function via(object $notifiable): array
     {
@@ -35,7 +34,6 @@ class NewMessageNotification extends Notification implements ShouldQueue
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        // розшифровуємо повідомлення, щоб показати його в тості
         $payload = ChatEncryptionService::decryptPayload($this->message->encrypted_payload, $this->chatDek);
 
         $text = $payload['text'] ?? '';
@@ -57,6 +55,24 @@ class NewMessageNotification extends Notification implements ShouldQueue
             }
         }
 
+        $settings = $notifiable->notificationSettings;
+        $isEnabled = $settings ? $settings->notify_messages : true;
+
+        $sound = $isEnabled ? ($settings ? $settings->sound_messages : null) : 'none';
+
+        $override = $notifiable->notificationOverrides()->where('target_user_id', $this->sender->id)->first();
+        if ($override)
+        {
+            if ($override->is_muted)
+            {
+                $isEnabled = false;
+                $sound = 'none';
+            } elseif ($override->custom_sound)
+            {
+                $sound = $override->custom_sound;
+            }
+        }
+
         return new BroadcastMessage([
             'type' => 'new_message',
             'user_id' => $this->sender->id,
@@ -67,7 +83,9 @@ class NewMessageNotification extends Notification implements ShouldQueue
             'user_gender' => $this->sender->gender,
             'chat_slug' => $this->chatSlug,
             'message_text' => $text,
-            'file_type' => $fileType // 'image', 'video', 'file'
+            'file_type' => $fileType,
+            'sound' => $sound,
+            'show_toast' => $isEnabled,
         ]);
     }
 }

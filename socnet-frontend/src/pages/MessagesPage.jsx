@@ -41,9 +41,17 @@ export default function MessagesPage() {
     const [replyingTo, setReplyingTo] = useState(null);
 
     useEffect(() => {
-        setUnreadMessagesCount(0);
         fetchChats();
-    }, [setUnreadMessagesCount, fetchChats]);
+    }, [fetchChats]);
+
+    useEffect(() => {
+        if (chats && chats.length > 0) {
+            const totalUnread = chats.reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+            setUnreadMessagesCount(totalUnread);
+        } else {
+            setUnreadMessagesCount(0);
+        }
+    }, [chats, setUnreadMessagesCount]);
 
     useEffect(() => {
         if (dmSlug) {

@@ -5,11 +5,11 @@ namespace App\Notifications;
 use App\Models\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Support\Str;
 
-class ReportReviewedNotification extends Notification implements ShouldBroadcast
+class ReportReviewedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -60,8 +60,10 @@ class ReportReviewedNotification extends Notification implements ShouldBroadcast
 
     public function toBroadcast($notifiable)
     {
-        return new BroadcastMessage([
-            'data' => $this->toArray($notifiable)
-        ]);
+        $data = $this->toArray($notifiable);
+        $data['sound'] = null;
+        $data['show_toast'] = true;
+
+        return new BroadcastMessage($data);
     }
 }

@@ -49,6 +49,14 @@ class NewCommentNotification extends Notification implements ShouldQueue
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->toArray($notifiable));
+        $data = $this->toArray($notifiable);
+        $settings = $notifiable->notificationSettings;
+
+        $isEnabled = $settings ? $settings->notify_comments : true;
+
+        $data['sound'] = $isEnabled ? ($settings ? $settings->sound_comments : null) : 'none';
+        $data['show_toast'] = $isEnabled;
+
+        return new BroadcastMessage($data);
     }
 }

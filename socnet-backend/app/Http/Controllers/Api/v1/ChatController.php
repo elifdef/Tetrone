@@ -153,12 +153,18 @@ class ChatController extends Controller
 
         if ($targetParticipant)
         {
-            $targetParticipant->user->notify(new NewMessageNotification(
-                $user,
-                $message,
-                $chat->slug,
-                $chat->encrypted_dek
-            ));
+            $prefs = $targetParticipant->user->getNotificationPreferencesFor($user->id, 'messages');
+
+            if ($prefs['should_notify'])
+            {
+                $targetParticipant->user->notify(new NewMessageNotification(
+                    $user,
+                    $message,
+                    $chat->slug,
+                    $chat->encrypted_dek,
+                    $prefs['sound']
+                ));
+            }
         }
 
         $chat->touch();

@@ -8,7 +8,7 @@ import { NotificationContext } from "../../context/NotificationContext";
 const LeftSidebar = ({ isOpen }) => {
     const { t } = useTranslation();
     const { logout, user } = useContext(AuthContext);
-    const { unreadCount } = useContext(NotificationContext);
+    const { unreadCount, unreadMessagesCount } = useContext(NotificationContext);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -23,6 +23,8 @@ const LeftSidebar = ({ isOpen }) => {
     };
 
     const displayCount = unreadCount > 99 ? '99+' : unreadCount;
+    const displayNotifCount = unreadCount > 99 ? '99+' : unreadCount;
+    const displayMsgCount = unreadMessagesCount > 99 ? '99+' : unreadMessagesCount;
 
     return (
         <aside className={`socnet-sidebar-left ${isOpen ? 'mobile-open' : ''}`}>
@@ -41,6 +43,7 @@ const LeftSidebar = ({ isOpen }) => {
                         </Link>
                         <Link to="/messages" className={getLinkClass("/messages")}>
                             {t('common.messages')}
+                            {unreadMessagesCount > 0 && (<span className="socnet-badge">{displayMsgCount}</span>)}
                         </Link>
                         <Link to="/friends" className={getLinkClass("/friends")}>
                             {t('common.friends')}

@@ -187,6 +187,99 @@ body {
     font-size: 11px;
 }
 
+.socnet-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 13px;
+    height: 13px;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    border: 1px solid #8e8f8f;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    vertical-align: middle;
+}
+
+[data-theme="dark"] .socnet-checkbox {
+    background-color: var(--theme-input-bg);
+    border-color: var(--theme-input-border);
+}
+
+.socnet-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 3px;
+    height: 7px;
+    border: solid #2B587A;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+[data-theme="dark"] .socnet-checkbox:checked::after {
+    border-color: var(--theme-link);
+}
+
+.socnet-checkbox:focus-visible {
+    outline: 1px dotted #2B587A;
+    outline-offset: 1px;
+}
+
+.socnet-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--theme-input-bg);
+    color: var(--theme-text-main);
+    border: 1px solid #7f9db9;
+    border-radius: 0;
+    padding: 2px 20px 2px 4px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    font-size: 11px;
+    height: 22px;
+    cursor: pointer;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--theme-text-main) 50%),
+        linear-gradient(135deg, var(--theme-text-main) 50%, transparent 50%),
+        linear-gradient(to right, #7f9db9 1px, transparent 1px),
+        linear-gradient(to bottom, var(--theme-input-bg) 0%, var(--theme-input-bg) 100%);
+    background-position:
+        calc(100% - 9px) calc(50% + 1px),
+        calc(100% - 5px) calc(50% + 1px),
+        calc(100% - 17px) 0,
+        100% 0;
+    background-size:
+        4px 4px,
+        4px 4px,
+        1px 100%,
+        17px 100%;
+    background-repeat: no-repeat;
+}
+
+[data-theme="dark"] .socnet-select {
+    border-color: var(--theme-input-border);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--theme-text-main) 50%),
+        linear-gradient(135deg, var(--theme-text-main) 50%, transparent 50%),
+        linear-gradient(to right, var(--theme-border) 1px, transparent 1px),
+        linear-gradient(to bottom, #444 0%, #333 100%);
+}
+
+.socnet-select:focus {
+    outline: 1px dotted #2B587A;
+    outline-offset: 0;
+}
+
+.socnet-select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 var(--theme-text-main);
+}
+
 /* Фікс для автозаповнення Chrome/Edge у темній темі */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -350,8 +443,7 @@ input:-webkit-autofill:active {
 
 .socnet-card-wrapper,
 .socnet-friends-page,
-.socnet-feed-page,
-.socnet-settings-page {
+.socnet-feed-page {
     font-size: 11px;
     color: var(--theme-text-main);
     background-color: var(--theme-bg-page);
@@ -366,8 +458,7 @@ input:-webkit-autofill:active {
 
 [data-theme="light"] .socnet-card-wrapper,
 [data-theme="light"] .socnet-friends-page,
-[data-theme="light"] .socnet-feed-page,
-[data-theme="light"] .socnet-settings-page {
+[data-theme="light"] .socnet-feed-page {
     background-color: var(--theme-bg-box);
 }
 
@@ -3050,154 +3141,6 @@ input:-webkit-autofill:active {
     font-size: 11px;
     color: var(--theme-link);
     word-break: break-all;
-}
-
-/* налаштування */
-.socnet-settings-form {
-    padding: 10px;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-}
-
-.socnet-settings-form-setup {
-    border: none;
-    padding: 0;
-}
-
-.socnet-form-group {
-    margin-bottom: 15px;
-}
-
-.socnet-form-row {
-    display: flex;
-    gap: 15px;
-}
-
-.socnet-form-row .socnet-form-group {
-    flex: 1;
-}
-
-.socnet-settings-box {
-    margin-bottom: 20px;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    padding: 15px;
-}
-
-.socnet-settings-box strong {
-    display: block;
-    margin-bottom: 10px;
-    color: var(--theme-link);
-    font-size: 12px;
-    border-bottom: 1px solid var(--theme-border);
-    padding-bottom: 5px;
-}
-
-.socnet-settings-info-row {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: var(--theme-bg-page);
-    border: 1px solid var(--theme-border);
-}
-
-.socnet-settings-info-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.socnet-settings-danger {
-    margin-top: 30px;
-    border: 1px solid var(--theme-error);
-    padding: 1px;
-}
-
-.socnet-settings-danger-header {
-    background: var(--theme-error);
-    color: white;
-    padding: 5px 10px;
-    font-weight: bold;
-}
-
-.socnet-settings-danger-body {
-    padding: 15px;
-    background: var(--theme-bg-box);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.socnet-settings-quote {
-    font-style: italic;
-    color: var(--theme-text-muted);
-    font-size: 13px;
-    margin-bottom: 10px;
-    white-space: pre-line;
-}
-
-.socnet-settings-desc {
-    font-size: 13px;
-    color: #777;
-    margin-top: 10px;
-}
-
-.socnet-settings-group {
-    display: flex;
-    gap: 20px;
-}
-
-.socnet-btn-save {
-    background: var(--theme-btn-bg);
-    border: 1px solid var(--theme-border);
-    color: var(--theme-text-main);
-    padding: 6px 15px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 11px;
-}
-
-.socnet-btn-save:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.socnet-btn-save:hover {
-    background: var(--theme-btn-hover);
-}
-
-[data-theme="light"] .socnet-btn-save {
-    background: var(--theme-link);
-    color: white;
-    border-color: var(--theme-link);
-}
-
-.socnet-btn-delete {
-    background: transparent;
-    border: 1px solid var(--theme-error);
-    color: var(--theme-error);
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.socnet-btn-delete:hover {
-    background: var(--theme-error);
-    color: white;
-}
-
-.socnet-avatar-upload-box {
-    border: 1px solid var(--theme-input-border);
-    background: var(--theme-input-bg);
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.socnet-avatar-file-name {
-    font-size: 11px;
-    color: var(--theme-text-muted);
 }
 
 /* перевірка безпеки пароля */

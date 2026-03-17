@@ -181,8 +181,12 @@ class PostController extends Controller
                 return response()->json(['status' => false, 'message' => 'Poll question cannot be empty.'], 422);
             }
 
+            if (!isset($poll['options']) || !is_array($poll['options']))
+            {
+                return response()->json(['status' => false, 'message' => 'Poll options must be a valid array.'], 422);
+            }
             // ліміт відповідей [2,16]
-            $optionsCount = count($poll['options'] ?? []);
+            $optionsCount = count($poll['options']);
             if ($optionsCount < 2 || $optionsCount > 16)
             {
                 return response()->json(['status' => false, 'message' => 'Poll must have between 2 and 16 options.'], 422);
@@ -230,13 +234,33 @@ class PostController extends Controller
             $targetUser = User::find($targetUserId);
             if ($targetUser)
             {
-                $targetUser->notify(new NewWallPostNotification($user, $post));
+                // чи можемо надсилати сповіщення
+                $prefs = $targetUser->getNotificationPreferencesFor($user->id, 'wall_posts');
+
+                if ($prefs['should_notify'])
+                {
+                    $targetUser->notify(new NewWallPostNotification($user, $post, $prefs['sound']));
+                }
             }
         }
 
         if ($originalPostId)
         {
             $originalPost = Post::find($originalPostId);
+
+            if (!$originalPost)
+            {
+                return response()->json(['status' => false, 'message' => 'Original post not found.'], 404);
+            }
+
+            // перевірка чи автор оригінального посту не заблокував нас
+            if ($user->isBlockedByTarget($user->id, $originalPost->user_id))
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You are blocked by the author of the original post.'
+                ], 403);
+            }
 
             if ($originalPost && $originalPost->user_id !== $user->id)
             {
@@ -248,7 +272,12 @@ class PostController extends Controller
 
                 if (!$alreadyNotified)
                 {
-                    $originalPost->user->notify(new NewRepostNotification($user, $originalPost));
+                    $prefs = $originalPost->user->getNotificationPreferencesFor($user->id, 'reposts');
+
+                    if ($prefs['should_notify'])
+                    {
+                        $originalPost->user->notify(new NewRepostNotification($user, $originalPost, $prefs['sound']));
+                    }
                 }
             }
         }
@@ -321,7 +350,19 @@ class PostController extends Controller
         $currentMediaCount = $post->attachments()->count();
         $deletedMediaCount = $request->has('deleted_media') ? count($request->input('deleted_media')) : 0;
         $newMediaCount = $request->hasFile('media') ? count($request->file('media')) : 0;
-        $futureMediaExists = ($currentMediaCount - $deletedMediaCount + $newMediaCount) > 0;
+
+        $futureMediaCount = $currentMediaCount - $deletedMediaCount + $newMediaCount;
+
+        // перевірка на загальний ліміт
+        if ($futureMediaCount > 10)
+        {
+            return response()->json([
+                'status' => false,
+                'message' => 'A post cannot have more than 10 media attachments in total.'
+            ], 422);
+        }
+
+        $futureMediaExists = $futureMediaCount > 0;
 
         // перевіряємо, чи є в оригінальному пості опитування
         $originalEntities = $post->entities ?? [];
@@ -381,7 +422,7 @@ class PostController extends Controller
 
                 $path = $this->fileService->upload(
                     file: $file,
-                    folder: $request->user()->username,
+                    folder: $post->user->username,
                     prefix: 'media'
                 );
 

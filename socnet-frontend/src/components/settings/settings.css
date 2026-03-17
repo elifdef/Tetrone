@@ -1,0 +1,224 @@
+.socnet-settings-page {
+    font-size: 11px;
+    color: var(--theme-text-main);
+    background-color: var(--theme-bg-page);
+    padding: 20px;
+    border: 1px solid var(--theme-border);
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    overflow: visible;
+    margin: 0 auto;
+}
+
+[data-theme="light"] .socnet-settings-page {
+    background-color: var(--theme-bg-box);
+}
+
+.socnet-settings-form {
+    padding: 10px;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-settings-form-setup {
+    border: none;
+    padding: 0;
+}
+
+.socnet-form-group {
+    margin-bottom: 15px;
+}
+
+.socnet-form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.socnet-form-row .socnet-form-group {
+    flex: 1;
+}
+
+.socnet-settings-box {
+    margin-bottom: 20px;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 15px;
+}
+
+.socnet-settings-box strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--theme-link);
+    font-size: 12px;
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 5px;
+}
+
+.socnet-settings-info-row {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--theme-bg-page);
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-settings-info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.socnet-settings-danger {
+    margin-top: 30px;
+    border: 1px solid var(--theme-error);
+    padding: 1px;
+}
+
+.socnet-settings-danger-header {
+    background: var(--theme-error);
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+.socnet-settings-danger-body {
+    padding: 15px;
+    background: var(--theme-bg-box);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.socnet-settings-quote {
+    font-style: italic;
+    color: var(--theme-text-muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+    white-space: pre-line;
+}
+
+.socnet-settings-desc {
+    font-size: 13px;
+    color: #777;
+    margin-top: 10px;
+}
+
+.socnet-settings-group {
+    display: flex;
+    gap: 20px;
+}
+
+.socnet-btn-save {
+    background: var(--theme-btn-bg);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text-main);
+    padding: 6px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.socnet-btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.socnet-btn-save:hover {
+    background: var(--theme-btn-hover);
+}
+
+[data-theme="light"] .socnet-btn-save {
+    background: var(--theme-link);
+    color: white;
+    border-color: var(--theme-link);
+}
+
+.socnet-btn-delete {
+    background: transparent;
+    border: 1px solid var(--theme-error);
+    color: var(--theme-error);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.socnet-btn-delete:hover {
+    background: var(--theme-error);
+    color: white;
+}
+
+.socnet-avatar-upload-box {
+    border: 1px solid var(--theme-input-border);
+    background: var(--theme-input-bg);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.socnet-avatar-file-name {
+    font-size: 11px;
+    color: var(--theme-text-muted);
+}
+
+.notification-settings-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+}
+
+.notification-setting-row {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.notification-setting-row:last-child {
+    border-bottom: none;
+}
+
+.setting-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.socnet-native-checkbox {
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.setting-label {
+    font-size: 11px;
+    color: var(--theme-text-main);
+}
+
+.setting-controls {
+    margin-top: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-left: 20px;
+}
+
+.sound-select {
+    min-width: 140px;
+    padding: 2px 4px;
+    font-size: 11px;
+    height: 22px;
+}
+
+.socnet-file-input {
+    font-size: 11px;
+    color: var(--theme-text-main);
+}
+
+.setting-controls .socnet-btn.btn-small {
+    padding: 2px 8px;
+    height: 22px;
+    line-height: 1;
+}

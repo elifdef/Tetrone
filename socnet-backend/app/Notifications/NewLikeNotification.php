@@ -14,35 +14,20 @@ class NewLikeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    // щоб не тормозити відповідь сервера
-
     public $liker;
     public $post;
 
-    /**
-     * Create a new notification instance.
-     */
     public function __construct(User $liker, Post $post)
     {
         $this->liker = $liker;
         $this->post = $post;
     }
 
-    /**
-     * куди відправляти сповіщення в БД і в вебсокети
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['database', 'broadcast'];
     }
 
-    /**
-     * Що записуємо в таблицю notifications (колонка data)
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(object $notifiable): array
     {
         $snippet = $this->post->content ? Str::limit(strip_tags($this->post->content), 40) : null;
@@ -60,9 +45,16 @@ class NewLikeNotification extends Notification implements ShouldQueue
         ];
     }
 
-    // Що летить по вебсокетах на фронтенд миттєво
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->toArray($notifiable));
+        $data = $this->toArray($notifiable);
+        $settings = $notifiable->notificationSettings;
+
+        $isEnabled = $settings ? $settings->notify_likes : true;
+
+        $data['sound'] = $isEnabled ? ($settings ? $settings->sound_likes : null) : 'none';
+        $data['show_toast'] = $isEnabled;
+
+        return new BroadcastMessage($data);
     }
 }

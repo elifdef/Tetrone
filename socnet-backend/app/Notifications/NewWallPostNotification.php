@@ -47,6 +47,14 @@ class NewWallPostNotification extends Notification implements ShouldQueue
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->toArray($notifiable));
+        $data = $this->toArray($notifiable);
+        $settings = $notifiable->notificationSettings;
+
+        $isEnabled = $settings ? $settings->notify_wall_posts : true;
+
+        $data['sound'] = $isEnabled ? ($settings ? $settings->sound_wall_posts : null) : 'none';
+        $data['show_toast'] = $isEnabled;
+
+        return new BroadcastMessage($data);
     }
 }

@@ -17,11 +17,11 @@ class FriendService {
     }
 
     async addFriend(username) {
-        return await fetchClient(`/friends/${username}`, { method: 'POST' });
+        return await fetchClient(`/friends/add/${username}`, { method: 'POST' });
     }
 
     async acceptRequest(username) {
-        return await fetchClient(`/friends/${username}/accept`, { method: 'POST' });
+        return await fetchClient(`/friends/accept/${username}`, { method: 'POST' });
     }
 
     async removeFriend(username) {

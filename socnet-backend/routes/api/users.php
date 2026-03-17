@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\NotificationSettingsController;
 use App\Http\Controllers\Api\v1\PersonalizationController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Resources\UserResource;
@@ -39,5 +40,13 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
         // персоналізація
         Route::get('/settings/personalization', [PersonalizationController::class, 'show']);
         Route::post('/settings/personalization', [PersonalizationController::class, 'update']);
+
+        // налаштування сповіщень
+        Route::get('/settings/notifications', [NotificationSettingsController::class, 'getSettings']);
+        Route::put('/settings/notifications', [NotificationSettingsController::class, 'updateSettings']);
+
+        Route::get('/settings/notifications/overrides', [NotificationSettingsController::class, 'getOverrides']);
+        Route::put('/settings/notifications/overrides/{targetUserId}', [NotificationSettingsController::class, 'updateOverride']);
+        Route::delete('/settings/notifications/overrides/{targetUserId}', [NotificationSettingsController::class, 'deleteOverride']);
     });
 });

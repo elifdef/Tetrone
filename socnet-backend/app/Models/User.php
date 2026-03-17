@@ -76,6 +76,73 @@ class User extends Authenticatable implements MustVerifyEmail
                 $user->email_verified_at = now();
             }
         });
+
+        // після створення юзера генеруємо йому дефолтні налаштування сповіщень
+        static::created(function ($user)
+        {
+            $user->notificationSettings()->create();
+        });
+    }
+
+    public function notificationSettings()
+    {
+        return $this->hasOne(UserNotificationSetting::class)->withDefault([
+            'notify_wall_posts' => true,
+            'notify_likes' => true,
+            'notify_comments' => true,
+            'notify_reposts' => true,
+            'notify_friend_requests' => true,
+            'notify_messages' => true,
+        ]);
+    }
+
+    public function notificationOverrides()
+    {
+        return $this->hasMany(NotificationOverride::class, 'user_id');
+    }
+
+    public function getNotificationPreferencesFor(int $senderId, string $type)
+    {
+        // пошук винятка
+        $override = $this->notificationOverrides()->where('target_user_id', $senderId)->first();
+
+        // якщо замучений - вихід
+        if ($override && $override->is_muted)
+        {
+            return [
+                'should_notify' => false,
+                'sound' => null
+            ];
+        }
+
+        $settings = $this->notificationSettings;
+
+        $notifyColumn = "notify_{$type}"; // наприклад, 'notify_likes'
+        $soundColumn = "sound_{$type}";   // наприклад, 'sound_likes'
+
+        // базова перевірка (чи ввімкнені взагалі лайки/повідомлення)
+        $shouldNotify = $settings->$notifyColumn ?? true;
+
+        // Пріоритет:
+        // 1. Кастомний звук для конкретної людини ->
+        // 2. Глобальний звук для дії ->
+        // 3. Дефолт (null)
+        $sound = null;
+        if ($shouldNotify)
+        {
+            if ($override && $override->custom_sound)
+            {
+                $sound = $override->custom_sound;
+            } else
+            {
+                $sound = $settings->$soundColumn;
+            }
+        }
+
+        return [
+            'should_notify' => $shouldNotify,
+            'sound' => $sound
+        ];
     }
 
     protected function avatarUrl(): Attribute

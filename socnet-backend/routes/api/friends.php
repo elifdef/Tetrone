@@ -17,8 +17,8 @@ Route::middleware(['auth:sanctum', 'throttle:180,1', 'not_banned'])
         // щоб додати друга треба підтверджену пошту
         Route::middleware(['verified', 'not_muted'])->group(function ()
         {
-            Route::post('add', 'sendRequest');              // додати друга
-            Route::post('accept', 'acceptRequest');         // прийняти друга
+            Route::post('add/{username}', 'sendRequest');   // додати друга
+            Route::post('accept/{username}', 'acceptRequest');// прийняти друга
             Route::delete('{username}', 'destroy');         // видалити друга
             Route::post('block/{username}', 'block');       // заблокувати
             Route::delete('blocked/{username}', 'unblock'); // розблокувати

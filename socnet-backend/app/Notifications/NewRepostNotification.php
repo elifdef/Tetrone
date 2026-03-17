@@ -20,7 +20,7 @@ class NewRepostNotification extends Notification implements ShouldQueue
     public function __construct(User $user, Post $post)
     {
         $this->user = $user;
-        $this->post = $post; // ОРИГІНАЛЬНИЙ пост
+        $this->post = $post;
     }
 
     public function via(object $notifiable): array
@@ -38,7 +38,7 @@ class NewRepostNotification extends Notification implements ShouldQueue
             'user_username' => $this->user->username,
             'user_first_name' => $this->user->first_name,
             'user_last_name' => $this->user->last_name,
-            'user_avatar' => $this->user->avatar_url ?? $this->user->avatar,
+            'user_avatar' => $this->user->avatar_url,
             'user_gender' => $this->user->gender,
             'post_id' => $this->post->id,
             'post_snippet' => $snippet,
@@ -47,6 +47,14 @@ class NewRepostNotification extends Notification implements ShouldQueue
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->toArray($notifiable));
+        $data = $this->toArray($notifiable);
+        $settings = $notifiable->notificationSettings;
+
+        $isEnabled = $settings ? $settings->notify_reposts : true;
+
+        $data['sound'] = $isEnabled ? ($settings ? $settings->sound_reposts : null) : 'none';
+        $data['show_toast'] = $isEnabled;
+
+        return new BroadcastMessage($data);
     }
 }

@@ -39,6 +39,14 @@ class NewFriendRequestNotification extends Notification implements ShouldQueue
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->toArray($notifiable));
+        $data = $this->toArray($notifiable);
+        $settings = $notifiable->notificationSettings;
+
+        $isEnabled = $settings ? $settings->notify_friend_requests : true;
+
+        $data['sound'] = $isEnabled ? ($settings ? $settings->sound_friend_requests : null) : 'none';
+        $data['show_toast'] = $isEnabled;
+
+        return new BroadcastMessage($data);
     }
 }

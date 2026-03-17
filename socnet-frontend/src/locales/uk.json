@@ -219,8 +219,8 @@
     "votes_count_many": "голосів",
     "votes_count_other": "голосів",
     "anonymous_poll": "Анонімне опитування",
-    "updated_avatar_male":"оновив аватар",
-    "updated_avatar_female":"оновила аватар"
+    "updated_avatar_male": "оновив аватар",
+    "updated_avatar_female": "оновила аватар"
   },
   "comment": {
     "no_comments": "Коментарів ще немає.",
@@ -342,7 +342,22 @@
     "theme_modern": "Модерн",
     "theme_classic": "Класичний",
     "profile_theme": "Дизайн профілю",
-    "personalization_title": "Персоналізація"
+    "personalization_title": "Персоналізація",
+    "sounds": {
+      "default": "Стандартний звук",
+      "silent": "Без звуку (тільки сповіщення)",
+      "custom_url": "Власне посилання (URL)",
+      "custom_file": "Завантажити свій аудіофайл",
+      "ding": "Ding",
+      "bam": "Bam",
+      "faaah": "Faaah"
+    },
+    "notification_messages": "Особисті повідомлення",
+    "notification_likes": "Нові вподобайки (Лайки)",
+    "notification_comments": "Коментарі до ваших дописів",
+    "notification_reposts": "Поширення ваших дописів (Репости)",
+    "notification_wall_posts": "Дописи на вашій стіні",
+    "notification_friend_requests": "Запити на додавання в друзі"
   },
   "admin": {
     "control_panel": "Панель керування",

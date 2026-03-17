@@ -49,7 +49,14 @@ class CommentController extends Controller
         ]);
 
         if ($post->user_id !== $request->user()->id)
-            $post->user->notify(new NewCommentNotification($request->user(), $post, $comment));
+        {
+            $prefs = $post->user->getNotificationPreferencesFor($currentUser->id, 'comments');
+
+            if ($prefs['should_notify'])
+            {
+                $post->user->notify(new NewCommentNotification($currentUser, $post, $comment, $prefs['sound']));
+            }
+        }
 
         return (new CommentResource($comment->load('user')))->resolve();
     }

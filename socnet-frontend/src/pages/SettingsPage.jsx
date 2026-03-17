@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ProfileSettings from '../components/settings/ProfileSettings';
 import SecuritySettings from '../components/settings/SecuritySettings';
 import PersonalizationSettings from '../components/settings/PersonalizationSettings';
+import NotificationSettings from '../components/settings/NotificationSettings';
+import "../components/settings/settings.css";
 
 const SettingsPage = () => {
     const { t } = useTranslation();
@@ -16,11 +18,12 @@ const SettingsPage = () => {
     const getPageTitle = () => {
         if (activeTab === 'security') return t('common.security');
         if (activeTab === 'personalization') return t('settings.personalization');
+        if (activeTab === 'notifications') return t('common.notifications');
         return t('settings.profile_settings');
     };
     usePageTitle(getPageTitle());
 
-    if (!user) 
+    if (!user)
         return <div className="socnet-settings-page">{t('common.loading')}</div>;
 
     const getTabClass = (tabName) => {
@@ -39,12 +42,16 @@ const SettingsPage = () => {
                 <Link to="/settings?act=security" className={getTabClass('security')}>
                     {t('common.security')}
                 </Link>
+                <Link to="/settings?act=notifications" className={getTabClass('notifications')}>
+                    {t('common.notifications')}
+                </Link>
             </div>
 
             <div className="settings-content">
                 {activeTab === 'profile' && <ProfileSettings />}
                 {activeTab === 'personalization' && <PersonalizationSettings />}
                 {activeTab === 'security' && <SecuritySettings />}
+                {activeTab === 'notifications' && <NotificationSettings />}
             </div>
         </div>
     );

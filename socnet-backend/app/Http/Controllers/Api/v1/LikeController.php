@@ -48,7 +48,13 @@ class LikeController extends Controller
 
                 if (!Cache::has($spamCacheKey))
                 {
-                    $post->user->notify(new NewLikeNotification($user, $post));
+                    $prefs = $post->user->getNotificationPreferencesFor($user->id, 'likes');
+
+                    if ($prefs['should_notify'])
+                    {
+                        $post->user->notify(new NewLikeNotification($user, $post, $prefs['sound']));
+                    }
+
                     Cache::put($spamCacheKey, true, now()->addDay());
                 }
             }
