@@ -16,16 +16,15 @@ export default function AdminAppeals() {
 
     const fetchAppeals = useCallback(async () => {
         setLoading(true);
-        try {
-            const { items, stats: statistics } = await AdminService.getAppeals(statusFilter);
-            setStats(statistics);
-            setAppeals(items);
-        } catch (error) {
-            notifyError(error.data?.message || t('common.error'));
-            console.error("Failed to load appeals:", error.data?.message || error.message);
-        } finally {
-            setLoading(false);
+        const res = await AdminService.getAppeals(statusFilter);
+
+        if (res.success) {
+            setStats(res.data.stats);
+            setAppeals(res.data.appeals?.data || []);
+        } else {
+            notifyError(res.message);
         }
+        setLoading(false);
     }, [statusFilter, t]);
 
     useEffect(() => {
@@ -37,21 +36,17 @@ export default function AdminAppeals() {
             ? t('admin.appeals.prompt_approve')
             : t('admin.appeals.prompt_reject');
 
-        const responseText = await openPrompt(
-            t('admin.common.prompt_placeholder'),
-            title,
-            true
-        );
+        const responseText = await openPrompt(t('admin.common.prompt_placeholder'), title, true);
 
         if (responseText === null) return;
 
-        try {
-            await AdminService.handleAppeal(appealId, actionType, responseText.trim());
+        const res = await AdminService.handleAppeal(appealId, actionType, responseText.trim());
 
-            notifySuccess(t('common.saved'));
+        if (res.success) {
+            notifySuccess(res.message);
             fetchAppeals();
-        } catch (error) {
-            notifyError(error.data?.message || t('common.error'));
+        } else {
+            notifyError(res.message);
         }
     };
 

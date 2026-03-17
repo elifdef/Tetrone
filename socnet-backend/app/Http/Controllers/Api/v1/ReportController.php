@@ -7,20 +7,18 @@ use App\Models\Post;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ReportController extends Controller
 {
-    // отримання причин (кешується в браузері на 24год)
-    public function getReasons()
+    public function getReasons(): JsonResponse
     {
-        return response()->json([
-            'status' => true,
+        return $this->success('REASONS_RETRIEVED', 'Reasons retrieved', [
             'reasons' => config('reports.reasons')
         ])->setCache(['max_age' => 86400, 'public' => true]);
     }
 
-    // відправка скарги
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validReasons = implode(',', config('reports.reasons'));
 
@@ -42,7 +40,7 @@ class ReportController extends Controller
         // перевіряємо чи існує
         if (!$targetClass::find($request->id))
         {
-            return response()->json(['message' => 'Target not found'], 404);
+            return $this->error('ERR_TARGET_NOT_FOUND', 'Target not found', 404);
         }
 
         // захист від спаму: чи не скаржився юзер на це саме щойно
@@ -54,7 +52,7 @@ class ReportController extends Controller
 
         if ($exists)
         {
-            return response()->json(['message' => 'You already reported this.'], 429);
+            return $this->error('ERR_ALREADY_REPORTED', 'You already reported this.', 429);
         }
 
         Report::create([
@@ -65,6 +63,6 @@ class ReportController extends Controller
             'details' => $request->details,
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Report submitted successfully.']);
+        return $this->success('REPORT_SUBMITTED', 'Report submitted successfully.');
     }
 }

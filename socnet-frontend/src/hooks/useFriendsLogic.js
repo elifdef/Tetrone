@@ -42,24 +42,21 @@ export const useFriendsLogic = () => {
 
         setLoading(true);
 
-        try {
-            const data = await FriendService.getList(tab, query, controller.signal);
-            setUsers(data);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                if (err.status === 404) {
+        const res = await FriendService.getList(tab, query, controller.signal);
+
+        if (!controller.signal.aborted) {
+            if (res.success) {
+                setUsers(res.data || []);
+            } else {
+                if (res.status === 404) {
                     setUsers([]);
                 } else {
-                    notifyError(t('error.loading', { resource: t('common.list') }));
-                    console.error("Failed to load users:", err.data?.message || err.message);
+                    notifyError(res.message);
                 }
             }
-        } finally {
-            if (!controller.signal.aborted) {
-                setLoading(false);
-            }
+            setLoading(false);
         }
-    }, [t]);
+    }, []);
 
     useEffect(() => {
         setSearchQuery("");
@@ -81,41 +78,26 @@ export const useFriendsLogic = () => {
             if (!confirmed) return;
         }
 
-        try {
-            let res;
-            if (action === 'add') res = await addFriend(username);
-            else if (action === 'accept') res = await acceptRequest(username);
-            else if (action === 'delete' || action === 'cancel_request') res = await removeFriend(username);
-            else if (action === 'block') res = await blockUser(username);
-            else if (action === 'unblock') res = await unblockUser(username);
+        let res;
 
-            if (res?.success) {
-                notifySuccess(res.message);
+        if (action === 'add') res = await addFriend(username);
+        else if (action === 'accept') res = await acceptRequest(username);
+        else if (action === 'delete' || action === 'cancel_request') res = await removeFriend(username);
+        else if (action === 'block') res = await blockUser(username);
+        else if (action === 'unblock') res = await unblockUser(username);
 
-                if (activeTab !== 'all') {
-                    setUsers(prev => prev.filter(u => u.username !== username));
-                } else {
-                    fetchUsers('all', searchQuery.toLowerCase());
-                }
+        if (res?.success) {
+            notifySuccess(res.message);
+
+            if (activeTab !== 'all') {
+                setUsers(prev => prev.filter(u => u.username !== username));
             } else {
-                notifyError(res?.message || t('common.error'));
+                fetchUsers('all', searchQuery.toLowerCase());
             }
-        } catch (e) {
-            notifyError(t('common.error'));
+        } else {
+            notifyError(res?.message || t('common.error'));
         }
     };
 
-    return {
-        tabs,
-        activeTab,
-        handleTabChange,
-        searchQuery,
-        setSearchQuery,
-        handleSearchSubmit,
-        users,
-        loading,
-        handleAction,
-        currentUser,
-        t
-    };
+    return { tabs, activeTab, handleTabChange, searchQuery, setSearchQuery, handleSearchSubmit, users, loading, handleAction, currentUser, t };
 };

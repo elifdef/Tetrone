@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Resources\PublicUserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Services\FileStorageService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller
 {
@@ -24,9 +26,9 @@ class UserController extends Controller
      * З пагінацією 20 юзерів на сторінку
      *
      * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $search = $request->input('search');
         $query = User::query();
@@ -54,6 +56,7 @@ class UserController extends Controller
 
         // поверне лише 20 записів + метадані про сторінки
         $users = $query->paginate(20);
+
         return PublicUserResource::collection($users);
     }
 
@@ -63,23 +66,33 @@ class UserController extends Controller
         //
     }
 
-    // вивести дані КОНКРЕТНОГО користувача
-    public function show(string $username)
+    /**
+     * вивести дані КОНКРЕТНОГО користувача
+     *
+     * @param string $username
+     * @return array
+     */
+    public function show(string $username): array
     {
         $currentUser = User::where('username', $username)->firstOrFail();
+
         return (new PublicUserResource($currentUser))->resolve();
     }
 
-    // обновити користувача (якщо він поміняв аватарку, ПІБ і т.д)
-    public function update(Request $request, string $username)
+    /**
+     * обновити користувача (якщо він поміняв аватарку, ПІБ і т.д)
+     *
+     * @param Request $request
+     * @param string $username
+     * @return JsonResponse
+     */
+    public function update(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
+
         if ($request->user()->id !== $targetUser->id)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'Access denied.'
-            ], 403);
+            return $this->error('ERR_ACCESS_DENIED', 'Access denied.', 403);
         }
 
         $rules = [
@@ -136,19 +149,27 @@ class UserController extends Controller
         }
 
         if ($request->has('finish_setup') && $request->input('finish_setup'))
+        {
             $targetUser->is_setup_complete = true;
+        }
 
         if (!$targetUser->isDirty())
-            return response()->json(['status' => true, 'message' => 'Nothing to update'], 418);
+        {
+            return $this->error('ERR_NOTHING_TO_UPDATE', 'Nothing to update', 418);
+        }
 
         $targetUser->save();
-        return response()->json([
-            'status' => true,
-            'message' => 'Profile updated successfully'
-        ]);
+
+        return $this->success('PROFILE_UPDATED', 'Profile updated successfully');
     }
 
-    public function updateEmail(Request $request)
+    /**
+     * оновлення пошти
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateEmail(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'email', Rule::unique('users')->ignore($request->user()->id)],
@@ -159,23 +180,26 @@ class UserController extends Controller
 
         if (!Hash::check($request->password, $user->password))
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid password'
-            ], 422);
+            return $this->error('ERR_INVALID_PASSWORD', 'Invalid password', 422);
         }
 
-        // оновлення пошти
+        // обнуляєм верифікацію для старої пошти
         $user->email = $request->email;
-        $user->email_verified_at = null; // обнуляєм верифікацію для старої пошти
+        $user->email_verified_at = null;
         $user->save();
 
         $user->sendEmailVerificationNotification();
 
-        return response()->json(['message' => 'Email changed. Please confirm your new address.']);
+        return $this->success('EMAIL_UPDATED', 'Email changed. Please confirm your new address.');
     }
 
-    public function updatePassword(Request $request)
+    /**
+     * оновлення пароля
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updatePassword(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
@@ -187,9 +211,7 @@ class UserController extends Controller
         ]);
 
         $request->user()->update(['password' => Hash::make($validated['password'])]);
-        return response()->json([
-            'status' => true,
-            'message' => 'Password has been changed.'
-        ]);
+
+        return $this->success('PASSWORD_UPDATED', 'Password has been changed.');
     }
 }

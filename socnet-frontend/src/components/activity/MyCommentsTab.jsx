@@ -24,28 +24,27 @@ export default function MyCommentsTab({ onCountUpdate }) {
         else setIsLoadingMore(true);
         setError(false);
 
-        try {
-            const { items, meta } = await ActivityService.getMyComments(page);
+        const res = await ActivityService.getMyComments(page);
+
+        if (res.success) {
+            const items = res.data || [];
+            const meta = res.meta;
 
             setComments(prev => {
                 if (page === 1) return items;
-
                 const existingIds = new Set(prev.map(c => c.id));
                 const uniqueNewComments = items.filter(c => !existingIds.has(c.id));
                 return [...prev, ...uniqueNewComments];
             });
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                notifyError(t('error.loading_comments'));
-                setError(true);
-                console.error("Failed to load comments:", err.data?.message || err.message);
-            }
-        } finally {
-            setIsLoadingInitial(false);
-            setIsLoadingMore(false);
+        } else {
+            notifyError(res.message || t('error.loading_comments'));
+            setError(true);
         }
+
+        setIsLoadingInitial(false);
+        setIsLoadingMore(false);
     }, [page, t]);
 
     useEffect(() => {
@@ -62,12 +61,13 @@ export default function MyCommentsTab({ onCountUpdate }) {
         const isConfirmed = await openConfirm(t('comment.remove_comment'));
         if (!isConfirmed) return;
 
-        try {
-            await CommentService.delete(commentId);
+        const res = await CommentService.delete(commentId);
+
+        if (res.success) {
             setComments(prev => prev.filter(c => c.id !== commentId));
             if (onCountUpdate) onCountUpdate(-1);
-        } catch (err) {
-            notifyError(err.data?.message || t('error.deleting'));
+        } else {
+            notifyError(res.message || t('error.deleting'));
         }
     };
 

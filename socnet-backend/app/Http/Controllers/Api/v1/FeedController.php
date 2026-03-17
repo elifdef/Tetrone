@@ -6,7 +6,7 @@ use App\Models\Post;
 use App\Models\Friendship;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class FeedController extends Controller
 {
@@ -20,14 +20,7 @@ class FeedController extends Controller
         'originalPost.originalPost.attachments'
     ];
 
-    /**
-     * Повертає пагінований список з постами НАШИХ друзів.
-     * Також у цьому списку є і наші публікації.
-     *
-     * @param Request $request
-     * @return AnonymousResourceCollection
-     */
-    public function feed(Request $request): AnonymousResourceCollection
+    public function feed(Request $request): JsonResponse
     {
         $user = $request->user();
         $friendIds = $user->getAllFriendIds();
@@ -43,18 +36,12 @@ class FeedController extends Controller
             ->latest()
             ->paginate(config('posts.max_paginate'));
 
-        return PostResource::collection($posts);
+        return $this->success('FEED_RETRIEVED', 'Feed retrieved',
+            PostResource::collection($posts)->response()->getData(true)
+        );
     }
 
-    /**
-     * Повертає пагінований список з ВСІМА постами.
-     * Також враховано: якщо нас заблокували, то ми не бачимо пости блокувальника.
-     * Якщо ми заблокували, то ми не бачимо пости заблокованого.
-     *
-     * @param Request $request
-     * @return AnonymousResourceCollection
-     */
-    public function globalFeed(Request $request): AnonymousResourceCollection
+    public function globalFeed(Request $request): JsonResponse
     {
         $user = $request->user('sanctum');
 
@@ -78,11 +65,12 @@ class FeedController extends Controller
             }]);
         }
 
-        $posts = $query
-            ->withCount(['likes', 'comments', 'reposts'])
+        $posts = $query->withCount(['likes', 'comments', 'reposts'])
             ->latest()
             ->paginate(config('posts.max_paginate'));
 
-        return PostResource::collection($posts);
+        return $this->success('GLOBAL_FEED_RETRIEVED', 'Global feed retrieved',
+            PostResource::collection($posts)->response()->getData(true)
+        );
     }
 }

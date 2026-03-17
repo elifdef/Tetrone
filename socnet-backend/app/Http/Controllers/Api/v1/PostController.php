@@ -52,7 +52,7 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
         {
-            return response()->json(['status' => false, 'message' => 'The user has restricted your access.'], 403);
+            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access.', 403);
         }
 
         $query = Post::select('posts.*')
@@ -85,6 +85,10 @@ class PostController extends Controller
 
     /**
      * Повертає дані окремого поста по його ID(String).
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
      */
     public function show(Request $request, Post $post): JsonResponse
     {
@@ -92,10 +96,7 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $post->user_id))
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'The user has restricted your access to the post.'
-            ], 403);
+            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access to the post.', 403);
         }
 
         $post->load(self::POST_RELATIONS);
@@ -112,12 +113,15 @@ class PostController extends Controller
             $post->is_liked = false;
         }
 
-        return response()->json((new PostResource($post))->resolve());
+        return $this->success('SUCCESS', 'Post retrieved successfully', (new PostResource($post))->resolve());
     }
 
     /**
      * Зберігає дані для поста в БД.
      * Повертає новий пост.
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
@@ -127,7 +131,7 @@ class PostController extends Controller
             'original_post_id' => 'nullable|string|exists:posts,id',
             'target_user_id' => 'nullable|exists:users,id',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|max:' . config('uploads.max_size')
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,mp3,wav,pdf,doc,docx,zip,rar|max:' . config('uploads.max_size')
         ]);
 
         $targetUserId = $request->input('target_user_id');
@@ -142,19 +146,13 @@ class PostController extends Controller
 
         if (!$request->input('content') && !$request->hasFile('media') && !$originalPostId && !$hasPoll)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'Post cannot be completely empty.'
-            ], 422);
+            return $this->error('ERR_POST_EMPTY', 'Post cannot be completely empty.', 422);
         }
 
         // не можна репостити на чужу стіну
         if ($targetUserId && $targetUserId != $user->id && $originalPostId)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'You cannot repost to another user\'s wall.'
-            ], 403);
+            return $this->error('ERR_CANNOT_REPOST_TO_WALL', "You cannot repost to another user's wall.", 403);
         }
 
         // перевірка чи ми не заблоковані
@@ -163,10 +161,7 @@ class PostController extends Controller
             $targetUser = User::findOrFail($targetUserId);
             if ($user->isBlockedByTarget($user->id, $targetUser->id))
             {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'You are blocked by this user and cannot post on their wall.'
-                ], 403);
+                return $this->error('ERR_USER_BLOCKED', 'You are blocked by this user and cannot post on their wall.', 403);
             }
         }
 
@@ -178,18 +173,18 @@ class PostController extends Controller
             // питання не може бути пустим
             if (empty(trim($poll['question'] ?? '')))
             {
-                return response()->json(['status' => false, 'message' => 'Poll question cannot be empty.'], 422);
+                return $this->error('ERR_POLL_QUESTION_EMPTY', 'Poll question cannot be empty.', 422);
             }
 
             if (!isset($poll['options']) || !is_array($poll['options']))
             {
-                return response()->json(['status' => false, 'message' => 'Poll options must be a valid array.'], 422);
+                return $this->error('ERR_POLL_OPTIONS_INVALID', 'Poll options must be a valid array.', 422);
             }
             // ліміт відповідей [2,16]
             $optionsCount = count($poll['options']);
             if ($optionsCount < 2 || $optionsCount > 16)
             {
-                return response()->json(['status' => false, 'message' => 'Poll must have between 2 and 16 options.'], 422);
+                return $this->error('ERR_POLL_OPTIONS_LIMIT', 'Poll must have between 2 and 16 options.', 422);
             }
 
             $hasCorrectOption = false;
@@ -198,7 +193,7 @@ class PostController extends Controller
                 // Жоден варіант не може бути пустим
                 if (empty(trim($option['text'] ?? '')))
                 {
-                    return response()->json(['status' => false, 'message' => 'Poll options cannot be empty.'], 422);
+                    return $this->error('ERR_POLL_OPTION_EMPTY', 'Poll options cannot be empty.', 422);
                 }
                 if (isset($option['is_correct']) && $option['is_correct'] === true)
                 {
@@ -211,12 +206,12 @@ class PostController extends Controller
             {
                 if (!$hasCorrectOption)
                 {
-                    return response()->json(['status' => false, 'message' => 'Quiz must have at least one correct option.'], 422);
+                    return $this->error('ERR_QUIZ_NO_CORRECT_OPTION', 'Quiz must have at least one correct option.', 422);
                 }
                 // перевірка довжини пояснення
                 if (isset($poll['explanation']) && mb_strlen($poll['explanation']) > 255)
                 {
-                    return response()->json(['status' => false, 'message' => 'Explanation is too long (max 255 characters).'], 422);
+                    return $this->error('ERR_QUIZ_EXPLANATION_TOO_LONG', 'Explanation is too long (max 255 characters).', 422);
                 }
             }
         }
@@ -250,16 +245,13 @@ class PostController extends Controller
 
             if (!$originalPost)
             {
-                return response()->json(['status' => false, 'message' => 'Original post not found.'], 404);
+                return $this->error('ERR_ORIGINAL_POST_NOT_FOUND', 'Original post not found.', 404);
             }
 
             // перевірка чи автор оригінального посту не заблокував нас
             if ($user->isBlockedByTarget($user->id, $originalPost->user_id))
             {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'You are blocked by the author of the original post.'
-                ], 403);
+                return $this->error('ERR_USER_BLOCKED', 'You are blocked by the author of the original post.', 403);
             }
 
             if ($originalPost && $originalPost->user_id !== $user->id)
@@ -318,21 +310,22 @@ class PostController extends Controller
             $query->where('user_id', $user->id);
         }]);
 
-        return response()->json((new PostResource($post))->resolve(), 201);
+        return $this->success('POST_CREATED', 'Post created successfully', (new PostResource($post))->resolve(), 201);
     }
 
     /**
      * Оновлення поста.
      * Повертає змінений пост.
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
      */
     public function update(Request $request, Post $post): JsonResponse
     {
         if ($request->user()->id !== $post->user_id && $request->user()->cannot('edit-any-content'))
         {
-            return response()->json([
-                'status' => false,
-                'message' => "You do not have permission to edit someone else's post."
-            ], 403);
+            return $this->error('ERR_EDIT_PERMISSION_DENIED', "You do not have permission to edit someone else's post.", 403);
         }
 
         $request->validate([
@@ -341,7 +334,7 @@ class PostController extends Controller
             'deleted_media' => 'nullable|array',
             'deleted_media.*' => 'integer|exists:post_attachments,id',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|max:' . config('uploads.max_size')
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,mp3,wav,pdf,doc,docx,zip,rar|max:' . config('uploads.max_size')
         ]);
 
         $futureContent = $request->has('content') ? $request->input('content') : $post->content;
@@ -356,10 +349,7 @@ class PostController extends Controller
         // перевірка на загальний ліміт
         if ($futureMediaCount > 10)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'A post cannot have more than 10 media attachments in total.'
-            ], 422);
+            return $this->error('ERR_MAX_MEDIA_EXCEEDED', 'A post cannot have more than 10 media attachments in total.', 422);
         }
 
         $futureMediaExists = $futureMediaCount > 0;
@@ -370,10 +360,7 @@ class PostController extends Controller
 
         if (empty($futureContent) && !$futureMediaExists && !$hasRepost && !$hasPoll)
         {
-            return response()->json([
-                'status' => false,
-                'message' => "Post can't be empty."
-            ], 422);
+            return $this->error('ERR_POST_EMPTY', "Post can't be empty.", 422);
         }
 
         $data = [];
@@ -445,11 +432,15 @@ class PostController extends Controller
             $query->where('user_id', $user->id);
         }]);
 
-        return response()->json((new PostResource($post))->resolve());
+        return $this->success('POST_UPDATED', 'Post updated successfully', (new PostResource($post))->resolve());
     }
 
     /**
      * Видалення поста.
+     *
+     * @param Post $post
+     * @param Request $request
+     * @return JsonResponse
      */
     public function destroy(Post $post, Request $request): JsonResponse
     {
@@ -462,10 +453,7 @@ class PostController extends Controller
 
         if (!$isAuthor && !$isWallOwner && $canDeleteAny)
         {
-            return response()->json([
-                'status' => false,
-                'message' => "You do not have right to delete this post."
-            ], 403);
+            return $this->error('ERR_DELETE_PERMISSION_DENIED', "You do not have right to delete this post.", 403);
         }
 
         $attachments = $post->attachments()->get();
@@ -476,12 +464,16 @@ class PostController extends Controller
 
         $post->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Post deleted.'
-        ], 202);
+        return $this->success('POST_DELETED', 'Post deleted.', null, 202);
     }
 
+    /**
+     * Отримання постів з оновленням аватарок
+     *
+     * @param Request $request
+     * @param string $username
+     * @return JsonResponse
+     */
     public function getUserAvatars(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -489,7 +481,7 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
         {
-            return response()->json(['status' => false, 'message' => 'Access denied.'], 403);
+            return $this->error('ERR_USER_BLOCKED', 'Access denied.', 403);
         }
 
         $posts = Post::where('user_id', $targetUser->id)
@@ -507,6 +499,6 @@ class PostController extends Controller
             }]);
         }
 
-        return response()->json(PostResource::collection($posts));
+        return $this->success('SUCCESS', 'Avatars retrieved', PostResource::collection($posts));
     }
 }

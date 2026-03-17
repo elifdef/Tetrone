@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -10,8 +11,13 @@ use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
-    // вхід
-    public function login(Request $request)
+    /**
+     * вхід в аккаунт
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -21,10 +27,9 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password))
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid email or password'
-            ], 401);
+        {
+            return $this->error('ERR_INVALID_CREDENTIALS', 'Invalid email or password', 401);
+        }
 
         $tokenResult = $user->createToken('auth_token');
 
@@ -39,21 +44,23 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Login successful',
+        return $this->success('LOGIN_SUCCESS', 'Login successful', [
             'token' => $tokenResult->plainTextToken
         ]);
     }
 
-    // реєстрація
-    public function register(Request $request)
+    /**
+     * реєстрація
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request): JsonResponse
     {
         if (!config('features.allow_registration'))
-            return response()->json([
-                'status' => false,
-                'message' => 'New user registration is currently suspended'
-            ], 403);
+        {
+            return $this->error('ERR_REGISTRATION_SUSPENDED', 'New user registration is currently suspended', 403);
+        }
 
         $validated = $request->validate([
             'username' => [
@@ -90,20 +97,21 @@ class AuthController extends Controller
             $user->sendEmailVerificationNotification();
         }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User registered successfully. Please check your email.',
+        return $this->success('REGISTER_SUCCESS', 'User registered successfully. Please check your email.', [
             'user_id' => $user->id
         ], 201);
     }
 
-    // вихід з аккаунта
-    public function logout(Request $request)
+    /**
+     * вихід з аккаунта
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Logged out successfully'
-        ]);
+
+        return $this->success('LOGOUT_SUCCESS', 'Logged out successfully');
     }
 }

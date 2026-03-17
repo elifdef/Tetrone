@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import fetchClient from '../api/client';
 import LikedPostsTab from '../components/activity/LikedPostsTab';
@@ -7,15 +7,19 @@ import MyCommentsTab from '../components/activity/MyCommentsTab';
 import MyRepostsTab from '../components/activity/MyRepostsTab';
 import ScreenTimeTab from '../components/activity/ScreenTimeTab';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { notifyError } from '../components/common/Notify';
 
 export default function ActivityPage() {
     const { t } = useTranslation();
-    const { tab } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Отримуємо вкладку з URL (дефолтна: 'likes')
+    const activeTab = searchParams.get('tab') || 'likes';
     const [counts, setCounts] = useState({ likes: 0, comments: 0, reposts: 0 });
 
     const getPageTitle = () => {
         const baseTitle = t('common.my_activity');
-        switch (tab) {
+        switch (activeTab) {
             case 'likes': return `${baseTitle} | ${t('common.likes')}`;
             case 'comments': return `${baseTitle} | ${t('common.comments')}`;
             case 'reposts': return `${baseTitle} | ${t('common.reposts')}`;
@@ -27,9 +31,14 @@ export default function ActivityPage() {
     usePageTitle(getPageTitle());
 
     useEffect(() => {
-        fetchClient('/activity/counts')
-            .then(data => setCounts(data))
-            .catch(err => console.error("Failed to fetch activity counts", err));
+        fetchClient('/activity/counts').then(res => {
+            if (res.success) {
+                setCounts(res.data);
+            } else {
+                console.error("Failed to fetch activity counts:", res.message);
+                notifyError(res.message);
+            }
+        });
     }, []);
 
     const updateCount = useCallback((type, delta) => {
@@ -39,10 +48,12 @@ export default function ActivityPage() {
         }));
     }, []);
 
-    if (!tab) return <Navigate to="/activity/likes" replace />;
+    const handleTabChange = (newTab) => {
+        setSearchParams({ tab: newTab });
+    };
 
     const renderContent = () => {
-        switch (tab) {
+        switch (activeTab) {
             case 'likes':
                 return <LikedPostsTab onCountUpdate={(delta) => updateCount('likes', delta)} />;
             case 'comments':
@@ -63,36 +74,36 @@ export default function ActivityPage() {
             </h1>
 
             <div className="socnet-tabs">
-                <Link
-                    to="/activity/likes"
-                    className={`socnet-tab ${tab === 'likes' ? 'active' : ''}`}
+                <button
+                    onClick={() => handleTabChange('likes')}
+                    className={`socnet-tab ${activeTab === 'likes' ? 'active' : ''}`}
                 >
                     {t('common.likes')}
                     <span className="socnet-tab-count">({counts.likes})</span>
-                </Link>
+                </button>
 
-                <Link
-                    to="/activity/comments"
-                    className={`socnet-tab ${tab === 'comments' ? 'active' : ''}`}
+                <button
+                    onClick={() => handleTabChange('comments')}
+                    className={`socnet-tab ${activeTab === 'comments' ? 'active' : ''}`}
                 >
                     {t('common.comments')}
                     <span className="socnet-tab-count">({counts.comments})</span>
-                </Link>
+                </button>
 
-                <Link
-                    to="/activity/reposts"
-                    className={`socnet-tab ${tab === 'reposts' ? 'active' : ''}`}
+                <button
+                    onClick={() => handleTabChange('reposts')}
+                    className={`socnet-tab ${activeTab === 'reposts' ? 'active' : ''}`}
                 >
                     {t('common.reposts')}
                     <span className="socnet-tab-count">({counts.reposts})</span>
-                </Link>
+                </button>
 
-                <Link
-                    to="/activity/stats"
-                    className={`socnet-tab ${tab === 'stats' ? 'active' : ''}`}
+                <button
+                    onClick={() => handleTabChange('stats')}
+                    className={`socnet-tab ${activeTab === 'stats' ? 'active' : ''}`}
                 >
                     {t('activity.stats.title')}
-                </Link>
+                </button>
             </div>
 
             <div className="socnet-activity-content">

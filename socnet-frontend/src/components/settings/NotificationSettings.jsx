@@ -28,15 +28,12 @@ const NotificationSettings = () => {
 
     const [playingKey, setPlayingKey] = useState(null);
     const audioRef = useRef(new Audio());
-
     const fileInputRefs = useRef({});
 
     useEffect(() => {
         const audio = audioRef.current;
         const handleEnded = () => setPlayingKey(null);
-
         audio.addEventListener('ended', handleEnded);
-
         return () => {
             audio.removeEventListener('ended', handleEnded);
             audio.pause();
@@ -45,9 +42,9 @@ const NotificationSettings = () => {
 
     useEffect(() => {
         const fetchSettings = async () => {
-            try {
-                const data = await notificationService.getSettings();
-                const formattedData = { ...data };
+            const res = await notificationService.getSettings();
+            if (res.success) {
+                const formattedData = { ...(res.data || {}) };
 
                 Object.keys(formattedData).forEach(key => {
                     if (formattedData[key] === null) formattedData[key] = '';
@@ -57,11 +54,10 @@ const NotificationSettings = () => {
                 });
 
                 setSettings(formattedData);
-            } catch (error) {
-                notifyError(t('error.loading'));
-            } finally {
-                setLoading(false);
+            } else {
+                notifyError(res.message);
             }
+            setLoading(false);
         };
         fetchSettings();
     }, [t]);
@@ -164,30 +160,30 @@ const NotificationSettings = () => {
 
     const handleSave = async () => {
         setSaving(true);
-        try {
-            const formData = new FormData();
-            formData.append('_method', 'PUT');
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
 
-            SETTING_ITEMS.forEach(({ type }) => {
-                const notifyKey = `notify_${type}`;
-                const soundKey = `sound_${type}`;
+        SETTING_ITEMS.forEach(({ type }) => {
+            const notifyKey = `notify_${type}`;
+            const soundKey = `sound_${type}`;
 
-                formData.append(notifyKey, settings[notifyKey] ? '1' : '0');
+            formData.append(notifyKey, settings[notifyKey] ? '1' : '0');
 
-                const currentType = getSelectValue(soundKey);
+            const currentType = getSelectValue(soundKey);
 
-                if (currentType === 'custom_file' && files[soundKey]) {
-                    formData.append(soundKey, files[soundKey]);
-                } else if (currentType === 'custom_url') {
-                    formData.append(soundKey, settings[`${soundKey}_input`] || '');
-                } else {
-                    formData.append(soundKey, settings[soundKey] || '');
-                }
-            });
+            if (currentType === 'custom_file' && files[soundKey]) {
+                formData.append(soundKey, files[soundKey]);
+            } else if (currentType === 'custom_url') {
+                formData.append(soundKey, settings[`${soundKey}_input`] || '');
+            } else {
+                formData.append(soundKey, settings[soundKey] || '');
+            }
+        });
 
-            const response = await notificationService.updateSettings(formData);
+        const res = await notificationService.updateSettings(formData);
 
-            const formattedData = { ...response.settings };
+        if (res.success) {
+            const formattedData = { ...(res.data?.settings || res.data || {}) };
             Object.keys(formattedData).forEach(key => {
                 if (formattedData[key] === null) formattedData[key] = '';
                 if (key.startsWith('sound_') && formattedData[key].startsWith('http')) {
@@ -196,12 +192,11 @@ const NotificationSettings = () => {
             });
             setSettings(formattedData);
             setFiles({});
-            notifySuccess(t('success.changes_saved'));
-        } catch (error) {
-            notifyError(t('error.save_changes'));
-        } finally {
-            setSaving(false);
+            notifySuccess(res.message);
+        } else {
+            notifyError(res.message);
         }
+        setSaving(false);
     };
 
     const getDisplayFileName = (soundKey) => {

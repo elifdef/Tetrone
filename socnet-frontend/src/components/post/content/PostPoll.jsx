@@ -40,6 +40,58 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
     const hasDraftChanges = JSON.stringify([...draftOptionIds].sort()) !== JSON.stringify([...votedOptionIds].sort());
 
+    const submitVote = async (idsToSubmit) => {
+        if (idsToSubmit.length === 0 || isClosed) return;
+
+        setIsLoading(true);
+        const res = await PostService.votePoll(postId, idsToSubmit);
+
+        if (res.success) {
+            setResults(res.data.results);
+            setVotedOptionIds(res.data.voted_option_ids);
+            setDraftOptionIds(res.data.voted_option_ids);
+
+            if (res.data.quiz_data) setQuizData(res.data.quiz_data);
+        } else {
+            notifyError(res.message || t('error.connection'));
+            setDraftOptionIds(votedOptionIds);
+        }
+        setIsLoading(false);
+    };
+
+    const openVotersModal = async (optionId, e) => {
+        e.stopPropagation();
+        if (poll.is_anonymous) return;
+
+        setActiveTab(optionId);
+        setIsVotersModalOpen(true);
+        if (votersData) return;
+
+        setIsLoadingVoters(true);
+        const res = await PostService.getPollVoters(postId);
+
+        if (res.success) {
+            setVotersData(res.data?.voters || res.data);
+        } else {
+            notifyError(res.message || t('poll.error_voters'));
+            setIsVotersModalOpen(false);
+        }
+        setIsLoadingVoters(false);
+    };
+
+    const closePoll = async () => {
+        setIsLoading(true);
+        const res = await PostService.closePoll(postId);
+
+        if (res.success) {
+            setIsClosed(true);
+            setIsCloseConfirmOpen(false);
+        } else {
+            notifyError(res.message || t('error.connection'));
+        }
+        setIsLoading(false);
+    };
+
     const handleOptionClick = (optionId) => {
         if (isLoading || isClosed) return;
 
@@ -60,62 +112,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
         }
     };
 
-    const submitVote = async (idsToSubmit) => {
-        if (idsToSubmit.length === 0 || isClosed) return;
-
-        setIsLoading(true);
-        try {
-            const data = await PostService.votePoll(postId, idsToSubmit);
-
-            setResults(data.results);
-            setVotedOptionIds(data.voted_option_ids);
-            setDraftOptionIds(data.voted_option_ids);
-
-            if (data.quiz_data) {
-                setQuizData(data.quiz_data);
-            }
-        } catch (error) {
-            notifyError(error.data?.message || t('error.connection'));
-            setDraftOptionIds(votedOptionIds);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const cancelDraft = () => setDraftOptionIds(votedOptionIds);
-
-    const openVotersModal = async (optionId, e) => {
-        e.stopPropagation();
-        if (poll.is_anonymous) return;
-
-        setActiveTab(optionId);
-        setIsVotersModalOpen(true);
-        if (votersData) return;
-
-        setIsLoadingVoters(true);
-        try {
-            const voters = await PostService.getPollVoters(postId);
-            setVotersData(voters);
-        } catch (error) {
-            notifyError(error.data?.message || t('poll.error_voters'));
-            setIsVotersModalOpen(false);
-        } finally {
-            setIsLoadingVoters(false);
-        }
-    };
-
-    const closePoll = async () => {
-        setIsLoading(true);
-        try {
-            await PostService.closePoll(postId);
-            setIsClosed(true);
-            setIsCloseConfirmOpen(false);
-        } catch (error) {
-            notifyError(error.data?.message || t('error.connection'));
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const showResults = votedOptionIds.length > 0 || isClosed;
     const isQuiz = poll.type === 'quiz';

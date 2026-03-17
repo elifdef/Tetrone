@@ -57,86 +57,81 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
         if (loading || !currentUser?.username) return;
         setLoading(true);
 
-        try {
-            let res;
-            let nextStatus = status;
+        let res;
+        let nextStatus = status;
 
-            switch (status) {
-                case 'none':
-                    res = await FriendService.addFriend(currentUser.username);
-                    if (res) nextStatus = 'pending_sent';
-                    break;
-                case 'pending_sent':
+        switch (status) {
+            case 'none':
+                res = await FriendService.addFriend(currentUser.username);
+                if (res.success) nextStatus = 'pending_sent';
+                break;
+            case 'pending_sent':
+                res = await FriendService.removeFriend(currentUser.username);
+                if (res.success) nextStatus = 'none';
+                break;
+            case 'pending_received':
+                res = await FriendService.acceptRequest(currentUser.username);
+                if (res.success) nextStatus = 'friends';
+                break;
+            case 'friends':
+                const confirmed = await openConfirm(`${t('friends.remove_friends')}?`);
+                if (confirmed) {
                     res = await FriendService.removeFriend(currentUser.username);
-                    if (res) nextStatus = 'none';
-                    break;
-                case 'pending_received':
-                    res = await FriendService.acceptRequest(currentUser.username);
-                    if (res) nextStatus = 'friends';
-                    break;
-                case 'friends':
-                    if (await openConfirm(`${t('friends.remove_friends')}?`)) {
-                        res = await FriendService.removeFriend(currentUser.username);
-                        if (res) nextStatus = 'none';
-                    } else {
-                        setLoading(false);
-                        return;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            if (res) {
-                setStatus(nextStatus);
-                if (status === 'none') notifySuccess(res.message || t('common.success'));
-            }
-        } catch (err) {
-            notifyError(err.data?.message || t('common.error'));
-        } finally {
-            setLoading(false);
+                    if (res.success) nextStatus = 'none';
+                } else {
+                    setLoading(false);
+                    return;
+                }
+                break;
+            default:
+                setLoading(false);
+                return;
         }
+
+        if (res) {
+            if (res.success) {
+                setStatus(nextStatus);
+                if (status === 'none' || status === 'pending_received') {
+                    notifySuccess(res.message);
+                }
+            } else {
+                notifyError(res.message);
+            }
+        }
+
+        setLoading(false);
     };
 
-const handleBlockAction = async () => {
+    const handleBlockAction = async () => {
         if (loading || !currentUser?.username) return;
 
-        try {
-            if (isBlockedByMe) {
-                setLoading(true);
-                const res = await FriendService.unblockUser(currentUser.username);
+        if (isBlockedByMe) {
+            setLoading(true);
+            const res = await FriendService.unblockUser(currentUser.username);
+
+            if (res.success) {
                 setStatus('none');
-                notifyInfo(res.message || t('friends.user_unblocked'));
+                notifyInfo(res.message);
             } else {
-                const confirmed = await openConfirm(`${t('common.to_block')} @${currentUser.username}?`);
-                if (confirmed) {
-                    setLoading(true);
-                    const res = await FriendService.blockUser(currentUser.username);
-                    setStatus('blocked_by_me');
-                    notifyInfo(res.message || t('friends.user_blocked'));
-                }
+                notifyError(res.message);
             }
-        } catch (err) {
-            notifyError(err.data?.message || t('common.error'));
-        } finally {
             setLoading(false);
+        } else {
+            const confirmed = await openConfirm(`${t('common.to_block')} @${currentUser.username}?`);
+            if (confirmed) {
+                setLoading(true);
+                const res = await FriendService.blockUser(currentUser.username);
+
+                if (res.success) {
+                    setStatus('blocked_by_me');
+                    notifyInfo(res.message);
+                } else {
+                    notifyError(res.message);
+                }
+                setLoading(false);
+            }
         }
     };
 
-    return {
-        status,
-        loading,
-        sameUser,
-        isBlockedByMe,
-        isBlockedByTarget,
-        isBanned,
-        isFriend,
-        displayAvatar,
-        displayBio,
-        displayBirth,
-        displayCountry,
-        displayGender,
-        handleFriendshipAction,
-        handleBlockAction
-    };
+    return { status, loading, sameUser, isBlockedByMe, isBlockedByTarget, isBanned, isFriend, displayAvatar, displayBio, displayBirth, displayCountry, displayGender, handleFriendshipAction, handleBlockAction };
 };

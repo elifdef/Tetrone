@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import fetchClient from '../../api/client';
+import ActivityService from '../../services/activity.service';
 import { useTranslation } from 'react-i18next';
 
 export default function ScreenTimeTab() {
@@ -8,10 +8,14 @@ export default function ScreenTimeTab() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchClient('/activity/screen-time')
-            .then(data => setStats(data))
-            .catch(err => console.error("Failed to fetch screen time stats", err))
-            .finally(() => setIsLoading(false));
+        ActivityService.getScreenTime().then(res => {
+            if (res.success) {
+                setStats(res.data);
+            } else {
+                console.error("Failed to fetch screen time stats:", res.message);
+            }
+            setIsLoading(false);
+        });
     }, []);
 
     useEffect(() => {
@@ -53,7 +57,7 @@ export default function ScreenTimeTab() {
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        
+
         let result = '';
         if (hours > 0) {
             result += `${hours} ${t('common.hours_short')} `;
@@ -62,7 +66,7 @@ export default function ScreenTimeTab() {
             result += `${minutes} ${t('common.minutes_short')} `;
         }
         result += `${seconds} ${t('common.seconds_short')}`;
-        
+
         return result.trim();
     };
 
@@ -83,7 +87,7 @@ export default function ScreenTimeTab() {
             </div>
 
             <h4 className="socnet-section-title">{t('activity.stats.history')}</h4>
-            
+
             {stats.history.length === 0 ? (
                 <div className="socnet-empty-state">{t('activity.stats.empty')}</div>
             ) : (

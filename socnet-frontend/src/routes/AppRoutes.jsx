@@ -56,7 +56,7 @@ export default function AppRoutes() {
                     <Route path="/email-verify/:id/:hash" element={<HomePage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/activity/:tab?" element={<ActivityPage />} />
+                    <Route path="/activity/" element={<ActivityPage />} />
 
                     {user?.role >= userRole.Support && (
                         <Route path="/support" element={<SupportPage />} />

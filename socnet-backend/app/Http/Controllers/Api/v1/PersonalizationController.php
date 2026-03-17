@@ -21,9 +21,9 @@ class PersonalizationController extends Controller
         $personalization = $request->user()->personalization;
         $bannerImage = $personalization?->banner_image;
 
-        return response()->json([
+        return $this->success('PERSONALIZATION_RETRIEVED', 'Personalization retrieved', [
             'personalization' => [
-                'banner_image' => asset("storage/".$bannerImage),
+                'banner_image' => $bannerImage ? asset("storage/" . $bannerImage) : null,
                 'banner_color' => $personalization?->banner_color,
                 'username_color' => $personalization?->username_color,
             ]
@@ -47,8 +47,6 @@ class PersonalizationController extends Controller
 
         if ($request->hasFile('banner_image'))
         {
-            // Видаляємо стару картинку, якщо є (якщо твій fileService має метод delete - юзай його,
-            // інакше залишаємо стандартний Storage::delete)
             if ($personalization->banner_image)
             {
                 $oldPath = str_replace('/storage/', '', $personalization->banner_image);
@@ -77,9 +75,7 @@ class PersonalizationController extends Controller
 
         $freshBannerImage = $personalization->banner_image;
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Personalization updated',
+        return $this->success('PERSONALIZATION_UPDATED', 'Personalization updated', [
             'personalization' => [
                 'banner_image' => $freshBannerImage,
                 'banner_color' => $freshBannerImage ? null : $personalization->banner_color,

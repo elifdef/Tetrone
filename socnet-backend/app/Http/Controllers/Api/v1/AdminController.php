@@ -11,13 +11,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Gate;
-use App\Enums\Role;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\ReportReviewedNotification;
 
 class AdminController extends Controller
 {
-    // профіль конкретного користувача
+    /**
+     * профіль конкретного користувача
+     */
     public function getUserProfile(User $user)
     {
         Gate::authorize('manage-users');
@@ -30,14 +31,15 @@ class AdminController extends Controller
         return new AdminUserResource($user);
     }
 
-    // отримати список усіх користувачів (з пошуком)
-    public function getUsers(Request $request)
+    /**
+     * отримати список усіх користувачів
+     */
+    public function getUsers(Request $request): JsonResponse
     {
         Gate::authorize('manage-users');
 
         $query = User::query();
 
-        // Якщо передали параметр пошуку (username або email)
         if ($request->has('search') && !empty($request->search))
         {
             $search = $request->search;
@@ -49,19 +51,52 @@ class AdminController extends Controller
             ->latest()
             ->paginate(20);
 
-        return AdminUserResource::collection($users);
+        return $this->success('USERS_RETRIEVED', 'Users list loaded',
+            AdminUserResource::collection($users)->response()->getData(true)
+        );
     }
 
-    // мут
+    /**
+     * Список постів для модерації
+     */
+    public function getPosts(Request $request): JsonResponse
+    {
+        Gate::authorize('delete-any-content');
+
+        $relations = [
+            'user', 'targetUser', 'attachments',
+            'originalPost.user', 'originalPost.attachments',
+            'originalPost.originalPost.user', 'originalPost.originalPost.attachments'
+        ];
+
+        $query = Post::with($relations)->withCount(['likes', 'comments', 'reposts'])->latest();
+
+        if ($request->has('username') && !empty($request->username))
+        {
+            $query->whereHas('user', function ($q) use ($request)
+            {
+                $q->where('username', $request->username);
+            });
+        }
+
+        $posts = $query->paginate(config('posts.max_paginate', 20));
+
+        return $this->success('POSTS_RETRIEVED', 'Posts loaded',
+            PostResource::collection($posts)->response()->getData(true)
+        );
+    }
+
+    /**
+     * мут
+     */
     public function toggleMute(Request $request, User $user): JsonResponse
     {
         Gate::authorize('manage-users');
 
         if ($user->role->value >= $request->user()->role->value)
-            return response()->json([
-                'status' => false,
-                'message' => 'You do not have permission to mute this user.'
-            ], 403);
+        {
+            return $this->error('ERR_PERMISSION_DENIED', 'You do not have permission to mute this user.', 403);
+        }
 
         $user->is_muted = !$user->is_muted;
         $user->save();
@@ -75,21 +110,20 @@ class AdminController extends Controller
             'reason' => $request->input('reason', 'Reason not specified')
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => "User successfully $action.",
-            'is_muted' => $user->is_muted
-        ]);
+        return $this->success('USER_MUTE_TOGGLED', "User successfully $action.", ['is_muted' => $user->is_muted]);
     }
 
+    /**
+     * бан
+     */
     public function toggleBan(Request $request, User $user): JsonResponse
     {
         Gate::authorize('manage-users');
+
         if ($user->role->value >= $request->user()->role->value)
-            return response()->json([
-                'status' => false,
-                'message' => 'You do not have permission to ban this user.'
-            ], 403);
+        {
+            return $this->error('ERR_PERMISSION_DENIED', 'You do not have permission to ban this user.', 403);
+        }
 
         $user->is_banned = !$user->is_banned;
         $user->save();
@@ -108,46 +142,16 @@ class AdminController extends Controller
             'reason' => $request->input('reason', 'Reason not specified')
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => "Account successfully $action.",
-            'is_banned' => $user->is_banned
-        ]);
+        return $this->success('USER_BAN_TOGGLED', "Account successfully $action.", ['is_banned' => $user->is_banned]);
     }
 
-    public function getPosts(Request $request)
+    /**
+     * отримати список скарг
+     */
+    public function getReports(Request $request): JsonResponse
     {
         Gate::authorize('delete-any-content');
 
-        $relations = [
-            'user',
-            'targetUser',
-            'attachments',
-            'originalPost.user',
-            'originalPost.attachments',
-            'originalPost.originalPost.user',
-            'originalPost.originalPost.attachments'
-        ];
-
-        $query = Post::with($relations)->withCount(['likes', 'comments', 'reposts'])->latest();
-
-        if ($request->has('username') && !empty($request->username))
-        {
-            $query->whereHas('user', function ($q) use ($request)
-            {
-                $q->where('username', $request->username);
-            });
-        }
-
-        $posts = $query->paginate(config('posts.max_paginate', 20));
-
-        return PostResource::collection($posts);
-    }
-
-    // отримати список скарг
-    public function getReports(Request $request)
-    {
-        Gate::authorize('delete-any-content');
         $stats = [
             'total' => Report::count(),
             'pending' => Report::where('status', 'pending')->count(),
@@ -164,20 +168,20 @@ class AdminController extends Controller
 
         $reports = $query->paginate(20);
 
-        return response()->json([
+        return $this->success('REPORTS_RETRIEVED', 'Reports retrieved', [
             'stats' => $stats,
             'reports' => $reports
         ]);
     }
 
-    // задовольнити скаргу
-    public function resolveReport(Request $request, Report $report)
+    /**
+     * задовольнити скаргу
+     */
+    public function resolveReport(Request $request, Report $report): JsonResponse
     {
         Gate::authorize('delete-any-content');
 
-        $request->validate([
-            'admin_response' => 'required|string|max:1000'
-        ]);
+        $request->validate(['admin_response' => 'required|string|max:1000']);
 
         $modelName = class_basename($report->reportable_type);
 
@@ -187,7 +191,6 @@ class AdminController extends Controller
             'admin_response' => $request->admin_response
         ]);
 
-        // ВІДПРАВЛЯЄМО СПОВІЩЕННЯ ДО ВИДАЛЕННЯ КОНТЕНТУ
         $report->reporter->notify(new ReportReviewedNotification($report));
 
         // перевірка ієрархії ролей
@@ -197,10 +200,7 @@ class AdminController extends Controller
 
             if ($targetUser->role->value >= $request->user()->role->value)
             {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'You cannot block a user with an equal or higher role!'
-                ], 403);
+                return $this->error('ERR_PERMISSION_DENIED', 'You cannot block a user with an equal or higher role!', 403);
             }
 
             // блокуємо і ЗБЕРІГАЄМО ПРИЧИНУ
@@ -241,17 +241,17 @@ class AdminController extends Controller
                 'admin_response' => 'Content was deleted due to multiple reports. (Auto-closed)'
             ]);
 
-        return response()->json(['status' => true, 'message' => 'Report resolved. Content deleted.']);
+        return $this->success('REPORT_RESOLVED', 'Report resolved. Content deleted.');
     }
 
-    // відхилити скаргу
-    public function rejectReport(Request $request, Report $report)
+    /**
+     * відхилити скаргу
+     */
+    public function rejectReport(Request $request, Report $report): JsonResponse
     {
         Gate::authorize('delete-any-content');
 
-        $request->validate([
-            'admin_response' => 'required|string|max:1000'
-        ]);
+        $request->validate(['admin_response' => 'required|string|max:1000']);
 
         $report->update([
             'status' => 'rejected',
@@ -261,11 +261,13 @@ class AdminController extends Controller
 
         $report->reporter->notify(new ReportReviewedNotification($report));
 
-        return response()->json(['status' => true, 'message' => 'Report rejected. Content remains.']);
+        return $this->success('REPORT_REJECTED', 'Report rejected. Content remains.');
     }
 
-    // отримати список апеляцій
-    public function getAppeals(Request $request)
+    /**
+     * отримати список апеляцій
+     */
+    public function getAppeals(Request $request): JsonResponse
     {
         Gate::authorize('manage-users');
 
@@ -285,20 +287,20 @@ class AdminController extends Controller
 
         $appeals = $query->paginate(20);
 
-        return response()->json([
+        return $this->success('APPEALS_RETRIEVED', 'Appeals retrieved', [
             'stats' => $stats,
             'appeals' => $appeals
         ]);
     }
 
-    // схвалити апеляцію
-    public function resolveAppeal(Request $request, Appeal $appeal)
+    /**
+     * схвалити апеляцію
+     */
+    public function resolveAppeal(Request $request, Appeal $appeal): JsonResponse
     {
         Gate::authorize('manage-users');
 
-        $request->validate([
-            'admin_response' => 'required|string|max:1000'
-        ]);
+        $request->validate(['admin_response' => 'required|string|max:1000']);
 
         $user = $appeal->user;
         if ($user)
@@ -313,17 +315,17 @@ class AdminController extends Controller
             'admin_response' => $request->admin_response
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Appeal approved. User unlocked.']);
+        return $this->success('APPEAL_APPROVED', 'Appeal approved. User unlocked.');
     }
 
-    // відхилити апеляцію
-    public function rejectAppeal(Request $request, Appeal $appeal)
+    /**
+     * відхилити апеляцію
+     */
+    public function rejectAppeal(Request $request, Appeal $appeal): JsonResponse
     {
         Gate::authorize('manage-users');
 
-        $request->validate([
-            'admin_response' => 'required|string|max:1000'
-        ]);
+        $request->validate(['admin_response' => 'required|string|max:1000']);
 
         $appeal->update([
             'status' => 'rejected',
@@ -331,6 +333,6 @@ class AdminController extends Controller
             'admin_response' => $request->admin_response
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Appeal dismissed. Ban remains in force.']);
+        return $this->success('APPEAL_REJECTED', 'Appeal dismissed. Ban remains in force.');
     }
 }

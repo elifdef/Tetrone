@@ -37,7 +37,8 @@ class DashboardController extends Controller
             ->groupBy('date')->orderBy('date')->get()->keyBy('date');
 
         $contentActivity = [];
-        for ($i = 0; $i < 7; $i++) {
+        for ($i = 0; $i < 7; $i++)
+        {
             $dateString = clone $last7Days;
             $dateString->addDays($i);
             $formattedDate = $dateString->format('Y-m-d');
@@ -70,7 +71,7 @@ class DashboardController extends Controller
         $diskTotal = disk_total_space("/") / 1024 / 1024 / 1024; // ГБ
         $diskUsagePercent = $diskTotal > 0 ? round((($diskTotal - $diskFree) / $diskTotal) * 100) : 0;
 
-        return response()->json([
+        return $this->success('DASHBOARD_STATS_RETRIEVED', 'Stats retrieved', [
             'summary' => [
                 'users' => $totalUsers,
                 'posts' => $totalPosts,

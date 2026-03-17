@@ -11,9 +11,9 @@ export const useUserWall = (profileUser) => {
     const [posts, setPosts] = useState([]);
     const [countPosts, setCountPosts] = useState(0);
     const [isPageLoading, setIsPageLoading] = useState(true);
-    
-    const [editingPostId, setEditingPostId] = useState(null); 
-    
+
+    const [editingPostId, setEditingPostId] = useState(null);
+
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -24,28 +24,35 @@ export const useUserWall = (profileUser) => {
         if (pageNumber > 1) setIsLoadingMore(true);
         else setIsPageLoading(true);
 
-        try {
-            const res = await PostService.getUserPosts(profileUser.username, pageNumber);
-            const processedPosts = res.data;
+        const res = await PostService.getUserPosts(profileUser.username, pageNumber);
 
-            if (pageNumber === 1) setPosts(processedPosts);
-            else setPosts(prev => {
-                const uniqueNewPosts = processedPosts.filter(
-                    newPost => !prev.some(existingPost => existingPost.id === newPost.id)
-                );
-                return [...prev, ...uniqueNewPosts];
-            });
+        if (res.success) {
+            const processedPosts = res.data.data || res.data;
+            const meta = res.data.meta;
 
-            const meta = res.meta;
-            setCountPosts(res.meta.total);
-            setHasMore(meta.current_page < meta.last_page);
-        } catch (err) {
-            if (err.response && err.response.status === 403) setPosts([]);
-            else notifyError(t('error.loading_post'));
-        } finally {
-            if (pageNumber === 1) setIsPageLoading(false);
-            else setIsLoadingMore(false);
+            if (pageNumber === 1) {
+                setPosts(processedPosts);
+            } else {
+                setPosts(prev => {
+                    const uniqueNewPosts = processedPosts.filter(
+                        newPost => !prev.some(existingPost => existingPost.id === newPost.id)
+                    );
+                    return [...prev, ...uniqueNewPosts];
+                });
+            }
+
+            setCountPosts(meta?.total || 0);
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
+        } else {
+            if (res.status === 403) {
+                setPosts([]);
+            } else {
+                notifyError(res.message);
+            }
         }
+
+        if (pageNumber === 1) setIsPageLoading(false);
+        else setIsLoadingMore(false);
     };
 
     useEffect(() => {
@@ -62,15 +69,16 @@ export const useUserWall = (profileUser) => {
     }, [isLoadingMore, hasMore, page, profileUser?.username]);
 
     const createPost = async (content, images, entities = null) => {
-        try {
-            const newPost = await PostService.create({
-                images, content, target_user_id: profileUser.id, entities
-            });
-            setPosts([newPost, ...posts]);
+        const res = await PostService.create({
+            images, content, target_user_id: profileUser.id, entities
+        });
+
+        if (res.success) {
+            setPosts([res.data, ...posts]);
             setCountPosts(countPosts + 1);
             return true;
-        } catch (error) {
-            notifyError(error.response?.data?.message || t('common.error'));
+        } else {
+            notifyError(res.message || t('error.publish_post'));
             return false;
         }
     };
@@ -84,25 +92,28 @@ export const useUserWall = (profileUser) => {
     const cancelEditing = () => setEditingPostId(null);
 
     const saveEdit = async (postId, updateData) => {
-        try {
-            const updatedPostData = await PostService.update(postId, updateData);
-            setPosts(prev => prev.map(p => p.id === postId ? updatedPostData : p));
-            notifySuccess(t('success.changes_saved'));
+        const res = await PostService.update(postId, updateData);
+
+        if (res.success) {
+            setPosts(prev => prev.map(p => p.id === postId ? res.data : p));
+            notifySuccess(res.message || t('success.changes_saved'));
             cancelEditing();
-        } catch (error) {
-            notifyError(t('error.save_changes'));
+        } else {
+            notifyError(res.message);
         }
     };
 
     const handleDelete = async (postId) => {
         const isConfirmed = await openConfirm(t('post.delete_post'));
         if (!isConfirmed) return;
-        try {
-            await PostService.delete(postId);
+
+        const res = await PostService.delete(postId);
+
+        if (res.success) {
             setPosts(prev => prev.filter(p => p.id !== postId));
             setCountPosts(prev => prev - 1);
-        } catch (error) {
-            notifyError(t('error.deleting'));
+        } else {
+            notifyError(res.message || t('error.delete_post'));
         }
     };
 

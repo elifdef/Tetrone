@@ -18,16 +18,15 @@ export default function AdminReports() {
 
     const fetchReports = useCallback(async () => {
         setLoading(true);
-        try {
-            const { reports: items, stats: statistics } = await AdminService.getReports(statusFilter);
-            setStats(statistics);
-            setReports(items);
-        } catch (error) {
-            notifyError(t('common.error'));
-            console.error("Failed to fetch reports:", error.data?.message || error.message);
-        } finally {
-            setLoading(false);
+        const res = await AdminService.getReports(statusFilter);
+
+        if (res.success) {
+            setStats(res.data.stats);
+            setReports(res.data.reports?.data || []);
+        } else {
+            notifyError(res.message);
         }
+        setLoading(false);
     }, [statusFilter, t]);
 
     useEffect(() => {
@@ -39,21 +38,17 @@ export default function AdminReports() {
             ? t('admin.reports.prompt_resolve')
             : t('admin.reports.prompt_reject');
 
-        const responseText = await openPrompt(
-            t('admin.common.prompt_placeholder'),
-            title,
-            true
-        );
+        const responseText = await openPrompt(t('admin.common.prompt_placeholder'), title, true);
 
         if (responseText === null) return;
 
-        try {
-            await AdminService.handleReport(reportId, actionType, responseText.trim());
+        const res = await AdminService.handleReport(reportId, actionType, responseText.trim());
 
-            notifySuccess(t('common.saved'));
+        if (res.success) {
+            notifySuccess(res.message);
             fetchReports();
-        } catch (error) {
-            notifyError(error.data?.message || t('common.error'));
+        } else {
+            notifyError(res.message);
         }
     };
 

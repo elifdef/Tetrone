@@ -7,11 +7,7 @@ export const GuestGuard = () => {
     const { user } = useContext(AuthContext);
 
     if (user)
-        // якщо профіль не налаштований то редірект на /setup-profile
-        return (user.is_setup_complete
-            ? <Navigate to="/" replace />
-            : <Navigate to="/setup-profile" replace />
-        );
+        return user.is_setup_complete ? <Navigate to="/" replace /> : <Navigate to="/setup-profile" replace />;
     return <Outlet />;
 };
 
@@ -19,11 +15,8 @@ export const GuestGuard = () => {
 export const AuthGuard = () => {
     const { user } = useContext(AuthContext);
 
-    if (!user)
-        return <Navigate to="/login" replace />;
-
-    if (!user.is_setup_complete)
-        return <Navigate to="/setup-profile" replace />;
+    if (!user) return <Navigate to="/login" replace />;
+    if (!user.is_setup_complete) return <Navigate to="/setup-profile" replace />;
 
     return <Outlet />;
 };
@@ -31,7 +24,9 @@ export const AuthGuard = () => {
 // якщо юзер не завершив початкове оформлення
 export const SetupGuard = () => {
     const { user } = useContext(AuthContext);
-    if (!user)
-        return <Navigate to="/login" replace />;
+
+    if (!user) return <Navigate to="/login" replace />;
+    if (user.is_setup_complete) return <Navigate to="/" replace />;
+
     return <Outlet />;
 };

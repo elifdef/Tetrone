@@ -15,18 +15,16 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
         if (isOpen && reasons.length === 0) {
             const fetchReasons = async () => {
                 setIsLoadingReasons(true);
-                try {
-                    const data = await ReportService.getReasons();
+                const res = await ReportService.getReasons();
+
+                if (res.success) {
+                    const data = res.data?.reasons || [];
                     setReasons(data);
-                    if (data.length > 0) {
-                        setSelectedReason(data[0]);
-                    }
-                } catch (error) {
-                    notifyError(t('reports.error_load_reasons'));
-                    console.error("Failed to load report reasons:", error.data?.message || error.message);
-                } finally {
-                    setIsLoadingReasons(false);
+                    if (data.length > 0) setSelectedReason(data[0]);
+                } else {
+                    notifyError(res.message || t('reports.error_load_reasons'));
                 }
+                setIsLoadingReasons(false);
             };
             fetchReasons();
         }
@@ -35,32 +33,23 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!selectedReason) {
-            notifyError(t('reports.choose_reason'));
-            return;
-        }
-
-        if (!targetId) {
+        if (!selectedReason || !targetId) {
             notifyError(t('common.error'));
             return;
         }
 
         setIsSubmitting(true);
-        try {
-            await ReportService.submitReport({
-                type: targetType,
-                id: targetId,
-                reason: selectedReason,
-                details: details
-            });
+        const res = await ReportService.submitReport({
+            type: targetType, id: targetId, reason: selectedReason, details: details
+        });
 
-            notifySuccess(t('reports.success'));
+        if (res.success) {
+            notifySuccess(res.message || t('reports.success'));
             handleClose();
-        } catch (error) {
-            notifyError(error.data?.message || error.message || t('common.error'));
-        } finally {
-            setIsSubmitting(false);
+        } else {
+            notifyError(res.message || t('common.error'));
         }
+        setIsSubmitting(false);
     };
 
     const handleClose = () => {
@@ -69,6 +58,8 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
     };
 
     if (!isOpen) return null;
+
+    // ... рендер (без змін)
 
     return (
         <div className="socnet-modal-overlay" onClick={handleClose}>

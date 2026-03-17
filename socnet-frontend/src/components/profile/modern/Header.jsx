@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import { useInbox } from "../../../hooks/useInbox";
 import { useDateFormatter } from "../../../hooks/useDateFormatter";
 import PostService from "../../../services/post.service";
+import MessageService from "../../../services/chat.service";
 import { notifyError } from "../../common/Notify";
 import PhotoModal from "../../../components/UI/PhotoModal";
 
@@ -15,7 +15,6 @@ export default function Header({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { initChat } = useInbox();
     const formatDate = useDateFormatter();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -78,12 +77,14 @@ export default function Header({
 
     const handleSendMessage = async () => {
         setIsChatLoading(true);
-        try {
-            const slug = await initChat(currentUser.id);
-            if (slug) navigate(`/messages?dm=${slug}`);
-        } finally {
-            setIsChatLoading(false);
+        const res = await MessageService.initChat(currentUser.id);
+
+        if (res.success && res.data?.chat_slug) {
+            navigate(`/messages?dm=${res.data.chat_slug}`);
+        } else {
+            notifyError(res.message);
         }
+        setIsChatLoading(false);
     };
 
     const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned);
@@ -93,20 +94,19 @@ export default function Header({
         if (!canViewAvatar || isLoadingAvatar) return;
 
         setIsLoadingAvatar(true);
-        try {
-            const posts = await PostService.getUserAvatars(currentUser.username);
-            
-            if (posts && posts.length > 0) {
+        const res = await PostService.getUserAvatars(currentUser.username);
+
+        if (res.success) {
+            const posts = res.data || [];
+            if (posts.length > 0) {
                 setAvatarPosts(posts);
                 setCurrentIndex(0);
                 setIsPhotoModalOpen(true);
             }
-        } catch (error) {
-            console.error(error);
-            notifyError(t('error.connection'));
-        } finally {
-            setIsLoadingAvatar(false);
+        } else {
+            notifyError(res.message);
         }
+        setIsLoadingAvatar(false);
     };
 
     const nextAvatar = () => setCurrentIndex(prev => (prev + 1) % avatarPosts.length);
@@ -121,9 +121,9 @@ export default function Header({
                         alt="avatar"
                         className={`socnet-modern-avatar`}
                         onClick={handleAvatarClick}
-                        style={{ 
+                        style={{
                             cursor: canViewAvatar ? 'pointer' : 'default',
-                            opacity: isLoadingAvatar ? 0.7 : 1 
+                            opacity: isLoadingAvatar ? 0.7 : 1
                         }}
                     />
                 </div>

@@ -14,15 +14,16 @@ export default function AdminDashboard() {
 
     const fetchStats = useCallback(async () => {
         setLoading(true);
-        try {
-            const data = await AdminService.getDashboardStats();
-            setStats(data);
-        } catch (err) {
-            console.error("Dashboard stats load failed:", err.data?.message || err.message);
-            notifyError(t('error.load_stats'));
-        } finally {
-            setLoading(false);
+        const res = await AdminService.getDashboardStats();
+
+        if (res.success) {
+            setStats(res.data);
+        } else {
+            console.error("Dashboard stats load failed:", res.message);
+            notifyError(res.message || t('error.load_stats'));
         }
+
+        setLoading(false);
     }, [t]);
 
     useEffect(() => {

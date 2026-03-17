@@ -16,10 +16,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
 {
-    public function index()
+    /**
+     * Отримати список усіх чатів користувача
+     *
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
     {
         $myId = Auth::id();
 
@@ -36,7 +42,7 @@ class ChatController extends Controller
             }])
             ->orderBy('updated_at', 'desc')
             ->get()
-            ->map(function ($chat) use ($myId)
+            ->map(function ($chat)
             {
                 $lastMsg = $chat->messages->first();
                 $targetParticipant = $chat->participants->first();
@@ -66,10 +72,16 @@ class ChatController extends Controller
                 ];
             });
 
-        return response()->json($chats);
+        return $this->success('CHATS_RETRIEVED', 'Chats retrieved successfully', $chats);
     }
 
-    public function getOrCreateChat(Request $request)
+    /**
+     * Отримати існуючий або створити новий чат
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getOrCreateChat(Request $request): JsonResponse
     {
         $request->validate(['target_user_id' => 'required|exists:users,id']);
         $myId = Auth::id();
@@ -94,32 +106,37 @@ class ChatController extends Controller
             ]);
         }
 
-        return response()->json(['chat_slug' => $chat->slug]);
+        return $this->success('CHAT_INITIALIZED', 'Chat initialized', ['chat_slug' => $chat->slug]);
     }
 
-    public function sendMessage(Request $request, $slug)
+    /**
+     * Відправити повідомлення
+     *
+     * @param Request $request
+     * @param string $slug
+     * @return JsonResponse
+     */
+    public function sendMessage(Request $request, $slug): JsonResponse
     {
         $request->validate([
             'text' => 'nullable|string|max:65536',
             'shared_post_id' => 'nullable|exists:posts,id',
             'reply_to_id' => 'nullable|exists:messages,id',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|max:' . config('uploads.max_size', 51200)
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,mp3,wav,pdf,doc,docx,zip,rar|max:' . config('uploads.max_size', 51200)
         ]);
 
         if (!$request->text && !$request->hasFile('media') && !$request->shared_post_id)
         {
-            return response()->json(['error' => 'Message cannot be empty'], 422);
+            return $this->error('ERR_EMPTY_MESSAGE', 'Message cannot be empty', 422);
         }
 
         $chat = Chat::where('slug', $slug)->firstOrFail();
-
-        /** @var \App\Models\User $user */
         $user = $request->user();
 
         if (!$chat->participants()->where('user_id', $user->id)->exists())
         {
-            return response()->json(['error' => 'Forbidden'], 403);
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
         $savedFiles = [];
@@ -158,39 +175,41 @@ class ChatController extends Controller
             if ($prefs['should_notify'])
             {
                 $targetParticipant->user->notify(new NewMessageNotification(
-                    $user,
-                    $message,
-                    $chat->slug,
-                    $chat->encrypted_dek,
-                    $prefs['sound']
+                    $user, $message, $chat->slug, $chat->encrypted_dek, $prefs['sound']
                 ));
             }
         }
 
         $chat->touch();
 
-        return response()->json(['success' => true, 'message_id' => $message->id]);
+        return $this->success('MESSAGE_SENT', 'Message sent', ['message_id' => $message->id]);
     }
 
-    public function updateMessage(Request $request, $slug, $messageId)
+    /**
+     * Оновити повідомлення
+     *
+     * @param Request $request
+     * @param string $slug
+     * @param int $messageId
+     * @return JsonResponse
+     */
+    public function updateMessage(Request $request, $slug, $messageId): JsonResponse
     {
         $request->validate([
             'text' => 'nullable|string|max:4096',
             'deleted_media' => 'nullable|array',
             'deleted_media.*' => 'string',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|max:' . config('uploads.max_size', 51200)
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,mp3,wav,pdf,doc,docx,zip,rar|max:' . config('uploads.max_size', 51200)
         ]);
 
         $chat = Chat::where('slug', $slug)->firstOrFail();
         $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
-
-        /** @var \App\Models\User $user */
         $user = $request->user();
 
         if ($message->sender_id !== $user->id)
         {
-            return response()->json(['error' => 'Not your message'], 403);
+            return $this->error('ERR_NOT_YOUR_MESSAGE', 'Not your message', 403);
         }
 
         $oldPayload = ChatEncryptionService::decryptPayload($message->encrypted_payload, $chat->encrypted_dek);
@@ -221,7 +240,7 @@ class ChatController extends Controller
 
         if (empty($request->text) && empty($currentFiles) && !$message->shared_post_id)
         {
-            return response()->json(['error' => 'Message cannot be empty'], 422);
+            return $this->error('ERR_EMPTY_MESSAGE', 'Message cannot be empty', 422);
         }
 
         $newPayload = [
@@ -234,16 +253,22 @@ class ChatController extends Controller
             'is_edited' => true
         ]);
 
-        return response()->json(['success' => true, 'edited_at' => $message->updated_at]);
+        return $this->success('MESSAGE_UPDATED', 'Message updated', ['edited_at' => $message->updated_at]);
     }
 
-    public function getMessages($slug)
+    /**
+     * Отримати повідомлення чату
+     *
+     * @param string $slug
+     * @return JsonResponse
+     */
+    public function getMessages($slug): JsonResponse
     {
         $chat = Chat::where('slug', $slug)->firstOrFail();
 
         if (!$chat->participants()->where('user_id', Auth::id())->exists())
         {
-            return response()->json(['error' => 'Forbidden'], 403);
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
         $messages = Message::with(['sharedPost.user', 'sharedPost.attachments', 'repliedMessage.sender'])
@@ -294,20 +319,33 @@ class ChatController extends Controller
             ];
         });
 
-        return response()->json($messages);
+        return $this->success('MESSAGES_RETRIEVED', 'Messages loaded', [
+            'data' => $messages->items(),
+            'meta' => [
+                'current_page' => $messages->currentPage(),
+                'last_page' => $messages->lastPage()
+            ]
+        ]);
     }
 
-    public function destroyMessage($slug, $messageId)
+    /**
+     * Видалити повідомлення
+     *
+     * @param string $slug
+     * @param int $messageId
+     * @return JsonResponse
+     */
+    public function destroyMessage($slug, $messageId): JsonResponse
     {
         $chat = Chat::where('slug', $slug)->firstOrFail();
         $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($message->sender_id !== $user->id)
         {
-            return response()->json(['error' => 'Not your message'], 403);
+            return $this->error('ERR_NOT_YOUR_MESSAGE', 'Not your message', 403);
         }
 
         $payload = ChatEncryptionService::decryptPayload($message->encrypted_payload, $chat->encrypted_dek);
@@ -328,16 +366,23 @@ class ChatController extends Controller
             broadcast(new MessageDeletedEvent($chat->slug, $messageId, $targetParticipant->user_id));
         }
 
-        return response()->json(['success' => true]);
+        return $this->success('MESSAGE_DELETED', 'Message deleted');
     }
 
-    public function destroyChat($slug, Request $request)
+    /**
+     * Видалити чат
+     *
+     * @param string $slug
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function destroyChat($slug, Request $request): JsonResponse
     {
         $chat = Chat::where('slug', $slug)->firstOrFail();
 
         if (!$chat->participants()->where('user_id', Auth::id())->exists())
         {
-            return response()->json(['error' => 'Forbidden'], 403);
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
         if ($request->for_both)
@@ -348,20 +393,26 @@ class ChatController extends Controller
             $chat->participants()->where('user_id', Auth::id())->delete();
         }
 
-        return response()->json(['success' => true]);
+        return $this->success('CHAT_DELETED', 'Chat deleted');
     }
 
-    public function togglePinMessage($slug, $messageId, Request $request)
+    /**
+     * Закріпити/Відкріпити повідомлення
+     *
+     * @param string $slug
+     * @param int $messageId
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function togglePinMessage($slug, $messageId, Request $request): JsonResponse
     {
         $chat = Chat::where('slug', $slug)->firstOrFail();
         $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
-
-        /** @var \App\Models\User $user */
         $user = $request->user();
 
         if (!$chat->participants()->where('user_id', $user->id)->exists())
         {
-            return response()->json(['error' => 'Forbidden'], 403);
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
         $isPinning = !$message->is_pinned;
@@ -375,10 +426,17 @@ class ChatController extends Controller
 
         $message->update(['is_pinned' => $isPinning]);
 
-        return response()->json(['success' => true, 'is_pinned' => $message->is_pinned]);
+        return $this->success('MESSAGE_PIN_TOGGLED', 'Message pin status updated', ['is_pinned' => $message->is_pinned]);
     }
 
-    public function markAsRead($slug, Request $request)
+    /**
+     * Позначити як прочитане
+     *
+     * @param string $slug
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function markAsRead($slug, Request $request): JsonResponse
     {
         $chat = Chat::where('slug', $slug)->firstOrFail();
         $user = $request->user();
@@ -397,6 +455,6 @@ class ChatController extends Controller
             }
         }
 
-        return response()->json(['success' => true]);
+        return $this->success('MARKED_AS_READ', 'Messages marked as read');
     }
 }

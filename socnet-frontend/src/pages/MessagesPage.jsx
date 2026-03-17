@@ -9,7 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 import Messages from '../components/messages/Messages';
 import MessagesOld from '../components/messages/MessagesOld';
 import ActionModal from '../components/common/ActionModal';
-import ChatService from '../services/chat.service';
+import MessageService from '../services/chat.service';
 import ChatInfoModal from '../components/messages/ChatInfoModal';
 import { notifyError } from '../components/common/Notify';
 
@@ -66,7 +66,6 @@ export default function MessagesPage() {
     useEffect(() => {
         if (incomingMessage) {
             fetchChats();
-
             if (incomingMessage.chat_slug === dmSlug) {
                 fetchMessages({ silent: true });
             }
@@ -100,19 +99,21 @@ export default function MessagesPage() {
 
     const handleSend = async () => {
         if (!text.trim() && files.length === 0) return;
-        try {
-            if (editingMessage) {
-                await updateMessage(editingMessage.id, text, files, []);
-                setEditingMessage(null);
-            } else {
-                await sendMessage(text, files, null, replyingTo ? replyingTo.id : null);
-            }
+
+        let success = false;
+
+        if (editingMessage) {
+            success = await updateMessage(editingMessage.id, text, files, []);
+            if (success) setEditingMessage(null);
+        } else {
+            success = await sendMessage(text, files, null, replyingTo ? replyingTo.id : null);
+        }
+
+        if (success) {
             setText('');
             setFiles([]);
             setReplyingTo(null);
             fetchChats();
-        } catch (err) {
-            console.error("Message send/update failed:", err.data?.message || err.message);
         }
     };
 
@@ -168,12 +169,12 @@ export default function MessagesPage() {
 
     const confirmDeleteChat = async (shouldDelete) => {
         if (shouldDelete && chatToDelete) {
-            try {
-                await ChatService.deleteChat(chatToDelete, deleteForBoth);
+            const res = await MessageService.deleteChat(chatToDelete, deleteForBoth);
+            if (res.success) {
                 setSearchParams({});
                 fetchChats();
-            } catch (err) {
-                console.error("Chat deletion failed:", err.data?.message || err.message);
+            } else {
+                notifyError(res.message);
             }
         }
         setChatToDelete(null);
@@ -183,35 +184,18 @@ export default function MessagesPage() {
     const activeChatObj = chats.find(c => c.slug === dmSlug);
 
     const childProps = {
-        isLoadingInitial,
-        isLoadingMore,
-        hasMore,
+        isLoadingInitial, isLoadingMore, hasMore,
         onLoadMore: loadMoreMessages,
         onOpenInfo: () => setIsInfoModalOpen(true),
         onDeleteChatClick: () => setChatToDelete(dmSlug),
-        currentUser,
-        chats,
-        messages,
+        currentUser, chats, messages,
         activeChat: activeChatObj,
-        dmSlug,
-        text,
-        setText,
-        files,
-        editingMessage,
-        handleSend,
-        handleSelectChat,
-        handleBackToInbox,
-        handleEditClick,
-        handleCancelEdit,
-        handleDelete: handleDeleteClick,
-        replyingTo,
-        setReplyingTo,
-        togglePin,
-        handleCancelReplyEdit,
-        handleFileChange,
-        handleRemoveFile,
-        isTyping: targetIsTyping,
-        onTyping: emitTyping,
+        dmSlug, text, setText, files, editingMessage,
+        handleSend, handleSelectChat, handleBackToInbox,
+        handleEditClick, handleCancelEdit, handleDelete: handleDeleteClick,
+        replyingTo, setReplyingTo, togglePin, handleCancelReplyEdit,
+        handleFileChange, handleRemoveFile,
+        isTyping: targetIsTyping, onTyping: emitTyping,
     };
 
     const handleScrollToMessage = (msgId) => {

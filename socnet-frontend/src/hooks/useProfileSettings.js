@@ -1,7 +1,7 @@
 import { useState, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from "../context/AuthContext";
-import UserService from '../services/user.service'; // Новий сервіс
+import UserService from '../services/user.service';
 import { notifySuccess, notifyError, notifyLoading, dismissToast, notifyInfo } from "../components/common/Notify";
 import { validateImageFile } from "../utils/upload";
 
@@ -64,9 +64,7 @@ export const useProfileSettings = (isSetupMode = false) => {
         // якщо користувач зніме disabled через DevTools
         if (!canSubmit) {
             notifyInfo(t('settings.same_info'));
-
             setPreviewUser(prev => ({ ...prev, avatar: "https://substackcdn.com/image/fetch/$s_!N8t_!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25d56fff-096b-4f24-a996-149cc73e9cf6_1055x1212.jpeg" }));
-
             setTimeout(() => {
                 window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1";
             }, 8000);
@@ -91,31 +89,23 @@ export const useProfileSettings = (isSetupMode = false) => {
             data.append('avatar', formData.avatarFile);
         }
 
-        try {
-            await UserService.updateProfile(user.username, data);
+        const res = await UserService.updateProfile(user.username, data);
 
+        if (res.success) {
             setUser(prev => ({ ...prev, ...previewUser, is_setup_complete: true }));
 
             if (isSetupMode) {
                 window.location.href = `/${user.username}`;
             } else {
-                notifySuccess(t('success.changes_saved'));
+                notifySuccess(res.message);
                 setFormData(prev => ({ ...prev, avatarFile: null }));
             }
-        } catch (error) {
-            notifyError(error.data?.message || error.message || t('error.save_changes'));
-        } finally {
-            dismissToast(toastId);
+        } else {
+            notifyError(res.message);
         }
+
+        dismissToast(toastId);
     };
 
-    return {
-        formData,
-        previewUser,
-        canSubmit,
-        handleChange,
-        handleFileChange,
-        handleSubmit,
-        avatarFile: formData.avatarFile
-    };
+    return { formData, previewUser, canSubmit, handleChange, handleFileChange, handleSubmit, avatarFile: formData.avatarFile };
 };

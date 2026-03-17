@@ -2,11 +2,11 @@ import { useState } from "react";
 import PostService from "../../../services/post.service";
 import { notifyError } from "../../common/Notify";
 import { useTranslation } from "react-i18next";
-import PhotoModal from "../../UI/PhotoModal"; 
+import PhotoModal from "../../UI/PhotoModal";
 
 export default function ProfileAvatar({ user, isPreview, isBlocked }) {
     const { t } = useTranslation();
-    
+
     const [avatarPosts, setAvatarPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
@@ -18,20 +18,19 @@ export default function ProfileAvatar({ user, isPreview, isBlocked }) {
         if (!canViewAvatar || isLoading) return;
 
         setIsLoading(true);
-        try {
-            const posts = await PostService.getUserAvatars(user.username);
-            
-            if (posts && posts.length > 0) {
+        const res = await PostService.getUserAvatars(user.username);
+
+        if (res.success) {
+            const posts = res.data || [];
+            if (posts.length > 0) {
                 setAvatarPosts(posts);
                 setCurrentIndex(0);
                 setIsPhotoModalOpen(true);
             }
-        } catch (error) {
-            console.error(error);
-            notifyError(t('error.connection'));
-        } finally {
-            setIsLoading(false);
+        } else {
+            notifyError(res.message);
         }
+        setIsLoading(false);
     };
 
     const nextAvatar = () => setCurrentIndex(prev => (prev + 1) % avatarPosts.length);
@@ -44,9 +43,9 @@ export default function ProfileAvatar({ user, isPreview, isBlocked }) {
                 alt={user.username}
                 className={`socnet-avatar ${(!isPreview && isBlocked) ? 'socnet-avatar-blocked' : ''}`}
                 onClick={handleAvatarClick}
-                style={{ 
+                style={{
                     cursor: canViewAvatar ? 'pointer' : 'default',
-                    opacity: isLoading ? 0.7 : 1 
+                    opacity: isLoading ? 0.7 : 1
                 }}
             />
 

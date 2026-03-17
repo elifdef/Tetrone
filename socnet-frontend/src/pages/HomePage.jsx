@@ -27,7 +27,6 @@ export default function HomePage() {
 
     const handleTabChange = (tab) => {
         if (activeTab === tab) return;
-
         setLoading(true);
         setPosts([]);
         setError(false);
@@ -41,40 +40,30 @@ export default function HomePage() {
         const newController = new AbortController();
         abortControllerRef.current = newController;
 
-        try {
-            setError(false);
-            if (page === 1) setLoading(true);
-            else setIsLoadingMore(true);
+        setError(false);
+        if (page === 1) setLoading(true);
+        else setIsLoadingMore(true);
 
-            const { items, meta } = await FeedService.getFeed(
-                activeTab,
-                page,
-                newController.signal
-            );
+        const res = await FeedService.getFeed(activeTab, page, newController.signal);
 
-            setPosts(prev => {
-                if (page === 1) return items;
-                const uniqueNewPosts = items.filter(
-                    newPost => !prev.some(existingPost => existingPost.id === newPost.id)
-                );
-                return [...prev, ...uniqueNewPosts];
-            });
+        if (!newController.signal.aborted) {
+            if (res.success) {
+                const items = res.data || [];
+                const meta = res.meta;
 
-            setHasMore(meta ? meta.current_page < meta.last_page : false);
-
-        } catch (err) {
-            if (err.name !== "AbortError") {
+                setPosts(prev => {
+                    if (page === 1) return items;
+                    const existingIds = new Set(prev.map(p => p.id));
+                    const uniqueNewPosts = items.filter(newPost => !existingIds.has(newPost.id));
+                    return [...prev, ...uniqueNewPosts];
+                });
+                setHasMore(meta ? meta.current_page < meta.last_page : false);
+            } else {
                 setError(true);
-                if (page === 1) {
-                    notifyError(t('error.loading', { resource: "feed" }));
-                }
-                console.error("Failed to fetch feed:", err.data?.message || err.message);
+                if (page === 1) notifyError(res.message || t('error.load_feed'));
             }
-        } finally {
-            if (!newController.signal.aborted) {
-                setLoading(false);
-                setIsLoadingMore(false);
-            }
+            setLoading(false);
+            setIsLoadingMore(false);
         }
     };
 
@@ -112,21 +101,15 @@ export default function HomePage() {
         </div>
     );
 
-    const handleRepostSuccess = (newPost) => {
-        setPosts(prevPosts => [newPost, ...prevPosts]);
-    };
+    const handleRepostSuccess = (newPost) => setPosts(prevPosts => [newPost, ...prevPosts]);
 
     return (
         <div className="socnet-feed-page">
             <div className="socnet-tabs">
-                <button
-                    className={`socnet-tab ${activeTab === 'feed' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('feed')}>
+                <button className={`socnet-tab ${activeTab === 'feed' ? 'active' : ''}`} onClick={() => handleTabChange('feed')}>
                     {t('feed.my_feed')}
                 </button>
-                <button
-                    className={`socnet-tab ${activeTab === 'global' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('global')}>
+                <button className={`socnet-tab ${activeTab === 'global' ? 'active' : ''}`} onClick={() => handleTabChange('global')}>
                     {t('feed.global_feed')}
                 </button>
             </div>

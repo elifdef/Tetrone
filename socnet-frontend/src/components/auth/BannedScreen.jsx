@@ -19,14 +19,13 @@ export const BannedScreen = () => {
         if (!user) return;
 
         const checkStatus = async () => {
-            try {
-                const data = await AppealService.checkStatus();
-                setHasPendingAppeal(data.has_pending_appeal);
-            } catch (error) {
-                console.error("Failed to check appeal status:", error.data?.message || error.message);
-            } finally {
-                setIsLoadingStatus(false);
+            const res = await AppealService.checkStatus();
+            if (res.success) {
+                setHasPendingAppeal(res.data?.has_pending_appeal || false);
+            } else {
+                console.error("Failed to check appeal status:", res.message);
             }
+            setIsLoadingStatus(false);
         };
 
         checkStatus();
@@ -36,17 +35,17 @@ export const BannedScreen = () => {
         if (!appealText.trim()) return;
         setIsSubmitting(true);
 
-        try {
-            await AppealService.submitAppeal(appealText);
-            
-            notifySuccess(t('banned.appeal_success'));
+        const res = await AppealService.submitAppeal(appealText);
+
+        if (res.success) {
+            notifySuccess(res.message || t('banned.appeal_success'));
             setHasPendingAppeal(true);
             setIsAppealing(false);
-        } catch (error) {
-            notifyError(error.data?.message || error.message || t('banned.appeal_error'));
-        } finally {
-            setIsSubmitting(false);
+        } else {
+            notifyError(res.message || t('banned.appeal_error'));
         }
+
+        setIsSubmitting(false);
     };
 
     if (!user) return null;

@@ -23,31 +23,28 @@ export const useComments = (postId) => {
 
         setError(false);
 
-        try {
-            const { items, meta } = await CommentService.getComments(postId, page);
+        const res = await CommentService.getComments(postId, page);
 
-            if (isMounted) {
+        if (isMounted) {
+            if (res.success) {
+                const items = res.data || [];
+                const meta = res.meta;
+
                 setComments(prev => {
                     if (page === 1) return items;
-
                     const existingIds = new Set(prev.map(c => c.id));
                     const uniqueNewComments = items.filter(c => !existingIds.has(c.id));
                     return [...prev, ...uniqueNewComments];
                 });
 
                 setHasMore(meta ? meta.current_page < meta.last_page : false);
-            }
-        } catch (err) {
-            if (isMounted) {
-                notifyError(t('error.loading_comments'));
+            } else {
+                notifyError(res.message || t('error.load_comments'));
                 setError(true);
-                console.error("Failed to load comments:", err.data?.message || err.message);
             }
-        } finally {
-            if (isMounted) {
-                setIsLoadingInitial(false);
-                setIsLoadingMore(false);
-            }
+
+            setIsLoadingInitial(false);
+            setIsLoadingMore(false);
         }
     }, [postId, page, t]);
 
@@ -64,14 +61,29 @@ export const useComments = (postId) => {
     const addComment = async (content) => {
         if (!content.trim()) return false;
 
-        try {
-            const res = await CommentService.addComment(postId, content);
-            const newComment = res.data || res;
+        const res = await CommentService.addComment(postId, content);
 
+        if (res.success) {
+            const newComment = res.data;
             setComments(prev => [newComment, ...prev]);
             return true;
-        } catch (err) {
-            notifyError(err.data?.message || t('error.add_comment'));
+        } else {
+            notifyError(res.message || t('error.add_comment'));
+            return false;
+        }
+    };
+
+    const editComment = async (commentId, newContent) => {
+        if (!newContent.trim()) return false;
+
+        const res = await CommentService.update(commentId, newContent);
+
+        if (res.success) {
+            const updatedComment = res.data;
+            setComments(prev => prev.map(c => c.id === commentId ? updatedComment : c));
+            return true;
+        } else {
+            notifyError(res.message || t('error.edit_comment'));
             return false;
         }
     };
@@ -80,12 +92,13 @@ export const useComments = (postId) => {
         const isConfirmed = await openConfirm(t('comment.remove_comment'));
         if (!isConfirmed) return false;
 
-        try {
-            await CommentService.delete(commentId);
+        const res = await CommentService.delete(commentId);
+
+        if (res.success) {
             setComments(prev => prev.filter(c => c.id !== commentId));
             return true;
-        } catch (err) {
-            notifyError(err.data?.message || t('error.deleting'));
+        } else {
+            notifyError(res.message || t('error.delete_comment'));
             return false;
         }
     };
@@ -99,6 +112,7 @@ export const useComments = (postId) => {
         fetchComments,
         loadMore,
         addComment,
+        editComment,
         removeComment
     };
 };

@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Api\v1;
 use App\Models\Like;
 use App\Models\Post;
 use App\Notifications\NewLikeNotification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class LikeController extends Controller
 {
-    public function toggle(Request $request, Post $post)
+    /**
+     * Поставити або забрати лайк
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function toggle(Request $request, Post $post): JsonResponse
     {
         $user = $request->user();
 
@@ -60,8 +68,7 @@ class LikeController extends Controller
             }
         }
 
-        return response()->json([
-            'status' => true,
+        return $this->success('LIKE_TOGGLED', 'Like updated', [
             'liked' => $liked,
             'likes_count' => $post->likes()->count()
         ]);

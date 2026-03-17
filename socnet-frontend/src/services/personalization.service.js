@@ -2,15 +2,11 @@ import fetchClient from "../api/client";
 
 class PersonalizationService {
     async getSettings() {
-        const data = await fetchClient('/settings/personalization');
-        return data.personalization || data;
+        return await fetchClient('/settings/personalization');
     }
 
     async updateSettings(formData) {
-        return await fetchClient('/settings/personalization', { 
-            method: 'POST', 
-            body: formData 
-        });
+        return await fetchClient('/settings/personalization', { method: 'POST', body: formData });
     }
 }
 

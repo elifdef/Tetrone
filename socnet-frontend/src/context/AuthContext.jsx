@@ -18,25 +18,23 @@ export const AuthProvider = ({ children }) => {
 
             const controller = new AbortController();
 
-            fetchClient('/me', { signal: controller.signal })
-                .then(data => {
-                    setUser(data);
-                    setLoading(false);
-                })
-                .catch((err) => {
-                    if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED' || err.name === 'AbortError')
-                        return;
+            fetchClient('/me', { signal: controller.signal }).then(res => {
+                if (controller.signal.aborted) return; // Ігноруємо, якщо запит скасовано
 
-                    if (err.status === 401) {
+                if (res.success) {
+                    setUser(res.data);
+                } else {
+                    if (res.status === 401) {
                         localStorage.removeItem('token');
                         setToken(null);
                         setUser(null);
-                        setLoading(false);
                     } else {
                         setInitError(true);
-                        setLoading(false);
                     }
-                });
+                }
+                setLoading(false);
+            });
+
             return () => controller.abort();
         } else {
             setLoading(false);
@@ -52,8 +50,7 @@ export const AuthProvider = ({ children }) => {
         const pingServer = () => {
             if (document.visibilityState === 'visible') {
                 isOfflineSent = false; // Скидаємо прапорець, коли юзер повернувся
-                fetchClient('/user/ping', { method: 'POST', body: { active: true } })
-                    .catch(() => { });
+                fetchClient('/user/ping', { method: 'POST', body: { active: true } });
             }
         };
 
@@ -61,8 +58,7 @@ export const AuthProvider = ({ children }) => {
             if (isOfflineSent) return; // Якщо вже відправили - ігноруємо
             isOfflineSent = true;
 
-            fetchClient('/user/offline', { method: 'POST', keepalive: true })
-                .catch(() => { });
+            fetchClient('/user/offline', { method: 'POST', keepalive: true });
         };
 
         const handleVisibilityChange = () => {
@@ -111,12 +107,11 @@ export const AuthProvider = ({ children }) => {
         setInitError(false);
     };
 
-    const logout = () => {
-        fetchClient('/sign-out', { method: 'POST' }).finally(() => {
-            localStorage.removeItem('token');
-            setToken(null);
-            setUser(null);
-        });
+    const logout = async () => {
+        await fetchClient('/sign-out', { method: 'POST' });
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
     };
 
     return (

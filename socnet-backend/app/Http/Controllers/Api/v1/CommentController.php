@@ -7,11 +7,11 @@ use App\Models\Post;
 use App\Notifications\NewCommentNotification;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
+use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
-    // отримати ВСІ коментарі до поста
-    public function index(Post $post)
+    public function index(Post $post): JsonResponse
     {
         $comments = $post->comments()
             ->with('user')
@@ -19,14 +19,15 @@ class CommentController extends Controller
             {
                 $query->where('is_banned', false);
             })
-            ->latest() // нові зверху
+            ->latest()
             ->paginate(config('comments.max_paginate'));
 
-        return CommentResource::collection($comments);
+        return $this->success('COMMENTS_RETRIEVED', 'Comments retrieved',
+            CommentResource::collection($comments)->response()->getData(true)
+        );
     }
 
-    // створити коментар
-    public function store(Request $request, Post $post)
+    public function store(Request $request, Post $post): JsonResponse
     {
         $currentUser = $request->user('sanctum');
 
@@ -38,7 +39,9 @@ class CommentController extends Controller
             $blockedByCommenter = $currentUser->isBlockedByTarget($post->user_id, $currentUser->id);
 
             if ($blockedByAuthor || $blockedByCommenter)
-                return response()->json(['message' => 'Forbidden'], 403);
+            {
+                return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
+            }
         }
 
         $request->validate(['content' => 'required|string|max:1000']);
@@ -58,21 +61,40 @@ class CommentController extends Controller
             }
         }
 
-        return (new CommentResource($comment->load('user')))->resolve();
+        return $this->success('COMMENT_CREATED', 'Comment created', (new CommentResource($comment->load('user')))->resolve(), 201);
     }
 
-    // видалити коментар
-    public function destroy(Request $request, Comment $comment)
+    /**
+     * Редагування коментаря
+     */
+    public function update(Request $request, Comment $comment): JsonResponse
+    {
+        if ($request->user()->id !== $comment->user_id)
+        {
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
+        }
+
+        $request->validate(['content' => 'required|string|max:1000']);
+
+        $comment->update(['content' => $request->input('content')]);
+
+        return $this->success('COMMENT_UPDATED', 'Comment updated', (new CommentResource($comment->load('user')))->resolve());
+    }
+
+    public function destroy(Request $request, Comment $comment): JsonResponse
     {
         // Видаляти може ТІЛЬКИ автор коментаря
         if ($request->user()->id !== $comment->user_id)
-            return response()->json(['message' => 'Forbidden'], 403);
+        {
+            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
+        }
 
         $comment->delete();
-        return response()->json(['message' => 'Deleted']);
+
+        return $this->success('COMMENT_DELETED', 'Deleted');
     }
 
-    public function myComments(Request $request)
+    public function myComments(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -81,6 +103,8 @@ class CommentController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(config('comments.max_paginate'));
 
-        return CommentResource::collection($comments);
+        return $this->success('MY_COMMENTS_RETRIEVED', 'My comments',
+            CommentResource::collection($comments)->response()->getData(true)
+        );
     }
 }

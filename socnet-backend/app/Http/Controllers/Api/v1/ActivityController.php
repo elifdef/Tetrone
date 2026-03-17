@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PostResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ActivityController extends Controller
 {
@@ -26,9 +25,9 @@ class ActivityController extends Controller
      * Повертає список постів де стоїть НАШ лайк
      *
      * @param Request $request
-     * @return AnonymousResourceCollection
+     * @return JsonResponse
      */
-    public function likedPosts(Request $request): AnonymousResourceCollection
+    public function likedPosts(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -44,16 +43,18 @@ class ActivityController extends Controller
             ->orderBy('likes.created_at', 'desc')
             ->paginate(config('posts.max_paginate'));
 
-        return PostResource::collection($posts);
+        return $this->success('LIKED_POSTS_RETRIEVED', 'Liked posts retrieved',
+            PostResource::collection($posts)->response()->getData(true)
+        );
     }
 
     /**
      * Повертає список репостів користувача
      *
-     * * @param Request $request
-     * @return AnonymousResourceCollection
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function reposts(Request $request): AnonymousResourceCollection
+    public function reposts(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -63,7 +64,9 @@ class ActivityController extends Controller
             ->latest()
             ->paginate(config('posts.max_paginate'));
 
-        return PostResource::collection($reposts);
+        return $this->success('REPOSTS_RETRIEVED', 'Reposts retrieved',
+            PostResource::collection($reposts)->response()->getData(true)
+        );
     }
 
     /**
@@ -72,7 +75,7 @@ class ActivityController extends Controller
      * * @param Request $request
      * @return JsonResponse
      */
-    public function getCounts(Request $request)
+    public function getCounts(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -80,7 +83,7 @@ class ActivityController extends Controller
         $commentsCount = $user->comments()->count();
         $repostsCount = $user->posts()->whereNotNull('original_post_id')->count();
 
-        return response()->json([
+        return $this->success('ACTIVITY_COUNTS_RETRIEVED', 'Counts retrieved', [
             'likes' => $likesCount,
             'comments' => $commentsCount,
             'reposts' => $repostsCount
@@ -91,9 +94,9 @@ class ActivityController extends Controller
      * Повертає пагінований список коментарів які залишив поточний користувач.
      *
      * @param Request $request
-     * @return AnonymousResourceCollection
+     * @return JsonResponse
      */
-    public function comments(Request $request): AnonymousResourceCollection
+    public function comments(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -102,7 +105,9 @@ class ActivityController extends Controller
             ->latest()
             ->paginate(config('posts.max_paginate'));
 
-        return CommentResource::collection($comments);
+        return $this->success('COMMENTS_RETRIEVED', 'Comments retrieved',
+            CommentResource::collection($comments)->response()->getData(true)
+        );
     }
 
     /**
@@ -111,13 +116,12 @@ class ActivityController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function screenTime(Request $request)
+    public function screenTime(Request $request): JsonResponse
     {
         $user = $request->user();
-
         $user->load('activities');
 
-        return response()->json([
+        return $this->success('SCREEN_TIME_RETRIEVED', 'Screen time retrieved', [
             'total_active_seconds' => $user->activities->sum('active_seconds'),
             'history' => $user->activities->map(function ($act)
             {

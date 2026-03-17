@@ -1,9 +1,8 @@
 import fetchClient from '../api/client';
 
-class ChatService {
+class MessageService {
     async getChats() {
-        const res = await fetchClient('/chat');
-        return res.data || res;
+        return await fetchClient('/chat');
     }
 
     async initChat(targetUserId) {
@@ -14,11 +13,7 @@ class ChatService {
     }
 
     async getMessages(slug, page = 1) {
-        const res = await fetchClient(`/chat/${slug}/messages?page=${page}`);
-        return {
-            items: res.data || [],
-            meta: res.meta || null
-        };
+        return await fetchClient(`/chat/${slug}/messages?page=${page}`);
     }
 
     async sendMessage(slug, text, files = [], sharedPostId = null, replyToId = null) {
@@ -74,4 +69,4 @@ class ChatService {
     }
 }
 
-export default new ChatService();
+export default new MessageService();

@@ -20,25 +20,22 @@ export const usePostLike = (post) => {
         setIsLiked(!previousLiked);
         setLikesCount(previousLiked ? previousCount - 1 : previousCount + 1);
 
-        try {
-            const data = await PostService.toggleLike(post.id);
+        const res = await PostService.toggleLike(post.id);
 
-            setLikesCount(data.likes_count);
-            setIsLiked(data.liked);
-
+        if (res.success) {
+            setLikesCount(res.data.likes_count);
+            setIsLiked(res.data.liked);
+            setIsLiking(false);
             return {
-                liked: data.liked,
-                likes_count: data.likes_count
+                liked: res.data.liked,
+                likes_count: res.data.likes_count
             };
-
-        } catch (error) {
+        } else {
             setIsLiked(previousLiked);
             setLikesCount(previousCount);
-
-            notifyError(error.data?.message || t('error.connection'));
-            return null;
-        } finally {
+            notifyError(res.message || t('error.connection'));
             setIsLiking(false);
+            return null;
         }
     };
 

@@ -6,10 +6,7 @@ class NotificationSettingsService {
     }
 
     async updateSettings(formData) {
-        return await fetchClient('/settings/notifications', {
-            method: 'POST',
-            body: formData
-        });
+        return await fetchClient('/settings/notifications', { method: 'POST', body: formData });
     }
 
     async getOverrides() {
@@ -17,19 +14,11 @@ class NotificationSettingsService {
     }
 
     async updateOverride(targetUserId, data) {
-        return await fetchClient(`/settings/notifications/overrides/${targetUserId}`, {
-            method: 'PUT',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        return await fetchClient(`/settings/notifications/overrides/${targetUserId}`, { method: 'PUT', body: data });
     }
 
     async deleteOverride(targetUserId) {
-        return await fetchClient(`/settings/notifications/overrides/${targetUserId}`, {
-            method: 'DELETE'
-        });
+        return await fetchClient(`/settings/notifications/overrides/${targetUserId}`, { method: 'DELETE' });
     }
 }
 

@@ -53,10 +53,10 @@ export default function ChatInfoModal({ isOpen, onClose, chat, messages, onScrol
                         </div>
                         <div className="socnet-old-info-actions">
                             <span className="socnet-action-link danger" onClick={onBlockUser}>
-                                {t('common.block_user')}
+                                {t('common.to_block')}
                             </span>
                             <span className="socnet-action-link danger" onClick={onDeleteChat}>
-                                {t('messages.delete_chat_both')}
+                                {t('messages.delete_for_both')}
                             </span>
                         </div>
                     </div>
@@ -77,12 +77,12 @@ export default function ChatInfoModal({ isOpen, onClose, chat, messages, onScrol
                             {mediaFiles.length > 0 ? mediaFiles.map((file, idx) => (
                                 <div key={idx} className="socnet-old-info-media-wrapper" onClick={() => handleMediaClick(file.messageId)} title={t('messages.go_to_message')}>
                                     {file.name.match(/\.(mp4|webm)$/i) ? (
-                                        <div className="socnet-old-info-video-stub">🎥 {t('messages.video')}</div>
+                                        <div className="socnet-old-info-video-stub">🎥 {t('messages.attach_video')}</div>
                                     ) : (
                                         <img src={file.url} alt="attachment" className="socnet-old-info-grid-img" />
                                     )}
                                 </div>
-                            )) : <div className="socnet-empty-state">{t('messages.no_media_yet')}</div>}
+                            )) : <div className="socnet-empty-state">{t('messages.empty_inbox')}</div>}
                         </div>
                     )}
 

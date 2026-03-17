@@ -20,9 +20,7 @@ class AuthService {
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }
-
-        const res = await fetchClient('/me', { headers });
-        return res.data || res;
+        return await fetchClient('/me', { headers });
     }
 
     async verifyEmail(id, hash, query) {

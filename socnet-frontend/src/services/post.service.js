@@ -21,12 +21,10 @@ class PostService {
             });
         }
 
-        const responseData = await fetchClient('/posts', {
+        return await fetchClient('/posts', {
             method: 'POST',
             body: formData
         });
-
-        return responseData.data || responseData;
     }
 
     async update(id, data) {
@@ -55,33 +53,26 @@ class PostService {
             });
         }
 
-        const responseData = await fetchClient(`/posts/${id}`, {
+        return await fetchClient(`/posts/${id}`, {
             method: 'POST',
             body: formData
         });
-
-        return responseData.data || responseData;
     }
 
     async get(id) {
-        const data = await fetchClient(`/posts/${id}`);
-        return data;
+        return await fetchClient(`/posts/${id}`);
     }
 
     async delete(id) {
-        const data = await fetchClient(`/posts/${id}`, { method: 'DELETE' });
-        return data;
+        return await fetchClient(`/posts/${id}`, { method: 'DELETE' });
     }
 
     async toggleLike(postId) {
-        return await fetchClient(`/posts/${postId}/like`, {
-            method: 'POST'
-        });
+        return await fetchClient(`/posts/${postId}/like`, { method: 'POST' });
     }
 
     async getUserPosts(username, pageNumber = 1) {
-        const data = await fetchClient(`/users/${username}/posts?page=${pageNumber}`);
-        return data;
+        return await fetchClient(`/users/${username}/posts?page=${pageNumber}`);
     }
 
     async votePoll(postId, optionIds) {
@@ -92,19 +83,15 @@ class PostService {
     }
 
     async getPollVoters(postId) {
-        const res = await fetchClient(`/posts/${postId}/poll/voters`);
-        return res.voters || res.data?.voters || res;
+        return await fetchClient(`/posts/${postId}/poll/voters`);
     }
 
     async closePoll(postId) {
-        return await fetchClient(`/posts/${postId}/poll/close`, {
-            method: 'POST'
-        });
+        return await fetchClient(`/posts/${postId}/poll/close`, { method: 'POST' });
     }
 
     async getUserAvatars(username) {
-        const res = await fetchClient(`/users/${username}/avatars`);
-        return res.data || res;
+        return await fetchClient(`/users/${username}/avatars`);
     }
 }
 

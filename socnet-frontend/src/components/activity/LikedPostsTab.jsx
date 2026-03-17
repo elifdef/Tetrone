@@ -20,28 +20,27 @@ export default function LikedPostsTab({ onCountUpdate }) {
         else setIsLoadingMore(true);
         setError(false);
 
-        try {
-            const { items, meta } = await ActivityService.getLikedPosts(page);
+        const res = await ActivityService.getLikedPosts(page);
+
+        if (res.success) {
+            const items = res.data || [];
+            const meta = res.meta;
 
             setPosts(prev => {
                 if (page === 1) return items;
-
                 const existingIds = new Set(prev.map(p => p.id));
                 const uniqueNewPosts = items.filter(newPost => !existingIds.has(newPost.id));
                 return [...prev, ...uniqueNewPosts];
             });
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                notifyError(t('error.loading_likes'));
-                setError(true);
-                console.error("Failed to load liked posts:", err.data?.message || err.message);
-            }
-        } finally {
-            setIsLoadingInitial(false);
-            setIsLoadingMore(false);
+        } else {
+            notifyError(res.message || t('error.loading_likes'));
+            setError(true);
         }
+
+        setIsLoadingInitial(false);
+        setIsLoadingMore(false);
     }, [page, t]);
 
     useEffect(() => {

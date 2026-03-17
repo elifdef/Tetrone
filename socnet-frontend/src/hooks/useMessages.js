@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import chatService from '../services/chat.service';
+import MessageService from '../services/chat.service';
 import { notifyError, notifySuccess } from "../components/common/Notify";
 import { AuthContext } from '../context/AuthContext';
 
@@ -17,7 +17,6 @@ export const useMessages = (slug, echoInstance) => {
     const [targetIsTyping, setTargetIsTyping] = useState(false);
     const typingTimeoutRef = useRef(null);
 
-    // Підключення до каналу та прослуховування друкування + прочитання
     useEffect(() => {
         if (!slug || !echoInstance || !user) return;
 
@@ -36,10 +35,8 @@ export const useMessages = (slug, echoInstance) => {
         const userChannel = echoInstance.private(userChannelName);
 
         userChannel.listen('.messages_read', (event) => {
-            // Якщо інший юзер прочитав повідомлення саме в цьому чаті
             if (event.chat_slug === slug) {
                 setMessages(prev => prev.map(msg =>
-                    // Якщо повідомлення моє і ще не прочитане - ставимо дату прочитання
                     (msg.sender_id === user.id && !msg.read_at)
                         ? { ...msg, read_at: new Date().toISOString() }
                         : msg
@@ -68,8 +65,12 @@ export const useMessages = (slug, echoInstance) => {
             else setIsLoadingInitial(true);
         }
 
-        try {
-            const { items, meta } = await chatService.getMessages(slug, currentPage);
+        const res = await MessageService.getMessages(slug, currentPage);
+
+        if (res.success) {
+            const items = res.data?.data || res.data || [];
+            const meta = res.meta || res.data?.meta;
+
             const reversedData = [...items].reverse();
 
             if (isLoadMore) {
@@ -87,17 +88,14 @@ export const useMessages = (slug, echoInstance) => {
             setHasMore(meta && meta.current_page < meta.last_page);
 
             if (!isLoadMore) {
-                chatService.markAsRead(slug).catch(e => console.error("Failed to mark as read", e));
+                MessageService.markAsRead(slug).catch(e => console.error("Failed to mark as read", e));
             }
-
-        } catch (err) {
-            if (!silent) {
-                notifyError(err.data?.message || err.message || t('messages.errors.load_failed'));
-            }
-        } finally {
-            setIsLoadingInitial(false);
-            setIsLoadingMore(false);
+        } else {
+            if (!silent) notifyError(res.message);
         }
+
+        setIsLoadingInitial(false);
+        setIsLoadingMore(false);
     }, [slug, t]);
 
     const loadMoreMessages = () => {
@@ -107,55 +105,50 @@ export const useMessages = (slug, echoInstance) => {
     };
 
     const sendMessage = async (text, files = [], sharedPostId = null, replyToId = null) => {
-        if (!text && files.length === 0 && !sharedPostId) return;
-        try {
-            await chatService.sendMessage(slug, text, files, sharedPostId, replyToId);
+        if (!text && files.length === 0 && !sharedPostId) return false;
+
+        const res = await MessageService.sendMessage(slug, text, files, sharedPostId, replyToId);
+
+        if (res.success) {
             await fetchMessages({ silent: true });
-        } catch (err) {
-            notifyError(err.data?.message || err.message || t('messages.errors.send_failed'));
+            return true;
+        } else {
+            notifyError(res.message);
+            return false;
         }
     };
 
     const updateMessage = async (messageId, text, newFiles = [], deletedMedia = []) => {
-        try {
-            await chatService.updateMessage(slug, messageId, text, newFiles, deletedMedia);
+        const res = await MessageService.updateMessage(slug, messageId, text, newFiles, deletedMedia);
+
+        if (res.success) {
             await fetchMessages({ silent: true });
-            notifySuccess(t('messages.success.updated'));
-        } catch (err) {
-            notifyError(err.data?.message || err.message || t('messages.errors.update_failed'));
+            return true;
+        } else {
+            notifyError(res.message);
+            return false;
         }
     };
 
     const deleteMessage = async (messageId) => {
-        try {
-            await chatService.deleteMessage(slug, messageId);
+        const res = await MessageService.deleteMessage(slug, messageId);
+
+        if (res.success) {
             setMessages(prev => prev.filter(msg => msg.id !== messageId));
-        } catch (err) {
-            notifyError(err.data?.message || err.message || t('messages.errors.delete_failed'));
+        } else {
+            notifyError(res.message);
         }
     };
 
     const togglePin = async (messageId) => {
-        try {
-            await chatService.togglePin(slug, messageId);
+        const res = await MessageService.togglePin(slug, messageId);
+
+        if (res.success) {
             await fetchMessages({ silent: true });
-        } catch (err) {
-            notifyError(err.data?.message || err.message || t('messages.errors.pin_failed'));
+        } else {
+            notifyError(res.message);
         }
     };
 
-    return {
-        messages,
-        isLoadingInitial,
-        isLoadingMore,
-        hasMore,
-        targetIsTyping,
-        fetchMessages,
-        loadMoreMessages,
-        sendMessage,
-        updateMessage,
-        deleteMessage,
-        togglePin,
-        emitTyping
-    };
+    return { messages, isLoadingInitial, isLoadingMore, hasMore, targetIsTyping, fetchMessages, loadMoreMessages, sendMessage, updateMessage, deleteMessage, togglePin, emitTyping };
 };

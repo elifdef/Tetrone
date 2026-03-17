@@ -11,6 +11,10 @@ class PollController extends Controller
 {
     /**
      * проголосувати в пості (якщо є така можливість)
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
      */
     public function vote(Request $request, Post $post): JsonResponse
     {
@@ -24,7 +28,7 @@ class PollController extends Controller
 
         if (!isset($entities['poll']))
         {
-            return response()->json(['status' => false, 'message' => 'This post does not contain a poll.'], 404);
+            return $this->error('ERR_NO_POLL', 'This post does not contain a poll.', 404);
         }
 
         $poll = $entities['poll'];
@@ -32,7 +36,7 @@ class PollController extends Controller
         // перевірка на закриття
         if (isset($poll['is_closed']) && $poll['is_closed'] === true)
         {
-            return response()->json(['status' => false, 'message' => 'This poll is closed. Voting is no longer allowed.'], 403);
+            return $this->error('ERR_POLL_CLOSED', 'This poll is closed. Voting is no longer allowed.', 403);
         }
 
         $selectedIds = $request->input('option_ids');
@@ -42,14 +46,14 @@ class PollController extends Controller
         // якщо це не множинний вибір а юзер надіслав декілька - блокуємо
         if (!$isMultipleChoice && count($selectedIds) > 1)
         {
-            return response()->json(['status' => false, 'message' => 'You can only select one option in this poll.'], 422);
+            return $this->error('ERR_SINGLE_CHOICE_ONLY', 'You can only select one option in this poll.', 422);
         }
 
         // перевіряємо чи всі вибрані ID дійсно існують в опитуванні
         $validOptionIds = array_column($poll['options'], 'id');
         if (array_diff($selectedIds, $validOptionIds))
         {
-            return response()->json(['status' => false, 'message' => 'One or more selected options are invalid.'], 422);
+            return $this->error('ERR_INVALID_POLL_OPTION', 'One or more selected options are invalid.', 422);
         }
 
         // шукаємо старі голоси юзера в цьому пості
@@ -59,10 +63,7 @@ class PollController extends Controller
         {
             if (!$canChangeVote)
             {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'You have already voted. Changing your vote is not allowed in this poll.'
-                ], 403);
+                return $this->error('ERR_VOTE_CHANGE_DENIED', 'You have already voted. Changing your vote is not allowed in this poll.', 403);
             }
 
             // якщо можна змінювати: видаляємо старі голоси
@@ -88,9 +89,7 @@ class PollController extends Controller
             ->groupBy('option_id')
             ->pluck('count', 'option_id');
 
-        $response = [
-            'status' => true,
-            'message' => 'Vote successfully recorded.',
+        $payload = [
             'results' => $results,
             'voted_option_ids' => $selectedIds
         ];
@@ -98,17 +97,21 @@ class PollController extends Controller
         // якщо це вікторина то віддаємо пояснення
         if (($poll['type'] ?? 'regular') === 'quiz')
         {
-            $response['quiz_data'] = [
+            $payload['quiz_data'] = [
                 'options' => $poll['options'],
                 'explanation' => $poll['explanation'] ?? null
             ];
         }
 
-        return response()->json($response);
+        return $this->success('VOTE_RECORDED', 'Vote successfully recorded.', $payload);
     }
 
     /**
      * список тих хто проголосував
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
      */
     public function voters(Request $request, Post $post): JsonResponse
     {
@@ -116,20 +119,14 @@ class PollController extends Controller
 
         if (!isset($entities['poll']))
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'Poll not found.'
-            ], 404);
+            return $this->error('ERR_NO_POLL', 'Poll not found.', 404);
         }
 
         $poll = $entities['poll'];
 
         if (isset($poll['is_anonymous']) && $poll['is_anonymous'] === true)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'This poll is anonymous.'
-            ], 403);
+            return $this->error('ERR_POLL_ANONYMOUS', 'This poll is anonymous.', 403);
         }
 
         $votes = PollVote::where('post_id', $post->id)
@@ -137,12 +134,16 @@ class PollController extends Controller
             ->get()
             ->groupBy('option_id');
 
-        return response()->json([
-            'status' => true,
-            'voters' => $votes
-        ]);
+        return $this->success('SUCCESS', 'Voters retrieved', ['voters' => $votes]);
     }
 
+    /**
+     * закрити опитування
+     *
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
+     */
     public function close(Request $request, Post $post): JsonResponse
     {
         $user = $request->user();
@@ -150,24 +151,24 @@ class PollController extends Controller
         // тільки автор поста може закрити опитування
         if ($user->id !== $post->user_id)
         {
-            return response()->json(['status' => false, 'message' => 'You do not have permission to close this poll.'], 403);
+            return $this->error('ERR_CLOSE_PERMISSION_DENIED', 'You do not have permission to close this poll.', 403);
         }
 
         $entities = $post->entities ?? [];
 
         if (!isset($entities['poll']))
         {
-            return response()->json(['status' => false, 'message' => 'This post does not contain a poll.'], 404);
+            return $this->error('ERR_NO_POLL', 'This post does not contain a poll.', 404);
         }
 
         if (isset($entities['poll']['is_closed']) && $entities['poll']['is_closed'] === true)
         {
-            return response()->json(['status' => false, 'message' => 'This poll is already closed.'], 422);
+            return $this->error('ERR_POLL_ALREADY_CLOSED', 'This poll is already closed.', 422);
         }
 
         $entities['poll']['is_closed'] = true;
         $post->update(['entities' => $entities]);
 
-        return response()->json(['status' => true, 'message' => 'Poll successfully closed.']);
+        return $this->success('POLL_CLOSED', 'Poll closed.');
     }
 }

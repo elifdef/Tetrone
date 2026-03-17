@@ -2,8 +2,7 @@ import fetchClient from "../api/client";
 
 class UserService {
     async getProfile(username) {
-        const data = await fetchClient(`/users/${username}`);
-        return data.data || data;
+        return await fetchClient(`/users/${username}`);
     }
 
     async updateProfile(username, data) {
@@ -29,11 +28,7 @@ class UserService {
 
     async getUsers(params = {}) {
         const queryString = new URLSearchParams(params).toString();
-        const data = await fetchClient(`/users?${queryString}`);
-        return {
-            items: data.data || [],
-            meta: data.meta || null
-        };
+        return await fetchClient(`/users?${queryString}`);
     }
 }
 

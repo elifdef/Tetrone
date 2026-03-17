@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import ActivityService from '../../services/activity.service';
 import fetchClient from '../../api/client';
 import PostItem from '../post/PostItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';
@@ -18,47 +19,36 @@ export default function MyRepostsTab({ onCountUpdate }) {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState(false);
 
-    const fetchReposts = useCallback(() => {
-        let isMounted = true;
-
+    const fetchReposts = useCallback(async () => {
         if (page === 1) setIsLoadingInitial(true);
         else setIsLoadingMore(true);
         setError(false);
 
-        fetchClient(`/activity/reposts?page=${page}`)
-            .then(data => {
-                if (isMounted) {
-                    const newReposts = data.data;
-                    const meta = data.meta;
+        const res = await ActivityService.getMyReposts(page);
 
-                    setReposts(prev => {
-                        if (page === 1) return newReposts;
-                        const uniqueNew = newReposts.filter(
-                            newItem => !prev.some(existing => existing.id === newItem.id)
-                        );
-                        return [...prev, ...uniqueNew];
-                    });
+        if (res.success) {
+            const newReposts = res.data || [];
+            const meta = res.meta;
 
-                    setHasMore(meta ? meta.current_page < meta.last_page : false);
-                }
-            })
-            .catch(err => {
-                notifyError(t('error.loading_reposts'));
-                if (isMounted) setError(true);
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsLoadingInitial(false);
-                    setIsLoadingMore(false);
-                }
+            setReposts(prev => {
+                if (page === 1) return newReposts;
+                const existingIds = new Set(prev.map(p => p.id));
+                const uniqueNew = newReposts.filter(newItem => !existingIds.has(newItem.id));
+                return [...prev, ...uniqueNew];
             });
 
-        return () => { isMounted = false; };
+            setHasMore(meta ? meta.current_page < meta.last_page : false);
+        } else {
+            notifyError(res.message || t('error.loading_reposts'));
+            setError(true);
+        }
+
+        setIsLoadingInitial(false);
+        setIsLoadingMore(false);
     }, [page, t]);
 
     useEffect(() => {
-        const cleanup = fetchReposts();
-        return cleanup;
+        fetchReposts();
     }, [fetchReposts]);
 
     const loadMore = useCallback(() => {
@@ -71,14 +61,13 @@ export default function MyRepostsTab({ onCountUpdate }) {
         const isConfirmed = await openConfirm(t('post.delete_post'));
         if (!isConfirmed) return;
 
-        try {
-            await fetchClient(`/posts/${postId}`, { method: 'DELETE' });
-            
+        const res = await fetchClient(`/posts/${postId}`, { method: 'DELETE' });
+
+        if (res.success) {
             setReposts(prev => prev.filter(p => p.id !== postId));
             if (onCountUpdate) onCountUpdate(-1);
-
-        } catch (error) {
-            notifyError(t('error.deleting'));
+        } else {
+            notifyError(res.message || t('error.deleting'));
         }
     };
 

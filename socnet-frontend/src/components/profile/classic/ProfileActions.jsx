@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import { useInbox } from "../../../hooks/useInbox";
+import MessageService from "../../../services/chat.service";
 
 export default function ProfileActions({
     sameUser, userId, loading, status, isBlockedByMe, isBlockedByTarget,
@@ -9,8 +9,7 @@ export default function ProfileActions({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { initChat } = useInbox();
-    
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isChatLoading, setIsChatLoading] = useState(false);
     const menuRef = useRef(null);
@@ -58,21 +57,21 @@ export default function ProfileActions({
 
     const handleSendMessage = async () => {
         setIsChatLoading(true);
-        try {
-            const slug = await initChat(userId);
-            if (slug) {
-                navigate(`/messages?dm=${slug}`);
-            }
-        } finally {
-            setIsChatLoading(false);
+        const res = await MessageService.initChat(userId);
+
+        if (res.success && res.data?.chat_slug) {
+            navigate(`/messages?dm=${res.data.chat_slug}`);
+        } else {
+            notifyError(res.message);
         }
+        setIsChatLoading(false);
     };
 
     return (
         <div className="socnet-actions">
             {!isBlockedByMe && (
-                <button 
-                    className="socnet-btn" 
+                <button
+                    className="socnet-btn"
                     onClick={handleSendMessage}
                     disabled={isChatLoading || loading}
                 >
@@ -96,7 +95,7 @@ export default function ProfileActions({
                                 {getFriendActionLabel()}
                             </button>
                         )}
-                        
+
                         <button
                             className="socnet-menu-item"
                             onClick={() => { onReportAction(); setIsMenuOpen(false); }}

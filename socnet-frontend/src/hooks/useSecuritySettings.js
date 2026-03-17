@@ -27,29 +27,22 @@ export const useSecuritySettings = () => {
 
         setLoadingEmail(true);
 
-        try {
-            const response = await UserService.updateEmail(email, passwordForEmail);
+        const res = await UserService.updateEmail(email, passwordForEmail);
 
-            setUser(prev => ({
-                ...prev,
-                email: email,
-                email_verified_at: null
-            }));
-
+        if (res.success) {
+            setUser(prev => ({ ...prev, email: email, email_verified_at: null }));
             setPasswordForEmail('');
-            notifySuccess(response.message || t('common.success'));
-
-        } catch (error) {
-            if (error.status === 422) {
-                notifyError(error.data?.message || t('error.validation'));
-            } else if (error.status === 403) {
-                notifyError(t('error.invalid_password'));
+            notifySuccess(res.message);
+        } else {
+            if (res.status === 422 && res.data?.errors?.email) {
+                notifyError(res.data.errors.email[0]);
+            } else if (res.status === 403) {
+                notifyError(t('api.error.ERR_INVALID_PASSWORD'));
             } else {
-                notifyError(error.data?.message || t('error.change_email'));
+                notifyError(res.message);
             }
-        } finally {
-            setLoadingEmail(false);
         }
+        setLoadingEmail(false);
     };
 
     const handleUpdatePassword = async (e) => {
@@ -61,47 +54,30 @@ export const useSecuritySettings = () => {
 
         setLoadingPass(true);
 
-        try {
-            const response = await UserService.updatePassword(
-                currentPassword,
-                newPassword,
-                confirmPassword
-            );
+        const res = await UserService.updatePassword(currentPassword, newPassword, confirmPassword);
 
-            notifySuccess(response.message || t('success.password_changed'));
-
+        if (res.success) {
+            notifySuccess(res.message);
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
-
-        } catch (error) {
-            if (error.status === 422) {
-                const errors = error.data?.errors || {};
-
-                if (errors.current_password) {
-                    notifyError(errors.current_password[0]);
-                } else if (errors.password) {
-                    notifyError(errors.password[0]);
-                } else {
-                    notifyError(error.data?.message || t('error.check_entered_data'));
-                }
+        } else {
+            const errors = res.data?.errors || {};
+            if (errors.current_password) {
+                notifyError(errors.current_password[0]);
+            } else if (errors.password) {
+                notifyError(errors.password[0]);
             } else {
-                notifyError(error.data?.message || t('error.change_password'));
+                notifyError(res.message);
             }
-        } finally {
-            setLoadingPass(false);
         }
+        setLoadingPass(false);
     };
 
     return {
-        user,
-        email, setEmail,
-        passwordForEmail, setPasswordForEmail,
+        user, email, setEmail, passwordForEmail, setPasswordForEmail,
         loadingEmail, handleUpdateEmail,
-        currentPassword, setCurrentPassword,
-        newPassword, setNewPassword,
-        confirmPassword, setConfirmPassword,
-        loadingPass, handleUpdatePassword,
-        t
+        currentPassword, setCurrentPassword, newPassword, setNewPassword,
+        confirmPassword, setConfirmPassword, loadingPass, handleUpdatePassword, t
     };
 };

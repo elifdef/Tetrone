@@ -51,30 +51,30 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
         if (content === null) return;
 
         setIsReposting(true);
-        try {
-            const targetId = postData.is_repost ? postData.original_post_id : postData.id;
 
-            const newPost = await PostService.create({
-                content: content.trim() !== '' ? content : null,
-                original_post_id: targetId
-            });
+        const targetId = postData.is_repost ? postData.original_post_id : postData.id;
 
-            notifySuccess(t('post.repost_success'));
+        const res = await PostService.create({
+            content: content.trim() !== '' ? content : null,
+            original_post_id: targetId
+        });
+
+        if (res.success) {
+            notifySuccess(res.message || t('post.repost_success'));
 
             setPostData(prev => ({
                 ...prev,
                 reposts_count: (prev.reposts_count || 0) + 1
             }));
 
-            if (onRepostSuccess && newPost) {
-                onRepostSuccess(newPost);
+            if (onRepostSuccess && res.data) {
+                onRepostSuccess(res.data);
             }
-
-        } catch (err) {
-            notifyError(err.response?.data?.message || t('common.error'));
-        } finally {
-            setIsReposting(false);
+        } else {
+            notifyError(res.message || t('error.publish_post'));
         }
+
+        setIsReposting(false);
     };
 
     return {

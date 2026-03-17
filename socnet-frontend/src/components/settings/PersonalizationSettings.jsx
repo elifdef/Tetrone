@@ -90,9 +90,10 @@ export default function PersonalizationSettings() {
             parseGradient(initialPersonalization.banner_color);
         }
 
-        PersonalizationService.getSettings()
-            .then(data => {
-                const resData = data.data || data;
+        const fetchSettings = async () => {
+            const res = await PersonalizationService.getSettings();
+            if (res.success) {
+                const resData = res.data || {};
                 const bc = resData.banner_color || '';
 
                 setSettings({
@@ -102,11 +103,12 @@ export default function PersonalizationSettings() {
                 });
                 setPreviewBannerImage(resData.banner_image || null);
                 parseGradient(bc);
-            })
-            .catch(err => {
-                notifyError(t('error.connection'));
-            })
-            .finally(() => setIsLoading(false));
+            } else {
+                notifyError(res.message);
+            }
+            setIsLoading(false);
+        };
+        fetchSettings();
     }, [t, parseGradient, initialPersonalization.banner_color]);
 
     const handleProfileThemeChange = (newTheme) => {
@@ -156,31 +158,28 @@ export default function PersonalizationSettings() {
 
     const handleSave = async () => {
         setIsSaving(true);
-        try {
-            const formData = new FormData();
+        const formData = new FormData();
 
-            formData.append('username_color', settings.username_color || '');
-            formData.append('banner_color', settings.banner_color || '');
+        formData.append('username_color', settings.username_color || '');
+        formData.append('banner_color', settings.banner_color || '');
 
-            if (bannerFile) {
-                formData.append('banner_image', bannerFile);
-            } else if (previewBannerImage === null) {
-                formData.append('remove_banner_image', 'true');
-            }
-
-            const response = await PersonalizationService.updateSettings(formData);
-
-            const updatedData = response.data || response;
-            if (setUser && updatedData) {
-                setUser({ ...user, personalization: updatedData });
-            }
-
-            notifySuccess(t('common.saved'));
-        } catch (error) {
-            notifyError(error.data?.message || t('error.connection'));
-        } finally {
-            setIsSaving(false);
+        if (bannerFile) {
+            formData.append('banner_image', bannerFile);
+        } else if (previewBannerImage === null) {
+            formData.append('remove_banner_image', 'true');
         }
+
+        const res = await PersonalizationService.updateSettings(formData);
+
+        if (res.success) {
+            if (setUser && res.data?.personalization) {
+                setUser({ ...user, personalization: res.data.personalization });
+            }
+            notifySuccess(res.message);
+        } else {
+            notifyError(res.message);
+        }
+        setIsSaving(false);
     };
 
     const previewUser = user ? {
@@ -285,34 +284,34 @@ export default function PersonalizationSettings() {
                             )}
                         </div>
 
-                            <div className="socnet-gradient-builder" style={{ marginTop: '15px' }}>
-                                <div
-                                    className="socnet-gradient-preview"
-                                    style={{ background: settings.banner_color || `linear-gradient(${grad.deg}deg, ${grad.c1}, ${grad.c2})` }}
-                                />
+                        <div className="socnet-gradient-builder" style={{ marginTop: '15px' }}>
+                            <div
+                                className="socnet-gradient-preview"
+                                style={{ background: settings.banner_color || `linear-gradient(${grad.deg}deg, ${grad.c1}, ${grad.c2})` }}
+                            />
 
-                                <div className="socnet-gradient-controls">
-                                    <div className="socnet-gradient-colors">
-                                        <PopoverPicker color={grad.c1} onChange={(c) => updateGradient(grad.deg, c, grad.c2)} t={t} />
-                                        <span className="socnet-gradient-icon">→</span>
-                                        <PopoverPicker color={grad.c2} onChange={(c) => updateGradient(grad.deg, grad.c1, c)} t={t} />
-                                    </div>
+                            <div className="socnet-gradient-controls">
+                                <div className="socnet-gradient-colors">
+                                    <PopoverPicker color={grad.c1} onChange={(c) => updateGradient(grad.deg, c, grad.c2)} t={t} />
+                                    <span className="socnet-gradient-icon">→</span>
+                                    <PopoverPicker color={grad.c2} onChange={(c) => updateGradient(grad.deg, grad.c1, c)} t={t} />
+                                </div>
 
-                                    <div className="socnet-gradient-angle">
-                                        <label className="socnet-angle-label">
-                                            {t('settings.angle')} ({grad.deg}°)
-                                        </label>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="360"
-                                            value={grad.deg}
-                                            onChange={(e) => updateGradient(e.target.value, grad.c1, grad.c2)}
-                                            className="socnet-range-slider"
-                                        />
-                                    </div>
+                                <div className="socnet-gradient-angle">
+                                    <label className="socnet-angle-label">
+                                        {t('settings.angle')} ({grad.deg}°)
+                                    </label>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="360"
+                                        value={grad.deg}
+                                        onChange={(e) => updateGradient(e.target.value, grad.c1, grad.c2)}
+                                        className="socnet-range-slider"
+                                    />
                                 </div>
                             </div>
+                        </div>
                         <small className="socnet-text-muted">{t('settings.banner_hint')}</small>
                     </div>
                 )}

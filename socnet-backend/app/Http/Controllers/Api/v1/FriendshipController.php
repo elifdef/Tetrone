@@ -30,13 +30,13 @@ class FriendshipController extends Controller
         // Перевірка пошти
         if (!$me->hasVerifiedEmail())
         {
-            return response()->json(['message' => 'Email not confirmed.'], 403);
+            return $this->error('ERR_EMAIL_UNVERIFIED', 'Email not confirmed.', 403);
         }
 
         // якщо кинув заявку сам собі
         if ($me->id === $targetUser->id)
         {
-            return response()->json(['message' => 'You cannot friend yourself XD'], 400);
+            return $this->error('ERR_CANNOT_FRIEND_SELF', 'You cannot friend yourself XD', 400);
         }
 
         // перевірка чи вже є якісь відносини між А і В або навпаки
@@ -47,19 +47,19 @@ class FriendshipController extends Controller
             // якщо А і В уже друзі
             if ($existing->status == Friendship::STATUS_ACCEPTED)
             {
-                return response()->json(['message' => 'Already friends'], 409);
+                return $this->error('ERR_ALREADY_FRIENDS', 'Already friends', 409);
             }
 
             // якщо уже є заявка або від А або від В
             if ($existing->status == Friendship::STATUS_PENDING)
             {
-                return response()->json(['message' => 'Request already pending'], 409);
+                return $this->error('ERR_REQUEST_PENDING', 'Request already pending', 409);
             }
 
             // якщо А заблокував В або навпаки
             if ($existing->status == Friendship::STATUS_BLOCKED)
             {
-                return response()->json(['message' => 'Unable to send request'], 403);
+                return $this->error('ERR_USER_BLOCKED', 'Unable to send request', 403);
             }
         }
 
@@ -71,7 +71,7 @@ class FriendshipController extends Controller
 
         $targetUser->notify(new NewFriendRequestNotification($me));
 
-        return response()->json(['status' => true, 'message' => 'Friend request sent']);
+        return $this->success('FRIEND_REQUEST_SENT', 'Friend request sent');
     }
 
     /**
@@ -94,12 +94,12 @@ class FriendshipController extends Controller
 
         if (!$friendship)
         {
-            return response()->json(['message' => 'No pending request found'], 404);
+            return $this->error('ERR_NO_PENDING_REQUEST', 'No pending request found', 404);
         }
 
         $friendship->update(['status' => Friendship::STATUS_ACCEPTED]);
 
-        return response()->json(['status' => true, 'message' => 'Friend request accepted']);
+        return $this->success('FRIEND_REQUEST_ACCEPTED', 'Friend request accepted');
     }
 
     /**
@@ -114,7 +114,7 @@ class FriendshipController extends Controller
         $targetUser = User::where('username', $username)->firstOrFail();
         Friendship::between($request->user(), $targetUser)->delete();
 
-        return response()->json(['status' => true, 'message' => 'Relationship removed']);
+        return $this->success('FRIEND_REMOVED', 'Relationship removed');
     }
 
     /**
@@ -131,10 +131,7 @@ class FriendshipController extends Controller
 
         if ($me->id === $targetUser->id)
         {
-            return response()->json([
-                'status' => false,
-                'message' => 'Cannot block yourself 1000-7'
-            ], 400);
+            return $this->error('ERR_CANNOT_BLOCK_SELF', 'Cannot block yourself 1000-7', 400);
         }
 
         // видаляємо будь-які старі відносини (дружбу або заявки)
@@ -147,11 +144,12 @@ class FriendshipController extends Controller
             'status' => Friendship::STATUS_BLOCKED
         ]);
 
-        return response()->json(['status' => true, 'message' => 'User blocked']);
+        return $this->success('USER_BLOCKED', 'User blocked');
     }
 
     /**
      * отримання списку друзів
+     * (Колекції ресурсів залишаємо як є, fetchClient сам дістане res.data)
      *
      * @param Request $request
      * @return AnonymousResourceCollection
@@ -159,11 +157,7 @@ class FriendshipController extends Controller
     public function listFriends(Request $request): AnonymousResourceCollection
     {
         $me = $request->user();
-
-        // беремо ID всіх друзів
         $friendIds = $me->getAllFriendIds();
-
-        // знаходимо юзерів по цих ID
         $friends = User::whereIn('id', $friendIds)->get();
 
         return PublicUserResource::collection($friends);
@@ -178,12 +172,12 @@ class FriendshipController extends Controller
     public function getCounts(Request $request): JsonResponse
     {
         $me = $request->user();
-
         $requestsCount = Friendship::where('friend_id', $me->id)
             ->where('status', Friendship::STATUS_PENDING)
             ->count();
 
-        return response()->json(['requests_count' => $requestsCount]);
+        // Загортаємо в success, щоб фронт отримав дані у res.data.requests_count
+        return $this->success('SUCCESS', 'Counts retrieved', ['requests_count' => $requestsCount]);
     }
 
     /**
@@ -195,11 +189,9 @@ class FriendshipController extends Controller
     public function sentRequests(Request $request): AnonymousResourceCollection
     {
         $me = $request->user();
-
         $users = User::whereHas('receivedFriendships', function ($q) use ($me)
         {
-            $q->where('user_id', $me->id)
-                ->where('status', Friendship::STATUS_PENDING);
+            $q->where('user_id', $me->id)->where('status', Friendship::STATUS_PENDING);
         })->get();
 
         return PublicUserResource::collection($users);
@@ -214,11 +206,9 @@ class FriendshipController extends Controller
     public function requests(Request $request): AnonymousResourceCollection
     {
         $me = $request->user();
-
         $users = User::whereHas('sentFriendships', function ($q) use ($me)
         {
-            $q->where('friend_id', $me->id)
-                ->where('status', Friendship::STATUS_PENDING);
+            $q->where('friend_id', $me->id)->where('status', Friendship::STATUS_PENDING);
         })->get();
 
         return PublicUserResource::collection($users);
@@ -233,11 +223,9 @@ class FriendshipController extends Controller
     public function blocked(Request $request): AnonymousResourceCollection
     {
         $me = $request->user();
-
         $users = User::whereHas('receivedFriendships', function ($q) use ($me)
         {
-            $q->where('user_id', $me->id)
-                ->where('status', Friendship::STATUS_BLOCKED);
+            $q->where('user_id', $me->id)->where('status', Friendship::STATUS_BLOCKED);
         })->get();
 
         return PublicUserResource::collection($users);
@@ -263,9 +251,9 @@ class FriendshipController extends Controller
 
         if ($deleted)
         {
-            return response()->json(['status' => true, 'message' => 'User unblocked']);
+            return $this->success('USER_UNBLOCKED', 'User unblocked');
         }
 
-        return response()->json(['message' => 'User was not in blacklist'], 404);
+        return $this->error('ERR_NOT_IN_BLACKLIST', 'User was not in blacklist', 404);
     }
 }

@@ -94,16 +94,14 @@ export const UsersManager = ({ canBan = true }) => {
 
     const fetchUsers = async (searchQuery = '') => {
         setIsLoading(true);
-        try {
-            // Використовуємо наш новий AdminService
-            const { items } = await AdminService.getUsers(searchQuery);
-            setUsers(items);
-        } catch (error) {
-            console.error("Error loading users:", error.data?.message || error.message);
-            notifyError(t('admin.error_load_users'));
-        } finally {
-            setIsLoading(false);
+        const res = await AdminService.getUsers(searchQuery);
+
+        if (res.success) {
+            setUsers(res.data || []);
+        } else {
+            notifyError(res.message);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -117,48 +115,37 @@ export const UsersManager = ({ canBan = true }) => {
 
     const handleMute = async (username, currentStatus) => {
         const reason = await openPrompt(
-            t('admin.actions.reason_prompt'),
-            "",
-            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'),
-            t('common.cancel')
+            t('admin.actions.reason_prompt'), "",
+            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'), t('common.cancel')
         );
 
         if (reason === null) return;
 
-        try {
-            const res = await AdminService.toggleMute(username, reason);
+        const res = await AdminService.toggleMute(username, reason);
 
-            // fetchClient вже повернув розпарсений об'єкт
-            setUsers(prevUsers =>
-                prevUsers.map(u => u.username === username ? { ...u, is_muted: !currentStatus } : u)
-            );
-            notifySuccess(res.message || t('success.changes_saved'));
-
-        } catch (error) {
-            notifyError(error.data?.message || t('common.error'));
+        if (res.success) {
+            setUsers(prevUsers => prevUsers.map(u => u.username === username ? { ...u, is_muted: !currentStatus } : u));
+            notifySuccess(res.message);
+        } else {
+            notifyError(res.message);
         }
     };
 
     const handleBan = async (username, currentStatus) => {
         const reason = await openPrompt(
-            t('admin.actions.reason_prompt'),
-            "",
-            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'),
-            t('common.cancel')
+            t('admin.actions.reason_prompt'), "",
+            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'), t('common.cancel')
         );
 
         if (reason === null) return;
 
-        try {
-            const res = await AdminService.toggleBan(username, reason);
+        const res = await AdminService.toggleBan(username, reason);
 
-            setUsers(prevUsers =>
-                prevUsers.map(u => u.username === username ? { ...u, is_banned: !currentStatus } : u)
-            );
-            notifySuccess(res.message || t('success.changes_saved'));
-
-        } catch (error) {
-            notifyError(error.data?.message || t('common.error'));
+        if (res.success) {
+            setUsers(prevUsers => prevUsers.map(u => u.username === username ? { ...u, is_banned: !currentStatus } : u));
+            notifySuccess(res.message);
+        } else {
+            notifyError(res.message);
         }
     };
 

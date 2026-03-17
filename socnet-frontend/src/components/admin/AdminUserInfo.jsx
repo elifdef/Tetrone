@@ -20,15 +20,14 @@ export default function AdminUserInfo() {
 
     const fetchUserDossier = async () => {
         setIsLoading(true);
-        try {
-            const data = await AdminService.getUserDossier(username);
-            setUser(data);
-        } catch (error) {
+        const res = await AdminService.getUserDossier(username);
+
+        if (res.success) {
+            setUser(res.data);
+        } else {
             notifyError(t('admin.user_info.error_load'));
-            console.error("Failed to fetch user dossier:", error.data?.message || error.message);
-        } finally {
-            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -41,40 +40,27 @@ export default function AdminUserInfo() {
             : (currentStatus ? t('admin.actions.unmute') : t('admin.actions.mute'));
 
         const reason = await openPrompt(
-            t('admin.actions.reason_prompt'),
-            "",
-            actionText,
-            t('common.cancel')
+            t('admin.actions.reason_prompt'), "", actionText, t('common.cancel')
         );
 
         if (reason === null) return;
 
-        try {
-            const finalReason = reason || t('admin.actions.reason_not_specified');
+        const finalReason = reason || t('admin.actions.reason_not_specified');
 
-            // Викликаємо відповідний метод сервісу
-            const res = actionType === 'ban'
-                ? await AdminService.toggleBan(username, finalReason)
-                : await AdminService.toggleMute(username, finalReason);
+        const res = actionType === 'ban'
+            ? await AdminService.toggleBan(username, finalReason)
+            : await AdminService.toggleMute(username, finalReason);
 
-            notifySuccess(res.message || t('common.success'));
+        if (res.success) {
+            notifySuccess(res.message);
             fetchUserDossier();
-        } catch (error) {
-            notifyError(error.data?.message || t('admin.actions.error_action'));
+        } else {
+            notifyError(res.message);
         }
     };
 
-    if (isLoading) {
-        return <div className="socnet-empty-state">{t('admin.user_info.loading_dossier')}</div>;
-    }
-
-    if (!user) {
-        return (
-            <div className="socnet-empty-state with-card">
-                {t('admin.user_info.not_found')}
-            </div>
-        );
-    }
+    if (isLoading) return <div className="socnet-empty-state">{t('admin.user_info.loading_dossier')}</div>;
+    if (!user) return <div className="socnet-empty-state with-card">{t('admin.user_info.not_found')}</div>;
 
     return (
         <div className="admin-dossier-wrapper">

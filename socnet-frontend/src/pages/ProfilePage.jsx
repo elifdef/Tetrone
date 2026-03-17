@@ -30,25 +30,22 @@ export default function ProfilePage() {
         setLoading(true);
 
         UserService.getProfile(username)
-            .then(data => {
+            .then(res => {
                 if (isMounted) {
-                    setProfile(data);
-                }
-            })
-            .catch(err => {
-                if (isMounted) {
-                    if (err.status === 404) {
-                        setNotFound(true);
+                    if (res.success) {
+                        setProfile(res.data);
                     } else {
-                        setServerError(true);
-                        console.error("Failed to load profile:", err.data?.message || err.message);
+                        if (res.status === 404) {
+                            setNotFound(true);
+                        } else {
+                            setServerError(true);
+                            console.error("Failed to load profile:", res.message);
+                        }
                     }
                 }
             })
             .finally(() => {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                if (isMounted) setLoading(false);
             });
 
         return () => { isMounted = false; };

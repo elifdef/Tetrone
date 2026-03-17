@@ -7,20 +7,12 @@ import PasswordStrengthBar from "../UI/PasswordStrengthBar";
 
 export default function RegisterForm() {
     const { t } = useTranslation();
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-        password_confirmation: ""
-    });
-
+    const [formData, setFormData] = useState({ username: "", email: "", password: "", password_confirmation: "" });
     const [msg, setMsg] = useState({ text: "", type: "" });
     const [loading, setLoading] = useState(false);
     const [passwordScore, setPasswordScore] = useState(0);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,14 +25,13 @@ export default function RegisterForm() {
         setMsg({ text: "", type: "" });
         setLoading(true);
 
-        try {
-            // Викликаємо метод сервісу
-            await AuthService.signUp(formData);
-            
+        const res = await AuthService.signUp(formData);
+
+        if (res.success) {
             setMsg({
                 text: (
                     <span className="socnet-auth-success-text">
-                        {t('auth.you_have_registered')}<br />
+                        {res.message || t('auth.you_have_registered')}<br />
                         <Link to="/login" className="socnet-link socnet-auth-msg-link">
                             {t('auth.signin')}
                         </Link>
@@ -48,15 +39,12 @@ export default function RegisterForm() {
                 ),
                 type: "success"
             });
-            
             setFormData({ username: "", email: "", password: "", password_confirmation: "" });
-            
-        } catch (err) {
-            const errorText = err.data?.message || t('error.registration');
-            setMsg({ text: errorText, type: "error" });
-        } finally {
-            setLoading(false);
+        } else {
+            setMsg({ text: res.message || t('error.registration'), type: "error" });
         }
+
+        setLoading(false);
     };
 
     if (msg.type === "success") {

@@ -12,8 +12,7 @@ class FriendService {
             default: endpoint = '/friends'; break;
         }
 
-        const res = await fetchClient(endpoint, { signal });
-        return Array.isArray(res) ? res : (res.data || []);
+        return await fetchClient(endpoint, { signal });
     }
 
     async addFriend(username) {
@@ -29,15 +28,11 @@ class FriendService {
     }
 
     async blockUser(username) {
-        return await fetchClient(`/friends/block/${username}`, {
-            method: 'POST'
-        });
+        return await fetchClient(`/friends/block/${username}`, { method: 'POST' });
     }
 
     async unblockUser(username) {
-        return await fetchClient(`/friends/blocked/${username}`, {
-            method: 'DELETE'
-        });
+        return await fetchClient(`/friends/blocked/${username}`, { method: 'DELETE' });
     }
 }
 

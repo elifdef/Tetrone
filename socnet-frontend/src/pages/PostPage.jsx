@@ -20,23 +20,22 @@ export default function PostPage() {
 
     useEffect(() => {
         const fetchPosts = async (id) => {
-            try {
-                const res = await postService.get(id);
-                setPost(res);
-            } catch (err) {
-                setError(err.response?.status === 404 ? t('post.not_found') : t('error.connection'));
-            } finally {
-                setLoading(false)
-            };
+            const res = await postService.get(id);
+
+            if (res.success) {
+                setPost(res.data);
+            } else {
+                setError(res.status === 404 ? t('post.not_found') : res.message);
+            }
+
+            setLoading(false);
         }
         fetchPosts(id);
     }, [id])
 
     const handleCommentCountChange = (amount) => {
         setPost(prev => {
-            if (!prev)
-                return prev;
-
+            if (!prev) return prev;
             return {
                 ...prev,
                 comments_count: prev.comments_count + amount
@@ -66,10 +65,7 @@ export default function PostPage() {
     return (
         <div className="socnet-post-page-wrapper">
             {user && (
-                <button
-                    onClick={() => navigate(-1)}
-                    className="socnet-back-btn"
-                >
+                <button onClick={() => navigate(-1)} className="socnet-back-btn">
                     {t('common.back')}
                 </button>
             )}
