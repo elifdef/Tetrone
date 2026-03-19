@@ -580,6 +580,28 @@
     height: 150px;
 }
 
+.socnet-tg-layout {
+    display: flex;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+}
+
+.socnet-tg-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+}
+
+.socnet-tg-history-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
 @keyframes tgBounce {
 
     0%,

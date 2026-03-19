@@ -18,7 +18,7 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
                 const res = await ReportService.getReasons();
 
                 if (res.success) {
-                    const data = res.data?.reasons || [];
+                    const data = res.data.reasons || [];
                     setReasons(data);
                     if (data.length > 0) setSelectedReason(data[0]);
                 } else {

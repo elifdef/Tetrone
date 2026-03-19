@@ -186,7 +186,7 @@ export const PostsManager = ({ currentUser }) => {
         if (append) setIsLoadingMore(true);
         else setIsLoading(true);
 
-        const res = await AdminService.getPosts(username, pageNum);
+        const res = await AdminService.getUserPosts(username, pageNum);
 
         if (res.success) {
             const items = res.data || [];

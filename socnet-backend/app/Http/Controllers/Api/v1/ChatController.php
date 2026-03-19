@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\ChatDeletedEvent;
 use App\Events\MessagesReadEvent;
 use App\Http\Resources\UserBasicResource;
 use App\Models\Chat;
 use App\Models\ChatParticipant;
+use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
 use App\Notifications\NewMessageNotification;
@@ -87,6 +89,19 @@ class ChatController extends Controller
         $myId = Auth::id();
         $targetId = $request->target_user_id;
 
+        $isBlocked = Friendship::where(function ($q) use ($myId, $targetId)
+        {
+            $q->where('user_id', $myId)->where('friend_id', $targetId);
+        })->orWhere(function ($q) use ($myId, $targetId)
+        {
+            $q->where('user_id', $targetId)->where('friend_id', $myId);
+        })->where('status', Friendship::STATUS_BLOCKED)->exists();
+
+        if ($isBlocked)
+        {
+            return $this->error('ERR_USER_BLOCKED', 'You cannot create a chat with this user due to privacy settings.', 403);
+        }
+
         $chat = Chat::where('type', 'private')
             ->whereHas('participants', fn($q) => $q->where('user_id', $myId))
             ->whereHas('participants', fn($q) => $q->where('user_id', $targetId))
@@ -137,6 +152,24 @@ class ChatController extends Controller
         if (!$chat->participants()->where('user_id', $user->id)->exists())
         {
             return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
+        }
+
+        $targetParticipant = $chat->participants()->where('user_id', '!=', $user->id)->first();
+
+        if ($targetParticipant)
+        {
+            $isBlocked = Friendship::where(function ($q) use ($user, $targetParticipant)
+            {
+                $q->where('user_id', $user->id)->where('friend_id', $targetParticipant->user_id);
+            })->orWhere(function ($q) use ($user, $targetParticipant)
+            {
+                $q->where('user_id', $targetParticipant->user_id)->where('friend_id', $user->id);
+            })->where('status', Friendship::STATUS_BLOCKED)->exists();
+
+            if ($isBlocked)
+            {
+                return $this->error('ERR_USER_BLOCKED', 'Message not sent. You or this user are blocked.', 403);
+            }
         }
 
         $savedFiles = [];
@@ -385,9 +418,15 @@ class ChatController extends Controller
             return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
+        $targetParticipant = $chat->participants()->where('user_id', '!=', Auth::id())->first();
+
         if ($request->for_both)
         {
             $chat->delete();
+            if ($targetParticipant)
+            {
+                broadcast(new ChatDeletedEvent($slug, $targetParticipant->user_id));
+            }
         } else
         {
             $chat->participants()->where('user_id', Auth::id())->delete();

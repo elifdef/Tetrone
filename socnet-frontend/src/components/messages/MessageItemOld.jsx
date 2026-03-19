@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 
 export default function MessageItemOld({ msg, myAvatar, myName, targetUser, formatDate, t, handleEditClick, handleDelete, setReplyingTo, togglePin }) {
+    const isTemp = msg.status === 'sending' || msg.status === 'error';
+
     return (
-        <div id={`message-${msg.id}`} className="socnet-messages-old-message-row">
+        <div id={`message-${msg.id}`} className={`socnet-messages-old-message-row ${msg.status === 'error' ? 'error-state' : ''}`}>
             <div className="socnet-messages-old-msg-left">
                 <img src={msg.isMine ? myAvatar : targetUser?.avatar} alt="avatar" className="socnet-messages-old-avatar" />
             </div>
@@ -15,7 +17,9 @@ export default function MessageItemOld({ msg, myAvatar, myName, targetUser, form
                     >
                         {msg.isMine ? myName : targetUser?.first_name}
                     </Link>
-                    <span className="socnet-messages-old-date">{formatDate(msg.created_at)}</span>
+                    <span className="socnet-messages-old-date">
+                        {msg.status === 'sending' ? t('common.sending') : formatDate(msg.created_at)}
+                    </span>
                 </div>
 
                 {msg.reply_to && (
@@ -27,7 +31,13 @@ export default function MessageItemOld({ msg, myAvatar, myName, targetUser, form
 
                 <div className="socnet-messages-old-msg-text">
                     {msg.text}
-                    {msg.is_edited && <span className="socnet-edited-mark"> ({t('common.edited', 'ред.')})</span>}
+                    {msg.is_edited && <span className="socnet-edited-mark"> ({t('common.edited')})</span>}
+
+                    {msg.status === 'error' && (
+                        <div className="socnet-message-error-indicator" title={msg.errorText}>
+                            ❌ {t('messages.not_sent')}
+                        </div>
+                    )}
                 </div>
 
                 {msg.files?.length > 0 && (
@@ -39,20 +49,30 @@ export default function MessageItemOld({ msg, myAvatar, myName, targetUser, form
                 )}
 
                 <div className="socnet-messages-old-actions-bottom">
-                    <span className="socnet-action-link" onClick={() => setReplyingTo(msg)}>{t('messages.reply', 'Відповісти')}</span>
-                    <span className="socnet-action-link" onClick={() => togglePin(msg.id)}>
-                        {msg.is_pinned ? t('messages.unpin', 'Відкріпити') : t('messages.pin', 'Прикріпити')}
-                    </span>
-                    {msg.isMine && (
+                    {!isTemp && (
                         <>
-                            <span className="socnet-action-link" onClick={() => handleEditClick(msg)}>{t('common.edit', 'Редагувати')}</span>
-                            <span className="socnet-action-link danger" onClick={() => handleDelete(msg.id)}>{t('common.delete', 'Видалити')}</span>
+                            <span className="socnet-action-link" onClick={() => setReplyingTo(msg)}>
+                                {t('messages.reply')}
+                            </span>
+                            <span className="socnet-action-link" onClick={() => togglePin(msg.id)}>
+                                {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}
+                            </span>
+                            {msg.isMine && (
+                                <>
+                                    <span className="socnet-action-link" onClick={() => handleEditClick(msg)}>
+                                        {t('common.edit')}
+                                    </span>
+                                    <span className="socnet-action-link danger" onClick={() => handleDelete(msg.id)}>
+                                        {t('common.delete')}
+                                    </span>
+                                </>
+                            )}
+                            {msg.isMine && (
+                                <span className={`socnet-messages-old-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
+                                    {msg.read_at ? '✓✓' : '✓'}
+                                </span>
+                            )}
                         </>
-                    )}
-                    {msg.isMine && (
-                        <span className={`socnet-messages-old-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
-                            {msg.read_at ? '✓✓' : '✓'}
-                        </span>
                     )}
                 </div>
             </div>

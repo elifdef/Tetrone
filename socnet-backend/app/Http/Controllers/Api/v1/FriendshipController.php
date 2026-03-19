@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\UserBlockedEvent;
 use App\Http\Resources\PublicUserResource;
 use App\Models\Friendship;
 use App\Models\User;
@@ -143,6 +144,8 @@ class FriendshipController extends Controller
             'friend_id' => $targetUser->id,
             'status' => Friendship::STATUS_BLOCKED
         ]);
+
+        broadcast(new UserBlockedEvent($me->id, $targetUser->id));
 
         return $this->success('USER_BLOCKED', 'User blocked');
     }

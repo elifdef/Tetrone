@@ -3,11 +3,13 @@ import { useState } from 'react';
 export default function MessageItem({ msg, targetUser, formatDate, t, handleEditClick, handleDelete, setReplyingTo, togglePin }) {
     const [showActions, setShowActions] = useState(false);
 
+    const isTemp = msg.status === 'sending' || msg.status === 'error';
+
     return (
         <div
             id={`message-${msg.id}`}
-            className={`socnet-tg-message-wrapper ${msg.isMine ? 'mine' : 'theirs'}`}
-            onMouseEnter={() => setShowActions(true)}
+            className={`socnet-tg-message-wrapper ${msg.isMine ? 'mine' : 'theirs'} ${msg.status === 'error' ? 'error-state' : ''}`}
+            onMouseEnter={() => !isTemp && setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
         >
             <div className="socnet-tg-message-content">
@@ -36,10 +38,21 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
 
                     <div className="socnet-tg-msg-text">
                         {msg.text}
+
+                        {msg.status === 'error' && (
+                            <div className="socnet-message-error-indicator" title={msg.errorText}>
+                                ❌ {t('messages.not_sent')}
+                            </div>
+                        )}
+
                         <span className="socnet-tg-msg-meta">
                             {msg.is_edited && <span className="socnet-tg-edited">{t('common.edited')}</span>}
-                            <span className="socnet-tg-time">{formatDate(msg.created_at, true)}</span>
-                            {msg.isMine && (
+
+                            <span className="socnet-tg-time">
+                                {msg.status === 'sending' ? '⏱' : formatDate(msg.created_at, true)}
+                            </span>
+
+                            {msg.isMine && !isTemp && (
                                 <span className={`socnet-tg-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
                                     {msg.read_at ? '✓✓' : '✓'}
                                 </span>
@@ -48,13 +61,17 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
                     </div>
                 </div>
 
-                <div className={`socnet-tg-message-actions-bottom ${showActions ? 'visible' : ''}`}>
+                <div className={`socnet-tg-message-actions-bottom ${showActions && !isTemp ? 'visible' : ''}`}>
                     <button onClick={() => setReplyingTo(msg)}>{t('messages.reply')}</button>
-                    <button onClick={() => togglePin(msg.id)}>{msg.is_pinned ? t('messages.unpin') : t('messages.pin')}</button>
+                    <button onClick={() => togglePin(msg.id)}>
+                        {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}
+                    </button>
                     {msg.isMine && (
                         <>
                             <button onClick={() => handleEditClick(msg)}>{t('common.edit')}</button>
-                            <button onClick={() => handleDelete(msg.id)} className="socnet-text-danger">{t('common.delete')}</button>
+                            <button onClick={() => handleDelete(msg.id)} className="socnet-text-danger">
+                                {t('common.delete')}
+                            </button>
                         </>
                     )}
                 </div>

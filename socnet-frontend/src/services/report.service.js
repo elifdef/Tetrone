@@ -3,7 +3,7 @@ import fetchClient from '../api/client';
 class ReportService {
     async getReasons() {
         const res = await fetchClient('/reports/reasons');
-        return res.reasons || [];
+        return res;
     }
 
     async submitReport({ type, id, reason, details }) {  

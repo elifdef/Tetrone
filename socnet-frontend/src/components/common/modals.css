@@ -1,0 +1,217 @@
+.socnet-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding-top: 50px;
+}
+
+.socnet-modal-dialog {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    margin: auto;
+    background-color: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.socnet-modal-dialog.modal-lg {
+    max-width: 600px;
+}
+
+.socnet-modal-dialog.modal-sm {
+    max-width: 300px;
+}
+
+.socnet-modal-message {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--theme-text-main);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.socnet-modal-input {
+    margin-bottom: 15px;
+}
+
+.socnet-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.socnet-modal-btn {
+    min-width: 80px;
+}
+
+.report-modal-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.report-modal-actions {
+    margin-top: 20px;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.socnet-modal-fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+}
+
+.socnet-modal-close-fullscreen {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.socnet-modal-close-fullscreen:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.socnet-modal-fullscreen-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.socnet-modal-media-section {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.socnet-modal-sidebar-section {
+    width: 350px;
+    background: var(--theme-bg-box);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--theme-border);
+}
+
+.socnet-modal-sidebar-scroll {
+    overflow-y: auto;
+    padding: 20px;
+    height: 100%;
+}
+
+.socnet-modal-fullscreen-image,
+.socnet-modal-fullscreen-video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.socnet-modal-fullscreen-youtube {
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 16 / 9;
+}
+
+.socnet-modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    font-size: 40px;
+    width: 60px;
+    height: 80px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.socnet-modal-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.socnet-modal-nav-btn.left {
+    left: 0;
+}
+
+.socnet-modal-nav-btn.right {
+    right: 0;
+}
+
+.socnet-modal-counter {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px 10px;
+}
+
+@media (max-width: 768px) {
+    .socnet-modal-overlay {
+        align-items: center;
+        padding: 10px;
+    }
+
+    .socnet-modal-dialog {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .socnet-modal-fullscreen-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .socnet-modal-media-section {
+        height: 60vh;
+        flex: none;
+    }
+
+    .socnet-modal-sidebar-section {
+        width: 100%;
+        height: auto;
+        min-height: 40vh;
+        border-left: none;
+    }
+
+    .socnet-modal-close-fullscreen {
+        top: 10px;
+        right: 10px;
+    }
+}

@@ -201,7 +201,7 @@ export default function Messages(props) {
                                         <MessageItem
                                             key={`mod-${msg.id}`}
                                             msg={msg}
-                                            targetUser={activeChat.target_user} // ПЕРЕДАЄМО ЮЗЕРА
+                                            targetUser={activeChat.target_user}
                                             formatDate={formatDate}
                                             t={t}
                                             handleEditClick={handleEditClick}
