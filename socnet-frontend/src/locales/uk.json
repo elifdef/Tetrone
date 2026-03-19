@@ -487,7 +487,13 @@
     "notification_comments": "Коментарі до ваших дописів",
     "notification_reposts": "Поширення ваших дописів (Репости)",
     "notification_wall_posts": "Дописи на вашій стіні",
-    "notification_friend_requests": "Запити на додавання в друзі"
+    "notification_friend_requests": "Запити на додавання в друзі",
+    "sessions": "Активні сесії",
+    "sessions_desc": "Тут ви можете бачити всі пристрої, з яких виконано вхід у ваш акаунт.",
+    "current_session": "Поточний пристрій",
+    "other_sessions": "Інші пристрої",
+    "terminate_all": "Завершити всі інші сесії",
+    "unknown_device": "Невідомий пристрій"
   },
   "admin": {
     "control_panel": "Панель керування",

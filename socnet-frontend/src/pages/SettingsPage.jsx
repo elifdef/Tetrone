@@ -7,6 +7,7 @@ import ProfileSettings from '../components/settings/ProfileSettings';
 import SecuritySettings from '../components/settings/SecuritySettings';
 import PersonalizationSettings from '../components/settings/PersonalizationSettings';
 import NotificationSettings from '../components/settings/NotificationSettings';
+import SessionsSettings from '../components/settings/SessionsSettings';
 import "../components/settings/settings.css";
 
 const SettingsPage = () => {
@@ -19,6 +20,7 @@ const SettingsPage = () => {
         if (activeTab === 'security') return t('common.security');
         if (activeTab === 'personalization') return t('settings.personalization');
         if (activeTab === 'notifications') return t('common.notifications');
+        if (activeTab === 'sessions') return t('settings.sessions');
         return t('settings.profile_settings');
     };
     usePageTitle(getPageTitle());
@@ -45,6 +47,9 @@ const SettingsPage = () => {
                 <Link to="/settings?act=notifications" className={getTabClass('notifications')}>
                     {t('common.notifications')}
                 </Link>
+                <Link to="/settings?act=sessions" className={getTabClass('sessions')}>
+                    {t('settings.sessions')}
+                </Link>
             </div>
 
             <div className="settings-content">
@@ -52,6 +57,7 @@ const SettingsPage = () => {
                 {activeTab === 'personalization' && <PersonalizationSettings />}
                 {activeTab === 'security' && <SecuritySettings />}
                 {activeTab === 'notifications' && <NotificationSettings />}
+                {activeTab === 'sessions' && <SessionsSettings />} {/* <--- РЕНДЕР НОВОЇ ВКЛАДКИ */}
             </div>
         </div>
     );

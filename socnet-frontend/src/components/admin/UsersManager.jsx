@@ -34,7 +34,7 @@ const UserCard = ({ user, handleMute, handleBan, canBan }) => {
     const { user: currentAdmin } = useContext(AuthContext);
     const isAdmin = currentAdmin?.role === userRole.Admin;
 
-    const profilePath = `/${isAdmin ? 'admin/users/' : ''}${user.username}`;
+    const profilePath = `/${isAdmin ? 'control-panel/users/' : ''}${user.username}`;
 
     return (
         <div className="admin-user-card">

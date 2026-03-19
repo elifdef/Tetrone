@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Resources\AdminUserResource;
+use App\Http\Resources\CommentResource;
 use App\Models\Appeal;
 use App\Models\Report;
 use App\Models\User;
@@ -334,5 +335,68 @@ class AdminController extends Controller
         ]);
 
         return $this->success('APPEAL_REJECTED', 'Appeal dismissed. Ban remains in force.');
+    }
+
+    /**
+     * Отримати пости конкретного юзера
+     */
+    public function getUserPosts(Request $request, User $user): JsonResponse
+    {
+        Gate::authorize('manage-users');
+
+        $posts = $user->posts()
+            ->with(['user', 'targetUser', 'attachments'])
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->latest()
+            ->paginate(15);
+
+        return $this->success('ADMIN_USER_POSTS', 'User posts retrieved', PostResource::collection($posts)->response()->getData(true)
+        );
+    }
+
+    /**
+     * Отримати коментарі конкретного юзера
+     */
+    public function getUserComments(Request $request, User $user): JsonResponse
+    {
+        Gate::authorize('manage-users');
+
+        $comments = $user->comments()
+            ->with(['post.user'])
+            ->latest()
+            ->paginate(15);
+
+        return $this->success('ADMIN_USER_COMMENTS', 'User comments retrieved', CommentResource::collection($comments)->response()->getData(true)
+        );
+    }
+
+    /**
+     * Отримати лайкнуті пости конкретного юзера
+     */
+    public function getUserLikes(Request $request, User $user): JsonResponse
+    {
+        Gate::authorize('manage-users');
+
+        $posts = Post::select('posts.*')
+            ->join('likes', 'posts.id', '=', 'likes.post_id')
+            ->where('likes.user_id', $user->id)
+            ->with(['user', 'attachments'])
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->orderBy('likes.created_at', 'desc')
+            ->paginate(15);
+
+        return $this->success('ADMIN_USER_LIKES', 'User liked posts retrieved', PostResource::collection($posts)->response()->getData(true)
+        );
+    }
+
+    /**
+     * Отримати сесії юзера
+     */
+    public function getUserSessions(Request $request, User $user): JsonResponse
+    {
+        Gate::authorize('manage-users');
+
+        $tokens = $user->tokens()->orderBy('last_used_at', 'desc')->get();
+        return $this->success('ADMIN_USER_SESSIONS', 'User sessions retrieved', $tokens);
     }
 }

@@ -1,6 +1,6 @@
-import { useState, useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { usePageTitle } from "../hooks/usePageTitle";
 import { AuthContext } from "../context/AuthContext";
 import { userRole } from '../config';
@@ -15,11 +15,14 @@ const AdminPage = () => {
     const { t } = useTranslation();
     const { user: currentUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    
     usePageTitle(t('common.admin_panel'));
 
     const isAdmin = currentUser?.role === userRole.Admin;
     const isModerator = currentUser?.role === userRole.Moderator;
-    const [activeTab, setActiveTab] = useState(isAdmin ? 'dashboard' : 'reports');
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get('tab') || (isAdmin ? 'dashboard' : 'reports');
 
     useEffect(() => {
         if (!isAdmin && !isModerator) {
@@ -27,7 +30,8 @@ const AdminPage = () => {
         }
     }, [isAdmin, isModerator, navigate]);
 
-    const getTabs = () => {
+    // кешуєм вкладки щоб вони не перестворювалися при кожному рендері
+    const adminTabs = useMemo(() => {
         const tabs = [];
 
         if (isAdmin) {
@@ -42,9 +46,11 @@ const AdminPage = () => {
         }
 
         return tabs;
-    };
+    }, [isAdmin, isModerator, t]);
 
-    const adminTabs = getTabs();
+    const handleTabChange = (tabId) => {
+        setSearchParams({ tab: tabId });
+    };
 
     const renderContent = () => {
         switch (activeTab) {
@@ -62,6 +68,7 @@ const AdminPage = () => {
                 return null;
         }
     };
+
     if (!isAdmin && !isModerator) return null;
 
     return (
@@ -71,7 +78,7 @@ const AdminPage = () => {
             <AdminTabs
                 tabs={adminTabs}
                 activeTab={activeTab}
-                onTabChange={setActiveTab}
+                onTabChange={handleTabChange}
             />
 
             <div className="admin-content-wrapper">

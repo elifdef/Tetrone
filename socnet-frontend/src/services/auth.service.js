@@ -32,6 +32,18 @@ class AuthService {
             method: 'POST'
         });
     }
+
+    async getSessions() {
+        return await fetchClient('/settings/sessions');
+    }
+
+    async revokeSession(tokenId) {
+        return await fetchClient(`/settings/sessions/${tokenId}`, { method: 'DELETE' });
+    }
+    
+    async revokeAllOtherSessions() {
+        return await fetchClient('/settings/sessions', { method: 'DELETE' });
+    }
 }
 
 export default new AuthService();

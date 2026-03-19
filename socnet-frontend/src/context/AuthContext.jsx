@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import fetchClient from "../api/client";
 import { getSystemLanguage } from "../i18n";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const AuthContext = createContext();
 
@@ -9,6 +11,8 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
     const [initError, setInitError] = useState(false);
+    const { t } = useTranslation();
+    const navigate = useNavigate();
 
     // перед загрузкою перевіряєм чи правильний токен і чи не лежить бекенд
     useEffect(() => {
@@ -40,6 +44,20 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     }, [token]);
+
+    useEffect(() => {
+        const handleSessionExpired = () => {
+            localStorage.removeItem('token');
+            setUser(null);
+            notifyError(t('api.error.ERR_UNAUTHORIZED'));
+
+            navigate('/login');
+        };
+
+        window.addEventListener('session-expired', handleSessionExpired);
+
+        return () => window.removeEventListener('session-expired', handleSessionExpired);
+    }, [navigate, t]);
 
     // трекер онлайну
     useEffect(() => {

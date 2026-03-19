@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\NotificationSettingsController;
 use App\Http\Controllers\Api\v1\PersonalizationController;
 use App\Http\Controllers\Api\v1\UserController;
@@ -8,21 +9,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 
-// публічне отримання БАЗОВОЇ інформації профілю (120 запитів/мін)
-Route::middleware('throttle:120,1')->controller(UserController::class)->group(function ()
-{
-    Route::get('users/{username}', 'show');
-});
+// публічне отримання БАЗОВОЇ інформації профілю (120 запитів/хв)
+Route::middleware('throttle:120,1')->get('users/{username}', [UserController::class, 'show']);
 
 Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
 {
+
+    // Отримати поточного юзера
     Route::get('me', function (Request $request)
     {
         return (new UserResource($request->user()))->resolve();
     });
 
+    // Дозволено тільки НЕ ЗАБЛОКОВАНИМ юзерам
     Route::middleware(['not_banned'])->group(function ()
     {
+        // Встановлення офлайн статусу
         Route::post('/user/offline', function (Request $request)
         {
             $user = $request->user();
@@ -31,22 +33,43 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
             return response()->noContent();
         });
 
-        // редагування профілю
-        Route::patch('users/{username}', [UserController::class, 'update']);
-        Route::put('/user/email', [UserController::class, 'updateEmail']);
-        Route::put('/user/password', [UserController::class, 'updatePassword']);
-        Route::get('/users', [UserController::class, 'index']);
+        Route::controller(UserController::class)->group(function ()
+        {
+            Route::get('/users', 'index');
+            Route::patch('/users/{username}', 'update');
+            Route::put('/user/email', 'updateEmail');
+            Route::put('/user/password', 'updatePassword');
+        });
 
-        // персоналізація
-        Route::get('/settings/personalization', [PersonalizationController::class, 'show']);
-        Route::post('/settings/personalization', [PersonalizationController::class, 'update']);
+        Route::prefix('settings')->group(function ()
+        {
+            // Персоналізація
+            Route::controller(PersonalizationController::class)->prefix('personalization')->group(function ()
+            {
+                Route::get('/', 'show');
+                Route::post('/', 'update');
+            });
 
-        // налаштування сповіщень
-        Route::get('/settings/notifications', [NotificationSettingsController::class, 'getSettings']);
-        Route::put('/settings/notifications', [NotificationSettingsController::class, 'updateSettings']);
+            // Сповіщення
+            Route::controller(NotificationSettingsController::class)->prefix('notifications')->group(function ()
+            {
+                Route::get('/', 'getSettings');
+                Route::put('/', 'updateSettings');
 
-        Route::get('/settings/notifications/overrides', [NotificationSettingsController::class, 'getOverrides']);
-        Route::put('/settings/notifications/overrides/{targetUserId}', [NotificationSettingsController::class, 'updateOverride']);
-        Route::delete('/settings/notifications/overrides/{targetUserId}', [NotificationSettingsController::class, 'deleteOverride']);
+                Route::get('/overrides', 'getOverrides');
+                Route::put('/overrides/{targetUserId}', 'updateOverride');
+                Route::delete('/overrides/{targetUserId}', 'deleteOverride');
+            });
+
+            // Сесії
+            Route::controller(AuthController::class)->prefix('sessions')->group(function ()
+            {
+                Route::get('/', 'getSessions');
+                Route::delete('/', 'revokeAllOtherSessions');
+                Route::delete('/{tokenId}', 'revokeSession');
+            });
+
+        });
+
     });
 });

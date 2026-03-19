@@ -29,9 +29,10 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
 
         if (response.status === 401) {
-            localStorage.removeItem('token');
-            window.dispatchEvent(new Event('auth_error'));
-        }
+        window.dispatchEvent(new CustomEvent('session-expired'));
+        
+        return { success: false, message: 'Unauthenticated.' };
+    }
 
         const data = response.status !== 204 ? await response.json() : null;
 
@@ -51,17 +52,15 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
             };
         }
 
-        // 🟢 УСПІШНІ ЗАПИТИ (2xx)
         const successCode = data?.code;
         const successMessage = (successCode && i18n.exists(`api.success.${successCode}`))
             ? i18n.t(`api.success.${successCode}`)
             : data?.message;
 
-        // БРОНЕБІЙНЕ РОЗПАКУВАННЯ ДАНИХ
         let payload = data?.data !== undefined ? data.data : data;
         let meta = data?.meta || null;
 
-        // Якщо Laravel загорнув Resource всередину нашого data (подвійна матрьошка)
+        // якщо Laravel загорнув Resource всередину data
         if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
             if ('data' in payload) {
                 if ('meta' in payload && !meta) {
@@ -76,12 +75,11 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
             status: response.status,
             code: successCode,
             message: successMessage,
-            data: payload, // Завжди чистий масив або об'єкт
-            meta: meta     // Завжди чиста пагінація (якщо є)
+            data: payload,
+            meta: meta
         };
 
     } catch (error) {
-        // ❌ ВПАВ ІНТЕРНЕТ АБО СЕРВЕР
         return {
             success: false,
             status: 0,

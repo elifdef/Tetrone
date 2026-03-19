@@ -103,6 +103,49 @@ class AuthController extends Controller
     }
 
     /**
+     * Отримати список активних сесій (токенів)
+     */
+    public function getSessions(Request $request): JsonResponse
+    {
+        $tokens = $request->user()->tokens()->orderBy('last_used_at', 'desc')->get();
+        $currentId = $request->user()->currentAccessToken()->id;
+
+        $sessions = $tokens->map(function ($token) use ($currentId)
+        {
+            return [
+                'id' => $token->id,
+                'name' => $token->name,
+                'ip_address' => $token->ip_address,
+                'user_agent' => $token->user_agent,
+                'last_used_at' => $token->last_used_at,
+                'created_at' => $token->created_at,
+                'is_current' => $token->id === $currentId
+            ];
+        });
+
+        return $this->success('SESSIONS_RETRIEVED', 'Sessions retrieved', $sessions);
+    }
+
+    /**
+     * Видалити конкретну сесію (токен)
+     */
+    public function revokeSession(Request $request, $tokenId): JsonResponse
+    {
+        $request->user()->tokens()->where('id', $tokenId)->delete();
+        return $this->success('SESSION_REVOKED', 'Session revoked successfully');
+    }
+
+    /**
+     * Видалити всі сесії ОКРІМ поточної
+     */
+    public function revokeAllOtherSessions(Request $request): JsonResponse
+    {
+        $currentId = $request->user()->currentAccessToken()->id;
+        $request->user()->tokens()->where('id', '!=', $currentId)->delete();
+        return $this->success('ALL_OTHER_SESSIONS_REVOKED', 'All other sessions revoked successfully');
+    }
+
+    /**
      * вихід з аккаунта
      *
      * @param Request $request

@@ -4,6 +4,7 @@ export const AdminTabs = ({ tabs, activeTab, onTabChange }) => {
             {tabs.map((tab) => (
                 <button
                     key={tab.id}
+                    type="button"
                     className={`socnet-tab ${activeTab === tab.id ? 'active' : ''}`}
                     onClick={() => onTabChange(tab.id)}
                 >
