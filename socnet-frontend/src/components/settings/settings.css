@@ -352,7 +352,6 @@
     padding: 2px 6px;
     text-transform: uppercase;
     font-weight: bold;
-    border-radius: 3px;
 }
 
 .socnet-session-meta {
@@ -368,7 +367,6 @@
     color: var(--theme-text-main);
     background: rgba(0, 0, 0, 0.05);
     padding: 2px 5px;
-    border-radius: 3px;
 }
 
 [data-theme="dark"] .socnet-session-ip {

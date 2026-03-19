@@ -542,7 +542,6 @@
     width: 4px;
     height: 4px;
     background-color: var(--theme-link);
-    border-radius: 50%;
     animation: tgBounce 1.4s infinite ease-in-out both;
 }
 
