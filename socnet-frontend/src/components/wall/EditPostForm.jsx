@@ -79,7 +79,7 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 onPaste={handlePaste}
-                maxLength={2048}
+                maxLength={65536}
             />
 
             {post?.entities?.poll && (
@@ -99,10 +99,10 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
                 onToggle={toggleYouTubePreview}
             />
 
-            <div className="socnet-edit-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+            <div className="socnet-edit-actions">
                 <AttachBar onFileSelect={handleFileSelect} />
 
-                <div className="socnet-edit-buttons-right" style={{ display: 'flex', gap: '8px' }}>
+                <div className="socnet-edit-buttons-right">
                     <Button className="socnet-btn-small" onClick={handleSave}>
                         {t('common.save')}
                     </Button>

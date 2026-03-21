@@ -41,12 +41,13 @@ const UserCard = ({ user, handleMute, handleBan, canBan }) => {
     const { user: currentAdmin } = useContext(AuthContext);
     const isAdmin = currentAdmin?.role === userRole.Admin;
     const profilePath = `/${isAdmin ? 'admin/users/' : ''}${user.username}`;
+    const nameColor = user.personalization?.username_color;
 
     return (
         <div className="admin-user-card">
             <img src={user.avatar} alt={user.username} className="admin-user-avatar" />
             <div className="admin-user-info">
-                <a href={profilePath} className="admin-user-name" target="_blank" rel="noreferrer">
+                <a href={profilePath} className="admin-user-name" target="_blank" rel="noreferrer" style={nameColor ? { color: nameColor } : undefined}>
                     {user.first_name} {user.last_name}
                 </a>
                 <div className="admin-user-meta">

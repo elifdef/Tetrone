@@ -112,16 +112,25 @@ export default function AdminDashboard() {
                         <div className="socnet-empty-state">{t('admin.dashboard.no_one_online')}</div>
                     ) : (
                         <div className="admin-online-list">
-                            {stats.realtime.users.map(user => (
-                                <Link key={user.id} to={`/${user.username}`} className="admin-online-user">
-                                    <img src={user.avatar} alt={user.username} className="admin-online-avatar" />
-                                    <div className="admin-online-details">
-                                        <span className="admin-online-name">{user.first_name} {user.last_name}</span>
-                                        <span className="admin-online-nick">@{user.username}</span>
-                                    </div>
-                                    <div className="admin-online-indicator"></div>
-                                </Link>
-                            ))}
+                            {stats.realtime.users.map(user => {
+                                const nameColor = user.personalization?.username_color;
+
+                                return (
+                                    <Link key={user.id} to={`/${user.username}`} className="admin-online-user">
+                                        <img src={user.avatar} alt={user.username} className="admin-online-avatar" />
+                                        <div className="admin-online-details">
+                                            <span
+                                                className="admin-online-name"
+                                                style={nameColor ? { color: nameColor } : undefined}
+                                            >
+                                                {user.first_name} {user.last_name}
+                                            </span>
+                                            <span className="admin-online-nick">@{user.username}</span>
+                                        </div>
+                                        <div className="admin-online-indicator"></div>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

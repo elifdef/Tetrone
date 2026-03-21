@@ -9,7 +9,8 @@ export const useNotificationText = () => {
     const getNotificationData = (typeKey, data) => {
         if (!data) return { actionText: '', linkText: null, linkUrl: null };
 
-        const genderId = data.user_gender || 1;
+        const actualUser = data.user || data;
+        const genderId = actualUser.user_gender || actualUser.gender || 1;
         const phrase = genderTextMap[genderId];
 
         let key = typeKey || '';
@@ -21,70 +22,59 @@ export const useNotificationText = () => {
         if (key.includes('NewRepost') || key === 'repost') key = 'repost';
         if (key.includes('ReportReviewed') || key === 'report_reviewed') key = 'report_reviewed';
         if (key.includes('NewMessage') || key === 'new_message') key = 'new_message';
+        if (key.includes('MentionNotification') || key === 'mention') key = 'mention';
 
         const payload = data.data || data;
         const linkUrl = data.post_id ? `/post/${data.post_id}` : null;
 
         switch (key) {
             case 'new_like':
-                return {
-                    actionText: phrase.liked,
-                    linkText: t('notifications.your_post'),
-                    linkUrl
-                };
-
+                return { actionText: phrase.liked, linkText: t('notifications.your_post'), linkUrl };
             case 'new_comment':
-                return {
-                    actionText: phrase.commented,
-                    linkText: t('notifications.your_post'),
-                    linkUrl
-                };
-
+                return { actionText: phrase.commented, linkText: t('notifications.your_post'), linkUrl };
             case 'new_friend_request':
-                return {
-                    actionText: t('notifications.friend_request'),
-                    linkText: null,
-                    linkUrl: null
-                };
-
+                return { actionText: t('notifications.friend_request'), linkText: null, linkUrl: null };
             case 'wall_post':
-                return {
-                    actionText: '',
-                    linkText: phrase.wall_post, // "залишив(-ла) запис на вашій стіні."
-                    linkUrl
-                };
-
+                return { actionText: '', linkText: phrase.wall_post, linkUrl };
             case 'repost':
-                return {
-                    actionText: '',
-                    linkText: phrase.repost, // "поділився(-лась) вашим записом."
-                    linkUrl
-                };
-
+                return { actionText: '', linkText: phrase.repost, linkUrl };
             case 'report_reviewed':
-                return {
-                    actionText: t('notifications.report_reviewed_click'),
-                    linkText: '',
-                    linkUrl: null
-                };
+                return { actionText: t('notifications.report_reviewed_click'), linkText: '', linkUrl: null };
+            case 'new_message':
+                {
+                    let snippet = payload.message_text;
 
-            case 'new_message': {
-                let snippet = payload.message_text;
+                    if (!snippet && payload.file_type) {
+                        if (payload.file_type === 'image') snippet = phrase.sent_image;
+                        else if (payload.file_type === 'video') snippet = phrase.sent_video;
+                        else snippet = phrase.sent_file;
+                    }
 
-                if (!snippet && payload.file_type) {
-                    if (payload.file_type === 'image') snippet = phrase.sent_image;
-                    else if (payload.file_type === 'video') snippet = phrase.sent_video;
-                    else snippet = phrase.sent_file;
+                    payload.post_snippet = snippet;
+
+                    return {
+                        actionText: phrase.wrote,
+                        linkText: null,
+                        linkUrl: `/messages?dm=${payload.chat_slug}`
+                    };
                 }
 
-                payload.post_snippet = snippet;
+           case 'mention':
+                const mentionUrl = data.comment_uid 
+                    ? `/post/${data.post_id}?comment=${data.comment_uid}` 
+                    : `/post/${data.post_id}`;
+
+                const actionText = phrase.mentioned;
+                
+                const linkText = data.comment_uid 
+                    ? t('notifications.in_comment') 
+                    : t('notifications.in_post');
 
                 return {
-                    actionText: phrase.wrote,
-                    linkText: null,
-                    linkUrl: `/messages?dm=${payload.chat_slug}`
+                    actionText,
+                    linkText,
+                    linkUrl: mentionUrl
                 };
-            }
 
             default:
                 return { actionText: '', linkText: null, linkUrl: null };

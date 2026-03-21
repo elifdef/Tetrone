@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useDateFormatter } from "../hooks/useDateFormatter";
 import { NotificationContext } from "../context/NotificationContext";
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -12,11 +12,10 @@ const ListAvatar = ({ src, isSystem }) => {
     if (isSystem) {
         return (
             <div className="socnet-notification-avatar system-avatar">
-                <ShieldIcon width={64} height={64} /> 
+                <ShieldIcon width={64} height={64} />
             </div>
         );
     }
-
     return <img src={src} className="socnet-notification-avatar" alt="avatar" />;
 };
 
@@ -25,46 +24,55 @@ const NotificationListItem = ({ notif, handleNotificationClick, getNotificationD
     const isUnread = !notif.read_at;
     const data = notif.data || {};
     const { actionText, linkText, linkUrl } = getNotificationData(notif.type, data);
+
     const isSystem = notif.type?.includes('ReportReviewed') || data.type === 'report_reviewed';
-    const senderName = isSystem ? t('common.moderator') : `${data.user_first_name} ${data.user_last_name || ''}`.trim();
+    const actualUser = data.user || data;
+    const senderName = isSystem ? t('common.moderator') : `${actualUser.user_first_name || actualUser.first_name} ${actualUser.user_last_name || actualUser.last_name || ''}`.trim();
     const snippetText = data.admin_response || data.post_snippet;
+    const avatarUrl = actualUser.user_avatar || actualUser.avatar;
+    const usernameUrl = actualUser.user_username || actualUser.username;
+    const nameColor = actualUser.personalization?.username_color;
+
+    const onBlockClick = (e) => {
+        handleNotificationClick(notif, data, isSystem);
+        if (!isSystem && linkUrl && e.target.tagName !== 'A') {
+            Navigate(linkUrl);
+        }
+    };
 
     return (
         <div
             className={`socnet-notification-item ${isUnread ? 'unread' : ''}`}
-            onClick={() => handleNotificationClick(notif, data, isSystem)}
+            onClick={onBlockClick}
+            style={{ cursor: 'pointer' }}
         >
             {isSystem ? (
-                <div onClick={(e) => e.stopPropagation()}>
+                <div className="socnet-system-avatar-wrapper">
                     <ListAvatar isSystem={true} />
                 </div>
             ) : (
-                <Link to={`/${data.user_username}`} onClick={(e) => e.stopPropagation()}>
-                    <ListAvatar src={data.user_avatar} isSystem={false} />
+                <Link to={`/${usernameUrl}`}>
+                    <ListAvatar src={avatarUrl} isSystem={false} />
                 </Link>
             )}
 
             <div className="socnet-notification-content">
-                <div>
+                <div className="socnet-notification-text-row">
                     {isSystem ? (
-                        <span className="socnet-comment-author">
+                        <span className="socnet-comment-author" style={nameColor ? { color: nameColor } : undefined} >
                             {senderName}
                         </span>
                     ) : (
-                        <Link
-                            to={`/${data.user_username}`}
-                            className="socnet-comment-author"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <Link to={`/${usernameUrl}`} className="socnet-comment-author" style={nameColor ? { color: nameColor } : undefined} >
                             {senderName}
                         </Link>
                     )}
                     {' '}
-                    <span>
+                    <span className="socnet-notification-action">
                         {actionText}
                         {actionText && linkText ? ' ' : ''}
                         {linkUrl && linkText ? (
-                            <Link to={linkUrl} className="socnet-link" onClick={(e) => e.stopPropagation()}>
+                            <Link to={linkUrl} className="socnet-link">
                                 {linkText}
                             </Link>
                         ) : (
@@ -103,10 +111,7 @@ export default function NotificationsPage() {
 
     const handleNotificationClick = (notif, payload, isSystemReport) => {
         if (!notif.read_at) markAsRead(notif.id);
-
-        if (isSystemReport) {
-            setSelectedReport(payload);
-        }
+        if (isSystemReport) setSelectedReport(payload);
     };
 
     return (

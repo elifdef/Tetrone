@@ -9,6 +9,7 @@ export default function ActivityCommentItem({ comment, onDelete }) {
 
     const postAuthor = comment.post?.user;
     const me = comment.user;
+    const opColor = postAuthor?.personalization?.username_color;
 
     return (
         <div className="socnet-activity-card socnet-relative-card">
@@ -31,6 +32,7 @@ export default function ActivityCommentItem({ comment, onDelete }) {
                             src={postAuthor.avatar}
                             alt={postAuthor.username}
                             className="socnet-activity-op-avatar"
+                            style={opColor ? { color: opColor } : undefined}
                         />
                     </Link>
                     <span>

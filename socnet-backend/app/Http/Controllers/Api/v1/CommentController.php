@@ -44,20 +44,37 @@ class CommentController extends Controller
             }
         }
 
-        $request->validate(['content' => 'required|string|max:1000']);
+        $request->validate(['content' => 'required|string|max:32768']);
+        $content = $request->input('content');
 
         $comment = $post->comments()->create([
-            'content' => $request->input('content'),
+            'content' => $content,
             'user_id' => $currentUser->id
         ]);
 
-        if ($post->user_id !== $request->user()->id)
+        if ($post->user_id !== $currentUser->id)
         {
             $prefs = $post->user->getNotificationPreferencesFor($currentUser->id, 'comments');
 
             if ($prefs['should_notify'])
             {
                 $post->user->notify(new NewCommentNotification($currentUser, $post, $comment, $prefs['sound']));
+            }
+        }
+
+        preg_match_all('/@([a-zA-Z0-9_.]+)/', $content, $matches);
+        $mentionedUsernames = array_unique($matches[1]);
+
+        if (!empty($mentionedUsernames))
+        {
+            $mentionedUsers = \App\Models\User::whereIn('username', $mentionedUsernames)->get();
+
+            foreach ($mentionedUsers as $mentionedUser)
+            {
+                if ($mentionedUser->id !== $currentUser->id && $mentionedUser->id !== $post->user_id)
+                {
+                     $mentionedUser->notify(new MentionNotification($currentUser, $post, $comment));
+                }
             }
         }
 
@@ -74,7 +91,7 @@ class CommentController extends Controller
             return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
         }
 
-        $request->validate(['content' => 'required|string|max:1000']);
+        $request->validate(['content' => 'required|string|max:32768']);
 
         $comment->update(['content' => $request->input('content')]);
 

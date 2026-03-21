@@ -77,8 +77,8 @@ class PersonalizationController extends Controller
 
         return $this->success('PERSONALIZATION_UPDATED', 'Personalization updated', [
             'personalization' => [
-                'banner_image' => $freshBannerImage,
-                'banner_color' => $freshBannerImage ? null : $personalization->banner_color,
+                'banner_image' => $freshBannerImage ? asset("storage/" . $freshBannerImage) : null,
+                'banner_color' => $personalization->banner_color,
                 'username_color' => $personalization->username_color,
             ]
         ]);

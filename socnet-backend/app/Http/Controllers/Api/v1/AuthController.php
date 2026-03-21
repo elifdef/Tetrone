@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password))
         {
-            return $this->error('ERR_INVALID_CREDENTIALS', 'Invalid email or password', 401);
+            return $this->error('ERR_INVALID_CREDENTIALS', 'Invalid email or password', 404);
         }
 
         $tokenResult = $user->createToken('auth_token');

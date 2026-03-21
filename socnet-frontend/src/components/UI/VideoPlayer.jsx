@@ -2,6 +2,7 @@ import React, { useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plyr } from "plyr-react";
 import "plyr/dist/plyr.css";
+import "../../styles/video.css"
 
 const VideoPlayer = React.memo(function VideoPlayer({
     src,
@@ -12,6 +13,7 @@ const VideoPlayer = React.memo(function VideoPlayer({
 }) {
     const { t } = useTranslation();
     const wrapperRef = useRef(null);
+    const plyrRef = useRef(null);
 
     const plyrOptions = useMemo(() => ({
         controls: [
@@ -70,15 +72,9 @@ const VideoPlayer = React.memo(function VideoPlayer({
             (entries) => {
                 entries.forEach(entry => {
                     if (!entry.isIntersecting) {
-                        const videoElement = wrapper.querySelector('video');
-                        if (videoElement && !videoElement.paused) videoElement.pause();
-
-                        const iframeElement = wrapper.querySelector('iframe');
-                        if (iframeElement && iframeElement.contentWindow) {
-                            iframeElement.contentWindow.postMessage(JSON.stringify({
-                                event: 'command',
-                                func: 'pauseVideo'
-                            }), '*');
+                        const player = plyrRef.current?.plyr;
+                        if (player && player.playing) {
+                            player.pause();
                         }
                     }
                 });
@@ -91,13 +87,18 @@ const VideoPlayer = React.memo(function VideoPlayer({
             const activeTag = document.activeElement.tagName.toLowerCase();
             if (activeTag === 'input' || activeTag === 'textarea') return;
 
+            const player = plyrRef.current?.plyr;
+            if (!player) return;
+
             if (e.code === 'Space' || e.key === ' ') {
                 e.preventDefault();
-
-                const videoElement = wrapper.querySelector('video');
-                if (videoElement) {
-                    videoElement.paused ? videoElement.play() : videoElement.pause();
-                }
+                player.playing ? player.pause() : player.play();
+            } else if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                player.forward(5);
+            } else if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                player.rewind(5);
             }
         };
 
@@ -117,6 +118,7 @@ const VideoPlayer = React.memo(function VideoPlayer({
             tabIndex="0"
         >
             <Plyr
+                ref={plyrRef}
                 source={plyrSource}
                 options={plyrOptions}
             />

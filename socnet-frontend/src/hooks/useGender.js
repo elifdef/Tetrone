@@ -22,6 +22,7 @@ export const useGender = (genderValue) => {
             sent_image: t('notifications.sent_image_male'),
             sent_video: t('notifications.sent_video_male'),
             sent_file: t('notifications.sent_file_male'),
+            mentioned: t('notifications.mentioned_male'), 
         },
         2: {
             gender: t('common.female'),
@@ -37,6 +38,7 @@ export const useGender = (genderValue) => {
             sent_image: t('notifications.sent_image_female'),
             sent_video: t('notifications.sent_video_female'),
             sent_file: t('notifications.sent_file_female'),
+            mentioned: t('notifications.mentioned_female'),
         }
     });
 

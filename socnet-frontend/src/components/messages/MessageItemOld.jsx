@@ -52,7 +52,7 @@ export default function MessageItemOld({ msg, myAvatar, myName, targetUser, form
                     {!isTemp && (
                         <>
                             <span className="socnet-action-link" onClick={() => setReplyingTo(msg)}>
-                                {t('messages.reply')}
+                                {t('common.reply')}
                             </span>
                             <span className="socnet-action-link" onClick={() => togglePin(msg.id)}>
                                 {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}

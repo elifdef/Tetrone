@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table)
         {
             $table->id();
+            $table->string('uid', 15)->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('post_id');
             $table->foreign('post_id')->references('id')->on('posts')->cascadeOnDelete();
             $table->text('content');
             $table->timestamps();
-            $table->index('post_id'); // для обчислення кількості коментів і їх селекту
+            $table->index('post_id');
         });
     }
 

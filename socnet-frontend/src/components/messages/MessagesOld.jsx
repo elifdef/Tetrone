@@ -164,7 +164,7 @@ export default function MessagesOld(props) {
             <div className="socnet-messages-old-composer-wrapper">
                 {(editingMessage || replyingTo) && (
                     <div className="socnet-messages-old-editing">
-                        {editingMessage ? t('messages.editing') : `${t('messages.reply')}: ${replyingTo.sender_name}`}
+                        {editingMessage ? t('messages.editing') : `${t('common.reply')}: ${replyingTo.sender_name}`}
                         <div className="reply-preview-text">
                             {editingMessage ? '' : replyingTo.text}
                         </div>

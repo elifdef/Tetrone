@@ -1,28 +1,39 @@
+import { useState, useEffect } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
-import EditIcon from '../../assets/edit.svg?react';
-import DeleteIcon from '../../assets/delete.svg?react';
-import FlagIcon from '../../assets/flag.svg?react';
+import { EditIcon, DeleteIcon, ReportIcon, DotsIcon } from '../comments/CommentIcons';
 
 export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, currentUserId }) {
     const { t } = useTranslation();
     const formatDate = useDateFormatter();
     const { username: currentProfileUsername } = useParams();
 
-    const isAvatarUpdate = post.entities?.is_avatar_update === true;
+    const [showMenu, setShowMenu] = useState(false);
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (showMenu && !e.target.closest('.socnet-post-actions-container')) {
+                setShowMenu(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [showMenu]);
+
+    const isAvatarUpdate = post.entities?.is_avatar_update === true;
     const showTargetUser = !isAvatarUpdate && post.target_user && post.target_user.username !== currentProfileUsername;
     const isAuthor = currentUserId ? currentUserId == post.user?.id : isOwner;
 
-    // Редагує ТІЛЬКИ автор, і ТІЛЬКИ якщо це не системний пост (не оновлення аватарки)
+    const authorNameColor = post.user?.personalization?.username_color;
+    const targetNameColor = post.target_user?.personalization?.username_color;
+
     const canEdit = onEdit && isAuthor && !isAvatarUpdate;
-    const canDelete = onDelete && isOwner;          // видаляє автор АБО власник стіни
-    const canReport = onReport && !isAuthor;        // скаржиться будь-хто КРІМ автора
+    const canDelete = onDelete && isOwner;
+    const canReport = onReport && !isAuthor;
 
     const showActions = canEdit || canDelete || canReport;
 
-    // Текст оновлення залежно від статі
     const avatarUpdateText = post.user?.gender === 2
         ? t('post.updated_avatar_female')
         : t('post.updated_avatar_male');
@@ -39,7 +50,11 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
 
             <div className="socnet-post-meta">
                 <div className="socnet-post-authors-row">
-                    <Link to={`/${post.user.username}`} className="socnet-post-author">
+                    <Link
+                        to={`/${post.user.username}`}
+                        className="socnet-post-author"
+                        style={authorNameColor ? { color: authorNameColor } : undefined}
+                    >
                         {post.user.first_name} {post.user.last_name}
                     </Link>
 
@@ -65,21 +80,32 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
             </div>
 
             {showActions && (
-                <div className="socnet-post-actions-top">
-                    {canReport && (
-                        <button className="socnet-action-icon" onClick={() => onReport(post.id)} title={t('reports.title')}>
-                            <FlagIcon width={16} height={16} />
-                        </button>
-                    )}
-                    {canEdit && (
-                        <button className="socnet-action-icon" onClick={() => onEdit(post)} title={t('common.edit')}>
-                            <EditIcon width={16} height={16} />
-                        </button>
-                    )}
-                    {canDelete && (
-                        <button className="socnet-action-icon" onClick={() => onDelete(post.id)} title={t('common.delete')}>
-                            <DeleteIcon width={16} height={16} />
-                        </button>
+                <div className="socnet-post-actions-container">
+                    <button
+                        className="socnet-post-action-btn-trigger"
+                        onClick={() => setShowMenu(!showMenu)}
+                    >
+                        <DotsIcon width={20} height={20} />
+                    </button>
+
+                    {showMenu && (
+                        <div className="socnet-actions-dropdown">
+                            {canEdit && (
+                                <button onClick={() => { onEdit(post); setShowMenu(false); }}>
+                                    <EditIcon /> {t('common.edit')}
+                                </button>
+                            )}
+                            {canDelete && (
+                                <button className="danger" onClick={() => { onDelete(post.id); setShowMenu(false); }}>
+                                    <DeleteIcon /> {t('common.delete')}
+                                </button>
+                            )}
+                            {canReport && (
+                                <button className="warning" onClick={() => { onReport(post.id); setShowMenu(false); }}>
+                                    <ReportIcon /> {t('reports.title')}
+                                </button>
+                            )}
+                        </div>
                     )}
                 </div>
             )}

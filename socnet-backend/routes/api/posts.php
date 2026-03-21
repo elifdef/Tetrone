@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum', 'throttle:180,1', 'not_banned'])->group(funct
         Route::controller(CommentController::class)->group(function ()
         {
             Route::post('/posts/{post}/comments', 'store');
+            Route::put('/comments/{comment}', 'update');
             Route::delete('/comments/{comment}', 'destroy');
         });
     });

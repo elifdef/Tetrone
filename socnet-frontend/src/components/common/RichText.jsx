@@ -13,12 +13,12 @@ const linkifyOptions = {
     }
 };
 
-export default function RichText({ text }) {
+export default function RichText({ text, className = "socnet-post-text" }) {
     if (!text) return null;
-    // поки це заглушка, так що воно просто відповідає за форматування тексту якщо там є юзернейм або силка
+    
     return (
-        <p className="socnet-post-text">
+        <div className={className}>
             <Linkify options={linkifyOptions}>{text}</Linkify>
-        </p>
+        </div>
     );
 }

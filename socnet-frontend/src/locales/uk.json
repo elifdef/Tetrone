@@ -50,7 +50,7 @@
     },
     "success": {
       "LOGIN_SUCCESS": "Ви успішно увійшли в систему.",
-      "REGISTER_SUCCESS": "Реєстрація успішна! Будь ласка, перевірте вашу пошту.",
+      "REGISTER_SUCCESS": "Реєстрація успішна!",
       "LOGOUT_SUCCESS": "Ви успішно вийшли з облікового запису.",
       "EMAIL_VERIFIED_ALREADY": "Ваша пошта вже підтверджена.",
       "EMAIL_VERIFIED": "Електронну пошту успішно підтверджено!",
@@ -255,7 +255,8 @@
     "drag_and_drop": "Перетягніть сюди",
     "or_paste": "або вставте",
     "selected_file": "Вибраний файл",
-    "play_sound": "Відтворити звук"
+    "play_sound": "Відтворити звук",
+    "reply": "Відповісти"
   },
   "auth": {
     "signin": "Увійти",
@@ -645,7 +646,11 @@
     "sent_video_male": "Надіслав відео",
     "sent_video_female": "Надіслала відео",
     "sent_file_male": "Надіслав файл",
-    "sent_file_female": "Надіслала файл"
+    "sent_file_female": "Надіслала файл",
+    "mentioned_male": "згадав вас",
+    "mentioned_female": "згадала вас",
+    "in_comment": "у коментарі.",
+    "in_post": "у пості."
   },
   "activity": {
     "likes": {
@@ -752,7 +757,6 @@
     "chat_started": "Початок спілкування",
     "tab_media": "Фото і відео",
     "tab_files": "Документи",
-    "reply": "Відповісти",
     "pin": "Прикріпити",
     "unpin": "Відкріпити",
     "pinned_message": "Прикріплене повідомлення",

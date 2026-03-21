@@ -22,10 +22,11 @@ class UserBasicResource extends JsonResource
             'avatar' => $this->avatar_url,
             'gender' => $this->gender,
             'is_banned' => (bool)$this->is_banned,
-            'personalization' => [
+            'personalization' => $this->personalization ? [
+                'banner_image' => $this->personalization->banner_image ? asset("storage/" . $this->personalization->banner_image) : null,
                 'banner_color' => $this->personalization->banner_color,
                 'username_color' => $this->personalization->username_color,
-            ],
+            ] : null,
         ];
     }
 }

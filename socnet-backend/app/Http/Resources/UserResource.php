@@ -34,10 +34,11 @@ class UserResource extends JsonResource
                     ->latest()
                     ->value('reason');
             }),
-            'personalization' => [
+            'personalization' => $this->personalization ? [
+                'banner_image' => $this->personalization->banner_image ? asset("storage/" . $this->personalization->banner_image) : null,
                 'banner_color' => $this->personalization->banner_color,
                 'username_color' => $this->personalization->username_color,
-            ],
+            ] : null,
         ];
     }
 }

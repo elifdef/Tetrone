@@ -6,6 +6,8 @@ import PostContent from "./content/PostContent";
 import PostFooter from "./PostFooter";
 import ReportModal from "../common/ReportModal";
 
+import "../../styles/post.css";
+
 export default function PostItem({
     post,
     onEdit,

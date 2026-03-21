@@ -14,11 +14,11 @@ class PublicUserResource extends JsonResource
         $currentUser = $request->user('sanctum');
         $status = $this->getFriendshipStatusWith($currentUser);
 
-        $personalizationData = [
-            'banner_image' => asset("storage/".$this->personalization?->banner_image),
+        $personalizationData = $this->personalization ? [
+            'banner_image' => $this->personalization->banner_image ? asset("storage/" . $this->personalization->banner_image) : null,
             'banner_color' => $this->personalization->banner_color,
             'username_color' => $this->personalization->username_color,
-        ];
+        ] : null;
 
         // якщо забанені
         if ($this->is_banned)

@@ -68,7 +68,7 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 onPaste={handlePaste}
-                maxLength={2048}
+                maxLength={65536}
             />
 
             {pollData && (

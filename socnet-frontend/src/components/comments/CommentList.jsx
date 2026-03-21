@@ -5,6 +5,8 @@ export default function CommentList({
     comments,
     currentUser,
     onDelete,
+    onEdit,
+    onReply,
     noCommentsText,
     isLoadingInitial,
     isLoadingMore,
@@ -31,10 +33,12 @@ export default function CommentList({
         >
             {comments.map(comment => (
                 <CommentItem
-                    key={comment.id}
+                    key={comment.uid || comment.id}
                     comment={comment}
                     currentUser={currentUser}
                     onDelete={onDelete}
+                    onEdit={onEdit}
+                    onReply={onReply}
                 />
             ))}
         </InfiniteScrollList>

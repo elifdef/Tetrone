@@ -1,0 +1,966 @@
+.socnet-post-video {
+    margin-top: 10px;
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+    background: #000;
+}
+
+.socnet-post-videos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.socnet-preview-youtube-wrapper {
+    position: relative;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.socnet-youtube-checkbox-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.socnet-youtube-checkbox-overlay input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--theme-link);
+}
+
+.socnet-video-preview-inner {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-preview-youtube-wrapper .socnet-preview-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+/* стіна ім. Дурова */
+.socnet-wall {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.socnet-wall-header {
+    border-bottom: 1px solid var(--theme-border);
+    margin-bottom: 10px;
+    padding-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.socnet-wall-title {
+    color: var(--theme-link);
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.socnet-wall-count {
+    color: #999;
+    font-size: 13px;
+}
+
+.socnet-wall-input {
+    position: relative;
+    padding: 5px;
+    background: var(--theme-bg-box);
+    border: 1px solid transparent;
+}
+
+.socnet-wall-input.drag-active {
+    background: #EBF1F5;
+}
+
+.socnet-wall-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.socnet-wall-actions-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.socnet-attach-btn {
+    cursor: pointer;
+    color: #8292a4;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.socnet-attach-btn:hover {
+    color: var(--theme-link);
+}
+
+.socnet-post-list {
+    margin-top: 10px;
+}
+
+.socnet-post:first-child {
+    border-top: none;
+    padding-top: 5px;
+}
+
+.socnet-post-header {
+    border-top: 1px solid var(--theme-border);
+    padding-top: 5px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.socnet-post-avatar {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.socnet-post-meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+}
+
+.socnet-post-author {
+    color: var(--theme-link);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.socnet-post-author:hover {
+    text-decoration: underline;
+}
+
+.socnet-post-date {
+    color: #999;
+    font-size: 10px;
+    margin-top: 2px;
+    text-decoration: none;
+}
+
+.socnet-post-content {
+    font-size: 11px;
+    line-height: 1.4;
+    padding-left: 60px;
+    margin-top: 10px;
+}
+
+.socnet-post-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+    word-wrap: normal;
+}
+
+.socnet-post-image {
+    margin-top: 10px;
+}
+
+.socnet-post-image img {
+    max-width: 100%;
+    max-height: 400px;
+    display: block;
+}
+
+.socnet-post-footer {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 15px;
+    margin-top: 5px;
+}
+
+.socnet-post-footer-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding-top: 15px;
+}
+
+/* Галерея */
+.socnet-post-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.socnet-gallery-image {
+    cursor: pointer;
+    object-fit: cover;
+    flex-grow: 1;
+}
+
+.socnet-post-gallery.count-1 .socnet-gallery-image {
+    width: 100%;
+    max-height: 400px;
+}
+
+.socnet-post-gallery.count-more .socnet-gallery-image {
+    width: calc(50% - 2px);
+    max-height: 250px;
+}
+
+/* Прев'ю файлів та картинок */
+.socnet-post-previews-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.socnet-post-preview {
+    position: relative;
+    display: inline-block;
+    margin: 5px 0;
+    border: 1px solid var(--theme-border);
+    padding: 2px;
+    background: var(--theme-bg-box);
+}
+
+.socnet-post-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.socnet-post-preview.existing img {
+    border: 2px solid var(--theme-success);
+}
+
+.socnet-post-preview.new img {
+    opacity: 0.8;
+}
+
+.socnet-preview-remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.socnet-preview-remove-btn:hover {
+    background: rgba(255, 0, 0, 0.8);
+}
+
+.socnet-preview-file-stub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    padding: 8px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.socnet-preview-filename {
+    font-size: 12px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* Дії та редагування */
+.socnet-action-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    color: var(--theme-text-muted);
+    transition: all 0.2s ease;
+}
+
+.socnet-action-icon:hover {
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    color: var(--theme-text-main);
+}
+
+.socnet-post-actions-top {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.socnet-post:hover .socnet-post-actions-top {
+    opacity: 1;
+}
+
+.socnet-edit-mode {
+    padding: 0 10px;
+}
+
+.socnet-edit-textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid var(--theme-input-border);
+    padding: 5px;
+    font-size: 11px;
+    resize: vertical;
+    margin-bottom: 5px;
+    background: var(--theme-input-bg);
+    color: var(--theme-text-main);
+}
+
+.socnet-edit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-top: 8px;
+}
+
+.socnet-edit-buttons-right {
+    display: flex;
+    gap: 8px;
+}
+
+.socnet-btn-attach {
+    background: #8292a4;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+}
+
+.socnet-btn-attach:hover {
+    background: #6f7f91;
+}
+
+/* Репости */
+.socnet-repost-wrapper {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.socnet-repost-wrapper .socnet-post-actions {
+    display: none;
+}
+
+.socnet-repost-branch {
+    margin-top: 12px;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 2px solid var(--theme-border);
+}
+
+.socnet-deleted-stub {
+    padding: 15px;
+    margin-top: 10px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-size: 13px;
+    text-align: center;
+    font-style: italic;
+}
+
+.socnet-repost-limit-msg {
+    padding: 12px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-style: italic;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Документи */
+.socnet-post-documents {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--theme-border);
+}
+
+.socnet-document-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    border: 1px solid var(--theme-border);
+    text-decoration: none;
+    color: var(--theme-text-main);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+[data-theme="light"] .socnet-document-item {
+    background-color: #F7F7F7;
+}
+
+.socnet-document-item:hover {
+    background-color: var(--theme-bg-page);
+    border-color: var(--theme-link);
+    text-decoration: none;
+}
+
+.socnet-document-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    color: var(--theme-link);
+}
+
+.socnet-document-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+}
+
+.socnet-document-name {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--theme-link);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+}
+
+.socnet-document-size {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    text-transform: uppercase;
+}
+
+/* Опитування */
+.socnet-poll {
+    margin: 10px 0;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-bg-box);
+    padding: 12px;
+}
+
+.socnet-poll-question {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--theme-text-main);
+    word-break: break-word;
+}
+
+.socnet-poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.socnet-poll-option-wrapper {
+    position: relative;
+}
+
+.socnet-poll-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-input-border);
+    cursor: pointer;
+    overflow: hidden;
+    min-height: 28px;
+    transition: border-color 0.2s;
+}
+
+.socnet-poll-option.can-vote:hover {
+    border-color: var(--theme-link);
+}
+
+.socnet-poll-option.is-voted {
+    border-color: var(--theme-link);
+    font-weight: bold;
+}
+
+.socnet-poll-option.disabled {
+    cursor: default;
+}
+
+.socnet-poll-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--theme-btn-bg);
+    opacity: 0.15;
+    z-index: 1;
+    transition: width 0.5s ease-out;
+}
+
+.socnet-poll-option.is-voted .socnet-poll-fill {
+    opacity: 0.3;
+}
+
+.socnet-poll-text,
+.socnet-poll-percent {
+    position: relative;
+    z-index: 2;
+    font-size: 11px;
+}
+
+.socnet-poll-text {
+    display: flex;
+    align-items: center;
+    color: var(--theme-text-main);
+}
+
+.socnet-poll-multiple-checkbox {
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: var(--theme-link);
+}
+
+.socnet-poll-percent {
+    color: var(--theme-text-muted);
+}
+
+.socnet-poll-percent.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.socnet-poll-percent.clickable:hover {
+    color: var(--theme-link);
+}
+
+.socnet-poll-meta {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--theme-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--theme-border);
+}
+
+.socnet-poll-meta .dot {
+    font-size: 8px;
+}
+
+.socnet-poll-creator {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.socnet-poll-creator h3 {
+    margin: 0;
+    font-size: 14px;
+    color: var(--theme-link);
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 5px;
+}
+
+.socnet-poll-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.socnet-poll-option-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.socnet-poll-checkbox {
+    cursor: pointer;
+    accent-color: var(--theme-link);
+}
+
+.socnet-poll-remove-btn {
+    padding: 5px 8px;
+    min-width: 25px;
+}
+
+.socnet-poll-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--theme-bg-page);
+    padding: 10px;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-poll-setting-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--theme-text-main);
+}
+
+.socnet-poll-setting-label.highlight {
+    font-weight: bold;
+    color: var(--theme-link);
+}
+
+.socnet-poll-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid var(--theme-border);
+    padding-top: 15px;
+}
+
+.socnet-attached-poll-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--theme-bg-page);
+    border: 1px solid var(--theme-border);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.socnet-attached-poll-preview:hover {
+    border-color: var(--theme-link);
+}
+
+.socnet-attached-poll-preview.disabled {
+    cursor: default;
+}
+
+.socnet-attached-poll-preview.disabled:hover {
+    border-color: var(--theme-border);
+}
+
+.socnet-poll-preview-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--theme-text-main);
+}
+
+.socnet-poll-locked-text {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    font-style: italic;
+}
+
+.socnet-remove-poll-btn {
+    background: transparent;
+    border: none;
+    color: var(--theme-error);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0 5px;
+}
+
+.socnet-remove-poll-btn:hover {
+    opacity: 0.8;
+}
+
+.socnet-add-poll-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--theme-btn-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.socnet-add-poll-btn:hover {
+    color: var(--theme-link);
+}
+
+.socnet-poll-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.socnet-poll-modal-content {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 20px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.socnet-poll-voters-header {
+    margin: 0 0 15px 0;
+    color: var(--theme-link);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.socnet-poll-voters-list-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-top: 15px;
+}
+
+.socnet-poll-voter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-text-main);
+    text-decoration: none;
+    padding: 8px;
+    transition: background 0.2s;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.socnet-poll-voter-row:last-child {
+    border-bottom: none;
+}
+
+.socnet-poll-voter-row:hover {
+    background: var(--theme-bg-page);
+    text-decoration: none;
+}
+
+.socnet-poll-voter-img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-poll-voter-name {
+    font-weight: bold;
+    font-size: 12px;
+    color: var(--theme-link);
+}
+
+.socnet-poll-voter-name:hover {
+    text-decoration: underline;
+}
+
+.socnet-poll-voters-state-msg {
+    text-align: center;
+    padding: 30px;
+    color: var(--theme-text-muted);
+    font-size: 12px;
+}
+
+.socnet-poll-option.quiz-correct {
+    border-color: var(--theme-success, #4bb34b);
+    background-color: rgba(75, 179, 75, 0.05);
+}
+
+.socnet-poll-option.quiz-incorrect {
+    border-color: var(--theme-error, #e64646);
+    background-color: rgba(230, 70, 70, 0.05);
+}
+
+.socnet-poll-icon {
+    margin-left: 8px;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.socnet-poll-explanation-box {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--theme-bg-page);
+    border-left: 3px solid var(--theme-link);
+    font-size: 11px;
+    color: var(--theme-text-main);
+    line-height: 1.4;
+}
+
+.socnet-poll-explanation-title {
+    font-weight: bold;
+    color: var(--theme-link);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.socnet-poll-explanation-wrapper {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--theme-border);
+}
+
+.socnet-poll-closed-badge {
+    color: var(--theme-error);
+    font-weight: bold;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.socnet-poll-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.socnet-poll-close-btn:hover {
+    color: var(--theme-error);
+}
+
+.socnet-post-page-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+.socnet-post-content {
+    font-size: 11px;
+    line-height: 1.4;
+    padding-left: 60px;
+    margin-top: 5px;
+}
+
+.socnet-post-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.socnet-post-videos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.socnet-preview-youtube-wrapper {
+    position: relative;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.socnet-poll {
+    margin: 5px 0;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-bg-box);
+    padding: 10px;
+}
+
+.socnet-post-documents {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px dashed var(--theme-border);
+}
+
+@media (max-width: 768px) {
+    .socnet-feed-page {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        border: none !important;
+    }
+
+    .socnet-wall,
+    .socnet-post {
+        margin-left: -10px;
+        margin-right: -10px;
+        border-left: none;
+        border-right: none;
+    }
+
+    .socnet-post-header {
+        padding-left: 10px;
+        align-items: center;
+    }
+
+    .socnet-post-content {
+        padding-left: 10px;
+        margin-top: 10px;
+    }
+
+    .socnet-post-footer {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .socnet-post-image img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+    }
+
+    .socnet-post-actions-top {
+        opacity: 1;
+    }
+
+    .socnet-post-text {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+}

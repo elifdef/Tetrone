@@ -71,7 +71,7 @@ export default function PersonalizationSettings() {
     const [bannerFile, setBannerFile] = useState(null);
     const [previewBannerImage, setPreviewBannerImage] = useState(initialPersonalization.banner_image || null);
 
-    const [grad, setGrad] = useState({ deg: 135, c1: '#1e3a8a', c2: '#9333ea' });
+    const [grad, setGrad] = useState({ deg: 0, c1: '#FFFFFF', c2: '#000000' });
 
     const parseGradient = useCallback((bc) => {
         if (!bc) return;
@@ -86,15 +86,11 @@ export default function PersonalizationSettings() {
     }, []);
 
     useEffect(() => {
-        if (initialPersonalization.banner_color) {
-            parseGradient(initialPersonalization.banner_color);
-        }
-
         const fetchSettings = async () => {
             const res = await PersonalizationService.getSettings();
             if (res.success) {
-                const resData = res.data || {};
-                const bc = resData.banner_color || '';
+                const resData = res.data?.personalization || {};
+                const bc = resData.banner_color;
 
                 setSettings({
                     banner_color: bc,
@@ -102,14 +98,18 @@ export default function PersonalizationSettings() {
                     banner_image: resData.banner_image || null
                 });
                 setPreviewBannerImage(resData.banner_image || null);
-                parseGradient(bc);
+
+                if (bc) {
+                    parseGradient(bc);
+                }
             } else {
                 notifyError(res.message);
             }
             setIsLoading(false);
         };
+
         fetchSettings();
-    }, [t, parseGradient, initialPersonalization.banner_color]);
+    }, [parseGradient]);
 
     const handleProfileThemeChange = (newTheme) => {
         setUiTheme(newTheme);
@@ -153,7 +153,12 @@ export default function PersonalizationSettings() {
     const handleRemoveImage = () => {
         setBannerFile(null);
         setPreviewBannerImage(null);
-        setSettings(prev => ({ ...prev, banner_image: null }));
+
+        setSettings(prev => ({
+            ...prev,
+            banner_image: null,
+            banner_color: prev.banner_color
+        }));
     };
 
     const handleSave = async () => {

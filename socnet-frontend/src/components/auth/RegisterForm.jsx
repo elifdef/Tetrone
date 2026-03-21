@@ -22,6 +22,11 @@ export default function RegisterForm() {
             return;
         }
 
+        if (formData.password !== formData.password_confirmation) {
+            setMsg({ text: t('auth.password_not_match'), type: "error" });
+            return;
+        }
+
         setMsg({ text: "", type: "" });
         setLoading(true);
 

@@ -57,7 +57,7 @@ const SettingsPage = () => {
                 {activeTab === 'personalization' && <PersonalizationSettings />}
                 {activeTab === 'security' && <SecuritySettings />}
                 {activeTab === 'notifications' && <NotificationSettings />}
-                {activeTab === 'sessions' && <SessionsSettings />} {/* <--- РЕНДЕР НОВОЇ ВКЛАДКИ */}
+                {activeTab === 'sessions' && <SessionsSettings />}
             </div>
         </div>
     );

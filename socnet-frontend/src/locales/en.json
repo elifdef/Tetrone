@@ -50,7 +50,7 @@
     },
     "success": {
       "LOGIN_SUCCESS": "Successfully logged in.",
-      "REGISTER_SUCCESS": "Registration successful! Please check your email.",
+      "REGISTER_SUCCESS": "Registration successful!",
       "LOGOUT_SUCCESS": "You have successfully logged out.",
       "EMAIL_VERIFIED_ALREADY": "Your email is already verified.",
       "EMAIL_VERIFIED": "Email successfully verified!",
@@ -639,7 +639,11 @@
     "sent_video_male": "Sent a video",
     "sent_video_female": "Sent a video",
     "sent_file_male": "Sent a file",
-    "sent_file_female": "Sent a file"
+    "sent_file_female": "Sent a file",
+    "mentioned_male": "mentioned you",
+    "mentioned_female": "mentioned you",
+    "in_comment": "in a comment.",
+    "in_post": "in a post."
   },
   "activity": {
     "likes": {

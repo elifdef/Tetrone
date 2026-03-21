@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Notifications\MentionNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -126,7 +127,7 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'content' => 'nullable|string|max:2048',
+            'content' => 'nullable|string|max:65536',
             'entities' => 'nullable|json',
             'original_post_id' => 'nullable|string|exists:posts,id',
             'target_user_id' => 'nullable|exists:users,id',
@@ -221,9 +222,28 @@ class PostController extends Controller
             'content' => $request->input('content'),
             'entities' => $entities,
             'original_post_id' => $originalPostId,
-            'is_repost' => $originalPostId ? true : false
+            'is_repost' => (bool)$originalPostId
         ]);
 
+        // якщо когось згадали
+        if (!empty($post->content))
+        {
+            preg_match_all('/@([a-zA-Z0-9_.]+)/', $post->content, $matches);
+            $mentionedUsernames = array_unique($matches[1]);
+
+            if (!empty($mentionedUsernames))
+            {
+                $mentionedUsers = User::whereIn('username', $mentionedUsernames)->get();
+
+                foreach ($mentionedUsers as $mentionedUser)
+                {
+                    if ($mentionedUser->id !== $user->id && $mentionedUser->id != $targetUserId)
+                    {
+                        $mentionedUser->notify(new MentionNotification($user, $post));
+                    }
+                }
+            }
+        }
         if ($targetUserId && $targetUserId != $user->id)
         {
             $targetUser = User::find($targetUserId);
@@ -329,7 +349,7 @@ class PostController extends Controller
         }
 
         $request->validate([
-            'content' => 'nullable|string|max:2048',
+            'content' => 'nullable|string|max:65536',
             'entities' => 'nullable|json',
             'deleted_media' => 'nullable|array',
             'deleted_media.*' => 'integer|exists:post_attachments,id',

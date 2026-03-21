@@ -75,17 +75,19 @@ class NewMessageNotification extends Notification implements ShouldQueue
 
         return new BroadcastMessage([
             'type' => 'new_message',
-            'user_id' => $this->sender->id,
-            'user_username' => $this->sender->username,
-            'user_first_name' => $this->sender->first_name,
-            'user_last_name' => $this->sender->last_name,
-            'user_avatar' => $this->sender->avatar_url,
-            'user_gender' => $this->sender->gender,
             'chat_slug' => $this->chatSlug,
             'message_text' => $text,
             'file_type' => $fileType,
             'sound' => $sound,
             'show_toast' => $isEnabled,
+            'user' => [
+                'id' => $this->sender->id,
+                'username' => $this->sender->username,
+                'first_name' => $this->sender->first_name,
+                'last_name' => $this->sender->last_name,
+                'avatar' => $this->sender->avatar_url,
+                'gender' => $this->sender->gender,
+            ],
         ]);
     }
 }

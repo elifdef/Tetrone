@@ -1,0 +1,124 @@
+:root {
+    --plyr-color-main: #5b9bd5;
+    --plyr-video-background: var(--theme-bg-box);
+    --plyr-menu-background: var(--theme-bg-box);
+    --plyr-menu-color: var(--theme-text-main);
+}
+
+[data-theme="light"] {
+    --plyr-color-main: #2B587A;
+}
+
+.socnet-post-video {
+    margin-top: 10px;
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+    background: #000;
+    border-radius: 0 !important;
+}
+
+.socnet-video-wrapper {
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+    background: #000;
+    width: 100%;
+    border-radius: 0 !important;
+}
+
+.socnet-video-wrapper.socnet-video-player,
+.socnet-video-player {
+    background: #000;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    outline: none;
+    border-radius: 0 !important;
+}
+
+.socnet-video-player .plyr__controls {
+    border-top: 1px solid #444;
+    padding: 5px 10px !important;
+}
+
+.socnet-video-player input[type='range']::-webkit-slider-thumb {
+    background: #fff !important;
+    border: 1px solid #999 !important;
+    height: 12px !important;
+    width: 8px !important;
+    border-radius: 0 !important;
+}
+
+.socnet-video-player .plyr__control--overlaid {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #fff;
+    padding: 15px 25px;
+    border-radius: 0 !important;
+}
+
+.socnet-video-player .plyr__control--overlaid:hover {
+    background: #cc181e;
+    border-color: #cc181e;
+}
+
+.socnet-post-videos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.socnet-preview-youtube-wrapper,
+.socnet-preview-video-wrapper {
+    position: relative;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.socnet-youtube-checkbox-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.socnet-youtube-checkbox-overlay input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--theme-link);
+}
+
+.socnet-video-preview-inner {
+    border-radius: 0 !important;
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-preview-remove-video-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 0 !important;
+}
+
+.socnet-preview-remove-video-btn:hover {
+    background: rgba(255, 0, 0, 0.8);
+}

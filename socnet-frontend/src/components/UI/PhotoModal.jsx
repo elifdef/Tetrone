@@ -3,7 +3,7 @@ import CommentsSection from "../comments/CommentsSection";
 import PostFooter from "../post/PostFooter";
 import { usePostLike } from "../post/hooks/usePostLike";
 import PostHeader from "../post/PostHeader";
-import RichText from "../post/content/RichText";
+import RichText from "../common/RichText";
 import { usePostMedia } from "../post/hooks/usePostMedia";
 import VideoPlayer from "./VideoPlayer";
 

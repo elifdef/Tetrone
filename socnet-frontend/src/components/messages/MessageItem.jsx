@@ -62,7 +62,7 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
                 </div>
 
                 <div className={`socnet-tg-message-actions-bottom ${showActions && !isTemp ? 'visible' : ''}`}>
-                    <button onClick={() => setReplyingTo(msg)}>{t('messages.reply')}</button>
+                    <button onClick={() => setReplyingTo(msg)}>{t('common.reply')}</button>
                     <button onClick={() => togglePin(msg.id)}>
                         {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}
                     </button>

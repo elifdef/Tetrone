@@ -1,0 +1,328 @@
+.socnet-comments-container {
+    background-color: var(--theme-bg-page);
+    padding: 15px;
+    border-top: 1px solid var(--theme-border);
+}
+
+[data-theme="light"] .socnet-comments-container {
+    background-color: #f7f7f7;
+}
+
+.socnet-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.socnet-comment-item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    transition: background-color 0.5s ease;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.socnet-highlight-msg {
+    background-color: rgba(91, 155, 213, 0.15);
+}
+
+.socnet-comment-avatar {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.socnet-comment-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.socnet-comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.socnet-comment-author {
+    color: var(--theme-link);
+    font-weight: bold;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.socnet-comment-author:hover {
+    text-decoration: underline;
+}
+
+.socnet-comment-date {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+}
+
+.socnet-comment-text {
+    color: var(--theme-text-main);
+    font-size: 12px;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.socnet-comment-form {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.socnet-comment-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--theme-input-bg);
+    border: 1px solid var(--theme-input-border);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+    overflow: hidden;
+}
+
+.socnet-comment-input-wrapper:focus-within {
+    border-color: var(--theme-link);
+}
+
+.socnet-comment-reply-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--theme-input-border);
+    border-left: 3px solid var(--theme-link);
+}
+
+.socnet-reply-preview-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--theme-link);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.socnet-reply-preview-close {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.socnet-reply-preview-close:hover {
+    color: var(--theme-error);
+}
+
+.socnet-comment-input-row {
+    display: flex;
+    align-items: flex-end;
+}
+
+.socnet-comment-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--theme-text-main);
+    padding: 8px 10px;
+    font-size: 12px;
+    resize: none;
+    outline: none;
+    min-height: 36px;
+    max-height: 150px;
+}
+
+.socnet-send-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--theme-link);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.socnet-send-btn:hover:not(:disabled) {
+    opacity: 1;
+}
+
+.socnet-send-btn:disabled {
+    color: var(--theme-text-muted);
+    cursor: default;
+    opacity: 0.4;
+}
+
+.socnet-comment-reply-wrapper {
+    margin-top: 4px;
+}
+
+.socnet-comment-reply-btn {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+}
+
+.socnet-comment-reply-btn:hover {
+    color: var(--theme-link);
+}
+
+.socnet-comment-actions-wrapper {
+    opacity: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    transition: opacity 0.2s;
+}
+
+.socnet-comment-item:hover .socnet-comment-actions-wrapper {
+    opacity: 1;
+}
+
+.socnet-comment-action-icon {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    cursor: pointer;
+    color: var(--theme-text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.socnet-comment-action-icon:hover {
+    color: var(--theme-link);
+    border-color: var(--theme-link);
+}
+
+.socnet-comment-action-icon.danger:hover {
+    color: var(--theme-error);
+    border-color: var(--theme-error);
+}
+
+.socnet-edit-mode-comment {
+    margin-top: 5px;
+    width: 100%;
+}
+
+.socnet-comment-actions-container,
+.socnet-post-actions-container {
+    position: relative;
+    margin-left: auto;
+}
+
+/* Кнопка "Три крапки" для коментарів */
+.socnet-comment-action-btn-trigger {
+    background: transparent;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    /* Ховаємо до наведення на коментар */
+    transition: all 0.2s;
+}
+
+.socnet-comment-item:hover .socnet-comment-action-btn-trigger {
+    opacity: 1;
+}
+
+.socnet-comment-action-btn-trigger:hover {
+    color: var(--theme-link);
+}
+
+/* Кнопка "Три крапки" для постів (завжди видима) */
+.socnet-post-action-btn-trigger {
+    background: transparent;
+    border: none;
+    color: var(--theme-input-border);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.socnet-post-action-btn-trigger:hover {
+    color: var(--theme-text-muted);
+}
+
+/* Саме випадаюче меню */
+.socnet-actions-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.socnet-actions-dropdown button {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 10px 15px;
+    font-size: 12px;
+    color: var(--theme-text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.socnet-actions-dropdown button:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.socnet-actions-dropdown button.danger {
+    color: var(--theme-error);
+}
+
+.socnet-actions-dropdown button.danger:hover {
+    background-color: rgba(230, 70, 70, 0.1);
+}
+
+.socnet-actions-dropdown button.warning {
+    color: #f59e0b;
+}
+
+.socnet-actions-dropdown button.warning:hover {
+    background-color: rgba(245, 158, 11, 0.1);
+}
