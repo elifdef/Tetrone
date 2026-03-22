@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
+// щоб ларавел не перекидував на сторінку логін якої немає
+Route::get('/login', function ()
+{
+    return response()->json([
+        'status' => false,
+        'message' => 'Unauthenticated. Please login.'
+    ], 401);
+})->name('login');
+
 // публічні (12 запитів/мін)
 Route::middleware('throttle:12,1')->controller(AuthController::class)->group(function ()
 {

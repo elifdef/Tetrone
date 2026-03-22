@@ -17,12 +17,3 @@ Route::prefix('v1')->group(function ()
     require __DIR__ . '/api/reports.php';
     require __DIR__ . '/api/messages.php';
 });
-
-// щоб ларавел не перекидував на сторінку логін якої немає
-Route::get('/login', function ()
-{
-    return response()->json([
-        'status' => false,
-        'message' => 'Unauthenticated. Please login.'
-    ], 401);
-})->name('login');

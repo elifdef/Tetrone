@@ -2,113 +2,70 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Events\UserBlockedEvent;
 use App\Http\Resources\PublicUserResource;
 use App\Models\Friendship;
 use App\Models\User;
-use App\Notifications\NewFriendRequestNotification;
+use App\Services\FriendshipService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+/**
+ * @group Друзі та Блокування
+ *
+ * API для керування заявками в друзі, списком друзів та чорним списком.
+ */
 class FriendshipController extends Controller
 {
+    public function __construct(protected FriendshipService $friendService)
+    {
+    }
+
     /**
-     * надсилання заявки в друзі
+     * Надіслати заявку в друзі
      *
-     * @param Request $request
-     * @param string $username
-     * @return JsonResponse
+     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
+     * * @responseFile status=200 storage/responses/friend_success.json
+     * @responseFile status=403 storage/responses/friend_error_403.json
      */
     public function sendRequest(Request $request, string $username): JsonResponse
     {
-        // для розуміння:
-        // А - користувач 1
-        // В - користувач 2
         $targetUser = User::where('username', $username)->firstOrFail();
-        $me = $request->user();
+        $result = $this->friendService->sendRequest($request->user(), $targetUser);
 
-        // Перевірка пошти
-        if (!$me->hasVerifiedEmail())
+        if (is_array($result))
         {
-            return $this->error('ERR_EMAIL_UNVERIFIED', 'Email not confirmed.', 403);
+            return $this->error($result['error'], $result['message'], $result['status']);
         }
-
-        // якщо кинув заявку сам собі
-        if ($me->id === $targetUser->id)
-        {
-            return $this->error('ERR_CANNOT_FRIEND_SELF', 'You cannot friend yourself XD', 400);
-        }
-
-        // перевірка чи вже є якісь відносини між А і В або навпаки
-        $existing = Friendship::between($me, $targetUser)->first();
-
-        if ($existing)
-        {
-            // якщо А і В уже друзі
-            if ($existing->status == Friendship::STATUS_ACCEPTED)
-            {
-                return $this->error('ERR_ALREADY_FRIENDS', 'Already friends', 409);
-            }
-
-            // якщо уже є заявка або від А або від В
-            if ($existing->status == Friendship::STATUS_PENDING)
-            {
-                return $this->error('ERR_REQUEST_PENDING', 'Request already pending', 409);
-            }
-
-            // якщо А заблокував В або навпаки
-            if ($existing->status == Friendship::STATUS_BLOCKED)
-            {
-                return $this->error('ERR_USER_BLOCKED', 'Unable to send request', 403);
-            }
-        }
-
-        Friendship::create([
-            'user_id' => $me->id,
-            'friend_id' => $targetUser->id,
-            'status' => Friendship::STATUS_PENDING
-        ]);
-
-        $targetUser->notify(new NewFriendRequestNotification($me));
 
         return $this->success('FRIEND_REQUEST_SENT', 'Friend request sent');
     }
 
     /**
-     * приймання заявки в друзі
+     * Прийняти заявку в друзі
      *
-     * @param Request $request
-     * @param string $username
-     * @return JsonResponse
+     * @urlParam username string required Нікнейм користувача, який надіслав заявку. Example: Tetrone_84
+     * * @responseFile status=200 storage/responses/friend_success.json
+     * @response 404 {"success": false, "code": "ERR_NO_PENDING_REQUEST", "message": "No pending request found"}
      */
     public function acceptRequest(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
-        $me = $request->user();
+        $success = $this->friendService->acceptRequest($request->user(), $targetUser);
 
-        // Шукаємо заявку де User_id == ТОЙ ХТО ПРОСИТЬ а Friend_id == Я
-        $friendship = Friendship::where('user_id', $targetUser->id)
-            ->where('friend_id', $me->id)
-            ->where('status', Friendship::STATUS_PENDING)
-            ->first();
-
-        if (!$friendship)
+        if (!$success)
         {
             return $this->error('ERR_NO_PENDING_REQUEST', 'No pending request found', 404);
         }
-
-        $friendship->update(['status' => Friendship::STATUS_ACCEPTED]);
 
         return $this->success('FRIEND_REQUEST_ACCEPTED', 'Friend request accepted');
     }
 
     /**
-     * видалення заявки або видалення з друзів
+     * Видалити з друзів або скасувати заявку
      *
-     * @param Request $request
-     * @param string $username
-     * @return JsonResponse
+     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
+     * * @responseFile status=200 storage/responses/friend_success.json
      */
     public function destroy(Request $request, string $username): JsonResponse
     {
@@ -119,43 +76,48 @@ class FriendshipController extends Controller
     }
 
     /**
-     * блокування користувача
+     * Заблокувати користувача
      *
-     * @param Request $request
-     * @param string $username
-     * @return JsonResponse
+     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
+     * * @responseFile status=200 storage/responses/friend_success.json
      */
     public function block(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
-        $me = $request->user();
+        $result = $this->friendService->blockUser($request->user(), $targetUser);
 
-        if ($me->id === $targetUser->id)
+        if (is_array($result))
         {
-            return $this->error('ERR_CANNOT_BLOCK_SELF', 'Cannot block yourself 1000-7', 400);
+            return $this->error($result['error'], $result['message'], $result['status']);
         }
-
-        // видаляємо будь-які старі відносини (дружбу або заявки)
-        Friendship::between($me, $targetUser)->delete();
-
-        // новий запис про блокування, де ініціатор - Я
-        Friendship::create([
-            'user_id' => $me->id,
-            'friend_id' => $targetUser->id,
-            'status' => Friendship::STATUS_BLOCKED
-        ]);
-
-        broadcast(new UserBlockedEvent($me->id, $targetUser->id));
 
         return $this->success('USER_BLOCKED', 'User blocked');
     }
 
     /**
-     * отримання списку друзів
-     * (Колекції ресурсів залишаємо як є, fetchClient сам дістане res.data)
+     * Зняти блокування з користувача
      *
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
+     * * @responseFile status=200 storage/responses/friend_success.json
+     * @response 404 {"success": false, "code": "ERR_NOT_IN_BLACKLIST", "message": "User was not in blacklist"}
+     */
+    public function unblock(Request $request, string $username): JsonResponse
+    {
+        $targetUser = User::where('username', $username)->firstOrFail();
+        $success = $this->friendService->unblockUser($request->user(), $targetUser);
+
+        if (!$success)
+        {
+            return $this->error('ERR_NOT_IN_BLACKLIST', 'User was not in blacklist', 404);
+        }
+
+        return $this->success('USER_UNBLOCKED', 'User unblocked');
+    }
+
+    /**
+     * Отримати список друзів
+     *
+     * @responseFile status=200 storage/responses/friend_list.json
      */
     public function listFriends(Request $request): AnonymousResourceCollection
     {
@@ -167,10 +129,9 @@ class FriendshipController extends Controller
     }
 
     /**
-     * для підрахунку кількості заявок у друзі
+     * Отримати кількість вхідних заявок
      *
-     * @param Request $request
-     * @return JsonResponse
+     * @responseFile status=200 storage/responses/friend_counts.json
      */
     public function getCounts(Request $request): JsonResponse
     {
@@ -179,15 +140,13 @@ class FriendshipController extends Controller
             ->where('status', Friendship::STATUS_PENDING)
             ->count();
 
-        // Загортаємо в success, щоб фронт отримав дані у res.data.requests_count
         return $this->success('SUCCESS', 'Counts retrieved', ['requests_count' => $requestsCount]);
     }
 
     /**
-     * для отримання моїх підписок
+     * Отримати список надісланих мною заявок (підписок)
      *
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * @responseFile status=200 storage/responses/friend_list.json
      */
     public function sentRequests(Request $request): AnonymousResourceCollection
     {
@@ -201,10 +160,9 @@ class FriendshipController extends Controller
     }
 
     /**
-     * для отримання списку користувачів які НАМ кинули заявку в др
+     * Отримати список вхідних заявок
      *
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * @responseFile status=200 storage/responses/friend_list.json
      */
     public function requests(Request $request): AnonymousResourceCollection
     {
@@ -218,10 +176,9 @@ class FriendshipController extends Controller
     }
 
     /**
-     * для отримання списку користувачів які у нас в ЧС
+     * Отримати чорний список
      *
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * @responseFile status=200 storage/responses/friend_list.json
      */
     public function blocked(Request $request): AnonymousResourceCollection
     {
@@ -232,31 +189,5 @@ class FriendshipController extends Controller
         })->get();
 
         return PublicUserResource::collection($users);
-    }
-
-    /**
-     * для видалення з ЧС
-     *
-     * @param Request $request
-     * @param string $username
-     * @return JsonResponse
-     */
-    public function unblock(Request $request, string $username): JsonResponse
-    {
-        $targetUser = User::where('username', $username)->firstOrFail();
-        $me = $request->user();
-
-        // Видаляємо ТІЛЬКИ якщо Я заблокував (user_id == me)
-        $deleted = Friendship::where('user_id', $me->id)
-            ->where('friend_id', $targetUser->id)
-            ->where('status', Friendship::STATUS_BLOCKED)
-            ->delete();
-
-        if ($deleted)
-        {
-            return $this->success('USER_UNBLOCKED', 'User unblocked');
-        }
-
-        return $this->error('ERR_NOT_IN_BLACKLIST', 'User was not in blacklist', 404);
     }
 }

@@ -88,6 +88,13 @@ class PostController extends Controller
         return $this->success('SUCCESS', 'Post retrieved successfully', (new PostResource($post))->resolve());
     }
 
+    /**
+     * Створити новий пост
+     *
+     * Цей метод створює новий запис на стіні користувача.
+     * Якщо передати original_post_id, це буде вважатися репостом.
+     * * @responseFile status=201 storage/responses/post_created.json
+     */
     public function store(StorePostRequest $request): JsonResponse
     {
         $user = $request->user();

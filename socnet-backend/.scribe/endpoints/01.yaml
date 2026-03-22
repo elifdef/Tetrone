@@ -1,0 +1,341 @@
+name: 'Авторизація та Акаунт'
+description: |-
+
+  API для реєстрації, входу та керування сесіями (пристроями).
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/sign-up
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Реєстрація нового користувача'
+      description: 'Створює новий акаунт. Якщо реєстрація закрита в налаштуваннях сервера (features.allow_registration), запит буде відхилено.'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      username:
+        custom: []
+        name: username
+        description: 'Must match the regex /^[A-Za-z0-9_]+$/. Must not be one of <code>login</code>, <code>register</code>, <code>setup-profile</code>, <code>post</code>, <code>rules</code>, <code>friends</code>, <code>messages</code>, <code>email-verify</code>, <code>settings</code>, <code>notifications</code>, <code>activity</code>, <code>support</code>, <code>moderation</code>, <code>home</code>, <code>index</code>, <code>about</code>, <code>contact</code>, <code>search</code>, <code>api</code>, <code>storage</code>, <code>public</code>, <code>broadcasting</code>, <code>sanctum</code>, <code>vendor</code>, <code>admin</code>, <code>administrator</code>, <code>root</code>, <code>sysadmin</code>, <code>system</code>, <code>moderator</code>, <code>support</code>, or <code>pewdiepie</code> Must be at least 4 characters. Must not be greater than 32 characters.'
+        required: true
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: zbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      username: b
+      email: zbailey@example.net
+      password: architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+          "success": false,
+          "code": "ERR_REGISTRATION_SUSPENDED",
+          "message": "New user registration is currently suspended"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/sign-in
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Увійти в акаунт'
+      description: 'Аутентифікація користувача за email та паролем. Повертає токен доступу та базові дані користувача.'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: gbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: ''
+        required: true
+        example: '|]|{+-'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: gbailey@example.net
+      password: '|]|{+-'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: |-
+          {
+          "success": false,
+          "code": "ERR_INVALID_CREDENTIALS",
+          "message": "Invalid credentials"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/sign-out
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Вихід з акаунта'
+      description: 'Видаляє поточний токен доступу (розлогінює поточний пристрій).'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "code": "LOGOUT_SUCCESS",
+          "message": "Logged out successfully"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/settings/sessions
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Отримати список активних сесій'
+      description: 'Повертає список усіх пристроїв (токенів), з яких користувач зараз авторизований у системі.'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "code": "SESSIONS_RETRIEVED",
+          "message": "Sessions retrieved",
+          "data": [
+          {
+          "id": 1,
+          "name": "Windows_Chrome",
+          "ip_address": "192.168.1.1",
+          "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+          "last_used_at": "2026-03-22T20:12:52.000000Z",
+          "created_at": "2026-03-22T10:00:00.000000Z",
+          "is_current": true
+          }
+          ]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: api/v1/settings/sessions
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Видалити всі сесії ОКРІМ поточної'
+      description: 'Корисно, якщо користувач підозрює несанкціонований доступ до акаунта. Завершує всі інші активні сеанси на всіх пристроях.'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "code": "ALL_OTHER_SESSIONS_REVOKED",
+          "message": "All other sessions revoked successfully"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/settings/sessions/{tokenId}'
+    metadata:
+      custom: []
+      groupName: 'Авторизація та Акаунт'
+      groupDescription: |-
+
+        API для реєстрації, входу та керування сесіями (пристроями).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Видалити конкретну сесію (токен)'
+      description: 'Завершує сеанс для вказаного ID токена (примусово розлогінює користувача на іншому пристрої).'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      tokenId:
+        custom: []
+        name: tokenId
+        description: 'ID сесії (токена) для видалення.'
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      tokenId: 2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
