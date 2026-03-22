@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useTranslation } from 'react-i18next';
+
 import FeedService from "../services/feed.service";
 import { usePageTitle } from "../hooks/usePageTitle";
 import PostItem from "../components/post/PostItem";
-import { notifyError } from "../components/common/Notify";
-import { useTranslation } from 'react-i18next';
 import InfiniteScrollList from "../components/common/InfiniteScrollList";
 import { AuthContext } from "../context/AuthContext";
 
@@ -14,71 +15,43 @@ export default function HomePage() {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'feed';
-
-    const [error, setError] = useState(false);
-    const [posts, setPosts] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-    const abortControllerRef = useRef(null);
     const { user: authUser } = useContext(AuthContext);
+    const queryClient = useQueryClient();
 
     const handleTabChange = (tab) => {
         if (activeTab === tab) return;
-        setLoading(true);
-        setPosts([]);
-        setError(false);
-        setPage(1);
-        setHasMore(true);
         setSearchParams({ tab });
     };
 
-    const fetchFeed = async () => {
-        if (abortControllerRef.current) abortControllerRef.current.abort();
-        const newController = new AbortController();
-        abortControllerRef.current = newController;
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        refetch
+    } = useInfiniteQuery({
+        queryKey: ['feed', activeTab], // Кеш окремо для 'feed' і 'global'
+        queryFn: ({ pageParam = 1, signal }) => FeedService.getFeed(activeTab, pageParam, signal),
+        getNextPageParam: (lastPage) => {
+            const meta = lastPage?.meta;
+            return meta && meta.current_page < meta.last_page ? meta.current_page + 1 : undefined;
+        }
+    });
 
-        setError(false);
-        if (page === 1) setLoading(true);
-        else setIsLoadingMore(true);
+    const posts = data?.pages.flatMap(page => page.data || []) || [];
 
-        const res = await FeedService.getFeed(activeTab, page, newController.signal);
-
-        if (!newController.signal.aborted) {
-            if (res.success) {
-                const items = res.data || [];
-                const meta = res.meta;
-
-                setPosts(prev => {
-                    if (page === 1) return items;
-                    const existingIds = new Set(prev.map(p => p.id));
-                    const uniqueNewPosts = items.filter(newPost => !existingIds.has(newPost.id));
-                    return [...prev, ...uniqueNewPosts];
-                });
-                setHasMore(meta ? meta.current_page < meta.last_page : false);
-            } else {
-                setError(true);
-                if (page === 1) notifyError(res.message || t('error.load_feed'));
+    const handleRepostSuccess = (newPost) => {
+        queryClient.setQueryData(['feed', activeTab], (oldData) => {
+            if (!oldData) return oldData;
+            const newPages = [...oldData.pages];
+            if (newPages.length > 0) {
+                newPages[0] = { ...newPages[0], data: [newPost, ...newPages[0].data] };
             }
-            setLoading(false);
-            setIsLoadingMore(false);
-        }
+            return { ...oldData, pages: newPages };
+        });
     };
-
-    useEffect(() => {
-        fetchFeed();
-        return () => {
-            if (abortControllerRef.current) abortControllerRef.current.abort();
-        }
-    }, [activeTab, page]);
-
-    const loadMore = useCallback(() => {
-        if (!loading && !isLoadingMore && hasMore && !error) {
-            setPage(prev => prev + 1);
-        }
-    }, [loading, isLoadingMore, hasMore, error]);
 
     const EmptyState = () => (
         <div className="socnet-empty-state with-card">
@@ -101,8 +74,6 @@ export default function HomePage() {
         </div>
     );
 
-    const handleRepostSuccess = (newPost) => setPosts(prevPosts => [newPost, ...prevPosts]);
-
     return (
         <div className="socnet-feed-page">
             <div className="socnet-tabs">
@@ -116,12 +87,12 @@ export default function HomePage() {
 
             <InfiniteScrollList
                 itemsCount={posts.length}
-                isLoadingInitial={loading && page === 1}
-                isLoadingMore={isLoadingMore}
-                hasMore={hasMore}
-                onLoadMore={loadMore}
-                error={error}
-                onRetry={fetchFeed}
+                isLoadingInitial={isLoading}
+                isLoadingMore={isFetchingNextPage}
+                hasMore={!!hasNextPage}
+                onLoadMore={fetchNextPage}
+                error={isError}
+                onRetry={refetch}
                 emptyState={<EmptyState />}
             >
                 {posts.map(post => (

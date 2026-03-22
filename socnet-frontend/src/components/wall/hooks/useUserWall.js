@@ -1,125 +1,139 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from 'react-i18next';
-import { notifySuccess, notifyError } from "../../common/Notify";
+import { notifyError, notifySuccess } from "../../common/Notify";
 import { useModal } from "../../../context/ModalContext";
 import PostService from '../../../services/post.service';
 
 export const useUserWall = (profileUser) => {
     const { t } = useTranslation();
     const { openConfirm } = useModal();
+    const queryClient = useQueryClient();
 
-    const [posts, setPosts] = useState([]);
-    const [countPosts, setCountPosts] = useState(0);
-    const [isPageLoading, setIsPageLoading] = useState(true);
+    const queryKey = ['wall', profileUser?.username];
 
     const [editingPostId, setEditingPostId] = useState(null);
 
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useInfiniteQuery({
+        queryKey,
+        queryFn: ({ pageParam = 1 }) => PostService.getUserPosts(profileUser?.username, pageParam),
+        getNextPageParam: (lastPage) => {
+            const meta = lastPage?.meta || lastPage?.data?.meta;
+            return meta && meta.current_page < meta.last_page ? meta.current_page + 1 : undefined;
+        },
+        enabled: !!profileUser?.username
+    });
 
-    const fetchPosts = async (pageNumber = 1) => {
-        if (!profileUser?.username) return;
+    const posts = data?.pages.flatMap(page => page.data?.data || page.data || []) || [];
 
-        if (pageNumber > 1) setIsLoadingMore(true);
-        else setIsPageLoading(true);
+    const firstPageMeta = data?.pages[0]?.meta || data?.pages[0]?.data?.meta;
+    const countPosts = firstPageMeta?.total || 0;
 
-        const res = await PostService.getUserPosts(profileUser.username, pageNumber);
-
-        if (res.success) {
-            const processedPosts = res.data.data || res.data;
-            const meta = res.data.meta;
-
-            if (pageNumber === 1) {
-                setPosts(processedPosts);
-            } else {
-                setPosts(prev => {
-                    const uniqueNewPosts = processedPosts.filter(
-                        newPost => !prev.some(existingPost => existingPost.id === newPost.id)
-                    );
-                    return [...prev, ...uniqueNewPosts];
+    const createMutation = useMutation({
+        mutationFn: ({ content, images, entities }) => PostService.create({ images, content, target_user_id: profileUser.id, entities }),
+        onSuccess: (res) => {
+            if (res.success) {
+                queryClient.setQueryData(queryKey, (oldData) => {
+                    if (!oldData) return oldData;
+                    const newPages = [...oldData.pages];
+                    if (newPages.length > 0) {
+                        newPages[0] = { ...newPages[0], data: [res.data, ...newPages[0].data] };
+                    }
+                    return { ...oldData, pages: newPages };
                 });
+            } else {
+                notifyError(res.message || t('error.publish_post'));
             }
+        }
+    });
 
-            setCountPosts(meta?.total || 0);
-            setHasMore(meta ? meta.current_page < meta.last_page : false);
-        } else {
-            if (res.status === 403) {
-                setPosts([]);
+    const editMutation = useMutation({
+        mutationFn: ({ postId, updateData }) => PostService.update(postId, updateData),
+        onSuccess: (res, variables) => {
+            if (res.success) {
+                queryClient.setQueryData(queryKey, (oldData) => {
+                    if (!oldData) return oldData;
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map(page => ({
+                            ...page,
+                            data: page.data.map(p => p.id === variables.postId ? res.data : p)
+                        }))
+                    };
+                });
+                notifySuccess(res.message || t('success.changes_saved'));
+                setEditingPostId(null);
             } else {
                 notifyError(res.message);
             }
         }
+    });
 
-        if (pageNumber === 1) setIsPageLoading(false);
-        else setIsLoadingMore(false);
-    };
-
-    useEffect(() => {
-        setPage(1); setHasMore(true); setPosts([]); setIsPageLoading(true);
-        fetchPosts(1);
-    }, [profileUser?.username]);
-
-    const loadMore = useCallback(() => {
-        if (!isLoadingMore && hasMore) {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            fetchPosts(nextPage);
+    const deleteMutation = useMutation({
+        mutationFn: (postId) => PostService.delete(postId),
+        onSuccess: (res, deletedId) => {
+            if (res.success) {
+                queryClient.setQueryData(queryKey, (oldData) => {
+                    if (!oldData) return oldData;
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map(page => ({
+                            ...page,
+                            data: page.data.filter(p => p.id !== deletedId)
+                        }))
+                    };
+                });
+            } else {
+                notifyError(res.message || t('error.delete_post'));
+            }
         }
-    }, [isLoadingMore, hasMore, page, profileUser?.username]);
+    });
 
     const createPost = async (content, images, entities = null) => {
-        const res = await PostService.create({
-            images, content, target_user_id: profileUser.id, entities
-        });
-
-        if (res.success) {
-            setPosts([res.data, ...posts]);
-            setCountPosts(countPosts + 1);
-            return true;
-        } else {
-            notifyError(res.message || t('error.publish_post'));
-            return false;
-        }
+        await createMutation.mutateAsync({ content, images, entities });
+        return true;
     };
-
-    const handleRepostSuccess = (newPost) => {
-        setPosts(prev => [newPost, ...prev]);
-        setCountPosts(prev => prev + 1);
-    };
-
-    const startEditing = (post) => setEditingPostId(post.id);
-    const cancelEditing = () => setEditingPostId(null);
 
     const saveEdit = async (postId, updateData) => {
-        const res = await PostService.update(postId, updateData);
-
-        if (res.success) {
-            setPosts(prev => prev.map(p => p.id === postId ? res.data : p));
-            notifySuccess(res.message || t('success.changes_saved'));
-            cancelEditing();
-        } else {
-            notifyError(res.message);
-        }
+        await editMutation.mutateAsync({ postId, updateData });
     };
 
     const handleDelete = async (postId) => {
         const isConfirmed = await openConfirm(t('post.delete_post'));
         if (!isConfirmed) return;
+        await deleteMutation.mutateAsync(postId);
+    };
 
-        const res = await PostService.delete(postId);
-
-        if (res.success) {
-            setPosts(prev => prev.filter(p => p.id !== postId));
-            setCountPosts(prev => prev - 1);
-        } else {
-            notifyError(res.message || t('error.delete_post'));
-        }
+    const handleRepostSuccess = (newPost) => {
+        queryClient.setQueryData(queryKey, (oldData) => {
+            if (!oldData) return oldData;
+            const newPages = [...oldData.pages];
+            if (newPages.length > 0) {
+                newPages[0] = { ...newPages[0], data: [newPost, ...newPages[0].data] };
+            }
+            return { ...oldData, pages: newPages };
+        });
     };
 
     return {
-        posts, countPosts, isPageLoading, hasMore, isLoadingMore, loadMore,
-        createPost, handleDelete, editingPostId, handleRepostSuccess,
-        startEditing, cancelEditing, saveEdit
+        posts,
+        countPosts,
+        isPageLoading: isLoading,
+        hasMore: !!hasNextPage,
+        isLoadingMore: isFetchingNextPage,
+        loadMore: fetchNextPage,
+        createPost,
+        handleDelete,
+        editingPostId,
+        handleRepostSuccess,
+        startEditing: (post) => setEditingPostId(post.id),
+        cancelEditing: () => setEditingPostId(null),
+        saveEdit
     };
 };
