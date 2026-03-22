@@ -34,7 +34,7 @@ export default function PostItem({
     const originalAuthorColor = postData.original_post?.user?.personalization?.username_color;
 
     return (
-        <div className={`socnet-post ${isInner ? 'socnet-post-inner' : ''} ${readonly ? 'socnet-post-readonly' : ''}`}>
+        <div className={`tetrone-post ${isInner ? 'tetrone-post-inner' : ''} ${readonly ? 'tetrone-post-readonly' : ''}`}>
 
             <PostHeader
                 post={postData}
@@ -54,7 +54,7 @@ export default function PostItem({
 
             {postData.is_repost && (
                 <div
-                    className="socnet-repost-branch"
+                    className="tetrone-repost-branch"
                     style={originalAuthorColor ? { borderLeftColor: originalAuthorColor } : {}}
                 >
                     {postData.original_post_id && postData.original_post && depth < 3 ? (
@@ -65,11 +65,11 @@ export default function PostItem({
                             depth={depth + 1}
                         />
                     ) : postData.original_post_id && depth >= 3 ? (
-                        <div className="socnet-repost-limit-msg">
+                        <div className="tetrone-repost-limit-msg">
                             {t('post.nested_too_deep')}
                         </div>
                     ) : (
-                        <div className="socnet-deleted-stub">
+                        <div className="tetrone-deleted-stub">
                             {t('post.original_deleted')}
                         </div>
                     )}

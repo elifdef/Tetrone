@@ -24,9 +24,9 @@ export default function CommentList({
             onLoadMore={onLoadMore}
             error={error}
             onRetry={onRetry}
-            className="socnet-comments-list"
+            className="tetrone-comments-list"
             emptyState={
-                <div className="socnet-empty-state">
+                <div className="tetrone-empty-state">
                     <p>{noCommentsText}</p>
                 </div>
             }

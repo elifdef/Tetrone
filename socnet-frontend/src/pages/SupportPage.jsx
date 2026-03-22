@@ -6,9 +6,9 @@ const SupportPage = () => {
     usePageTitle(t('common.support_panel'));
 
     return (
-        <div className="socnet-card-wrapper">
-            <h2 className="socnet-section-title">{t('common.support_panel')}</h2>
-            <div className="socnet-empty-state with-card">
+        <div className="tetrone-card-wrapper">
+            <h2 className="tetrone-section-title">{t('common.support_panel')}</h2>
+            <div className="tetrone-empty-state with-card">
                 (У розробці)
                 <div>
                     Підтримайте себе самі

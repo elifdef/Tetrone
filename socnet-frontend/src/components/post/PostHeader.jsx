@@ -13,7 +13,7 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
 
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (showMenu && !e.target.closest('.socnet-post-actions-container')) {
+            if (showMenu && !e.target.closest('.tetrone-post-actions-container')) {
                 setShowMenu(false);
             }
         };
@@ -39,57 +39,57 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
         : t('post.updated_avatar_male');
 
     return (
-        <div className="socnet-post-header">
+        <div className="tetrone-post-header">
             <Link to={`/${post.user.username}`}>
                 <img
                     src={post.user.avatar}
-                    className="socnet-post-avatar"
+                    className="tetrone-post-avatar"
                     alt={post.user.username}
                 />
             </Link>
 
-            <div className="socnet-post-meta">
-                <div className="socnet-post-authors-row">
+            <div className="tetrone-post-meta">
+                <div className="tetrone-post-authors-row">
                     <Link
                         to={`/${post.user.username}`}
-                        className="socnet-post-author"
+                        className="tetrone-post-author"
                         style={authorNameColor ? { color: authorNameColor } : undefined}
                     >
                         {post.user.first_name} {post.user.last_name}
                     </Link>
 
                     {isAvatarUpdate && (
-                        <span className="socnet-post-target-text">
+                        <span className="tetrone-post-target-text">
                             {' '}{avatarUpdateText}
                         </span>
                     )}
 
                     {showTargetUser && (
-                        <span className="socnet-post-target-text">
+                        <span className="tetrone-post-target-text">
                             {' '}{t(`post.wrote_on_wall_${post.user.gender === 2 ? 'female' : 'male'}`)}{' '}
-                            <Link to={`/${post.target_user.username}`} className="socnet-post-author target">
+                            <Link to={`/${post.target_user.username}`} className="tetrone-post-author target">
                                 {post.target_user.first_name} {post.target_user.last_name}
                             </Link>
                         </span>
                     )}
                 </div>
 
-                <Link to={`/post/${post.id}`} className="socnet-post-date">
+                <Link to={`/post/${post.id}`} className="tetrone-post-date">
                     {formatDate(post.created_at)}
                 </Link>
             </div>
 
             {showActions && (
-                <div className="socnet-post-actions-container">
+                <div className="tetrone-post-actions-container">
                     <button
-                        className="socnet-post-action-btn-trigger"
+                        className="tetrone-post-action-btn-trigger"
                         onClick={() => setShowMenu(!showMenu)}
                     >
                         <DotsIcon width={20} height={20} />
                     </button>
 
                     {showMenu && (
-                        <div className="socnet-actions-dropdown">
+                        <div className="tetrone-actions-dropdown">
                             {canEdit && (
                                 <button onClick={() => { onEdit(post); setShowMenu(false); }}>
                                     <EditIcon /> {t('common.edit')}

@@ -46,7 +46,7 @@ const ImageDropzone = ({ onFileSelect, fileName }) => {
 
     return (
         <div
-            className={`socnet-avatar-dropzone ${isDragging ? 'drag-active' : ''}`}
+            className={`tetrone-avatar-dropzone ${isDragging ? 'drag-active' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -55,18 +55,18 @@ const ImageDropzone = ({ onFileSelect, fileName }) => {
             <input
                 type="file"
                 ref={fileInputRef}
-                className="socnet-hidden-input"
+                className="tetrone-hidden-input"
                 accept="image/*"
                 onChange={(e) => onFileSelect(e)}
             />
 
-            <div className="socnet-dropzone-content">
-                <div className="socnet-dropzone-text">
+            <div className="tetrone-dropzone-content">
+                <div className="tetrone-dropzone-text">
                     <strong>{t('common.drag_and_drop')}</strong> {t('common.or_paste')} (Ctrl+V)
                 </div>
             </div>
             {fileName && (
-                <div className="socnet-dropzone-filename">
+                <div className="tetrone-dropzone-filename">
                     {t('common.selected_file')}: <strong>{fileName}</strong>
                 </div>
             )}

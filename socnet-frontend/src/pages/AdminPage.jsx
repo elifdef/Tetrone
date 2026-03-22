@@ -72,8 +72,8 @@ const AdminPage = () => {
     if (!isAdmin && !isModerator) return null;
 
     return (
-        <div className="socnet-card-wrapper">
-            <h2 className="socnet-section-title">{t('common.admin_panel')}</h2>
+        <div className="tetrone-card-wrapper">
+            <h2 className="tetrone-section-title">{t('common.admin_panel')}</h2>
 
             <AdminTabs
                 tabs={adminTabs}

@@ -42,33 +42,33 @@ const CountrySelect = ({ value, onChange }) => {
     };
 
     return (
-        <div className="socnet-form-group" ref={dropdownRef}>
-            <label className="socnet-form-label">{t('common.country')}</label>
+        <div className="tetrone-form-group" ref={dropdownRef}>
+            <label className="tetrone-form-label">{t('common.country')}</label>
 
-            <div className="socnet-custom-select-wrapper">
+            <div className="tetrone-custom-select-wrapper">
                 <div
-                    className={`socnet-form-select socnet-custom-select ${isOpen ? 'open' : ''}`}
+                    className={`tetrone-form-select tetrone-custom-select ${isOpen ? 'open' : ''}`}
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {selectedCountry ? (
                         <>
-                            <span className={`fi fi-${selectedCountry.code.toLowerCase()} socnet-flag`}></span>
+                            <span className={`fi fi-${selectedCountry.code.toLowerCase()} tetrone-flag`}></span>
                             <span>{selectedCountry.name}</span>
                         </>
                     ) : (
-                        <span className="socnet-select-placeholder">{t('settings.not_selected')}</span>
+                        <span className="tetrone-select-placeholder">{t('settings.not_selected')}</span>
                     )}
                     
-                    <span className="socnet-select-arrow">
+                    <span className="tetrone-select-arrow">
                         {isOpen ? '▲' : '▼'}
                     </span>
                 </div>
 
                 {isOpen && (
-                    <ul className="socnet-custom-dropdown-list">
+                    <ul className="tetrone-custom-dropdown-list">
                         <li
                             onClick={() => handleSelect(null)}
-                            className="socnet-custom-dropdown-item not-selected"
+                            className="tetrone-custom-dropdown-item not-selected"
                         >
                             {t('settings.not_selected')}
                         </li>
@@ -77,9 +77,9 @@ const CountrySelect = ({ value, onChange }) => {
                             <li
                                 key={c.code}
                                 onClick={() => handleSelect(c.code)}
-                                className={`socnet-custom-dropdown-item ${value === c.code ? 'selected' : ''}`}
+                                className={`tetrone-custom-dropdown-item ${value === c.code ? 'selected' : ''}`}
                             >
-                                <span className={`fi fi-${c.code.toLowerCase()} socnet-flag`}></span>
+                                <span className={`fi fi-${c.code.toLowerCase()} tetrone-flag`}></span>
                                 <span>{c.name}</span>
                             </li>
                         ))}

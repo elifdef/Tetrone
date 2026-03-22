@@ -25,7 +25,7 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
                 <Input
                     label={t('admin.search_user')}
                     type="text"
-                    className="socnet-form-input"
+                    className="tetrone-form-input"
                     placeholder={t('admin.search_placeholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -154,14 +154,14 @@ export const UsersManager = ({ canBan = true }) => {
             <UserSearchForm search={search} setSearch={setSearch} handleSearch={handleSearch} />
 
             {isLoading ? (
-                <div className="socnet-empty-state">{t('common.loading')}</div>
+                <div className="tetrone-empty-state">{t('common.loading')}</div>
             ) : (
                 <div className="admin-users-list">
                     {users.map(user => (
                         <UserCard key={user.id} user={user} handleMute={handleMute} handleBan={handleBan} canBan={canBan} />
                     ))}
                     {users.length === 0 && (
-                        <div className="socnet-empty-state with-card">{t('admin.users_not_found')}</div>
+                        <div className="tetrone-empty-state with-card">{t('admin.users_not_found')}</div>
                     )}
                 </div>
             )}
@@ -266,7 +266,7 @@ export const PostsManager = ({ currentUser }) => {
             </form>
 
             <InfiniteScrollList
-                className="socnet-feed-list admin-feed-wrapper"
+                className="tetrone-feed-list admin-feed-wrapper"
                 itemsCount={posts.length}
                 isLoadingInitial={isLoading}
                 isLoadingMore={isLoadingMore}
@@ -275,9 +275,9 @@ export const PostsManager = ({ currentUser }) => {
                 error={false}
                 onRetry={() => fetchPosts(targetUser, page, false)}
                 emptyState={
-                    <div className="socnet-empty-state with-card">
-                        <h3 className="socnet-empty-title">{t('post.posts_not_found')}</h3>
-                        <p className="socnet-empty-desc">{t('admin.posts.not_found_desc')}</p>
+                    <div className="tetrone-empty-state with-card">
+                        <h3 className="tetrone-empty-title">{t('post.posts_not_found')}</h3>
+                        <p className="tetrone-empty-desc">{t('admin.posts.not_found_desc')}</p>
                     </div>
                 }
             >
@@ -287,38 +287,38 @@ export const PostsManager = ({ currentUser }) => {
                     const showTargetUser = post.target_user && post.target_user.username !== post.user?.username;
 
                     return (
-                        <div key={post.id} className="socnet-post admin-moderation-post">
-                            <div className="socnet-post-header">
+                        <div key={post.id} className="tetrone-post admin-moderation-post">
+                            <div className="tetrone-post-header">
                                 <Link to={`/${post.user?.username}`} target="_blank">
-                                    <img src={post.user?.avatar} alt={post.user?.username} className="socnet-post-avatar" />
+                                    <img src={post.user?.avatar} alt={post.user?.username} className="tetrone-post-avatar" />
                                 </Link>
-                                <div className="socnet-post-meta">
-                                    <div className="socnet-post-authors-row">
-                                        <Link to={`/${post.user?.username}`} className="socnet-post-author" target="_blank">
+                                <div className="tetrone-post-meta">
+                                    <div className="tetrone-post-authors-row">
+                                        <Link to={`/${post.user?.username}`} className="tetrone-post-author" target="_blank">
                                             {post.user?.first_name} {post.user?.last_name}
                                         </Link>
 
                                         {showTargetUser && (
-                                            <span className="socnet-post-target-text">
+                                            <span className="tetrone-post-target-text">
                                                 {` ${t(wallKey)} `}
-                                                <Link to={`/${post.target_user.username}`} className="socnet-post-author target" target="_blank">
+                                                <Link to={`/${post.target_user.username}`} className="tetrone-post-author target" target="_blank">
                                                     {post.target_user.first_name} {post.target_user.last_name}
                                                 </Link>
                                             </span>
                                         )}
                                     </div>
-                                    <span className="socnet-post-date">
+                                    <span className="tetrone-post-date">
                                         {t('common.id')}: {post.id} • {formatDate(post.created_at)}
                                     </span>
                                 </div>
 
-                                <div className="socnet-post-actions-top admin-post-actions-visible">
+                                <div className="tetrone-post-actions-top admin-post-actions-visible">
                                     {isAdmin && (
-                                        <button className="socnet-action-icon" onClick={() => handleEdit(post.id)} title={t('common.edit')}>
+                                        <button className="tetrone-action-icon" onClick={() => handleEdit(post.id)} title={t('common.edit')}>
                                             ✎
                                         </button>
                                     )}
-                                    <button className="socnet-post-delete" onClick={() => handleDelete(post.id)} title={t('common.delete')}>
+                                    <button className="tetrone-post-delete" onClick={() => handleDelete(post.id)} title={t('common.delete')}>
                                         ✖
                                     </button>
                                 </div>
@@ -327,11 +327,11 @@ export const PostsManager = ({ currentUser }) => {
                             <PostContent content={post.content} post={post} onUpdate={() => { }} />
 
                             {post.is_repost && (
-                                <div className="socnet-repost-branch">
+                                <div className="tetrone-repost-branch">
                                     {post.original_post_id && post.original_post ? (
                                         <PostItem post={post.original_post} isInner={true} readonly={true} />
                                     ) : (
-                                        <div className="socnet-deleted-stub">{t('post.original_deleted')}</div>
+                                        <div className="tetrone-deleted-stub">{t('post.original_deleted')}</div>
                                     )}
                                 </div>
                             )}

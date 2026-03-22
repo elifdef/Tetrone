@@ -71,11 +71,11 @@ export default function AdminAppeals() {
                 </div>
             </div>
 
-            <div className="socnet-tabs">
+            <div className="tetrone-tabs">
                 {['pending', 'approved', 'rejected'].map(status => (
                     <button
                         key={status}
-                        className={`socnet-tab ${statusFilter === status ? 'active' : ''}`}
+                        className={`tetrone-tab ${statusFilter === status ? 'active' : ''}`}
                         onClick={() => setStatusFilter(status)}
                     >
                         {t(`admin.stats.${status}`)}
@@ -84,27 +84,27 @@ export default function AdminAppeals() {
             </div>
 
             {loading ? (
-                <div className="socnet-empty-state">{t('common.loading')}</div>
+                <div className="tetrone-empty-state">{t('common.loading')}</div>
             ) : appeals.length === 0 ? (
-                <div className="socnet-empty-state with-card">{t('admin.appeals.empty')}</div>
+                <div className="tetrone-empty-state with-card">{t('admin.appeals.empty')}</div>
             ) : (
-                <div className="socnet-feed-list">
+                <div className="tetrone-feed-list">
                     {appeals.map((appeal) => (
                         <div key={appeal.id} className="admin-user-card admin-appeal-card">
                             <div className="admin-user-info">
-                                <div className="socnet-info-row">
-                                    <span className="socnet-label">{t('admin.appeals.from')}</span>
-                                    <span className="socnet-value">
-                                        <Link to={`/${appeal.user?.username}`} className="socnet-link" target="_blank">
+                                <div className="tetrone-info-row">
+                                    <span className="tetrone-label">{t('admin.appeals.from')}</span>
+                                    <span className="tetrone-value">
+                                        <Link to={`/${appeal.user?.username}`} className="tetrone-link" target="_blank">
                                             {appeal.user?.first_name} {appeal.user?.last_name} (@{appeal.user?.username})
                                         </Link>
                                     </span>
                                 </div>
 
-                                <div className="socnet-info-row">
-                                    <span className="socnet-label">{t('admin.appeals.message')}</span>
-                                    <span className="socnet-value">
-                                        <div className="socnet-settings-quote admin-appeal-quote">
+                                <div className="tetrone-info-row">
+                                    <span className="tetrone-label">{t('admin.appeals.message')}</span>
+                                    <span className="tetrone-value">
+                                        <div className="tetrone-settings-quote admin-appeal-quote">
                                             {appeal.message}
                                         </div>
                                     </span>

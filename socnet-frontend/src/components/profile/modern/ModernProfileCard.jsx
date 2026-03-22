@@ -28,7 +28,7 @@ export default function ModernProfileCard({ currentUser, isPreview = false }) {
     const customNameColor = currentUser.personalization?.username_color || 'var(--theme-text-main)';
 
     return (
-        <div className="socnet-modern-wrapper">
+        <div className="tetrone-modern-wrapper">
             {!isPreview && isStaff && !isBanned && <StaffBanner userRole={currentUser.role} />}
             
             <Banner personalization={currentUser?.personalization} />

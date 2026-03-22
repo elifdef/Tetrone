@@ -3,7 +3,7 @@ import "linkify-plugin-mention";
 
 const linkifyOptions = {
     target: "_blank",
-    className: "socnet-link",
+    className: "tetrone-link",
     formatHref: {
         mention: (href) => `/${href.substring(1)}`,
         url: (href) => href,
@@ -13,7 +13,7 @@ const linkifyOptions = {
     }
 };
 
-export default function RichText({ text, className = "socnet-post-text" }) {
+export default function RichText({ text, className = "tetrone-post-text" }) {
     if (!text) return null;
     
     return (

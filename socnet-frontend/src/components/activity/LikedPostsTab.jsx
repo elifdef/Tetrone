@@ -69,9 +69,9 @@ export default function LikedPostsTab({ onCountUpdate }) {
             onLoadMore={loadMore}
             error={error}
             onRetry={fetchLikedPosts}
-            className="socnet-feed-list"
+            className="tetrone-feed-list"
             emptyState={
-                <div className="socnet-empty-state">
+                <div className="tetrone-empty-state">
                     <p>{t('activity.likes.empty')}</p>
                 </div>
             }

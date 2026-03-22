@@ -114,7 +114,7 @@ const VideoPlayer = React.memo(function VideoPlayer({
     return (
         <div
             ref={wrapperRef}
-            className={`socnet-video-player retro-2012-player ${className}`}
+            className={`tetrone-video-player retro-2012-player ${className}`}
             tabIndex="0"
         >
             <Plyr

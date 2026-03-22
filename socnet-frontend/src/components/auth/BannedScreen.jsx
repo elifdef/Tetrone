@@ -51,8 +51,8 @@ export const BannedScreen = () => {
     if (!user) return null;
 
     return (
-        <div className="socnet-fullscreen-center">
-            <div className="socnet-card-wrapper banned-card">
+        <div className="tetrone-fullscreen-center">
+            <div className="tetrone-card-wrapper banned-card">
                 <h1 className="banned-title">{t('banned.title')}</h1>
 
                 <p className="banned-message">
@@ -70,12 +70,12 @@ export const BannedScreen = () => {
                 </div>
 
                 {isLoadingStatus ? (
-                    <div className="socnet-empty-state">{t('common.loading')}</div>
+                    <div className="tetrone-empty-state">{t('common.loading')}</div>
                 ) : (
                     <>
                         {hasPendingAppeal ? (
-                            <div className="socnet-info-block banned-appeal-pending-box">
-                                <span className="socnet-value banned-appeal-pending-text">
+                            <div className="tetrone-info-block banned-appeal-pending-box">
+                                <span className="tetrone-value banned-appeal-pending-text">
                                     {t('banned.appeal_pending')}
                                 </span>
                             </div>
@@ -88,7 +88,7 @@ export const BannedScreen = () => {
                                             {t('banned.appeal_form_title')}
                                         </h4>
                                         <textarea
-                                            className="socnet-form-textarea"
+                                            className="tetrone-form-textarea"
                                             rows="4"
                                             value={appealText}
                                             onChange={(e) => setAppealText(e.target.value)}

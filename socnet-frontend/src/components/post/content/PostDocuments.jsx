@@ -26,24 +26,24 @@ export default function PostDocuments({ documents = [] }) {
     if (documents.length === 0) return null;
 
     return (
-        <div className="socnet-post-documents">
+        <div className="tetrone-post-documents">
             {documents.map((doc) => (
                 <a
                     key={doc.id}
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="socnet-document-item"
+                    className="tetrone-document-item"
                     download={doc.original_name}
                 >
-                    <div className="socnet-document-icon">
+                    <div className="tetrone-document-icon">
                         {getFileIcon(doc.original_name)}
                     </div>
-                    <div className="socnet-document-info">
-                        <span className="socnet-document-name" title={doc.original_name}>
+                    <div className="tetrone-document-info">
+                        <span className="tetrone-document-name" title={doc.original_name}>
                             {doc.original_name || 'Document'}
                         </span>
-                        <span className="socnet-document-size">
+                        <span className="tetrone-document-size">
                             {formatFileSize(doc.file_size)}
                         </span>
                     </div>

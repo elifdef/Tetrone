@@ -8,10 +8,10 @@ export default function LoginPage() {
     usePageTitle(t('auth.signin'));
 
     return (
-        <div className="socnet-fullscreen-center">
-            <div className="socnet-auth-card">
-                <div className="socnet-auth-header">
-                    <h1 className="socnet-auth-title">{t('auth.signin')}</h1>
+        <div className="tetrone-fullscreen-center">
+            <div className="tetrone-auth-card">
+                <div className="tetrone-auth-header">
+                    <h1 className="tetrone-auth-title">{t('auth.signin')}</h1>
                 </div>
                 <LoginForm />
             </div>

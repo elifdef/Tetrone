@@ -9,12 +9,12 @@ import LoadingIcon from '../../assets/loader.svg?react';
 const renderToast = (message, IconComponent) => {
     toast.dismiss();
     return toast((t) => (
-        <div className="socnet-toast-inner">
+        <div className="tetrone-toast-inner">
             {IconComponent}
             <span>{message}</span>
         </div>
     ), {
-        className: 'socnet-toast-wrapper',
+        className: 'tetrone-toast-wrapper',
         duration: 4000,
         position: 'bottom-right'
     });
@@ -30,12 +30,12 @@ export const notifyLoading = (message) => {
     const text = message || i18next.t('common.processing');
 
     return toast((t) => (
-        <div className="socnet-toast-inner">
-            <LoadingIcon width={20} height={20} fill="#fff" className="socnet-spin" />
+        <div className="tetrone-toast-inner">
+            <LoadingIcon width={20} height={20} fill="#fff" className="tetrone-spin" />
             <span>{text}</span>
         </div>
     ), {
-        className: 'socnet-toast-wrapper',
+        className: 'tetrone-toast-wrapper',
         duration: Infinity,
         position: 'bottom-right'
     });

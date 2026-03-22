@@ -50,7 +50,7 @@ export default function ChatScrollContainer({
 
     return (
         <div className={className} ref={scrollRef} onScroll={handleScroll}>
-            {isLoadingMore && <div className="socnet-chat-loader-top">Завантаження...</div>}
+            {isLoadingMore && <div className="tetrone-chat-loader-top">Завантаження...</div>}
             {children}
         </div>
     );

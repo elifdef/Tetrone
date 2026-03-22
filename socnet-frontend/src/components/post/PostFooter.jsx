@@ -24,7 +24,7 @@ export default function PostFooter({
 
         if (readonly) {
             return (
-                <div className="socnet-comment-btn readonly">
+                <div className="tetrone-comment-btn readonly">
                     <IconComponent width={16} height={16} />
                     {commentsCount}
                 </div>
@@ -32,7 +32,7 @@ export default function PostFooter({
         }
 
         return (
-            <Link to={`/post/${postId}`} className="socnet-comment-btn">
+            <Link to={`/post/${postId}`} className="tetrone-comment-btn">
                 <IconComponent width={16} height={16} />
                 {commentsCount}
             </Link>
@@ -44,7 +44,7 @@ export default function PostFooter({
 
         if (readonly) {
             return (
-                <div className={`socnet-like-btn readonly ${isLiked ? 'liked' : ''}`}>
+                <div className={`tetrone-like-btn readonly ${isLiked ? 'liked' : ''}`}>
                     <IconComponent width={16} height={16} />
                     {likesCount}
                 </div>
@@ -53,7 +53,7 @@ export default function PostFooter({
 
         return (
             <button
-                className={`socnet-like-btn ${isLiked ? 'liked' : ''}`}
+                className={`tetrone-like-btn ${isLiked ? 'liked' : ''}`}
                 onClick={onLike}>
                 <IconComponent width={16} height={16} />
                 {likesCount}
@@ -66,7 +66,7 @@ export default function PostFooter({
 
         if (readonly)
             return (
-                <div className="socnet-repost-btn readonly">
+                <div className="tetrone-repost-btn readonly">
                     <IconComponent width={16} height={16} />
                     {repostsCount}
                 </div>
@@ -74,7 +74,7 @@ export default function PostFooter({
 
         return (
             <button
-                className="socnet-repost-btn"
+                className="tetrone-repost-btn"
                 onClick={onRepost}
                 disabled={isReposting}
             >
@@ -86,8 +86,8 @@ export default function PostFooter({
     }
 
     return (
-        <div className={`socnet-post-footer ${className || ''}`}>
-            <div className="socnet-post-footer-actions">
+        <div className={`tetrone-post-footer ${className || ''}`}>
+            <div className="tetrone-post-footer-actions">
                 <Like />
                 <Comment />
                 {(onRepost || readonly) && <Repost />}

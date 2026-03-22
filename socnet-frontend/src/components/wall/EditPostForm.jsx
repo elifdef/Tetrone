@@ -67,7 +67,7 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
 
     return (
         <div
-            className={`socnet-post socnet-edit-mode ${isDragging ? 'drag-active' : ''}`}
+            className={`tetrone-post tetrone-edit-mode ${isDragging ? 'drag-active' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -75,7 +75,7 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
             <FormatBar />
 
             <Textarea
-                className="socnet-form-textarea fixed-size"
+                className="tetrone-form-textarea fixed-size"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 onPaste={handlePaste}
@@ -83,9 +83,9 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
             />
 
             {post?.entities?.poll && (
-                <div className="socnet-attached-poll-preview disabled">
+                <div className="tetrone-attached-poll-preview disabled">
                     <span>📊 {post.entities.poll.question}</span>
-                    <span className="socnet-poll-locked-text">{t('poll.edit_locked')}</span>
+                    <span className="tetrone-poll-locked-text">{t('poll.edit_locked')}</span>
                 </div>
             )}
 
@@ -99,14 +99,14 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
                 onToggle={toggleYouTubePreview}
             />
 
-            <div className="socnet-edit-actions">
+            <div className="tetrone-edit-actions">
                 <AttachBar onFileSelect={handleFileSelect} />
 
-                <div className="socnet-edit-buttons-right">
-                    <Button className="socnet-btn-small" onClick={handleSave}>
+                <div className="tetrone-edit-buttons-right">
+                    <Button className="tetrone-btn-small" onClick={handleSave}>
                         {t('common.save')}
                     </Button>
-                    <Button className="socnet-btn-small socnet-btn-cancel" onClick={cancelEditing}>
+                    <Button className="tetrone-btn-small tetrone-btn-cancel" onClick={cancelEditing}>
                         {t('common.cancel')}
                     </Button>
                 </div>

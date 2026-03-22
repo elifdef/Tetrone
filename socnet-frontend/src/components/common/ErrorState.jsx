@@ -6,13 +6,13 @@ export default function ErrorState({ title, description, onRetry }) {
     const handleRetry = onRetry || (() => window.location.reload());
 
     return (
-        <div className="socnet-empty-state with-card">
+        <div className="tetrone-empty-state with-card">
             <h3>{title || t('error.connection')}</h3>
             <p>{description || t('error.loading', { resource: t('common.profile') })}</p>
 
-            <div className="socnet-feed-actions">
+            <div className="tetrone-feed-actions">
                 <button
-                    className="socnet-btn-small"
+                    className="tetrone-btn-small"
                     onClick={handleRetry}
                 >
                     {t('common.reload_page')}

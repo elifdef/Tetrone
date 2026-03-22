@@ -1,11 +1,11 @@
 export const AdminTabs = ({ tabs, activeTab, onTabChange }) => {
     return (
-        <div className="socnet-tabs">
+        <div className="tetrone-tabs">
             {tabs.map((tab) => (
                 <button
                     key={tab.id}
                     type="button"
-                    className={`socnet-tab ${activeTab === tab.id ? 'active' : ''}`}
+                    className={`tetrone-tab ${activeTab === tab.id ? 'active' : ''}`}
                     onClick={() => onTabChange(tab.id)}
                 >
                     {tab.label}

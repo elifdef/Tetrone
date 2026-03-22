@@ -31,7 +31,7 @@ export default function AdminDashboard() {
     }, [fetchStats]);
 
     if (loading && !stats) {
-        return <div className="socnet-empty-state">{t('common.loading')}</div>;
+        return <div className="tetrone-empty-state">{t('common.loading')}</div>;
     }
 
     if (!stats) return null;
@@ -40,7 +40,7 @@ export default function AdminDashboard() {
         <div className="admin-dashboard-wrapper">
             <div className="admin-dashboard-header">
                 <span className="admin-timeframe-badge">{t('admin.dashboard.last_7_days')}</span>
-                <button className="socnet-btn-small" onClick={fetchStats}>
+                <button className="tetrone-btn-small" onClick={fetchStats}>
                     {t('common.reload_page')}
                 </button>
             </div>
@@ -93,12 +93,12 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="admin-server-info-row">
-                        <span className="socnet-label">{t('admin.dashboard.version')} PHP:</span>
-                        <span className="socnet-value">{stats.server.php_version}</span>
+                        <span className="tetrone-label">{t('admin.dashboard.version')} PHP:</span>
+                        <span className="tetrone-value">{stats.server.php_version}</span>
                     </div>
                     <div className="admin-server-info-row">
-                        <span className="socnet-label">{t('admin.dashboard.ram_usage')}:</span>
-                        <span className="socnet-value">{stats.server.memory_mb} MB</span>
+                        <span className="tetrone-label">{t('admin.dashboard.ram_usage')}:</span>
+                        <span className="tetrone-value">{stats.server.memory_mb} MB</span>
                     </div>
                 </div>
 
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                     </h3>
 
                     {stats.realtime.users.length === 0 ? (
-                        <div className="socnet-empty-state">{t('admin.dashboard.no_one_online')}</div>
+                        <div className="tetrone-empty-state">{t('admin.dashboard.no_one_online')}</div>
                     ) : (
                         <div className="admin-online-list">
                             {stats.realtime.users.map(user => {

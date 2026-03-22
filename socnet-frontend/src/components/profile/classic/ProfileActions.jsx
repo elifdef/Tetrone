@@ -26,8 +26,8 @@ export default function ProfileActions({
 
     if (sameUser)
         return (
-            <div className="socnet-actions">
-                <Link to="/settings" className="socnet-btn">{t('common.edit')}</Link>
+            <div className="tetrone-actions">
+                <Link to="/settings" className="tetrone-btn">{t('common.edit')}</Link>
             </div>
         );
 
@@ -68,10 +68,10 @@ export default function ProfileActions({
     };
 
     return (
-        <div className="socnet-actions">
+        <div className="tetrone-actions">
             {!isBlockedByMe && (
                 <button
-                    className="socnet-btn"
+                    className="tetrone-btn"
                     onClick={handleSendMessage}
                     disabled={isChatLoading || loading}
                 >
@@ -79,9 +79,9 @@ export default function ProfileActions({
                 </button>
             )}
 
-            <div className="socnet-dropdown-wrapper" ref={menuRef}>
+            <div className="tetrone-dropdown-wrapper" ref={menuRef}>
                 <button
-                    className="socnet-btn socnet-btn-dropdown-trigger"
+                    className="tetrone-btn tetrone-btn-dropdown-trigger"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     disabled={loading}
                 >
@@ -89,22 +89,22 @@ export default function ProfileActions({
                 </button>
 
                 {isMenuOpen && (
-                    <div className="socnet-menu-list">
+                    <div className="tetrone-menu-list">
                         {!isBlockedByMe && (
-                            <button className="socnet-menu-item" onClick={() => { onFriendAction(); setIsMenuOpen(false); }}>
+                            <button className="tetrone-menu-item" onClick={() => { onFriendAction(); setIsMenuOpen(false); }}>
                                 {getFriendActionLabel()}
                             </button>
                         )}
 
                         <button
-                            className="socnet-menu-item"
+                            className="tetrone-menu-item"
                             onClick={() => { onReportAction(); setIsMenuOpen(false); }}
                         >
                             {t('reports.title')}
                         </button>
 
                         <button
-                            className={`socnet-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
+                            className={`tetrone-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
                             onClick={() => { onBlockAction(); setIsMenuOpen(false); }}
                         >
                             {isBlockedByMe

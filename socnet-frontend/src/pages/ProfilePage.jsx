@@ -55,7 +55,7 @@ export default function ProfilePage() {
 
     if (serverError)
         return (
-            <div className="socnet-profile-error-wrapper">
+            <div className="tetrone-profile-error-wrapper">
                 <ErrorState
                     title={t('error.connection')}
                     description={t('error.loading', { resource: t('common.profile').toLowerCase() })}
@@ -63,7 +63,7 @@ export default function ProfilePage() {
             </div>
         );
 
-    if (loading) return <div className="socnet-empty-state">{t('common.loading')}</div>;
+    if (loading) return <div className="tetrone-empty-state">{t('common.loading')}</div>;
     if (!profile) return null;
 
     const isOwnProfile = authUser && authUser.username === profile.username;

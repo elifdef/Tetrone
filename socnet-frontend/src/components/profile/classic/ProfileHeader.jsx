@@ -17,7 +17,7 @@ export default function ProfileHeader({ user, isPreview }) {
     const getStatusBlock = () => {
         if (isPreview) return;
         return (
-            <span className={`socnet-status ${user.is_online ? 'online' : 'offline'}`}>
+            <span className={`tetrone-status ${user.is_online ? 'online' : 'offline'}`}>
                 {getStatusText()}
             </span>
         )
@@ -29,10 +29,10 @@ export default function ProfileHeader({ user, isPreview }) {
         : {};
 
     return (
-        <div className="socnet-name-row">
-            <h2 className="socnet-name" style={nameStyle}>
+        <div className="tetrone-name-row">
+            <h2 className="tetrone-name" style={nameStyle}>
                 {user.first_name} {user.last_name}
-                <span className="socnet-nick" style={nameStyle}> @{user.username}</span>
+                <span className="tetrone-nick" style={nameStyle}> @{user.username}</span>
             </h2>
             {getStatusBlock()}
         </div>

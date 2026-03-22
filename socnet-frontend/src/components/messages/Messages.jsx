@@ -19,15 +19,15 @@ const ImagePreview = ({ file, onRemove }) => {
     }, [file]);
 
     return (
-        <div className="socnet-tg-preview-item">
+        <div className="tetrone-modern-preview-item">
             {url ? (
-                <img src={url} alt="preview" className="socnet-tg-preview-img" />
+                <img src={url} alt="preview" className="tetrone-modern-preview-img" />
             ) : (
-                <div className="socnet-tg-file-icon">
+                <div className="tetrone-modern-file-icon">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" /></svg>
                 </div>
             )}
-            <button className="socnet-tg-remove-preview" onClick={onRemove}>
+            <button className="tetrone-modern-remove-preview" onClick={onRemove}>
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
             </button>
         </div>
@@ -94,8 +94,8 @@ export default function Messages(props) {
         const el = document.getElementById(`message-${msgId}`);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('socnet-tg-highlight-msg');
-            setTimeout(() => el.classList.remove('socnet-tg-highlight-msg'), 2000);
+            el.classList.add('tetrone-modern-highlight-msg');
+            setTimeout(() => el.classList.remove('tetrone-modern-highlight-msg'), 2000);
         }
     };
 
@@ -107,53 +107,53 @@ export default function Messages(props) {
     };
 
     return (
-        <div className="socnet-tg-layout">
+        <div className="tetrone-modern-layout">
             <div
-                className={`socnet-tg-sidebar ${activeChat ? 'hidden-on-mobile' : ''}`}
+                className={`tetrone-modern-sidebar ${activeChat ? 'hidden-on-mobile' : ''}`}
                 style={{ width: `${sidebarWidth}px` }}
             >
-                <div className="socnet-tg-chat-list">
+                <div className="tetrone-modern-chat-list">
                     {chats.map(chat => (
-                        <div key={chat.slug} className={`socnet-tg-chat-item ${dmSlug === chat.slug ? 'active' : ''}`} onClick={() => handleSelectChat(chat.slug)}>
-                            <img src={chat.target_user?.avatar} alt="avatar" className="socnet-tg-avatar" />
-                            <div className="socnet-tg-chat-info">
-                                <div className="socnet-tg-chat-top">
-                                    <span className="socnet-tg-chat-name">{chat.target_user?.first_name} {chat.target_user?.last_name}</span>
-                                    <span className="socnet-tg-chat-time">{formatDate(chat.updated_at, true)}</span>
+                        <div key={chat.slug} className={`tetrone-modern-chat-item ${dmSlug === chat.slug ? 'active' : ''}`} onClick={() => handleSelectChat(chat.slug)}>
+                            <img src={chat.target_user?.avatar} alt="avatar" className="tetrone-modern-avatar" />
+                            <div className="tetrone-modern-chat-info">
+                                <div className="tetrone-modern-chat-top">
+                                    <span className="tetrone-modern-chat-name">{chat.target_user?.first_name} {chat.target_user?.last_name}</span>
+                                    <span className="tetrone-modern-chat-time">{formatDate(chat.updated_at, true)}</span>
                                 </div>
-                                <div className="socnet-tg-chat-preview">
-                                    <span className="socnet-tg-preview-text">
-                                        {chat.last_message_sender_id === currentUser?.id && <span className="socnet-tg-you-prefix">{t('common.you')}: </span>}
+                                <div className="tetrone-modern-chat-preview">
+                                    <span className="tetrone-modern-preview-text">
+                                        {chat.last_message_sender_id === currentUser?.id && <span className="tetrone-modern-you-prefix">{t('common.you')}: </span>}
                                         {chat.last_message}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     ))}
-                    {chats.length === 0 && <div className="socnet-tg-empty-inbox">{t('messages.empty_inbox')}</div>}
+                    {chats.length === 0 && <div className="tetrone-modern-empty-inbox">{t('messages.empty_inbox')}</div>}
                 </div>
             </div>
 
-            <div className="socnet-tg-resizer" onMouseDown={handleMouseDown}></div>
-            <div className={`socnet-tg-main ${!activeChat ? 'hidden-on-mobile' : ''}`}>
+            <div className="tetrone-modern-resizer" onMouseDown={handleMouseDown}></div>
+            <div className={`tetrone-modern-main ${!activeChat ? 'hidden-on-mobile' : ''}`}>
                 {!activeChat ? (
-                    <div className="socnet-tg-empty-state">
-                        <span className="socnet-tg-empty-badge">{t('messages.select_chat')}</span>
+                    <div className="tetrone-modern-empty-state">
+                        <span className="tetrone-modern-empty-badge">{t('messages.select_chat')}</span>
                     </div>
                 ) : (
                     <>
-                        <div className="socnet-tg-chat-header">
-                            <button className="socnet-tg-back-btn" onClick={handleBackToInbox}>
+                        <div className="tetrone-modern-chat-header">
+                            <button className="tetrone-modern-back-btn" onClick={handleBackToInbox}>
                                 <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" /></svg>
                             </button>
 
-                            <div className="socnet-tg-header-info" onClick={onOpenInfo}>
-                                <span className="socnet-tg-header-name">{activeChat.target_user?.first_name} {activeChat.target_user?.last_name}</span>
-                                <span className={`socnet-tg-header-status ${targetOnline || isTyping ? 'online' : ''}`}>
+                            <div className="tetrone-modern-header-info" onClick={onOpenInfo}>
+                                <span className="tetrone-modern-header-name">{activeChat.target_user?.first_name} {activeChat.target_user?.last_name}</span>
+                                <span className={`tetrone-modern-header-status ${targetOnline || isTyping ? 'online' : ''}`}>
                                     {isTyping ? (
-                                        <span className="socnet-tg-typing-text">
+                                        <span className="tetrone-modern-typing-text">
                                             {t('common.typing')}
-                                            <span className="socnet-tg-typing-dots"><span></span><span></span><span></span></span>
+                                            <span className="tetrone-modern-typing-dots"><span></span><span></span><span></span></span>
                                         </span>
                                     ) : targetOnline ? (
                                         t('messages.online')
@@ -163,7 +163,7 @@ export default function Messages(props) {
                                 </span>
                             </div>
 
-                            <button onClick={onOpenInfo} className="socnet-tg-header-btn" title={t('messages.chat_info')}>
+                            <button onClick={onOpenInfo} className="tetrone-modern-header-btn" title={t('messages.chat_info')}>
                                 <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                                     <circle cx="12" cy="5" r="2" />
                                     <circle cx="12" cy="12" r="2" />
@@ -173,20 +173,20 @@ export default function Messages(props) {
                         </div>
 
                         {pinnedMessage && (
-                            <div className="socnet-tg-pinned-bar" onClick={() => handleScrollToMessage(pinnedMessage.id)}>
-                                <div className="socnet-tg-pinned-line"></div>
-                                <div className="socnet-tg-pinned-content">
-                                    <span className="socnet-tg-pinned-title">{t('messages.pinned_message')}</span>
-                                    <span className="socnet-tg-pinned-text">{pinnedMessage.text || t('messages.media')}</span>
+                            <div className="tetrone-modern-pinned-bar" onClick={() => handleScrollToMessage(pinnedMessage.id)}>
+                                <div className="tetrone-modern-pinned-line"></div>
+                                <div className="tetrone-modern-pinned-content">
+                                    <span className="tetrone-modern-pinned-title">{t('messages.pinned_message')}</span>
+                                    <span className="tetrone-modern-pinned-text">{pinnedMessage.text || t('messages.media')}</span>
                                 </div>
-                                <button className="socnet-tg-pinned-close" onClick={(e) => { e.stopPropagation(); togglePin(pinnedMessage.id); }}>
+                                <button className="tetrone-modern-pinned-close" onClick={(e) => { e.stopPropagation(); togglePin(pinnedMessage.id); }}>
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                                 </button>
                             </div>
                         )}
 
                         <ChatScrollContainer
-                            className="socnet-tg-history-scroll"
+                            className="tetrone-modern-history-scroll"
                             messagesLength={messages.length}
                             isLoadingMore={isLoadingMore}
                             isLoadingInitial={isLoadingInitial}
@@ -194,9 +194,9 @@ export default function Messages(props) {
                             onLoadMore={onLoadMore}
                         >
                             {messages.length === 0 && !isLoadingInitial ? (
-                                <div className="socnet-tg-empty-messages">{t('messages.no_messages_yet')}</div>
+                                <div className="tetrone-modern-empty-messages">{t('messages.no_messages_yet')}</div>
                             ) : (
-                                <div className="socnet-tg-messages-history">
+                                <div className="tetrone-modern-messages-history">
                                     {messages.map(msg => (
                                         <MessageItem
                                             key={`mod-${msg.id}`}
@@ -214,53 +214,53 @@ export default function Messages(props) {
                             )}
                         </ChatScrollContainer>
 
-                        <div className="socnet-tg-composer">
+                        <div className="tetrone-modern-composer">
                             {(editingMessage || replyingTo) && (
-                                <div className="socnet-tg-reply-bar">
-                                    <div className="socnet-tg-reply-icon">
+                                <div className="tetrone-modern-reply-bar">
+                                    <div className="tetrone-modern-reply-icon">
                                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                     </div>
-                                    <div className="socnet-tg-reply-content">
-                                        <span className="socnet-tg-reply-title">{editingMessage ? t('messages.editing') : replyingTo.sender_name}</span>
-                                        <span className="socnet-tg-reply-text">{editingMessage ? editingMessage.text : replyingTo.text}</span>
+                                    <div className="tetrone-modern-reply-content">
+                                        <span className="tetrone-modern-reply-title">{editingMessage ? t('messages.editing') : replyingTo.sender_name}</span>
+                                        <span className="tetrone-modern-reply-text">{editingMessage ? editingMessage.text : replyingTo.text}</span>
                                     </div>
-                                    <button className="socnet-tg-reply-close" onClick={handleCancelReplyEdit}>
+                                    <button className="tetrone-modern-reply-close" onClick={handleCancelReplyEdit}>
                                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                                     </button>
                                 </div>
                             )}
 
                             {files.length > 0 && (
-                                <div className="socnet-tg-previews-container">
+                                <div className="tetrone-modern-previews-container">
                                     {files.map((f, idx) => (
                                         <ImagePreview key={idx} file={f} onRemove={() => handleRemoveFile(idx)} />
                                     ))}
                                 </div>
                             )}
 
-                            <div className="socnet-tg-input-row">
-                                <div className="socnet-tg-attach-wrapper" ref={attachMenuRef}>
-                                    <button className="socnet-tg-attach-btn" onClick={() => setIsAttachOpen(!isAttachOpen)}>
+                            <div className="tetrone-modern-input-row">
+                                <div className="tetrone-modern-attach-wrapper" ref={attachMenuRef}>
+                                    <button className="tetrone-modern-attach-btn" onClick={() => setIsAttachOpen(!isAttachOpen)}>
                                         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-3.31-2.69-6-6-6S3 1.69 3 5v12.5c0 3.86 3.14 7 7 7s7-3.14 7-7V6h-1.5z" /></svg>
                                     </button>
                                     {isAttachOpen && (
-                                        <div className="socnet-tg-attach-dropdown">
+                                        <div className="tetrone-modern-attach-dropdown">
                                             <label>
                                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
                                                 {t('messages.attach_image')}
-                                                <input type="file" accept="image/*,video/*" multiple className="socnet-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} />
+                                                <input type="file" accept="image/*,video/*" multiple className="tetrone-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} />
                                             </label>
                                             <label>
                                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" /></svg>
                                                 {t('messages.attach_file')}
-                                                <input type="file" multiple className="socnet-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} />
+                                                <input type="file" multiple className="tetrone-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} />
                                             </label>
                                         </div>
                                     )}
                                 </div>
 
                                 <Textarea
-                                    className="socnet-tg-textarea"
+                                    className="tetrone-modern-textarea"
                                     placeholder={t('messages.type_message')}
                                     value={text}
                                     onChange={handleTextChange}
@@ -268,11 +268,11 @@ export default function Messages(props) {
                                 />
 
                                 {text.trim() || files.length > 0 ? (
-                                    <button className="socnet-tg-send-btn active" onClick={handleSend}>
+                                    <button className="tetrone-modern-send-btn active" onClick={handleSend}>
                                         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                     </button>
                                 ) : (
-                                    <button className="socnet-tg-send-btn">
+                                    <button className="tetrone-modern-send-btn">
                                         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" /></svg>
                                     </button>
                                 )}

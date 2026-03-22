@@ -10,7 +10,7 @@ export default function WallPostList({
     const isWallOwner = authUser && profileUser && authUser.id === profileUser.id;
 
     return (
-        <div className="socnet-post-list">
+        <div className="tetrone-post-list">
             {posts.map(post => {
                 const isAuthor = authUser && post.user && authUser.id === post.user.id;
 

@@ -11,12 +11,12 @@ import ShieldIcon from '../assets/shield.svg?react';
 const ListAvatar = ({ src, isSystem }) => {
     if (isSystem) {
         return (
-            <div className="socnet-notification-avatar system-avatar">
+            <div className="tetrone-notification-avatar system-avatar">
                 <ShieldIcon width={64} height={64} />
             </div>
         );
     }
-    return <img src={src} className="socnet-notification-avatar" alt="avatar" />;
+    return <img src={src} className="tetrone-notification-avatar" alt="avatar" />;
 };
 
 const NotificationListItem = ({ notif, handleNotificationClick, getNotificationData, formatDate }) => {
@@ -42,12 +42,12 @@ const NotificationListItem = ({ notif, handleNotificationClick, getNotificationD
 
     return (
         <div
-            className={`socnet-notification-item ${isUnread ? 'unread' : ''}`}
+            className={`tetrone-notification-item ${isUnread ? 'unread' : ''}`}
             onClick={onBlockClick}
             style={{ cursor: 'pointer' }}
         >
             {isSystem ? (
-                <div className="socnet-system-avatar-wrapper">
+                <div className="tetrone-system-avatar-wrapper">
                     <ListAvatar isSystem={true} />
                 </div>
             ) : (
@@ -56,23 +56,23 @@ const NotificationListItem = ({ notif, handleNotificationClick, getNotificationD
                 </Link>
             )}
 
-            <div className="socnet-notification-content">
-                <div className="socnet-notification-text-row">
+            <div className="tetrone-notification-content">
+                <div className="tetrone-notification-text-row">
                     {isSystem ? (
-                        <span className="socnet-comment-author" style={nameColor ? { color: nameColor } : undefined} >
+                        <span className="tetrone-comment-author" style={nameColor ? { color: nameColor } : undefined} >
                             {senderName}
                         </span>
                     ) : (
-                        <Link to={`/${usernameUrl}`} className="socnet-comment-author" style={nameColor ? { color: nameColor } : undefined} >
+                        <Link to={`/${usernameUrl}`} className="tetrone-comment-author" style={nameColor ? { color: nameColor } : undefined} >
                             {senderName}
                         </Link>
                     )}
                     {' '}
-                    <span className="socnet-notification-action">
+                    <span className="tetrone-notification-action">
                         {actionText}
                         {actionText && linkText ? ' ' : ''}
                         {linkUrl && linkText ? (
-                            <Link to={linkUrl} className="socnet-link">
+                            <Link to={linkUrl} className="tetrone-link">
                                 {linkText}
                             </Link>
                         ) : (
@@ -82,18 +82,18 @@ const NotificationListItem = ({ notif, handleNotificationClick, getNotificationD
                 </div>
 
                 {snippetText && (
-                    <div className="socnet-notification-snippet">
+                    <div className="tetrone-notification-snippet">
                         "{snippetText}"
                     </div>
                 )}
 
-                <div className="socnet-notification-date">
+                <div className="tetrone-notification-date">
                     {formatDate(notif.created_at)}
                 </div>
             </div>
 
             {isUnread && (
-                <div className="socnet-notification-dot" title={t('notifications.mark_read')}></div>
+                <div className="tetrone-notification-dot" title={t('notifications.mark_read')}></div>
             )}
         </div>
     );
@@ -115,18 +115,18 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="socnet-card-wrapper">
-            <h1 className="socnet-section-title socnet-wall-header">
+        <div className="tetrone-card-wrapper">
+            <h1 className="tetrone-section-title tetrone-wall-header">
                 <span>{t('notifications.my_notifications')}</span>
-                {unreadCount > 0 && <span className="socnet-wall-count">+{unreadCount}</span>}
+                {unreadCount > 0 && <span className="tetrone-wall-count">+{unreadCount}</span>}
             </h1>
 
             {notifications.length === 0 ? (
-                <div className="socnet-empty-state">
+                <div className="tetrone-empty-state">
                     <p>{t('notifications.empty')}</p>
                 </div>
             ) : (
-                <div className="socnet-notification-list">
+                <div className="tetrone-notification-list">
                     {notifications.map((notif) => (
                         <NotificationListItem
                             key={notif.id}

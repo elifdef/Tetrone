@@ -8,23 +8,23 @@ export default function Info({ currentUser, displayBio, displayBirth, displayCou
     const langCode = i18n.language || 'en';
 
     return (
-        <div className="socnet-modern-body">
+        <div className="tetrone-modern-body">
             {displayBio && (
-                <div className="socnet-modern-bio">{displayBio}</div>
+                <div className="tetrone-modern-bio">{displayBio}</div>
             )}
 
             {(isPreview || (!isBlockedByTarget && !isBanned)) && (
-                <div className="socnet-modern-info-grid">
-                    <div className="socnet-modern-info-item">
-                        <span className="socnet-modern-info-label">{t('common.birthday')}</span>
-                        <span className="socnet-modern-info-val">
+                <div className="tetrone-modern-info-grid">
+                    <div className="tetrone-modern-info-item">
+                        <span className="tetrone-modern-info-label">{t('common.birthday')}</span>
+                        <span className="tetrone-modern-info-val">
                             {currentUser?.birth_date ? formatDate(currentUser.birth_date, { withTime: false, useRelative: false }) : displayBirth}
                         </span>
                     </div>
 
-                    <div className="socnet-modern-info-item">
-                        <span className="socnet-modern-info-label">{t('common.country')}</span>
-                        <span className="socnet-modern-info-val">
+                    <div className="tetrone-modern-info-item">
+                        <span className="tetrone-modern-info-label">{t('common.country')}</span>
+                        <span className="tetrone-modern-info-val">
                             {currentUser?.country && currentUser.country.length === 2 ? (
                                 <span className="profile-country-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <span className={`fi fi-${currentUser.country.toLowerCase()}`}></span>
@@ -36,14 +36,14 @@ export default function Info({ currentUser, displayBio, displayBirth, displayCou
                         </span>
                     </div>
 
-                    <div className="socnet-modern-info-item">
-                        <span className="socnet-modern-info-label">{t('common.gender')}</span>
-                        <span className="socnet-modern-info-val">{displayGender}</span>
+                    <div className="tetrone-modern-info-item">
+                        <span className="tetrone-modern-info-label">{t('common.gender')}</span>
+                        <span className="tetrone-modern-info-val">{displayGender}</span>
                     </div>
 
-                    <div className="socnet-modern-info-item">
-                        <span className="socnet-modern-info-label">{t('profile.joined')}</span>
-                        <span className="socnet-modern-info-val">
+                    <div className="tetrone-modern-info-item">
+                        <span className="tetrone-modern-info-label">{t('profile.joined')}</span>
+                        <span className="tetrone-modern-info-val">
                             {currentUser?.created_at ? formatDate(currentUser.created_at, { withTime: true, forceYear: true }) : ''}
                         </span>
                     </div>

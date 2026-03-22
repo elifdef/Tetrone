@@ -17,13 +17,13 @@ export default function FriendsPage() {
         );
 
     return (
-        <div className="socnet-friends-page">
-            <h1 className="socnet-friends-title">{t('friends.your_contacts')}</h1>
-            <div className="socnet-tabs">
+        <div className="tetrone-friends-page">
+            <h1 className="tetrone-friends-title">{t('friends.your_contacts')}</h1>
+            <div className="tetrone-tabs">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
-                        className={`socnet-tab ${activeTab === tab.id ? 'active' : ''}`}
+                        className={`tetrone-tab ${activeTab === tab.id ? 'active' : ''}`}
                         onClick={() => handleTabChange(tab.id)}
                     >
                         {tab.label}
@@ -31,28 +31,28 @@ export default function FriendsPage() {
                 ))}
             </div>
 
-            <div className="socnet-friends-search-wrapper">
+            <div className="tetrone-friends-search-wrapper">
                 <Input
                     placeholder={activeTab === 'all' ? t('friends.search_people') : t('friends.list_filter')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && activeTab === 'all' && handleSearchSubmit()}
-                    className="socnet-form-input"
+                    className="tetrone-form-input"
                 />
                 {activeTab === 'all' && (
-                    <button className="socnet-friends-search-btn" onClick={handleSearchSubmit}>
+                    <button className="tetrone-friends-search-btn" onClick={handleSearchSubmit}>
                         {t('common.find')}
                     </button>
                 )}
             </div>
 
-            <div className="socnet-friends-list">
+            <div className="tetrone-friends-list">
                 {loading ? (
-                    <div className="socnet-empty-state">{t('common.loading')}</div>
+                    <div className="tetrone-empty-state">{t('common.loading')}</div>
                 ) : (
                     <>
                         {displayUsers.length === 0 && (
-                            <div className="socnet-empty-state">
+                            <div className="tetrone-empty-state">
                                 {t('friends.list_empty')}
                             </div>
                         )}

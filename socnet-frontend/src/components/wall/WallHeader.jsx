@@ -4,9 +4,9 @@ export default function WallHeader({ postsCount }) {
     const { t } = useTranslation();
 
     return (
-        <div className="socnet-wall-header">
-            <span className="socnet-wall-title">{t('wall.title')}</span>
-            <span className="socnet-wall-count">
+        <div className="tetrone-wall-header">
+            <span className="tetrone-wall-title">{t('wall.title')}</span>
+            <span className="tetrone-wall-count">
                 {t('wall.posts_count', { count: postsCount })}
             </span>
         </div>

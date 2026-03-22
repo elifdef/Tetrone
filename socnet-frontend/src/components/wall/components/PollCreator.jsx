@@ -72,7 +72,7 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
     };
 
     return (
-        <div className="socnet-poll-creator">
+        <div className="tetrone-poll-creator">
             <h3>{t('poll.create_title')}</h3>
 
             <Input
@@ -82,16 +82,16 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
                 maxLength={255}
             />
 
-            <div className="socnet-poll-options-list">
+            <div className="tetrone-poll-options-list">
                 {options.map((option, index) => (
-                    <div key={option.id} className="socnet-poll-option-row">
+                    <div key={option.id} className="tetrone-poll-option-row">
                         {isQuiz && (
                             <input
                                 type={isMultipleChoice ? "checkbox" : "radio"}
                                 checked={option.is_correct}
                                 onChange={() => handleSetCorrect(option.id)}
                                 title={t('poll.mark_correct')}
-                                className="socnet-poll-checkbox"
+                                className="tetrone-poll-checkbox"
                             />
                         )}
                         <Input
@@ -100,7 +100,7 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
                             onChange={(e) => handleOptionChange(option.id, e.target.value)}
                             maxLength={100}
                         />
-                        <Button type="button" onClick={() => handleRemoveOption(option.id)} variant="danger" className="socnet-poll-remove-btn">
+                        <Button type="button" onClick={() => handleRemoveOption(option.id)} variant="danger" className="tetrone-poll-remove-btn">
                             ✖
                         </Button>
                     </div>
@@ -108,52 +108,52 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
             </div>
 
             {options.length < 16 && (
-                <Button type="button" onClick={handleAddOption} className="socnet-btn-ghost socnet-poll-add-btn">
+                <Button type="button" onClick={handleAddOption} className="tetrone-btn-ghost tetrone-poll-add-btn">
                     + {t('poll.add_option')}
                 </Button>
             )}
 
-            <div className="socnet-poll-settings">
-                <label className="socnet-poll-setting-label">
-                    <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} className="socnet-poll-checkbox" />
+            <div className="tetrone-poll-settings">
+                <label className="tetrone-poll-setting-label">
+                    <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} className="tetrone-poll-checkbox" />
                     {t('poll.setting_anonymous')}
                 </label>
 
-                <label className="socnet-poll-setting-label">
+                <label className="tetrone-poll-setting-label">
                     <input type="checkbox" checked={isMultipleChoice} onChange={(e) => {
                         setIsMultipleChoice(e.target.checked);
                         if (!e.target.checked && isQuiz) {
                             setOptions(options.map(opt => ({ ...opt, is_correct: false })));
                         }
-                    }} className="socnet-poll-checkbox" />
+                    }} className="tetrone-poll-checkbox" />
                     {t('poll.setting_multiple')}
                 </label>
 
-                <label className="socnet-poll-setting-label">
-                    <input type="checkbox" checked={canChangeVote} onChange={(e) => setCanChangeVote(e.target.checked)} className="socnet-poll-checkbox" />
+                <label className="tetrone-poll-setting-label">
+                    <input type="checkbox" checked={canChangeVote} onChange={(e) => setCanChangeVote(e.target.checked)} className="tetrone-poll-checkbox" />
                     {t('poll.setting_revote')}
                 </label>
 
-                <label className="socnet-poll-setting-label highlight">
-                    <input type="checkbox" checked={isQuiz} onChange={(e) => setIsQuiz(e.target.checked)} className="socnet-poll-checkbox" />
+                <label className="tetrone-poll-setting-label highlight">
+                    <input type="checkbox" checked={isQuiz} onChange={(e) => setIsQuiz(e.target.checked)} className="tetrone-poll-checkbox" />
                     <span>{t('poll.setting_quiz')}</span>
                 </label>
             </div>
 
             {isQuiz && (
-                <div className="socnet-poll-explanation-wrapper">
+                <div className="tetrone-poll-explanation-wrapper">
                     <Textarea
                         placeholder={t('poll.explanation_placeholder')}
                         value={explanation}
                         onChange={(e) => setExplanation(e.target.value)}
                         maxLength={255}
-                        className="socnet-form-textarea fixed-size"
+                        className="tetrone-form-textarea fixed-size"
                     />
                 </div>
             )}
 
-            <div className="socnet-poll-actions">
-                <Button type="button" onClick={onCancel} className="socnet-btn-cancel">{t('common.cancel')}</Button>
+            <div className="tetrone-poll-actions">
+                <Button type="button" onClick={onCancel} className="tetrone-btn-cancel">{t('common.cancel')}</Button>
                 <Button type="button" onClick={handleSave}>{t('common.save')}</Button>
             </div>
         </div>

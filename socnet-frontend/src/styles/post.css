@@ -1,24 +1,24 @@
-.socnet-post-video {
+.tetrone-post-video {
     margin-top: 10px;
     overflow: hidden;
     border: 1px solid var(--theme-border);
     background: #000;
 }
 
-.socnet-post-videos-container {
+.tetrone-post-videos-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
 }
 
-.socnet-preview-youtube-wrapper {
+.tetrone-preview-youtube-wrapper {
     position: relative;
     margin-top: 10px;
     width: 100%;
 }
 
-.socnet-youtube-checkbox-overlay {
+.tetrone-youtube-checkbox-overlay {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -31,7 +31,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.socnet-youtube-checkbox-overlay input[type="checkbox"] {
+.tetrone-youtube-checkbox-overlay input[type="checkbox"] {
     cursor: pointer;
     width: 18px;
     height: 18px;
@@ -39,13 +39,13 @@
     accent-color: var(--theme-link);
 }
 
-.socnet-video-preview-inner {
+.tetrone-video-preview-inner {
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-preview-youtube-wrapper .socnet-preview-remove-btn {
+.tetrone-preview-youtube-wrapper .tetrone-preview-remove-btn {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -54,14 +54,14 @@
 }
 
 /* стіна ім. Дурова */
-.socnet-wall {
+.tetrone-wall {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 15px;
     margin-top: 15px;
 }
 
-.socnet-wall-header {
+.tetrone-wall-header {
     border-bottom: 1px solid var(--theme-border);
     margin-bottom: 10px;
     padding-bottom: 3px;
@@ -70,42 +70,42 @@
     align-items: flex-end;
 }
 
-.socnet-wall-title {
+.tetrone-wall-title {
     color: var(--theme-link);
     font-weight: bold;
     font-size: 13px;
 }
 
-.socnet-wall-count {
+.tetrone-wall-count {
     color: #999;
     font-size: 13px;
 }
 
-.socnet-wall-input {
+.tetrone-wall-input {
     position: relative;
     padding: 5px;
     background: var(--theme-bg-box);
     border: 1px solid transparent;
 }
 
-.socnet-wall-input.drag-active {
+.tetrone-wall-input.drag-active {
     background: #EBF1F5;
 }
 
-.socnet-wall-actions {
+.tetrone-wall-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 5px;
 }
 
-.socnet-wall-actions-left {
+.tetrone-wall-actions-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.socnet-attach-btn {
+.tetrone-attach-btn {
     cursor: pointer;
     color: #8292a4;
     font-size: 16px;
@@ -114,80 +114,80 @@
     transition: color 0.2s;
 }
 
-.socnet-attach-btn:hover {
+.tetrone-attach-btn:hover {
     color: var(--theme-link);
 }
 
-.socnet-post-list {
+.tetrone-post-list {
     margin-top: 10px;
 }
 
-.socnet-post:first-child {
+.tetrone-post:first-child {
     border-top: none;
     padding-top: 5px;
 }
 
-.socnet-post-header {
+.tetrone-post-header {
     border-top: 1px solid var(--theme-border);
     padding-top: 5px;
     display: flex;
     align-items: flex-start;
 }
 
-.socnet-post-avatar {
+.tetrone-post-avatar {
     width: 50px;
     height: 50px;
     margin-right: 10px;
 }
 
-.socnet-post-meta {
+.tetrone-post-meta {
     display: flex;
     flex-direction: column;
     font-size: 11px;
 }
 
-.socnet-post-author {
+.tetrone-post-author {
     color: var(--theme-link);
     font-weight: bold;
     text-decoration: none;
     font-size: 12px;
 }
 
-.socnet-post-author:hover {
+.tetrone-post-author:hover {
     text-decoration: underline;
 }
 
-.socnet-post-date {
+.tetrone-post-date {
     color: #999;
     font-size: 10px;
     margin-top: 2px;
     text-decoration: none;
 }
 
-.socnet-post-content {
+.tetrone-post-content {
     font-size: 11px;
     line-height: 1.4;
     padding-left: 60px;
     margin-top: 10px;
 }
 
-.socnet-post-text {
+.tetrone-post-text {
     white-space: pre-wrap;
     word-break: break-word;
     word-wrap: normal;
 }
 
-.socnet-post-image {
+.tetrone-post-image {
     margin-top: 10px;
 }
 
-.socnet-post-image img {
+.tetrone-post-image img {
     max-width: 100%;
     max-height: 400px;
     display: block;
 }
 
-.socnet-post-footer {
+.tetrone-post-footer {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -195,7 +195,7 @@
     margin-top: 5px;
 }
 
-.socnet-post-footer-actions {
+.tetrone-post-footer-actions {
     display: flex;
     gap: 15px;
     align-items: center;
@@ -203,7 +203,7 @@
 }
 
 /* Галерея */
-.socnet-post-gallery {
+.tetrone-post-gallery {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -211,31 +211,31 @@
     overflow: hidden;
 }
 
-.socnet-gallery-image {
+.tetrone-gallery-image {
     cursor: pointer;
     object-fit: cover;
     flex-grow: 1;
 }
 
-.socnet-post-gallery.count-1 .socnet-gallery-image {
+.tetrone-post-gallery.count-1 .tetrone-gallery-image {
     width: 100%;
     max-height: 400px;
 }
 
-.socnet-post-gallery.count-more .socnet-gallery-image {
+.tetrone-post-gallery.count-more .tetrone-gallery-image {
     width: calc(50% - 2px);
     max-height: 250px;
 }
 
 /* Прев'ю файлів та картинок */
-.socnet-post-previews-container {
+.tetrone-post-previews-container {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 10px;
 }
 
-.socnet-post-preview {
+.tetrone-post-preview {
     position: relative;
     display: inline-block;
     margin: 5px 0;
@@ -244,21 +244,21 @@
     background: var(--theme-bg-box);
 }
 
-.socnet-post-preview img {
+.tetrone-post-preview img {
     width: 100px;
     height: 100px;
     object-fit: cover;
 }
 
-.socnet-post-preview.existing img {
+.tetrone-post-preview.existing img {
     border: 2px solid var(--theme-success);
 }
 
-.socnet-post-preview.new img {
+.tetrone-post-preview.new img {
     opacity: 0.8;
 }
 
-.socnet-preview-remove-btn {
+.tetrone-preview-remove-btn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -275,11 +275,11 @@
     line-height: 1;
 }
 
-.socnet-preview-remove-btn:hover {
+.tetrone-preview-remove-btn:hover {
     background: rgba(255, 0, 0, 0.8);
 }
 
-.socnet-preview-file-stub {
+.tetrone-preview-file-stub {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -291,7 +291,7 @@
     overflow: hidden;
 }
 
-.socnet-preview-filename {
+.tetrone-preview-filename {
     font-size: 12px;
     margin-top: 4px;
     white-space: nowrap;
@@ -301,7 +301,7 @@
 }
 
 /* Дії та редагування */
-.socnet-action-icon {
+.tetrone-action-icon {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -313,12 +313,12 @@
     transition: all 0.2s ease;
 }
 
-.socnet-action-icon:hover {
+.tetrone-action-icon:hover {
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
     color: var(--theme-text-main);
 }
 
-.socnet-post-actions-top {
+.tetrone-post-actions-top {
     margin-left: auto;
     display: flex;
     gap: 5px;
@@ -326,15 +326,15 @@
     transition: opacity 0.2s;
 }
 
-.socnet-post:hover .socnet-post-actions-top {
+.tetrone-post:hover .tetrone-post-actions-top {
     opacity: 1;
 }
 
-.socnet-edit-mode {
+.tetrone-edit-mode {
     padding: 0 10px;
 }
 
-.socnet-edit-textarea {
+.tetrone-edit-textarea {
     width: 100%;
     min-height: 60px;
     border: 1px solid var(--theme-input-border);
@@ -346,7 +346,7 @@
     color: var(--theme-text-main);
 }
 
-.socnet-edit-actions {
+.tetrone-edit-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -355,12 +355,12 @@
     margin-top: 8px;
 }
 
-.socnet-edit-buttons-right {
+.tetrone-edit-buttons-right {
     display: flex;
     gap: 8px;
 }
 
-.socnet-btn-attach {
+.tetrone-btn-attach {
     background: #8292a4;
     color: white;
     cursor: pointer;
@@ -370,30 +370,30 @@
     border: 1px solid transparent;
 }
 
-.socnet-btn-attach:hover {
+.tetrone-btn-attach:hover {
     background: #6f7f91;
 }
 
 /* Репости */
-.socnet-repost-wrapper {
+.tetrone-repost-wrapper {
     margin-top: 12px;
     padding: 12px;
     border: 1px solid var(--theme-border);
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
 }
 
-.socnet-repost-wrapper .socnet-post-actions {
+.tetrone-repost-wrapper .tetrone-post-actions {
     display: none;
 }
 
-.socnet-repost-branch {
+.tetrone-repost-branch {
     margin-top: 12px;
     margin-left: 16px;
     padding-left: 16px;
     border-left: 2px solid var(--theme-border);
 }
 
-.socnet-deleted-stub {
+.tetrone-deleted-stub {
     padding: 15px;
     margin-top: 10px;
     background-color: var(--theme-bg-page);
@@ -403,7 +403,7 @@
     font-style: italic;
 }
 
-.socnet-repost-limit-msg {
+.tetrone-repost-limit-msg {
     padding: 12px;
     background-color: var(--theme-bg-page);
     color: var(--theme-text-muted);
@@ -414,7 +414,7 @@
 }
 
 /* Документи */
-.socnet-post-documents {
+.tetrone-post-documents {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -423,7 +423,7 @@
     border-top: 1px dashed var(--theme-border);
 }
 
-.socnet-document-item {
+.tetrone-document-item {
     display: flex;
     align-items: center;
     padding: 8px 12px;
@@ -434,17 +434,17 @@
     transition: background-color 0.2s, border-color 0.2s;
 }
 
-[data-theme="light"] .socnet-document-item {
+[data-theme="light"] .tetrone-document-item {
     background-color: #F7F7F7;
 }
 
-.socnet-document-item:hover {
+.tetrone-document-item:hover {
     background-color: var(--theme-bg-page);
     border-color: var(--theme-link);
     text-decoration: none;
 }
 
-.socnet-document-icon {
+.tetrone-document-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -455,14 +455,14 @@
     color: var(--theme-link);
 }
 
-.socnet-document-info {
+.tetrone-document-info {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     flex: 1;
 }
 
-.socnet-document-name {
+.tetrone-document-name {
     font-size: 12px;
     font-weight: bold;
     color: var(--theme-link);
@@ -472,21 +472,21 @@
     margin-bottom: 3px;
 }
 
-.socnet-document-size {
+.tetrone-document-size {
     font-size: 10px;
     color: var(--theme-text-muted);
     text-transform: uppercase;
 }
 
 /* Опитування */
-.socnet-poll {
+.tetrone-poll {
     margin: 10px 0;
     border: 1px solid var(--theme-border);
     background: var(--theme-bg-box);
     padding: 12px;
 }
 
-.socnet-poll-question {
+.tetrone-poll-question {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 10px;
@@ -494,17 +494,17 @@
     word-break: break-word;
 }
 
-.socnet-poll-options {
+.tetrone-poll-options {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.socnet-poll-option-wrapper {
+.tetrone-poll-option-wrapper {
     position: relative;
 }
 
-.socnet-poll-option {
+.tetrone-poll-option {
     position: relative;
     display: flex;
     align-items: center;
@@ -518,20 +518,20 @@
     transition: border-color 0.2s;
 }
 
-.socnet-poll-option.can-vote:hover {
+.tetrone-poll-option.can-vote:hover {
     border-color: var(--theme-link);
 }
 
-.socnet-poll-option.is-voted {
+.tetrone-poll-option.is-voted {
     border-color: var(--theme-link);
     font-weight: bold;
 }
 
-.socnet-poll-option.disabled {
+.tetrone-poll-option.disabled {
     cursor: default;
 }
 
-.socnet-poll-fill {
+.tetrone-poll-fill {
     position: absolute;
     top: 0;
     left: 0;
@@ -542,43 +542,43 @@
     transition: width 0.5s ease-out;
 }
 
-.socnet-poll-option.is-voted .socnet-poll-fill {
+.tetrone-poll-option.is-voted .tetrone-poll-fill {
     opacity: 0.3;
 }
 
-.socnet-poll-text,
-.socnet-poll-percent {
+.tetrone-poll-text,
+.tetrone-poll-percent {
     position: relative;
     z-index: 2;
     font-size: 11px;
 }
 
-.socnet-poll-text {
+.tetrone-poll-text {
     display: flex;
     align-items: center;
     color: var(--theme-text-main);
 }
 
-.socnet-poll-multiple-checkbox {
+.tetrone-poll-multiple-checkbox {
     margin-right: 8px;
     cursor: pointer;
     accent-color: var(--theme-link);
 }
 
-.socnet-poll-percent {
+.tetrone-poll-percent {
     color: var(--theme-text-muted);
 }
 
-.socnet-poll-percent.clickable {
+.tetrone-poll-percent.clickable {
     cursor: pointer;
     text-decoration: underline;
 }
 
-.socnet-poll-percent.clickable:hover {
+.tetrone-poll-percent.clickable:hover {
     color: var(--theme-link);
 }
 
-.socnet-poll-meta {
+.tetrone-poll-meta {
     margin-top: 10px;
     font-size: 11px;
     color: var(--theme-text-muted);
@@ -589,17 +589,17 @@
     border-top: 1px solid var(--theme-border);
 }
 
-.socnet-poll-meta .dot {
+.tetrone-poll-meta .dot {
     font-size: 8px;
 }
 
-.socnet-poll-creator {
+.tetrone-poll-creator {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.socnet-poll-creator h3 {
+.tetrone-poll-creator h3 {
     margin: 0;
     font-size: 14px;
     color: var(--theme-link);
@@ -607,29 +607,29 @@
     padding-bottom: 5px;
 }
 
-.socnet-poll-options-list {
+.tetrone-poll-options-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.socnet-poll-option-row {
+.tetrone-poll-option-row {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
-.socnet-poll-checkbox {
+.tetrone-poll-checkbox {
     cursor: pointer;
     accent-color: var(--theme-link);
 }
 
-.socnet-poll-remove-btn {
+.tetrone-poll-remove-btn {
     padding: 5px 8px;
     min-width: 25px;
 }
 
-.socnet-poll-settings {
+.tetrone-poll-settings {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -638,7 +638,7 @@
     border: 1px solid var(--theme-border);
 }
 
-.socnet-poll-setting-label {
+.tetrone-poll-setting-label {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -647,12 +647,12 @@
     color: var(--theme-text-main);
 }
 
-.socnet-poll-setting-label.highlight {
+.tetrone-poll-setting-label.highlight {
     font-weight: bold;
     color: var(--theme-link);
 }
 
-.socnet-poll-actions {
+.tetrone-poll-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -660,7 +660,7 @@
     padding-top: 15px;
 }
 
-.socnet-attached-poll-preview {
+.tetrone-attached-poll-preview {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -672,31 +672,31 @@
     transition: border-color 0.2s;
 }
 
-.socnet-attached-poll-preview:hover {
+.tetrone-attached-poll-preview:hover {
     border-color: var(--theme-link);
 }
 
-.socnet-attached-poll-preview.disabled {
+.tetrone-attached-poll-preview.disabled {
     cursor: default;
 }
 
-.socnet-attached-poll-preview.disabled:hover {
+.tetrone-attached-poll-preview.disabled:hover {
     border-color: var(--theme-border);
 }
 
-.socnet-poll-preview-title {
+.tetrone-poll-preview-title {
     font-size: 11px;
     font-weight: bold;
     color: var(--theme-text-main);
 }
 
-.socnet-poll-locked-text {
+.tetrone-poll-locked-text {
     font-size: 10px;
     color: var(--theme-text-muted);
     font-style: italic;
 }
 
-.socnet-remove-poll-btn {
+.tetrone-remove-poll-btn {
     background: transparent;
     border: none;
     color: var(--theme-error);
@@ -706,11 +706,11 @@
     padding: 0 5px;
 }
 
-.socnet-remove-poll-btn:hover {
+.tetrone-remove-poll-btn:hover {
     opacity: 0.8;
 }
 
-.socnet-add-poll-btn {
+.tetrone-add-poll-btn {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -721,11 +721,11 @@
     justify-content: center;
 }
 
-.socnet-add-poll-btn:hover {
+.tetrone-add-poll-btn:hover {
     color: var(--theme-link);
 }
 
-.socnet-poll-modal-overlay {
+.tetrone-poll-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -738,7 +738,7 @@
     z-index: 2000;
 }
 
-.socnet-poll-modal-content {
+.tetrone-poll-modal-content {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 20px;
@@ -749,21 +749,21 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.socnet-poll-voters-header {
+.tetrone-poll-voters-header {
     margin: 0 0 15px 0;
     color: var(--theme-link);
     font-size: 16px;
     font-weight: bold;
 }
 
-.socnet-poll-voters-list-container {
+.tetrone-poll-voters-list-container {
     max-height: 300px;
     overflow-y: auto;
     padding-right: 5px;
     margin-top: 15px;
 }
 
-.socnet-poll-voter-row {
+.tetrone-poll-voter-row {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -774,56 +774,56 @@
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-poll-voter-row:last-child {
+.tetrone-poll-voter-row:last-child {
     border-bottom: none;
 }
 
-.socnet-poll-voter-row:hover {
+.tetrone-poll-voter-row:hover {
     background: var(--theme-bg-page);
     text-decoration: none;
 }
 
-.socnet-poll-voter-img {
+.tetrone-poll-voter-img {
     width: 32px;
     height: 32px;
     object-fit: cover;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-poll-voter-name {
+.tetrone-poll-voter-name {
     font-weight: bold;
     font-size: 12px;
     color: var(--theme-link);
 }
 
-.socnet-poll-voter-name:hover {
+.tetrone-poll-voter-name:hover {
     text-decoration: underline;
 }
 
-.socnet-poll-voters-state-msg {
+.tetrone-poll-voters-state-msg {
     text-align: center;
     padding: 30px;
     color: var(--theme-text-muted);
     font-size: 12px;
 }
 
-.socnet-poll-option.quiz-correct {
+.tetrone-poll-option.quiz-correct {
     border-color: var(--theme-success, #4bb34b);
     background-color: rgba(75, 179, 75, 0.05);
 }
 
-.socnet-poll-option.quiz-incorrect {
+.tetrone-poll-option.quiz-incorrect {
     border-color: var(--theme-error, #e64646);
     background-color: rgba(230, 70, 70, 0.05);
 }
 
-.socnet-poll-icon {
+.tetrone-poll-icon {
     margin-left: 8px;
     font-size: 13px;
     vertical-align: middle;
 }
 
-.socnet-poll-explanation-box {
+.tetrone-poll-explanation-box {
     margin-top: 12px;
     padding: 10px 12px;
     background: var(--theme-bg-page);
@@ -833,20 +833,20 @@
     line-height: 1.4;
 }
 
-.socnet-poll-explanation-title {
+.tetrone-poll-explanation-title {
     font-weight: bold;
     color: var(--theme-link);
     margin-bottom: 4px;
     display: block;
 }
 
-.socnet-poll-explanation-wrapper {
+.tetrone-poll-explanation-wrapper {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid var(--theme-border);
 }
 
-.socnet-poll-closed-badge {
+.tetrone-poll-closed-badge {
     color: var(--theme-error);
     font-weight: bold;
     font-size: 11px;
@@ -855,7 +855,7 @@
     gap: 4px;
 }
 
-.socnet-poll-close-btn {
+.tetrone-poll-close-btn {
     background: transparent;
     border: none;
     color: var(--theme-text-muted);
@@ -864,24 +864,24 @@
     text-decoration: underline;
 }
 
-.socnet-poll-close-btn:hover {
+.tetrone-poll-close-btn:hover {
     color: var(--theme-error);
 }
 
-.socnet-post-page-wrapper {
+.tetrone-post-page-wrapper {
     max-width: 600px;
     margin: 0 auto;
     padding-bottom: 50px;
 }
 
-.socnet-post-content {
+.tetrone-post-content {
     font-size: 11px;
     line-height: 1.4;
     padding-left: 60px;
     margin-top: 5px;
 }
 
-.socnet-post-gallery {
+.tetrone-post-gallery {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -889,27 +889,27 @@
     overflow: hidden;
 }
 
-.socnet-post-videos-container {
+.tetrone-post-videos-container {
     display: flex;
     flex-direction: column;
     gap: 5px;
     margin-top: 5px;
 }
 
-.socnet-preview-youtube-wrapper {
+.tetrone-preview-youtube-wrapper {
     position: relative;
     margin-top: 5px;
     width: 100%;
 }
 
-.socnet-poll {
+.tetrone-poll {
     margin: 5px 0;
     border: 1px solid var(--theme-border);
     background: var(--theme-bg-box);
     padding: 10px;
 }
 
-.socnet-post-documents {
+.tetrone-post-documents {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -919,47 +919,47 @@
 }
 
 @media (max-width: 768px) {
-    .socnet-feed-page {
+    .tetrone-feed-page {
         max-width: 100% !important;
         margin: 0 !important;
         padding: 10px !important;
         border: none !important;
     }
 
-    .socnet-wall,
-    .socnet-post {
+    .tetrone-wall,
+    .tetrone-post {
         margin-left: -10px;
         margin-right: -10px;
         border-left: none;
         border-right: none;
     }
 
-    .socnet-post-header {
+    .tetrone-post-header {
         padding-left: 10px;
         align-items: center;
     }
 
-    .socnet-post-content {
+    .tetrone-post-content {
         padding-left: 10px;
         margin-top: 10px;
     }
 
-    .socnet-post-footer {
+    .tetrone-post-footer {
         padding-left: 10px;
         padding-right: 10px;
     }
 
-    .socnet-post-image img {
+    .tetrone-post-image img {
         width: 100%;
         max-height: 500px;
         object-fit: cover;
     }
 
-    .socnet-post-actions-top {
+    .tetrone-post-actions-top {
         opacity: 1;
     }
 
-    .socnet-post-text {
+    .tetrone-post-text {
         word-break: break-word;
         overflow-wrap: break-word;
     }

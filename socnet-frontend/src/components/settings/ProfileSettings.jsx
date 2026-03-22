@@ -27,9 +27,9 @@ const ProfileSettings = ({ isSetupMode = false }) => {
     const renderForm = () => (
         <form
             onSubmit={handleSubmit}
-            className={`socnet-settings-form ${isSetupMode ? 'socnet-settings-form-setup' : ''}`}
+            className={`tetrone-settings-form ${isSetupMode ? 'tetrone-settings-form-setup' : ''}`}
         >
-            <div className="socnet-form-group">
+            <div className="tetrone-form-group">
                 <Label>{t('common.avatar')}</Label>
                 <ImageDropzone
                     onFileSelect={handleFileChange}
@@ -37,8 +37,8 @@ const ProfileSettings = ({ isSetupMode = false }) => {
                 />
             </div>
 
-            <div className="socnet-form-row">
-                <div className="socnet-form-group">
+            <div className="tetrone-form-row">
+                <div className="tetrone-form-group">
                     <Input
                         label={`${t('common.first_name')} *`}
                         name="first_name"
@@ -48,7 +48,7 @@ const ProfileSettings = ({ isSetupMode = false }) => {
                         required
                     />
                 </div>
-                <div className="socnet-form-group">
+                <div className="tetrone-form-group">
                     <Input
                         label={t('common.last_name')}
                         name="last_name"
@@ -76,7 +76,7 @@ const ProfileSettings = ({ isSetupMode = false }) => {
 
             <CountrySelect value={formData.country} onChange={handleChange} />
 
-            <div className="socnet-form-group">
+            <div className="tetrone-form-group">
                 <Label>{t('settings.about_me')}</Label>
                 <Textarea
                     name="bio"
@@ -91,7 +91,7 @@ const ProfileSettings = ({ isSetupMode = false }) => {
                 type="submit"
                 variant="save"
                 disabled={!canSubmit}
-                className={isSetupMode ? 'socnet-btn-full-width' : ''}
+                className={isSetupMode ? 'tetrone-btn-full-width' : ''}
             >
                 {t(isSetupMode ? 'first_setup.save_and_finish' : 'common.save')}
             </Button>
@@ -100,19 +100,19 @@ const ProfileSettings = ({ isSetupMode = false }) => {
 
     if (isSetupMode)
         return (
-            <div className="socnet-setup-layout">
-                <div className="socnet-setup-form-col">
+            <div className="tetrone-setup-layout">
+                <div className="tetrone-setup-form-col">
                     {renderForm()}
                 </div>
-                <div className="socnet-setup-preview-col">
-                    <div className="socnet-preview-label">{t('common.preview')}</div>
+                <div className="tetrone-setup-preview-col">
+                    <div className="tetrone-preview-label">{t('common.preview')}</div>
                     <UserProfileCard currentUser={previewUser} isPreview={true} />
                 </div>
             </div>
         );
 
     return (
-        <div className="socnet-settings-regular">
+        <div className="tetrone-settings-regular">
             <UserProfileCard currentUser={previewUser} isPreview={true} />
             {renderForm()}
         </div>

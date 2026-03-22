@@ -5,7 +5,7 @@ export default function Banner({ personalization }) {
 
     return (
         <div
-            className="socnet-modern-banner"
+            className="tetrone-modern-banner"
             style={bannerStyle}
         />
     );

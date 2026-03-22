@@ -26,15 +26,15 @@ const SettingsPage = () => {
     usePageTitle(getPageTitle());
 
     if (!user)
-        return <div className="socnet-settings-page">{t('common.loading')}</div>;
+        return <div className="tetrone-settings-page">{t('common.loading')}</div>;
 
     const getTabClass = (tabName) => {
-        return `socnet-tab ${activeTab === tabName ? 'active' : ''}`;
+        return `tetrone-tab ${activeTab === tabName ? 'active' : ''}`;
     };
 
     return (
-        <div className="socnet-settings-page">
-            <div className="socnet-tabs">
+        <div className="tetrone-settings-page">
+            <div className="tetrone-tabs">
                 <Link to="/settings?act=profile" className={getTabClass('profile')}>
                     {t('common.profile')}
                 </Link>

@@ -80,9 +80,9 @@ export default function MyRepostsTab({ onCountUpdate }) {
             onLoadMore={loadMore}
             error={error}
             onRetry={fetchReposts}
-            className="socnet-post-list"
+            className="tetrone-post-list"
             emptyState={
-                <div className="socnet-empty-state">
+                <div className="tetrone-empty-state">
                     <p>{t('activity.reposts.empty')}</p>
                 </div>
             }

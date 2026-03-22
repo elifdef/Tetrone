@@ -49,20 +49,20 @@ export default function LoginForm() {
             />
 
             {error && (
-                <div className="socnet-auth-msg error">
+                <div className="tetrone-auth-msg error">
                     {error}
                 </div>
             )}
 
             <button
-                className="socnet-btn socnet-btn-block"
+                className="tetrone-btn tetrone-btn-block"
                 disabled={loading}
             >
                 {loading ? t('common.loading') : t('auth.signin')}
             </button>
 
-            <div className="socnet-auth-footer">
-                {t('auth.not_have_account')} <Link to="/register" className="socnet-link">{t('auth.signup')}</Link>
+            <div className="tetrone-auth-footer">
+                {t('auth.not_have_account')} <Link to="/register" className="tetrone-link">{t('auth.signup')}</Link>
             </div>
         </form>
     );

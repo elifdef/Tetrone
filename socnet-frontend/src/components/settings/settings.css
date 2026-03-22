@@ -1,4 +1,4 @@
-.socnet-settings-page {
+.tetrone-settings-page {
     font-size: 11px;
     color: var(--theme-text-main);
     background-color: var(--theme-bg-page);
@@ -11,42 +11,42 @@
     margin: 0 auto;
 }
 
-[data-theme="light"] .socnet-settings-page {
+[data-theme="light"] .tetrone-settings-page {
     background-color: var(--theme-bg-box);
 }
 
-.socnet-settings-form {
+.tetrone-settings-form {
     padding: 10px;
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
 }
 
-.socnet-settings-form-setup {
+.tetrone-settings-form-setup {
     border: none;
     padding: 0;
 }
 
-.socnet-form-group {
+.tetrone-form-group {
     margin-bottom: 15px;
 }
 
-.socnet-form-row {
+.tetrone-form-row {
     display: flex;
     gap: 15px;
 }
 
-.socnet-form-row .socnet-form-group {
+.tetrone-form-row .tetrone-form-group {
     flex: 1;
 }
 
-.socnet-settings-box {
+.tetrone-settings-box {
     margin-bottom: 20px;
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 15px;
 }
 
-.socnet-settings-box strong {
+.tetrone-settings-box strong {
     display: block;
     margin-bottom: 10px;
     color: var(--theme-link);
@@ -55,33 +55,33 @@
     padding-bottom: 5px;
 }
 
-.socnet-settings-info-row {
+.tetrone-settings-info-row {
     margin-bottom: 15px;
     padding: 10px;
     background: var(--theme-bg-page);
     border: 1px solid var(--theme-border);
 }
 
-.socnet-settings-info-item {
+.tetrone-settings-info-item {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
 }
 
-.socnet-settings-danger {
+.tetrone-settings-danger {
     margin-top: 30px;
     border: 1px solid var(--theme-error);
     padding: 1px;
 }
 
-.socnet-settings-danger-header {
+.tetrone-settings-danger-header {
     background: var(--theme-error);
     color: white;
     padding: 5px 10px;
     font-weight: bold;
 }
 
-.socnet-settings-danger-body {
+.tetrone-settings-danger-body {
     padding: 15px;
     background: var(--theme-bg-box);
     display: flex;
@@ -89,7 +89,7 @@
     align-items: center;
 }
 
-.socnet-settings-quote {
+.tetrone-settings-quote {
     font-style: italic;
     color: var(--theme-text-muted);
     font-size: 13px;
@@ -97,18 +97,18 @@
     white-space: pre-line;
 }
 
-.socnet-settings-desc {
+.tetrone-settings-desc {
     font-size: 13px;
     color: #777;
     margin-top: 10px;
 }
 
-.socnet-settings-group {
+.tetrone-settings-group {
     display: flex;
     gap: 20px;
 }
 
-.socnet-btn-save {
+.tetrone-btn-save {
     background: var(--theme-btn-bg);
     border: 1px solid var(--theme-border);
     color: var(--theme-text-main);
@@ -118,22 +118,22 @@
     font-size: 11px;
 }
 
-.socnet-btn-save:disabled {
+.tetrone-btn-save:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.socnet-btn-save:hover {
+.tetrone-btn-save:hover {
     background: var(--theme-btn-hover);
 }
 
-[data-theme="light"] .socnet-btn-save {
+[data-theme="light"] .tetrone-btn-save {
     background: var(--theme-link);
     color: white;
     border-color: var(--theme-link);
 }
 
-.socnet-btn-delete {
+.tetrone-btn-delete {
     background: transparent;
     border: 1px solid var(--theme-error);
     color: var(--theme-error);
@@ -143,12 +143,12 @@
     font-weight: bold;
 }
 
-.socnet-btn-delete:hover {
+.tetrone-btn-delete:hover {
     background: var(--theme-error);
     color: white;
 }
 
-.socnet-avatar-upload-box {
+.tetrone-avatar-upload-box {
     border: 1px solid var(--theme-input-border);
     background: var(--theme-input-bg);
     padding: 10px;
@@ -157,7 +157,7 @@
     gap: 10px;
 }
 
-.socnet-avatar-file-name {
+.tetrone-avatar-file-name {
     font-size: 11px;
     color: var(--theme-text-muted);
 }
@@ -184,7 +184,7 @@
     cursor: pointer;
 }
 
-.socnet-native-checkbox {
+.tetrone-native-checkbox {
     margin: 0;
     padding: 0;
     cursor: pointer;
@@ -212,12 +212,12 @@
     height: 22px;
 }
 
-.socnet-file-input {
+.tetrone-file-input {
     font-size: 11px;
     color: var(--theme-text-main);
 }
 
-.setting-controls .socnet-btn.btn-small {
+.setting-controls .tetrone-btn.btn-small {
     padding: 2px 8px;
     height: 22px;
     line-height: 1;
@@ -227,24 +227,24 @@
    АКТИВНІ СЕСІЇ (ПРИСТРОЇ)
    ========================================= */
 
-.socnet-sessions-header {
+.tetrone-sessions-header {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-sessions-main-title {
+.tetrone-sessions-main-title {
     margin: 0 0 5px 0;
     color: var(--theme-link);
     font-size: 14px;
 }
 
-.socnet-sessions-desc {
+.tetrone-sessions-desc {
     margin: 0;
     color: var(--theme-text-muted);
 }
 
-.socnet-sessions-subtitle {
+.tetrone-sessions-subtitle {
     display: block;
     margin-bottom: 10px;
     color: var(--theme-link);
@@ -253,7 +253,7 @@
     padding-bottom: 5px;
 }
 
-.socnet-sessions-subtitle-clean {
+.tetrone-sessions-subtitle-clean {
     color: var(--theme-link);
     font-size: 12px;
     border: none;
@@ -261,11 +261,11 @@
     padding: 0;
 }
 
-.socnet-sessions-box-no-margin {
+.tetrone-sessions-box-no-margin {
     margin-bottom: 0;
 }
 
-.socnet-sessions-section-header {
+.tetrone-sessions-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -274,19 +274,19 @@
     padding-bottom: 5px;
 }
 
-.socnet-sessions-terminate-btn {
+.tetrone-sessions-terminate-btn {
     font-size: 10px;
     padding: 3px 8px;
 }
 
-.socnet-sessions-list {
+.tetrone-sessions-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
     /* Трохи збільшив відступ між картками */
 }
 
-.socnet-session-card {
+.tetrone-session-card {
     display: flex;
     align-items: center;
     padding: 12px 15px;
@@ -298,17 +298,17 @@
     transition: background 0.2s;
 }
 
-.socnet-session-card:hover {
+.tetrone-session-card:hover {
     background: var(--theme-bg-hover, rgba(0, 0, 0, 0.02));
 }
 
-.socnet-session-card.current {
+.tetrone-session-card.current {
     border-color: var(--theme-link);
     background: rgba(91, 155, 213, 0.05);
 }
 
 /* ОНОВЛЕНИЙ БЛОК ДЛЯ SVG ІКОНОК */
-.socnet-session-icons {
+.tetrone-session-icons {
     display: flex;
     gap: 12px;
     /* Іконки тепер не злипаються */
@@ -317,7 +317,7 @@
     padding-right: 5px;
 }
 
-.socnet-session-icon-svg {
+.tetrone-session-icon-svg {
     width: 32px;
     /* Зробив іконки значно більшими (було 24) */
     height: 32px;
@@ -327,7 +327,7 @@
     /* fill: var(--theme-text-main); */
 }
 
-.socnet-session-info {
+.tetrone-session-info {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -335,7 +335,7 @@
     gap: 4px;
 }
 
-.socnet-session-device {
+.tetrone-session-device {
     font-size: 13px;
     /* Збільшив розмір шрифту */
     font-weight: bold;
@@ -345,7 +345,7 @@
     gap: 8px;
 }
 
-.socnet-session-badge {
+.tetrone-session-badge {
     background: var(--theme-success);
     color: #fff;
     font-size: 9px;
@@ -354,7 +354,7 @@
     font-weight: bold;
 }
 
-.socnet-session-meta {
+.tetrone-session-meta {
     font-size: 11px;
     color: var(--theme-text-muted);
     display: flex;
@@ -362,22 +362,22 @@
     gap: 5px;
 }
 
-.socnet-session-ip {
+.tetrone-session-ip {
     font-family: monospace;
     color: var(--theme-text-main);
     background: rgba(0, 0, 0, 0.05);
     padding: 2px 5px;
 }
 
-[data-theme="dark"] .socnet-session-ip {
+[data-theme="dark"] .tetrone-session-ip {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.socnet-session-dot {
+.tetrone-session-dot {
     font-size: 8px;
 }
 
-.socnet-session-ua {
+.tetrone-session-ua {
     font-size: 10px;
     color: var(--theme-text-muted);
     white-space: nowrap;
@@ -386,7 +386,7 @@
     opacity: 0.6;
 }
 
-.socnet-session-close-btn {
+.tetrone-session-close-btn {
     background: transparent;
     border: none;
     color: var(--theme-text-muted);
@@ -398,16 +398,16 @@
     line-height: 1;
 }
 
-.socnet-session-close-btn:hover {
+.tetrone-session-close-btn:hover {
     color: var(--theme-error);
 }
 
-.socnet-session-close-btn:disabled {
+.tetrone-session-close-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.socnet-session-card {
+.tetrone-session-card {
     display: flex;
     align-items: center;
     padding: 15px;
@@ -417,20 +417,20 @@
     transition: background 0.2s;
 }
 
-.socnet-session-icon-wrapper {
+.tetrone-session-icon-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.socnet-session-icon-svg {
+.tetrone-session-icon-svg {
     width: 64px;
     height: 64px;
     display: block;
 }
 
-.socnet-session-info {
+.tetrone-session-info {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -438,7 +438,7 @@
     gap: 5px;
 }
 
-.socnet-session-device {
+.tetrone-session-device {
     font-size: 14px;
     font-weight: bold;
     color: var(--theme-link);
@@ -447,7 +447,7 @@
     gap: 8px;
 }
 
-.socnet-session-meta {
+.tetrone-session-meta {
     font-size: 11px;
     color: var(--theme-text-muted);
     display: flex;
@@ -455,18 +455,18 @@
     gap: 5px;
 }
 
-.socnet-session-close-btn {
+.tetrone-session-close-btn {
     flex-shrink: 0;
     padding: 6px 15px;
     white-space: nowrap;
 }
 
-.socnet-session-close-btn:hover {
+.tetrone-session-close-btn:hover {
     color: var(--theme-error) !important;
     border-color: var(--theme-error) !important;
 }
 
-.socnet-sessions-terminate-btn {
+.tetrone-sessions-terminate-btn {
     font-size: 11px;
     padding: 4px 10px;
 }

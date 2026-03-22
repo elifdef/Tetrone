@@ -7,10 +7,10 @@ export default function SetupProfilePage() {
     usePageTitle(t('first_setup.title'));
 
     return (
-        <div className="socnet-setup-wrapper">
-            <div className="socnet-setup-header">
-                <h1 className="socnet-setup-title">{t('first_setup.title')}</h1>
-                <p className="socnet-setup-subtitle">{t('first_setup.fill_details')}</p>
+        <div className="tetrone-setup-wrapper">
+            <div className="tetrone-setup-header">
+                <h1 className="tetrone-setup-title">{t('first_setup.title')}</h1>
+                <p className="tetrone-setup-subtitle">{t('first_setup.fill_details')}</p>
             </div>
             <ProfileSettings isSetupMode={true} />
         </div>

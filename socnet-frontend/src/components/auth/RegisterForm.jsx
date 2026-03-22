@@ -35,9 +35,9 @@ export default function RegisterForm() {
         if (res.success) {
             setMsg({
                 text: (
-                    <span className="socnet-auth-success-text">
+                    <span className="tetrone-auth-success-text">
                         {res.message || t('auth.you_have_registered')}<br />
-                        <Link to="/login" className="socnet-link socnet-auth-msg-link">
+                        <Link to="/login" className="tetrone-link tetrone-auth-msg-link">
                             {t('auth.signin')}
                         </Link>
                     </span>
@@ -54,10 +54,10 @@ export default function RegisterForm() {
 
     if (msg.type === "success") {
         return (
-            <div className="socnet-auth-success-wrapper">
-                <div className="socnet-auth-msg success socnet-auth-success-hero">
-                    <div className="socnet-auth-success-icon" />
-                    <div className="socnet-auth-success-content">
+            <div className="tetrone-auth-success-wrapper">
+                <div className="tetrone-auth-msg success tetrone-auth-success-hero">
+                    <div className="tetrone-auth-success-icon" />
+                    <div className="tetrone-auth-success-content">
                         {msg.text}
                     </div>
                 </div>
@@ -66,7 +66,7 @@ export default function RegisterForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="socnet-auth-form">
+        <form onSubmit={handleSubmit} className="tetrone-auth-form">
             <Input
                 type="text"
                 name="username"
@@ -89,8 +89,8 @@ export default function RegisterForm() {
                 required
             />
 
-            <div className="socnet-form-row">
-                <div className="socnet-form-group">
+            <div className="tetrone-form-row">
+                <div className="tetrone-form-group">
                     <Input
                         type="password"
                         name="password"
@@ -103,7 +103,7 @@ export default function RegisterForm() {
                     />
                 </div>
 
-                <div className="socnet-form-group">
+                <div className="tetrone-form-group">
                     <Input
                         type="password"
                         name="password_confirmation"
@@ -123,22 +123,22 @@ export default function RegisterForm() {
             />
 
             {msg.type === "error" && (
-                <div className="socnet-auth-msg error">
+                <div className="tetrone-auth-msg error">
                     {msg.text}
                 </div>
             )}
 
             <button
-                className="socnet-btn socnet-btn-block"
+                className="tetrone-btn tetrone-btn-block"
                 type="submit"
                 disabled={loading || (formData.password && passwordScore < 5)}
             >
                 {loading ? t('common.loading') : t('auth.signup')}
             </button>
 
-            <div className="socnet-auth-footer">
+            <div className="tetrone-auth-footer">
                 {t('auth.already_have_account')}{' '}
-                <Link to="/login" className="socnet-link">
+                <Link to="/login" className="tetrone-link">
                     {t('auth.signin')}
                 </Link>
             </div>

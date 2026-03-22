@@ -10,9 +10,9 @@ import { audioManager } from './utils/audioManager';
 const GlobalLoading = () => {
   const { t } = useTranslation();
   return (
-    <div className="socnet-fullscreen-center">
+    <div className="tetrone-fullscreen-center">
       <title>{t('common.loading')}</title>
-      <div className="socnet-empty-state">{t('common.loading')}</div>
+      <div className="tetrone-empty-state">{t('common.loading')}</div>
     </div>
   );
 };
@@ -20,7 +20,7 @@ const GlobalLoading = () => {
 const GlobalError = () => {
   const { t } = useTranslation();
   return (
-    <div className="socnet-fullscreen-center">
+    <div className="tetrone-fullscreen-center">
       <title>{t('error.connection')}</title>
       <ErrorState
         title={t('error.server_down')}

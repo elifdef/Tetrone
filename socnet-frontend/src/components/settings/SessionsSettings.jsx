@@ -60,7 +60,7 @@ export default function SessionsSettings() {
         setIsActionLoading(false);
     };
 
-    if (isLoading) return <div className="socnet-loading">{t('common.loading')}</div>;
+    if (isLoading) return <div className="tetrone-loading">{t('common.loading')}</div>;
 
     const currentSession = sessions.find(s => s.is_current);
     const otherSessions = sessions.filter(s => !s.is_current);
@@ -69,33 +69,33 @@ export default function SessionsSettings() {
         const { os, browser, OsIcon } = parseUserAgent(session.user_agent);
 
         return (
-            <div key={session.id} className={`socnet-session-card ${isCurrent ? 'current' : ''}`}>
-                <div className="socnet-session-icon-wrapper">
-                    <OsIcon className="socnet-session-icon-svg" title={os} />
+            <div key={session.id} className={`tetrone-session-card ${isCurrent ? 'current' : ''}`}>
+                <div className="tetrone-session-icon-wrapper">
+                    <OsIcon className="tetrone-session-icon-svg" title={os} />
                 </div>
 
-                <div className="socnet-session-info">
-                    <div className="socnet-session-device">
+                <div className="tetrone-session-info">
+                    <div className="tetrone-session-device">
                         {os} • {browser}
-                        {isCurrent && <span className="socnet-session-badge">{t('settings.current_session', 'Поточний')}</span>}
+                        {isCurrent && <span className="tetrone-session-badge">{t('settings.current_session', 'Поточний')}</span>}
                     </div>
-                    <div className="socnet-session-meta">
-                        <span className="socnet-session-ip">{session.ip_address}</span>
-                        <span className="socnet-session-dot">•</span>
+                    <div className="tetrone-session-meta">
+                        <span className="tetrone-session-ip">{session.ip_address}</span>
+                        <span className="tetrone-session-dot">•</span>
                         {isCurrent ? (
-                            <span className="socnet-text-success">{t('common.online')}</span>
+                            <span className="tetrone-text-success">{t('common.online')}</span>
                         ) : (
                             <span>{formatDate(session.last_used_at)}</span>
                         )}
                     </div>
-                    <div className="socnet-session-ua" title={session.user_agent}>
+                    <div className="tetrone-session-ua" title={session.user_agent}>
                         {session.user_agent}
                     </div>
                 </div>
 
                 {!isCurrent && (
                     <Button
-                        className="socnet-btn-cancel socnet-session-close-btn"
+                        className="tetrone-btn-cancel tetrone-session-close-btn"
                         onClick={() => handleRevokeSession(session.id)}
                         disabled={isActionLoading}
                         title={t('common.close')}
@@ -108,23 +108,23 @@ export default function SessionsSettings() {
     };
 
     return (
-        <div className="socnet-settings-form">
-            <div className="socnet-sessions-header">
-                <h3 className="socnet-sessions-main-title">{t('settings.sessions')}</h3>
-                <p className="socnet-sessions-desc">{t('settings.sessions_desc')}</p>
+        <div className="tetrone-settings-form">
+            <div className="tetrone-sessions-header">
+                <h3 className="tetrone-sessions-main-title">{t('settings.sessions')}</h3>
+                <p className="tetrone-sessions-desc">{t('settings.sessions_desc')}</p>
             </div>
 
-            <div className="socnet-settings-box">
-                <strong className="socnet-sessions-subtitle">{t('settings.current_session', 'Поточний пристрій')}</strong>
+            <div className="tetrone-settings-box">
+                <strong className="tetrone-sessions-subtitle">{t('settings.current_session', 'Поточний пристрій')}</strong>
                 {currentSession && renderSessionCard(currentSession, true)}
             </div>
 
             {otherSessions.length > 0 && (
-                <div className="socnet-settings-box socnet-sessions-box-no-margin">
-                    <div className="socnet-sessions-section-header">
-                        <strong className="socnet-sessions-subtitle-clean">{t('settings.other_sessions', 'Інші пристрої')}</strong>
+                <div className="tetrone-settings-box tetrone-sessions-box-no-margin">
+                    <div className="tetrone-sessions-section-header">
+                        <strong className="tetrone-sessions-subtitle-clean">{t('settings.other_sessions', 'Інші пристрої')}</strong>
                         <Button
-                            className="socnet-btn-ghost danger socnet-sessions-terminate-btn"
+                            className="tetrone-btn-ghost danger tetrone-sessions-terminate-btn"
                             onClick={handleRevokeAllOther}
                             disabled={isActionLoading}
                         >
@@ -132,7 +132,7 @@ export default function SessionsSettings() {
                         </Button>
                     </div>
 
-                    <div className="socnet-sessions-list">
+                    <div className="tetrone-sessions-list">
                         {otherSessions.map(session => renderSessionCard(session))}
                     </div>
                 </div>

@@ -62,22 +62,22 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
     // ... рендер (без змін)
 
     return (
-        <div className="socnet-modal-overlay" onClick={handleClose}>
-            <div className="socnet-modal-dialog" onClick={e => e.stopPropagation()}>
+        <div className="tetrone-modal-overlay" onClick={handleClose}>
+            <div className="tetrone-modal-dialog" onClick={e => e.stopPropagation()}>
 
-                <h2 className="socnet-section-title report-modal-title">
+                <h2 className="tetrone-section-title report-modal-title">
                     {t('reports.title')}
                 </h2>
 
-                <form onSubmit={handleSubmit} className="socnet-form">
+                <form onSubmit={handleSubmit} className="tetrone-form">
                     {isLoadingReasons ? (
-                        <div className="socnet-empty-state">{t('common.loading')}</div>
+                        <div className="tetrone-empty-state">{t('common.loading')}</div>
                     ) : (
                         <>
-                            <div className="socnet-form-group">
-                                <label className="socnet-form-label">{t('reports.reason_label')}</label>
+                            <div className="tetrone-form-group">
+                                <label className="tetrone-form-label">{t('reports.reason_label')}</label>
                                 <select
-                                    className="socnet-form-select"
+                                    className="tetrone-form-select"
                                     value={selectedReason}
                                     onChange={(e) => setSelectedReason(e.target.value)}
                                     required
@@ -90,10 +90,10 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
                                 </select>
                             </div>
 
-                            <div className="socnet-form-group">
-                                <label className="socnet-form-label">{t('reports.details_label')}</label>
+                            <div className="tetrone-form-group">
+                                <label className="tetrone-form-label">{t('reports.details_label')}</label>
                                 <textarea
-                                    className="socnet-form-textarea"
+                                    className="tetrone-form-textarea"
                                     placeholder={t('reports.details_placeholder')}
                                     value={details}
                                     onChange={(e) => setDetails(e.target.value)}
@@ -104,17 +104,17 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
                         </>
                     )}
 
-                    <div className="socnet-modal-actions report-modal-actions">
+                    <div className="tetrone-modal-actions report-modal-actions">
                         <button
                             type="button"
-                            className="socnet-btn socnet-btn-cancel"
+                            className="tetrone-btn tetrone-btn-cancel"
                             onClick={handleClose}
                         >
                             {t('common.cancel')}
                         </button>
                         <button
                             type="submit"
-                            className="socnet-btn"
+                            className="tetrone-btn"
                             disabled={isSubmitting || isLoadingReasons}
                         >
                             {isSubmitting ? t('common.saving') : t('reports.submit_btn')}

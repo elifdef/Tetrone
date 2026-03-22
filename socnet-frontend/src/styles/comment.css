@@ -1,20 +1,20 @@
-.socnet-comments-container {
+.tetrone-comments-container {
     background-color: var(--theme-bg-page);
     padding: 15px;
     border-top: 1px solid var(--theme-border);
 }
 
-[data-theme="light"] .socnet-comments-container {
+[data-theme="light"] .tetrone-comments-container {
     background-color: #f7f7f7;
 }
 
-.socnet-comments-list {
+.tetrone-comments-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.socnet-comment-item {
+.tetrone-comment-item {
     display: flex;
     gap: 12px;
     position: relative;
@@ -23,46 +23,46 @@
     border-radius: 4px;
 }
 
-.socnet-highlight-msg {
+.tetrone-highlight-msg {
     background-color: rgba(91, 155, 213, 0.15);
 }
 
-.socnet-comment-avatar {
+.tetrone-comment-avatar {
     width: 36px;
     height: 36px;
     object-fit: cover;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-comment-content {
+.tetrone-comment-content {
     flex: 1;
     min-width: 0;
 }
 
-.socnet-comment-header {
+.tetrone-comment-header {
     display: flex;
     align-items: baseline;
     gap: 8px;
     margin-bottom: 4px;
 }
 
-.socnet-comment-author {
+.tetrone-comment-author {
     color: var(--theme-link);
     font-weight: bold;
     font-size: 12px;
     text-decoration: none;
 }
 
-.socnet-comment-author:hover {
+.tetrone-comment-author:hover {
     text-decoration: underline;
 }
 
-.socnet-comment-date {
+.tetrone-comment-date {
     font-size: 10px;
     color: var(--theme-text-muted);
 }
 
-.socnet-comment-text {
+.tetrone-comment-text {
     color: var(--theme-text-main);
     font-size: 12px;
     line-height: 1.4;
@@ -70,14 +70,14 @@
     white-space: pre-wrap;
 }
 
-.socnet-comment-form {
+.tetrone-comment-form {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     margin-bottom: 20px;
 }
 
-.socnet-comment-input-wrapper {
+.tetrone-comment-input-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -88,11 +88,11 @@
     overflow: hidden;
 }
 
-.socnet-comment-input-wrapper:focus-within {
+.tetrone-comment-input-wrapper:focus-within {
     border-color: var(--theme-link);
 }
 
-.socnet-comment-reply-preview {
+.tetrone-comment-reply-preview {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,7 +102,7 @@
     border-left: 3px solid var(--theme-link);
 }
 
-.socnet-reply-preview-left {
+.tetrone-reply-preview-left {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -111,7 +111,7 @@
     font-weight: bold;
 }
 
-.socnet-reply-preview-close {
+.tetrone-reply-preview-close {
     background: none;
     border: none;
     color: var(--theme-text-muted);
@@ -121,16 +121,16 @@
     justify-content: center;
 }
 
-.socnet-reply-preview-close:hover {
+.tetrone-reply-preview-close:hover {
     color: var(--theme-error);
 }
 
-.socnet-comment-input-row {
+.tetrone-comment-input-row {
     display: flex;
     align-items: flex-end;
 }
 
-.socnet-comment-textarea {
+.tetrone-comment-textarea {
     flex: 1;
     background: transparent;
     border: none;
@@ -143,7 +143,7 @@
     max-height: 150px;
 }
 
-.socnet-send-btn {
+.tetrone-send-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -156,21 +156,21 @@
     transition: opacity 0.2s;
 }
 
-.socnet-send-btn:hover:not(:disabled) {
+.tetrone-send-btn:hover:not(:disabled) {
     opacity: 1;
 }
 
-.socnet-send-btn:disabled {
+.tetrone-send-btn:disabled {
     color: var(--theme-text-muted);
     cursor: default;
     opacity: 0.4;
 }
 
-.socnet-comment-reply-wrapper {
+.tetrone-comment-reply-wrapper {
     margin-top: 4px;
 }
 
-.socnet-comment-reply-btn {
+.tetrone-comment-reply-btn {
     background: none;
     border: none;
     color: var(--theme-text-muted);
@@ -183,11 +183,11 @@
     transition: color 0.2s;
 }
 
-.socnet-comment-reply-btn:hover {
+.tetrone-comment-reply-btn:hover {
     color: var(--theme-link);
 }
 
-.socnet-comment-actions-wrapper {
+.tetrone-comment-actions-wrapper {
     opacity: 0;
     display: flex;
     align-items: flex-start;
@@ -198,11 +198,11 @@
     transition: opacity 0.2s;
 }
 
-.socnet-comment-item:hover .socnet-comment-actions-wrapper {
+.tetrone-comment-item:hover .tetrone-comment-actions-wrapper {
     opacity: 1;
 }
 
-.socnet-comment-action-icon {
+.tetrone-comment-action-icon {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     cursor: pointer;
@@ -215,29 +215,29 @@
     transition: all 0.2s;
 }
 
-.socnet-comment-action-icon:hover {
+.tetrone-comment-action-icon:hover {
     color: var(--theme-link);
     border-color: var(--theme-link);
 }
 
-.socnet-comment-action-icon.danger:hover {
+.tetrone-comment-action-icon.danger:hover {
     color: var(--theme-error);
     border-color: var(--theme-error);
 }
 
-.socnet-edit-mode-comment {
+.tetrone-edit-mode-comment {
     margin-top: 5px;
     width: 100%;
 }
 
-.socnet-comment-actions-container,
-.socnet-post-actions-container {
+.tetrone-comment-actions-container,
+.tetrone-post-actions-container {
     position: relative;
     margin-left: auto;
 }
 
 /* Кнопка "Три крапки" для коментарів */
-.socnet-comment-action-btn-trigger {
+.tetrone-comment-action-btn-trigger {
     background: transparent;
     border: none;
     color: var(--theme-text-muted);
@@ -251,16 +251,16 @@
     transition: all 0.2s;
 }
 
-.socnet-comment-item:hover .socnet-comment-action-btn-trigger {
+.tetrone-comment-item:hover .tetrone-comment-action-btn-trigger {
     opacity: 1;
 }
 
-.socnet-comment-action-btn-trigger:hover {
+.tetrone-comment-action-btn-trigger:hover {
     color: var(--theme-link);
 }
 
 /* Кнопка "Три крапки" для постів (завжди видима) */
-.socnet-post-action-btn-trigger {
+.tetrone-post-action-btn-trigger {
     background: transparent;
     border: none;
     color: var(--theme-input-border);
@@ -272,12 +272,12 @@
     transition: all 0.2s;
 }
 
-.socnet-post-action-btn-trigger:hover {
+.tetrone-post-action-btn-trigger:hover {
     color: var(--theme-text-muted);
 }
 
 /* Саме випадаюче меню */
-.socnet-actions-dropdown {
+.tetrone-actions-dropdown {
     position: absolute;
     top: 100%;
     right: 0;
@@ -292,7 +292,7 @@
     overflow: hidden;
 }
 
-.socnet-actions-dropdown button {
+.tetrone-actions-dropdown button {
     background: transparent;
     border: none;
     text-align: left;
@@ -307,22 +307,22 @@
     width: 100%;
 }
 
-.socnet-actions-dropdown button:hover {
+.tetrone-actions-dropdown button:hover {
     background-color: var(--theme-bg-page);
 }
 
-.socnet-actions-dropdown button.danger {
+.tetrone-actions-dropdown button.danger {
     color: var(--theme-error);
 }
 
-.socnet-actions-dropdown button.danger:hover {
+.tetrone-actions-dropdown button.danger:hover {
     background-color: rgba(230, 70, 70, 0.1);
 }
 
-.socnet-actions-dropdown button.warning {
+.tetrone-actions-dropdown button.warning {
     color: #f59e0b;
 }
 
-.socnet-actions-dropdown button.warning:hover {
+.tetrone-actions-dropdown button.warning:hover {
     background-color: rgba(245, 158, 11, 0.1);
 }

@@ -18,7 +18,7 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
                 <Input
                     label={t('admin.search_user')}
                     type="text"
-                    className="socnet-form-input"
+                    className="tetrone-form-input"
                     placeholder={t('admin.search_placeholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -158,7 +158,7 @@ export const UsersManager = ({ canBan = true }) => {
             />
 
             {isLoading ? (
-                <div className="socnet-empty-state">{t('common.loading')}</div>
+                <div className="tetrone-empty-state">{t('common.loading')}</div>
             ) : (
                 <div className="admin-users-list">
                     {users.map(user => (
@@ -171,7 +171,7 @@ export const UsersManager = ({ canBan = true }) => {
                         />
                     ))}
                     {users.length === 0 && (
-                        <div className="socnet-empty-state with-card">
+                        <div className="tetrone-empty-state with-card">
                             {t('admin.users_not_found')}
                         </div>
                     )}

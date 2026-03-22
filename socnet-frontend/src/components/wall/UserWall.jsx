@@ -15,7 +15,7 @@ export default function UserWall({ profileUser, isOwnProfile }) {
     const canWriteOnWall = authUser && (isOwnProfile || profileUser.friendship_status !== "blocked_by_target");
 
     return (
-        <div className="socnet-wall">
+        <div className="tetrone-wall">
             <WallHeader postsCount={wallData.countPosts} />
 
             {canWriteOnWall && (<CreatePostForm onSubmitSuccess={wallData.createPost} />)}
@@ -27,7 +27,7 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 hasMore={wallData.hasMore}
                 onLoadMore={wallData.loadMore}
                 emptyState={
-                    <div className="socnet-empty-state with-card">
+                    <div className="tetrone-empty-state with-card">
                         {t('wall.no_posts')}
                     </div>
                 }

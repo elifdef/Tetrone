@@ -1,6 +1,6 @@
 const Label = ({ children, className = "", ...props }) => {
     return (
-        <label className={`socnet-form-label ${className}`} {...props}>
+        <label className={`tetrone-form-label ${className}`} {...props}>
             {children}
         </label>
     );

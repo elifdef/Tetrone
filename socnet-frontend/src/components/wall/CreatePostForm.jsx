@@ -55,7 +55,7 @@ export default function CreatePostForm({ onSubmitSuccess }) {
 
     return (
         <div
-            className={`socnet-wall-input ${isDragging ? 'drag-active' : ''}`}
+            className={`tetrone-wall-input ${isDragging ? 'drag-active' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -63,7 +63,7 @@ export default function CreatePostForm({ onSubmitSuccess }) {
             <FormatBar />
 
             <Textarea
-                className="socnet-form-textarea fixed-size"
+                className="tetrone-form-textarea fixed-size"
                 placeholder={isDragging ? t('wall.drop_files_here') : t('wall.write_post')}
                 value={content}
                 onChange={e => setContent(e.target.value)}
@@ -73,14 +73,14 @@ export default function CreatePostForm({ onSubmitSuccess }) {
 
             {pollData && (
                 <div
-                    className="socnet-attached-poll-preview"
+                    className="tetrone-attached-poll-preview"
                     onClick={() => setShowPollCreator(true)}
                     title={t('poll.click_to_edit')}
                 >
-                    <span className="socnet-poll-preview-title">📊 {pollData.question}</span>
+                    <span className="tetrone-poll-preview-title">📊 {pollData.question}</span>
                     <button
                         type="button"
-                        className="socnet-remove-poll-btn"
+                        className="tetrone-remove-poll-btn"
                         onClick={(e) => {
                             e.stopPropagation();
                             setPollData(null);
@@ -100,13 +100,13 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                 onToggle={toggleYouTubePreview}
             />
 
-            <div className="socnet-wall-actions">
-                <div className="socnet-wall-actions-left">
+            <div className="tetrone-wall-actions">
+                <div className="tetrone-wall-actions-left">
                     <AttachBar onFileSelect={handleFileSelect} />
 
                     {!pollData && (
                         <button
-                            className="socnet-add-poll-btn"
+                            className="tetrone-add-poll-btn"
                             onClick={() => setShowPollCreator(true)}
                             title={t('poll.add_poll')}
                         >
@@ -115,14 +115,14 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                     )}
                 </div>
 
-                <button className="socnet-btn" onClick={handleSubmit}>
+                <button className="tetrone-btn" onClick={handleSubmit}>
                     {t('wall.send_btn')}
                 </button>
             </div>
 
             {showPollCreator && (
-                <div className="socnet-poll-modal-overlay">
-                    <div className="socnet-poll-modal-content">
+                <div className="tetrone-poll-modal-overlay">
+                    <div className="tetrone-poll-modal-content">
                         <PollCreator
                             initialData={pollData}
                             onSave={(data) => {

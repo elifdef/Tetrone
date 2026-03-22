@@ -63,50 +63,50 @@ export default function ActivityPage() {
             case 'stats':
                 return <ScreenTimeTab />;
             default:
-                return <div className="socnet-empty-state">{t('error.page_not_found')}</div>;
+                return <div className="tetrone-empty-state">{t('error.page_not_found')}</div>;
         }
     };
 
     return (
-        <div className="socnet-card-wrapper">
-            <h1 className="socnet-section-title">
+        <div className="tetrone-card-wrapper">
+            <h1 className="tetrone-section-title">
                 {t('common.my_activity')}
             </h1>
 
-            <div className="socnet-tabs">
+            <div className="tetrone-tabs">
                 <button
                     onClick={() => handleTabChange('likes')}
-                    className={`socnet-tab ${activeTab === 'likes' ? 'active' : ''}`}
+                    className={`tetrone-tab ${activeTab === 'likes' ? 'active' : ''}`}
                 >
                     {t('common.likes')}
-                    <span className="socnet-tab-count">({counts.likes})</span>
+                    <span className="tetrone-tab-count">({counts.likes})</span>
                 </button>
 
                 <button
                     onClick={() => handleTabChange('comments')}
-                    className={`socnet-tab ${activeTab === 'comments' ? 'active' : ''}`}
+                    className={`tetrone-tab ${activeTab === 'comments' ? 'active' : ''}`}
                 >
                     {t('common.comments')}
-                    <span className="socnet-tab-count">({counts.comments})</span>
+                    <span className="tetrone-tab-count">({counts.comments})</span>
                 </button>
 
                 <button
                     onClick={() => handleTabChange('reposts')}
-                    className={`socnet-tab ${activeTab === 'reposts' ? 'active' : ''}`}
+                    className={`tetrone-tab ${activeTab === 'reposts' ? 'active' : ''}`}
                 >
                     {t('common.reposts')}
-                    <span className="socnet-tab-count">({counts.reposts})</span>
+                    <span className="tetrone-tab-count">({counts.reposts})</span>
                 </button>
 
                 <button
                     onClick={() => handleTabChange('stats')}
-                    className={`socnet-tab ${activeTab === 'stats' ? 'active' : ''}`}
+                    className={`tetrone-tab ${activeTab === 'stats' ? 'active' : ''}`}
                 >
                     {t('activity.stats.title')}
                 </button>
             </div>
 
-            <div className="socnet-activity-content">
+            <div className="tetrone-activity-content">
                 {renderContent()}
             </div>
         </div>

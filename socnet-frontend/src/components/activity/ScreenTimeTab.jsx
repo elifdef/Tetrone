@@ -71,31 +71,31 @@ export default function ScreenTimeTab() {
     };
 
     if (isLoading) {
-        return <div className="socnet-loading">{t('common.loading')}</div>;
+        return <div className="tetrone-loading">{t('common.loading')}</div>;
     }
 
     return (
-        <div className="socnet-settings-regular">
-            <div className="socnet-stats-header">
-                <h3 className="socnet-stats-subtitle">{t('activity.stats.total_time')}</h3>
-                <div className="socnet-stats-total">
+        <div className="tetrone-settings-regular">
+            <div className="tetrone-stats-header">
+                <h3 className="tetrone-stats-subtitle">{t('activity.stats.total_time')}</h3>
+                <div className="tetrone-stats-total">
                     {formatTime(stats.total_active_seconds)}
                 </div>
-                <p className="socnet-stats-desc">
+                <p className="tetrone-stats-desc">
                     {t('activity.stats.description')}
                 </p>
             </div>
 
-            <h4 className="socnet-section-title">{t('activity.stats.history')}</h4>
+            <h4 className="tetrone-section-title">{t('activity.stats.history')}</h4>
 
             {stats.history.length === 0 ? (
-                <div className="socnet-empty-state">{t('activity.stats.empty')}</div>
+                <div className="tetrone-empty-state">{t('activity.stats.empty')}</div>
             ) : (
-                <div className="socnet-stats-list">
+                <div className="tetrone-stats-list">
                     {stats.history.map((day, index) => (
-                        <div key={index} className="socnet-stats-item">
-                            <span className="socnet-stats-date">{day.date}</span>
-                            <span className="socnet-stats-time">{formatTime(day.seconds)}</span>
+                        <div key={index} className="tetrone-stats-item">
+                            <span className="tetrone-stats-date">{day.date}</span>
+                            <span className="tetrone-stats-time">{formatTime(day.seconds)}</span>
                         </div>
                     ))}
                 </div>

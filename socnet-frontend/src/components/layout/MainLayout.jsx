@@ -23,9 +23,9 @@ export default function MainLayout() {
             {isMobileMenuOpen && (
                 <div className="mobile-menu-overlay" onClick={closeMenu}></div>
             )}
-            <div className="socnet-app-layout">
+            <div className="tetrone-app-layout">
                 <LeftSidebar isOpen={isMobileMenuOpen} closeMenu={closeMenu} />
-                <main className="socnet-main-content">
+                <main className="tetrone-main-content">
                     <Outlet />
                 </main>
                 <RightSidebar />

@@ -22,8 +22,8 @@ const ModerationPage = ({ currentUser }) => {
     const handleTabChange = (tabId) => { setSearchParams({ act: tabId }); usePageTitle(tabs[tabId]); }
 
     return (
-        <div className="socnet-card-wrapper">
-            <h2 className="socnet-section-title">{t('common.moderator_panel')}</h2>
+        <div className="tetrone-card-wrapper">
+            <h2 className="tetrone-section-title">{t('common.moderator_panel')}</h2>
             <AdminTabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
 
             <div>

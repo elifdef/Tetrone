@@ -55,7 +55,7 @@ export default function AdminReports() {
     const renderReportTarget = (report) => {
         if (!report.reportable) {
             return (
-                <span className="socnet-settings-desc">
+                <span className="tetrone-settings-desc">
                     {t('admin.reports.target_deleted', { id: report.reportable_id })}
                 </span>
             );
@@ -65,7 +65,7 @@ export default function AdminReports() {
 
         if (type === 'Post') {
             return (
-                <Link to={`/post/${report.reportable.id}`} className="socnet-link" target="_blank">
+                <Link to={`/post/${report.reportable.id}`} className="tetrone-link" target="_blank">
                     {t('admin.reports.target_post', { date: formatDate(report.reportable.created_at) })}
                 </Link>
             );
@@ -74,11 +74,11 @@ export default function AdminReports() {
         if (type === 'Comment') {
             return (
                 <div className="admin-report-comment-target">
-                    <span className="socnet-value">
+                    <span className="tetrone-value">
                         {t('admin.reports.target_comment', { date: formatDate(report.reportable.created_at) })}
                     </span>
                     {report.reportable.content && (
-                        <span className="socnet-notification-snippet">
+                        <span className="tetrone-notification-snippet">
                             "{report.reportable.content}"
                         </span>
                     )}
@@ -88,7 +88,7 @@ export default function AdminReports() {
 
         if (type === 'User') {
             return (
-                <Link to={`/${report.reportable.username}`} className="socnet-link" target="_blank">
+                <Link to={`/${report.reportable.username}`} className="tetrone-link" target="_blank">
                     {report.reportable.first_name} {report.reportable.last_name} (@{report.reportable.username})
                 </Link>
             );
@@ -118,11 +118,11 @@ export default function AdminReports() {
                 </div>
             </div>
 
-            <div className="socnet-tabs">
+            <div className="tetrone-tabs">
                 {['pending', 'resolved', 'rejected'].map((status) => (
                     <button
                         key={status}
-                        className={`socnet-tab ${statusFilter === status ? 'active' : ''}`}
+                        className={`tetrone-tab ${statusFilter === status ? 'active' : ''}`}
                         onClick={() => setStatusFilter(status)}
                     >
                         {t(`admin.stats.${status}`)}
@@ -131,39 +131,39 @@ export default function AdminReports() {
             </div>
 
             {loading ? (
-                <div className="socnet-empty-state">{t('common.loading')}</div>
+                <div className="tetrone-empty-state">{t('common.loading')}</div>
             ) : reports.length === 0 ? (
-                <div className="socnet-empty-state with-card">{t('admin.reports.empty')}</div>
+                <div className="tetrone-empty-state with-card">{t('admin.reports.empty')}</div>
             ) : (
-                <div className="socnet-feed-list">
+                <div className="tetrone-feed-list">
                     {reports.map((report) => (
                         <div key={report.id} className="admin-user-card admin-report-card">
                             <div className="admin-user-info">
-                                <div className="socnet-info-row">
-                                    <span className="socnet-label">{t('admin.reports.from')}</span>
-                                    <span className="socnet-value">
-                                        <Link to={`/${report.reporter?.username}`} className="socnet-link">
+                                <div className="tetrone-info-row">
+                                    <span className="tetrone-label">{t('admin.reports.from')}</span>
+                                    <span className="tetrone-value">
+                                        <Link to={`/${report.reporter?.username}`} className="tetrone-link">
                                             {report.reporter?.first_name} {report.reporter?.last_name}
                                         </Link>
                                     </span>
                                 </div>
 
-                                <div className="socnet-info-row">
-                                    <span className="socnet-label">{t('admin.reports.reason')}</span>
-                                    <span className="socnet-value admin-status-red">
+                                <div className="tetrone-info-row">
+                                    <span className="tetrone-label">{t('admin.reports.reason')}</span>
+                                    <span className="tetrone-value admin-status-red">
                                         {t(`reports.reasons.${report.reason}`)}
                                     </span>
                                 </div>
 
-                                <div className="socnet-info-row">
-                                    <span className="socnet-label">{t('admin.reports.target')}</span>
-                                    <span className="socnet-value">
+                                <div className="tetrone-info-row">
+                                    <span className="tetrone-label">{t('admin.reports.target')}</span>
+                                    <span className="tetrone-value">
                                         {renderReportTarget(report)}
                                     </span>
                                 </div>
 
                                 {report.details && (
-                                    <div className="socnet-settings-quote admin-report-quote">
+                                    <div className="tetrone-settings-quote admin-report-quote">
                                         {report.details}
                                     </div>
                                 )}

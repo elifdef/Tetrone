@@ -15,7 +15,7 @@ export default function PostContent({ content: originalContent, post, onUpdate, 
     const hasOnlyOneVideo = local.videos.length === 1 && local.images.length === 0 && external.youtube.length === 0;
 
     return (
-        <div className={`socnet-post-content ${className || ''}`}>
+        <div className={`tetrone-post-content ${className || ''}`}>
             <RichText text={content} />
 
             {post?.poll && (
@@ -23,7 +23,7 @@ export default function PostContent({ content: originalContent, post, onUpdate, 
             )}
 
             {hasOnlyOneVideo && (
-                <div className="socnet-post-single-video">
+                <div className="tetrone-post-single-video">
                     <VideoPlayer src={local.videos[0].url} />
                 </div>
             )}

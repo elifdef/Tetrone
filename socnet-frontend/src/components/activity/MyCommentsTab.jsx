@@ -80,9 +80,9 @@ export default function MyCommentsTab({ onCountUpdate }) {
             onLoadMore={loadMore}
             error={error}
             onRetry={fetchComments}
-            className="socnet-notification-list"
+            className="tetrone-notification-list"
             emptyState={
-                <div className="socnet-empty-state">
+                <div className="tetrone-empty-state">
                     <p>{t('activity.comments.empty')}</p>
                 </div>
             }

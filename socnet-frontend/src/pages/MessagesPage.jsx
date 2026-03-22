@@ -166,9 +166,9 @@ export default function MessagesPage() {
         closeModal();
         let isForBoth = false;
         const confirmContent = (
-            <div className="socnet-delete-chat-modal">
+            <div className="tetrone-delete-chat-modal">
                 <p>{t('messages.delete_chat_confirm')}</p>
-                <label className="socnet-checkbox-label" onClick={(e) => e.stopPropagation()}>
+                <label className="tetrone-checkbox-label" onClick={(e) => e.stopPropagation()}>
                     <input
                         type="checkbox"
                         onChange={(e) => { isForBoth = e.target.checked; }}
@@ -179,11 +179,11 @@ export default function MessagesPage() {
         );
 
         openCustom(
-            <div className="socnet-modal-dialog">
+            <div className="tetrone-modal-dialog">
                 {confirmContent}
-                <div className="socnet-modal-actions">
-                    <button className="socnet-btn-cancel" onClick={() => closeModal()}>{t('common.cancel')}</button>
-                    <button className="socnet-btn-danger" onClick={async () => {
+                <div className="tetrone-modal-actions">
+                    <button className="tetrone-btn-cancel" onClick={() => closeModal()}>{t('common.cancel')}</button>
+                    <button className="tetrone-btn-danger" onClick={async () => {
                         closeModal();
                         const res = await MessageService.deleteChat(dmSlug, isForBoth);
                         if (res.success) {
@@ -220,8 +220,8 @@ export default function MessagesPage() {
         const el = document.getElementById(`message-${msgId}`);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('socnet-tg-highlight-msg');
-            setTimeout(() => el.classList.remove('socnet-tg-highlight-msg'), 2000);
+            el.classList.add('tetrone-modern-highlight-msg');
+            setTimeout(() => el.classList.remove('tetrone-modern-highlight-msg'), 2000);
         }
     };
 

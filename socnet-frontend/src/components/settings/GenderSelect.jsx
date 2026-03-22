@@ -4,10 +4,10 @@ const GenderSelect = ({ value, onChange, label }) => {
     const { t } = useTranslation();
 
     return (
-        <div className="socnet-form-group">
-            <label className="socnet-form-label">{label}</label>
-            <div className="socnet-settings-group">
-                <label className="socnet-radio-label">
+        <div className="tetrone-form-group">
+            <label className="tetrone-form-label">{label}</label>
+            <div className="tetrone-settings-group">
+                <label className="tetrone-radio-label">
                     <input
                         type="radio"
                         name="gender"
@@ -19,7 +19,7 @@ const GenderSelect = ({ value, onChange, label }) => {
                     {t('common.male')}
                 </label>
 
-                <label className="socnet-radio-label">
+                <label className="tetrone-radio-label">
                     <input
                         type="radio"
                         name="gender"

@@ -25,7 +25,7 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
 
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (showMenu && !e.target.closest('.socnet-comment-actions-container')) {
+            if (showMenu && !e.target.closest('.tetrone-comment-actions-container')) {
                 setShowMenu(false);
             }
         };
@@ -55,44 +55,44 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
     };
 
     return (
-        <div ref={commentRef} className={`socnet-comment-item ${isHighlighted ? 'socnet-highlight-msg' : ''}`}>
-            <Link to={`/${comment.user.username}`} className="socnet-comment-img-link">
-                <img src={comment.user.avatar} alt={comment.user.username} className="socnet-comment-avatar" />
+        <div ref={commentRef} className={`tetrone-comment-item ${isHighlighted ? 'tetrone-highlight-msg' : ''}`}>
+            <Link to={`/${comment.user.username}`} className="tetrone-comment-img-link">
+                <img src={comment.user.avatar} alt={comment.user.username} className="tetrone-comment-avatar" />
             </Link>
 
-            <div className="socnet-comment-content">
-                <div className="socnet-comment-header">
-                    <Link to={`/${comment.user.username}`} className="socnet-comment-author">
+            <div className="tetrone-comment-content">
+                <div className="tetrone-comment-header">
+                    <Link to={`/${comment.user.username}`} className="tetrone-comment-author">
                         {comment.user.first_name} {comment.user.last_name}
                     </Link>
-                    <span className="socnet-comment-date">
+                    <span className="tetrone-comment-date">
                         {formatDate(comment.created_at)}
                     </span>
                 </div>
 
                 {isEditing ? (
-                    <div className="socnet-edit-mode-comment">
+                    <div className="tetrone-edit-mode-comment">
                         <textarea
-                            className="socnet-edit-textarea"
+                            className="tetrone-edit-textarea"
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
                         />
-                        <div className="socnet-edit-buttons-right">
-                            <button className="socnet-btn socnet-btn-small" onClick={handleSave}>
+                        <div className="tetrone-edit-buttons-right">
+                            <button className="tetrone-btn tetrone-btn-small" onClick={handleSave}>
                                 {t('common.save')}
                             </button>
-                            <button className="socnet-btn socnet-btn-small socnet-btn-cancel" onClick={() => setIsEditing(false)}>
+                            <button className="tetrone-btn tetrone-btn-small tetrone-btn-cancel" onClick={() => setIsEditing(false)}>
                                 {t('common.cancel')}
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <RichText text={comment.content} className="socnet-comment-text" />
+                    <RichText text={comment.content} className="tetrone-comment-text" />
                 )}
 
                 {currentUser && !isEditing && (
-                    <div className="socnet-comment-reply-wrapper">
-                        <button className="socnet-comment-reply-btn" onClick={() => onReply(comment.user)}>
+                    <div className="tetrone-comment-reply-wrapper">
+                        <button className="tetrone-comment-reply-btn" onClick={() => onReply(comment.user)}>
                             <ReplyIcon /> {t('common.reply')}
                         </button>
                     </div>
@@ -100,16 +100,16 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
             </div>
 
             {(isOwner || canReport) && !isEditing && (
-                <div className="socnet-comment-actions-container">
+                <div className="tetrone-comment-actions-container">
                     <button
-                        className="socnet-comment-action-btn-trigger"
+                        className="tetrone-comment-action-btn-trigger"
                         onClick={() => setShowMenu(!showMenu)}
                     >
                         <DotsIcon />
                     </button>
 
                     {showMenu && (
-                        <div className="socnet-actions-dropdown">
+                        <div className="tetrone-actions-dropdown">
                             {isOwner && (
                                 <>
                                     <button onClick={() => { setIsEditing(true); setShowMenu(false); }}>

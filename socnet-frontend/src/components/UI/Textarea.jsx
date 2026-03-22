@@ -2,12 +2,12 @@ const Textarea = ({ label, className = "", ...props }) => {
     return (
         <>
             {label && (
-                <label className="socnet-form-label" htmlFor={props.id}>
+                <label className="tetrone-form-label" htmlFor={props.id}>
                     {label}
                 </label>
             )}
             <textarea
-                className={`socnet-form-textarea ${className}`}
+                className={`tetrone-form-textarea ${className}`}
                 {...props}
             />
         </>

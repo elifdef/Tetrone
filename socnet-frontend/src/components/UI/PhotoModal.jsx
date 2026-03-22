@@ -106,42 +106,42 @@ export default function PhotoModal({ isOpen, mediaId, post, onClose, onUpdate, o
     const currentMedia = mediaFiles[currentIndex];
 
     return (
-        <div className="socnet-modal-fullscreen-overlay" onClick={onClose}>
-            <button className="socnet-modal-close-fullscreen" onClick={onClose}>✕</button>
+        <div className="tetrone-modal-fullscreen-overlay" onClick={onClose}>
+            <button className="tetrone-modal-close-fullscreen" onClick={onClose}>✕</button>
 
-            <div className="socnet-modal-fullscreen-layout" onClick={(e) => e.stopPropagation()}>
+            <div className="tetrone-modal-fullscreen-layout" onClick={(e) => e.stopPropagation()}>
 
-                <div className="socnet-modal-media-section">
+                <div className="tetrone-modal-media-section">
                     {showNav && (
                         <>
-                            <button className="socnet-modal-nav-btn left" onClick={clickPrev}>‹</button>
-                            <button className="socnet-modal-nav-btn right" onClick={clickNext}>›</button>
-                            <div className="socnet-modal-counter">
+                            <button className="tetrone-modal-nav-btn left" onClick={clickPrev}>‹</button>
+                            <button className="tetrone-modal-nav-btn right" onClick={clickNext}>›</button>
+                            <div className="tetrone-modal-counter">
                                 {hasExternalNav ? `${listCurrent} / ${listTotal}` : `${currentIndex + 1} / ${mediaFiles.length}`}
                             </div>
                         </>
                     )}
 
                     {currentMedia?.type === 'image' && (
-                        <img src={currentMedia.url} className="socnet-modal-fullscreen-image" alt="" />
+                        <img src={currentMedia.url} className="tetrone-modal-fullscreen-image" alt="" />
                     )}
 
                     {currentMedia?.type === 'video' && (
-                        <VideoPlayer src={currentMedia.url} controls className="socnet-modal-fullscreen-video" />
+                        <VideoPlayer src={currentMedia.url} controls className="tetrone-modal-fullscreen-video" />
                     )}
 
                     {currentMedia?.videoId && (
-                        <div className="socnet-modal-fullscreen-youtube">
+                        <div className="tetrone-modal-fullscreen-youtube">
                             <VideoPlayer src={currentMedia.videoId} provider="youtube" />
                         </div>
                     )}
                 </div>
 
-                <div className="socnet-modal-sidebar-section">
-                    <div className="socnet-modal-sidebar-scroll">
+                <div className="tetrone-modal-sidebar-section">
+                    <div className="tetrone-modal-sidebar-scroll">
                         <PostHeader post={modalPost} isOwner={false} />
 
-                        <div className="socnet-post-content">
+                        <div className="tetrone-post-content">
                             <RichText text={modalPost.content} />
                         </div>
 

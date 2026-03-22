@@ -24,22 +24,22 @@ const PopoverPicker = ({ color, onChange, t }) => {
     const safeHex = (color && color.startsWith('#')) ? color : '#ffffff';
 
     return (
-        <div className="socnet-picker-container" ref={popoverRef}>
+        <div className="tetrone-picker-container" ref={popoverRef}>
             <div
-                className="socnet-custom-color-btn"
+                className="tetrone-custom-color-btn"
                 style={{ backgroundColor: color || '#ffffff' }}
                 onClick={() => setIsOpen(!isOpen)}
             />
             {isOpen && (
-                <div className="socnet-color-popover">
+                <div className="tetrone-color-popover">
                     <HexColorPicker
                         color={safeHex}
                         onChange={onChange}
                     />
-                    <div className="socnet-color-input-wrapper">
+                    <div className="tetrone-color-input-wrapper">
                         <input
                             type="text"
-                            className="socnet-input socnet-color-text-input"
+                            className="tetrone-input tetrone-color-text-input"
                             value={color || ''}
                             onChange={(e) => onChange(e.target.value)}
                             placeholder={t('settings.color_format_hint')}
@@ -196,80 +196,80 @@ export default function PersonalizationSettings() {
         }
     } : null;
 
-    if (isLoading) return <div className="socnet-loading">{t('common.loading')}</div>;
+    if (isLoading) return <div className="tetrone-loading">{t('common.loading')}</div>;
 
     const themeSuffix = isDarkTheme ? 'dark' : 'light';
 
     return (
-        <div className="socnet-settings-regular">
-            <div className="socnet-settings-preview-wrapper">
-                <div className="socnet-preview-label">{t('common.preview')}</div>
+        <div className="tetrone-settings-regular">
+            <div className="tetrone-settings-preview-wrapper">
+                <div className="tetrone-preview-label">{t('common.preview')}</div>
                 <UserProfileCard currentUser={previewUser} isPreview={true} forceTheme={uiTheme} />
             </div>
 
-            <div className="socnet-settings-form">
-                <div className="socnet-settings-header-row">
-                    <h3 className="socnet-settings-title">{t('settings.personalization_title')}</h3>
+            <div className="tetrone-settings-form">
+                <div className="tetrone-settings-header-row">
+                    <h3 className="tetrone-settings-title">{t('settings.personalization_title')}</h3>
 
                     <button
-                        className="socnet-btn-ghost socnet-theme-toggle-btn"
+                        className="tetrone-btn-ghost tetrone-theme-toggle-btn"
                         onClick={handleGlobalThemeToggle}
                     >
                         {isDarkTheme ? t('settings.theme_light') : t('settings.theme_dark')}
                     </button>
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-label">{t('settings.profile_theme')}</label>
-                    <div className="socnet-theme-selector-grid">
+                <div className="tetrone-form-group">
+                    <label className="tetrone-label">{t('settings.profile_theme')}</label>
+                    <div className="tetrone-theme-selector-grid">
                         <div
-                            className={`socnet-theme-card ${uiTheme === 'modern' ? 'active' : ''}`}
+                            className={`tetrone-theme-card ${uiTheme === 'modern' ? 'active' : ''}`}
                             onClick={() => handleProfileThemeChange('modern')}
                         >
                             <img
                                 src={`/images/theme-modern-${themeSuffix}.png`}
                                 alt="modern"
-                                className="socnet-theme-img"
+                                className="tetrone-theme-img"
                             />
-                            <div className="socnet-theme-card-label">{t('settings.theme_modern')}</div>
+                            <div className="tetrone-theme-card-label">{t('settings.theme_modern')}</div>
                         </div>
                         <div
-                            className={`socnet-theme-card ${uiTheme === 'classic' ? 'active' : ''}`}
+                            className={`tetrone-theme-card ${uiTheme === 'classic' ? 'active' : ''}`}
                             onClick={() => handleProfileThemeChange('classic')}
                         >
                             <img
                                 src={`/images/theme-classic-${themeSuffix}.png`}
                                 alt="classic"
-                                className="socnet-theme-img"
+                                className="tetrone-theme-img"
                             />
-                            <div className="socnet-theme-card-label">{t('settings.theme_classic')}</div>
+                            <div className="tetrone-theme-card-label">{t('settings.theme_classic')}</div>
                         </div>
                     </div>
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-label">{t('settings.username_color')}</label>
-                    <div className="socnet-color-picker-group">
+                <div className="tetrone-form-group">
+                    <label className="tetrone-label">{t('settings.username_color')}</label>
+                    <div className="tetrone-color-picker-group">
                         <PopoverPicker
                             color={settings.username_color}
                             onChange={(color) => setSettings({ ...settings, username_color: color })}
                             t={t}
                         />
                         <button
-                            className="socnet-btn-ghost"
+                            className="tetrone-btn-ghost"
                             onClick={() => setSettings({ ...settings, username_color: '' })}
                         >
                             {t('common.reset')}
                         </button>
                     </div>
-                    <small className="socnet-text-muted">{t('settings.username_color_hint')}</small>
+                    <small className="tetrone-text-muted">{t('settings.username_color_hint')}</small>
                 </div>
 
                 {uiTheme === 'modern' && (
-                    <div className="socnet-form-group">
-                        <label className="socnet-label">{t('settings.banner_background')}</label>
+                    <div className="tetrone-form-group">
+                        <label className="tetrone-label">{t('settings.banner_background')}</label>
 
-                        <div className="socnet-banner-upload-box">
+                        <div className="tetrone-banner-upload-box">
                             <ImageDropzone
                                 onFileSelect={handleImageChange}
                                 previewImage={previewBannerImage}
@@ -280,7 +280,7 @@ export default function PersonalizationSettings() {
                                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                                     <button
                                         type="button"
-                                        className="socnet-btn-ghost danger"
+                                        className="tetrone-btn-ghost danger"
                                         onClick={handleRemoveImage}
                                     >
                                         {t('common.delete')}
@@ -289,21 +289,21 @@ export default function PersonalizationSettings() {
                             )}
                         </div>
 
-                        <div className="socnet-gradient-builder" style={{ marginTop: '15px' }}>
+                        <div className="tetrone-gradient-builder" style={{ marginTop: '15px' }}>
                             <div
-                                className="socnet-gradient-preview"
+                                className="tetrone-gradient-preview"
                                 style={{ background: settings.banner_color || `linear-gradient(${grad.deg}deg, ${grad.c1}, ${grad.c2})` }}
                             />
 
-                            <div className="socnet-gradient-controls">
-                                <div className="socnet-gradient-colors">
+                            <div className="tetrone-gradient-controls">
+                                <div className="tetrone-gradient-colors">
                                     <PopoverPicker color={grad.c1} onChange={(c) => updateGradient(grad.deg, c, grad.c2)} t={t} />
-                                    <span className="socnet-gradient-icon">→</span>
+                                    <span className="tetrone-gradient-icon">→</span>
                                     <PopoverPicker color={grad.c2} onChange={(c) => updateGradient(grad.deg, grad.c1, c)} t={t} />
                                 </div>
 
-                                <div className="socnet-gradient-angle">
-                                    <label className="socnet-angle-label">
+                                <div className="tetrone-gradient-angle">
+                                    <label className="tetrone-angle-label">
                                         {t('settings.angle')} ({grad.deg}°)
                                     </label>
                                     <input
@@ -312,16 +312,16 @@ export default function PersonalizationSettings() {
                                         max="360"
                                         value={grad.deg}
                                         onChange={(e) => updateGradient(e.target.value, grad.c1, grad.c2)}
-                                        className="socnet-range-slider"
+                                        className="tetrone-range-slider"
                                     />
                                 </div>
                             </div>
                         </div>
-                        <small className="socnet-text-muted">{t('settings.banner_hint')}</small>
+                        <small className="tetrone-text-muted">{t('settings.banner_hint')}</small>
                     </div>
                 )}
 
-                <button className="socnet-btn" onClick={handleSave} disabled={isSaving}>
+                <button className="tetrone-btn" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? t('common.loading') : t('common.save')}
                 </button>
             </div>

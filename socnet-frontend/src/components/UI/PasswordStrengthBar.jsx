@@ -29,17 +29,17 @@ const PasswordStrengthBar = ({ password, onScoreChange }) => {
     if (!password) return null;
 
     return (
-        <div className="socnet-password-strength-wrapper">
-            <div className="socnet-password-strength-track">
+        <div className="tetrone-password-strength-wrapper">
+            <div className="tetrone-password-strength-track">
                 <div 
-                    className="socnet-password-strength-bar"
+                    className="tetrone-password-strength-bar"
                     style={{
                         width: `${(score / 5) * 100}%`,
                         backgroundColor: getStrengthColor(score)
                     }}
                 ></div>
             </div>
-            <div className="socnet-password-strength-text">
+            <div className="tetrone-password-strength-text">
                 {t('auth.password_requirements')}
             </div>
         </div>

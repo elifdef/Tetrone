@@ -1,4 +1,4 @@
-.socnet-messages-old-container {
+.tetrone-messages-old-container {
     max-width: 800px;
     margin: 0 auto;
     background-color: var(--theme-bg-box);
@@ -9,18 +9,18 @@
     flex-direction: column;
 }
 
-.socnet-messages-old-container:not(.in-chat) {
+.tetrone-messages-old-container:not(.in-chat) {
     height: auto;
     display: block;
 }
 
-.socnet-messages-old-container.in-chat {
+.tetrone-messages-old-container.in-chat {
     height: calc(100vh - 80px);
     max-height: 800px;
     overflow: hidden;
 }
 
-.socnet-messages-old-tabs {
+.tetrone-messages-old-tabs {
     display: flex;
     padding: 12px 15px;
     background-color: var(--theme-header-bg);
@@ -28,17 +28,17 @@
     font-size: 11px;
 }
 
-.socnet-messages-old-tab {
+.tetrone-messages-old-tab {
     color: var(--theme-link);
     cursor: pointer;
     font-weight: bold;
 }
 
-.socnet-messages-old-tab:hover {
+.tetrone-messages-old-tab:hover {
     text-decoration: underline;
 }
 
-.socnet-messages-old-chat-header-complex {
+.tetrone-messages-old-chat-header-complex {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,24 +47,24 @@
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-im-header-center {
+.tetrone-im-header-center {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
 }
 
-.socnet-im-header-center:hover .socnet-im-chat-title {
+.tetrone-im-header-center:hover .tetrone-im-chat-title {
     text-decoration: underline;
 }
 
-.socnet-im-chat-title {
+.tetrone-im-chat-title {
     font-weight: bold;
     font-size: 13px;
     color: var(--theme-link);
 }
 
-.socnet-im-online-indicator {
+.tetrone-im-online-indicator {
     display: inline-flex;
     align-items: center;
     color: var(--theme-text-muted);
@@ -73,7 +73,7 @@
     margin-left: 6px;
 }
 
-.socnet-im-online-square {
+.tetrone-im-online-square {
     display: inline-block;
     width: 6px;
     height: 6px;
@@ -81,13 +81,13 @@
     margin-right: 4px;
 }
 
-.socnet-im-offline-text {
+.tetrone-im-offline-text {
     font-size: 10px;
     color: var(--theme-text-muted);
     margin-top: 2px;
 }
 
-.socnet-btn-old-icon {
+.tetrone-btn-old-icon {
     background: transparent;
     border: 1px solid var(--theme-border);
     color: var(--theme-text-muted);
@@ -96,35 +96,35 @@
     padding: 3px 6px;
 }
 
-.socnet-btn-old-icon:hover {
+.tetrone-btn-old-icon:hover {
     background-color: var(--theme-bg-page);
     color: var(--theme-error);
     border-color: var(--theme-error);
 }
 
-.socnet-messages-old-history-scroll {
+.tetrone-messages-old-history-scroll {
     flex-grow: 1;
     overflow-y: auto;
     padding: 0 15px;
 }
 
-.socnet-messages-old-message-row {
+.tetrone-messages-old-message-row {
     display: flex;
     padding: 15px 0;
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-messages-old-message-row:last-child {
+.tetrone-messages-old-message-row:last-child {
     border-bottom: none;
 }
 
-.socnet-messages-old-msg-left {
+.tetrone-messages-old-msg-left {
     width: 50px;
     flex-shrink: 0;
     margin-right: 15px;
 }
 
-.socnet-messages-old-avatar {
+.tetrone-messages-old-avatar {
     width: 50px;
     height: 50px;
     object-fit: cover;
@@ -132,35 +132,35 @@
     border: 1px solid var(--theme-border);
 }
 
-.socnet-messages-old-msg-right {
+.tetrone-messages-old-msg-right {
     flex: 1;
     min-width: 0;
 }
 
-.socnet-im-msg-header {
+.tetrone-im-msg-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 6px;
 }
 
-.socnet-messages-old-author {
+.tetrone-messages-old-author {
     font-weight: bold;
     color: var(--theme-link);
     text-decoration: none;
     font-size: 12px;
 }
 
-.socnet-messages-old-author:hover {
+.tetrone-messages-old-author:hover {
     text-decoration: underline;
 }
 
-.socnet-messages-old-date {
+.tetrone-messages-old-date {
     color: var(--theme-text-muted);
     font-size: 10px;
 }
 
-.socnet-messages-old-msg-text {
+.tetrone-messages-old-msg-text {
     font-size: 12px;
     color: var(--theme-text-main);
     line-height: 1.4;
@@ -169,12 +169,12 @@
     margin-bottom: 8px;
 }
 
-.socnet-edited-mark {
+.tetrone-edited-mark {
     font-size: 10px;
     color: var(--theme-text-muted);
 }
 
-.socnet-messages-old-actions-bottom {
+.tetrone-messages-old-actions-bottom {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -182,39 +182,39 @@
     margin-top: 8px;
 }
 
-.socnet-action-link {
+.tetrone-action-link {
     cursor: pointer;
     color: var(--theme-link);
     font-size: 11px;
 }
 
-.socnet-action-link:hover {
+.tetrone-action-link:hover {
     text-decoration: underline;
 }
 
-.socnet-action-link.danger {
+.tetrone-action-link.danger {
     color: var(--theme-error);
 }
 
-.socnet-messages-old-read-status {
+.tetrone-messages-old-read-status {
     font-size: 11px;
     font-weight: bold;
     margin-left: 4px;
 }
 
-.socnet-messages-old-read-status.is-sent {
+.tetrone-messages-old-read-status.is-sent {
     color: var(--theme-text-muted);
 }
 
-.socnet-messages-old-read-status.is-read {
+.tetrone-messages-old-read-status.is-read {
     color: var(--theme-link);
 }
 
-.socnet-messages-old-dialog-list {
+.tetrone-messages-old-dialog-list {
     padding: 0 15px 15px 15px;
 }
 
-.socnet-messages-old-dialog-item {
+.tetrone-messages-old-dialog-item {
     display: flex;
     padding: 10px 0;
     border-bottom: 1px solid var(--theme-border);
@@ -222,23 +222,23 @@
     transition: background 0.2s;
 }
 
-.socnet-messages-old-dialog-item:hover {
+.tetrone-messages-old-dialog-item:hover {
     background-color: var(--theme-bg-page);
 }
 
-.socnet-messages-old-dialog-info {
+.tetrone-messages-old-dialog-info {
     flex: 1;
     margin-left: 15px;
     min-width: 0;
 }
 
-.socnet-messages-old-dialog-header {
+.tetrone-messages-old-dialog-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
 }
 
-.socnet-messages-old-dialog-snippet {
+.tetrone-messages-old-dialog-snippet {
     font-size: 11px;
     color: var(--theme-text-main);
     white-space: nowrap;
@@ -246,15 +246,15 @@
     text-overflow: ellipsis;
 }
 
-.socnet-msg-preview-you {
+.tetrone-msg-preview-you {
     color: var(--theme-link);
 }
 
-.socnet-msg-preview-them {
+.tetrone-msg-preview-them {
     color: var(--theme-text-muted);
 }
 
-.socnet-message-reply-quote {
+.tetrone-message-reply-quote {
     border-left: 2px solid var(--theme-link);
     padding-left: 10px;
     margin-bottom: 8px;
@@ -264,7 +264,7 @@
     cursor: pointer;
 }
 
-[data-theme="dark"] .socnet-message-reply-quote {
+[data-theme="dark"] .tetrone-message-reply-quote {
     background: rgba(255, 255, 255, 0.05);
 }
 
@@ -283,7 +283,7 @@
     text-overflow: ellipsis;
 }
 
-.socnet-pinned-message-bar {
+.tetrone-pinned-message-bar {
     display: flex;
     align-items: center;
     padding: 8px 15px;
@@ -293,7 +293,7 @@
     transition: background 0.1s;
 }
 
-.socnet-pinned-message-bar:hover {
+.tetrone-pinned-message-bar:hover {
     background: var(--theme-bg-box);
 }
 
@@ -335,20 +335,20 @@
     color: var(--theme-error);
 }
 
-.socnet-msg-files {
+.tetrone-msg-files {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     margin-top: 8px;
 }
 
-.socnet-msg-image-attachment {
+.tetrone-msg-image-attachment {
     max-width: 250px;
     border: 1px solid var(--theme-border);
     display: block;
 }
 
-.socnet-selected-files {
+.tetrone-selected-files {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -357,7 +357,7 @@
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-selected-file-item {
+.tetrone-selected-file-item {
     font-size: 11px;
     background: var(--theme-bg-box);
     padding: 4px 10px;
@@ -367,7 +367,7 @@
     gap: 8px;
 }
 
-.socnet-selected-file-item button {
+.tetrone-selected-file-item button {
     background: none;
     border: none;
     color: var(--theme-error);
@@ -375,13 +375,13 @@
     font-weight: bold;
 }
 
-.socnet-messages-old-composer-wrapper {
+.tetrone-messages-old-composer-wrapper {
     background-color: var(--theme-bg-page);
     border-top: 1px solid var(--theme-border);
     padding: 15px;
 }
 
-.socnet-messages-old-editing {
+.tetrone-messages-old-editing {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -402,19 +402,19 @@
     text-overflow: ellipsis;
 }
 
-.socnet-messages-old-composer-inner {
+.tetrone-messages-old-composer-inner {
     display: flex;
     gap: 15px;
     align-items: flex-start;
 }
 
-.socnet-messages-old-composer-center {
+.tetrone-messages-old-composer-center {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.socnet-messages-old-textarea {
+.tetrone-messages-old-textarea {
     width: 100%;
     min-height: 60px;
     border: 1px solid var(--theme-input-border);
@@ -427,18 +427,18 @@
     box-sizing: border-box;
 }
 
-.socnet-messages-old-textarea:focus {
+.tetrone-messages-old-textarea:focus {
     border-color: var(--theme-link);
     outline: none;
 }
 
-.socnet-messages-old-composer-actions {
+.tetrone-messages-old-composer-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.socnet-messages-old-send-btn {
+.tetrone-messages-old-send-btn {
     background-color: var(--theme-btn-bg);
     color: var(--theme-btn-text);
     border: 1px solid var(--theme-border);
@@ -448,26 +448,26 @@
     font-size: 11px;
 }
 
-.socnet-messages-old-send-btn:hover {
+.tetrone-messages-old-send-btn:hover {
     background-color: var(--theme-btn-hover);
 }
 
-.socnet-attach-wrapper {
+.tetrone-attach-wrapper {
     position: relative;
     display: inline-block;
 }
 
-.socnet-messages-old-attach-label {
+.tetrone-messages-old-attach-label {
     cursor: pointer;
     color: var(--theme-link);
     font-size: 11px;
 }
 
-.socnet-messages-old-attach-label:hover {
+.tetrone-messages-old-attach-label:hover {
     text-decoration: underline;
 }
 
-.socnet-attach-dropdown {
+.tetrone-attach-dropdown {
     position: absolute;
     bottom: 100%;
     right: 0;
@@ -479,7 +479,7 @@
     z-index: 100;
 }
 
-.socnet-attach-dropdown-item {
+.tetrone-attach-dropdown-item {
     padding: 10px 15px;
     cursor: pointer;
     font-size: 13px;
@@ -490,7 +490,7 @@
     transition: 0.1s;
 }
 
-.socnet-attach-dropdown-item:hover {
+.tetrone-attach-dropdown-item:hover {
     background: var(--theme-bg-page);
 }
 
@@ -499,15 +499,15 @@
     height: 50px;
 }
 
-.socnet-hidden-input {
+.tetrone-hidden-input {
     display: none;
 }
 
-.socnet-highlight-msg {
+.tetrone-highlight-msg {
     animation: highlightFade 2s ease-in-out;
 }
 
-.socnet-typing-old {
+.tetrone-typing-old {
     color: var(--theme-link);
     display: inline-flex;
     align-items: center;
@@ -551,7 +551,7 @@
 }
 
 /* Модалка Інформації про чат */
-.socnet-messages-old-info-modal {
+.tetrone-messages-old-info-modal {
     max-width: 450px !important;
     padding: 0 !important;
     overflow: hidden;
@@ -559,7 +559,7 @@
     flex-direction: column;
 }
 
-.socnet-messages-old-chat-header {
+.tetrone-messages-old-chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -571,7 +571,7 @@
     padding: 10px 15px;
 }
 
-.socnet-old-modal-close {
+.tetrone-old-modal-close {
     background: none;
     border: none;
     color: var(--theme-btn-text);
@@ -580,11 +580,11 @@
     opacity: 0.8;
 }
 
-.socnet-old-modal-close:hover {
+.tetrone-old-modal-close:hover {
     opacity: 1;
 }
 
-.socnet-old-info-profile {
+.tetrone-old-info-profile {
     display: flex;
     padding: 15px;
     align-items: flex-start;
@@ -592,21 +592,21 @@
     background: var(--theme-bg-page);
 }
 
-.socnet-old-info-profile img {
+.tetrone-old-info-profile img {
     width: 80px;
     height: 80px;
     object-fit: cover;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-old-info-details {
+.tetrone-old-info-details {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     gap: 4px;
 }
 
-.socnet-old-info-actions {
+.tetrone-old-info-actions {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -614,26 +614,26 @@
 }
 
 /* Перевизначення табів для модалки, щоб вони не мали відступів */
-.socnet-messages-old-info-modal .socnet-messages-old-tabs {
+.tetrone-messages-old-info-modal .tetrone-messages-old-tabs {
     margin: 0;
     padding: 10px 15px 0 15px;
     border-top: 1px solid var(--theme-border);
 }
 
-.socnet-old-info-content {
+.tetrone-old-info-content {
     padding: 15px;
     height: 350px;
     overflow-y: auto;
     background: var(--theme-bg-box);
 }
 
-.socnet-old-info-media-grid {
+.tetrone-old-info-media-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
 }
 
-.socnet-old-info-media-wrapper {
+.tetrone-old-info-media-wrapper {
     width: 100%;
     aspect-ratio: 1;
     cursor: pointer;
@@ -641,7 +641,7 @@
     position: relative;
 }
 
-.socnet-old-info-media-wrapper:hover::after {
+.tetrone-old-info-media-wrapper:hover::after {
     content: '';
     position: absolute;
     top: 0;
@@ -651,14 +651,14 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-.socnet-old-info-grid-img {
+.tetrone-old-info-grid-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.socnet-old-info-video-stub {
+.tetrone-old-info-video-stub {
     width: 100%;
     height: 100%;
     display: flex;
@@ -670,7 +670,7 @@
     font-weight: bold;
 }
 
-.socnet-old-info-file-row {
+.tetrone-old-info-file-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -678,19 +678,19 @@
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-messages-old-container.in-chat {
+.tetrone-messages-old-container.in-chat {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 80px);
     overflow: hidden;
 }
 
-.socnet-messages-old-history-scroll {
+.tetrone-messages-old-history-scroll {
     flex: 1;
     overflow-y: auto;
     padding: 15px;
 }
 
-.socnet-messages-old-composer-wrapper {
+.tetrone-messages-old-composer-wrapper {
     flex-shrink: 0;
 }

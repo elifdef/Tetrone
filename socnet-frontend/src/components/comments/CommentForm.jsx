@@ -26,36 +26,36 @@ export default function CommentForm({ user, onSubmit, placeholder, replyToUser, 
     };
 
     return (
-        <form className="socnet-comment-form" onSubmit={handleSubmit}>
+        <form className="tetrone-comment-form" onSubmit={handleSubmit}>
             {user && (
                 <>
-                    <img src={user.avatar} alt={user.username} className="socnet-comment-avatar" />
+                    <img src={user.avatar} alt={user.username} className="tetrone-comment-avatar" />
 
-                    <div className="socnet-comment-input-wrapper">
+                    <div className="tetrone-comment-input-wrapper">
                         {replyToUser && (
-                            <div className="socnet-comment-reply-preview">
-                                <div className="socnet-reply-preview-left">
+                            <div className="tetrone-comment-reply-preview">
+                                <div className="tetrone-reply-preview-left">
                                     <ReplyIcon width={12} height={12} />
-                                    <span className="socnet-reply-preview-name">
+                                    <span className="tetrone-reply-preview-name">
                                         {replyToUser.first_name} {replyToUser.last_name}
                                     </span>
                                 </div>
-                                <button type="button" onClick={onClearReply} className="socnet-reply-preview-close">
+                                <button type="button" onClick={onClearReply} className="tetrone-reply-preview-close">
                                     <DeleteIcon width={12} height={12} />
                                 </button>
                             </div>
                         )}
 
-                        <div className="socnet-comment-input-row">
+                        <div className="tetrone-comment-input-row">
                             <textarea
                                 ref={inputRef}
-                                className="socnet-comment-textarea"
+                                className="tetrone-comment-textarea"
                                 placeholder={placeholder}
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
                                 rows={1}
                             />
-                            <button type="submit" className="socnet-send-btn" disabled={!text.trim()}>
+                            <button type="submit" className="tetrone-send-btn" disabled={!text.trim()}>
                                 <SendIcon width={16} height={16} />
                             </button>
                         </div>

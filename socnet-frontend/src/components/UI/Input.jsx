@@ -8,21 +8,21 @@ const Input = ({ label, className = "", type, ...props }) => {
     return (
         <>
             {label && (
-                <label className="socnet-form-label" htmlFor={props.id}>
+                <label className="tetrone-form-label" htmlFor={props.id}>
                     {label}
                 </label>
             )}
 
             {isPassword ? (
-                <div className="socnet-password-wrapper">
+                <div className="tetrone-password-wrapper">
                     <input
                         type={inputType}
-                        className={`socnet-form-input ${className}`}
+                        className={`tetrone-form-input ${className}`}
                         {...props}
                     />
                     <button
                         type="button"
-                        className="socnet-password-toggle"
+                        className="tetrone-password-toggle"
                         onClick={() => setShowPassword(!showPassword)}
                         title={showPassword ? "Сховати пароль" : "Показати пароль"}
                     >
@@ -43,7 +43,7 @@ const Input = ({ label, className = "", type, ...props }) => {
             ) : (
                 <input
                     type={inputType}
-                    className={`socnet-form-input ${className}`}
+                    className={`tetrone-form-input ${className}`}
                     {...props}
                 />
             )}

@@ -12,7 +12,7 @@ export default function InfiniteScrollList({
     onRetry = null,      // функція для повторної спроби
     emptyState = null,   // компонент, який показуємо якщо пусто
     endMessage = null,   // текст в самому кінці
-    className = "socnet-feed-list"
+    className = "tetrone-feed-list"
 }) {
     const { t } = useTranslation();
     const loaderRef = useIntersectionObserver(onLoadMore, hasMore, isLoadingMore);
@@ -20,7 +20,7 @@ export default function InfiniteScrollList({
     // перше завантаження
     if (isLoadingInitial) {
         return (
-            <div className="socnet-empty-state">
+            <div className="tetrone-empty-state">
                 {t('common.loading')}
             </div>
         );
@@ -29,10 +29,10 @@ export default function InfiniteScrollList({
     // помилка при першому завантаженні (коли список порожній)
     if (error && itemsCount === 0) {
         return (
-            <div className="socnet-empty-state with-card">
+            <div className="tetrone-empty-state with-card">
                 <h3>{t('error.connection')}</h3>
                 {onRetry && (
-                    <button className="socnet-btn-small socnet-btn-retry" onClick={onRetry}>
+                    <button className="tetrone-btn-small tetrone-btn-retry" onClick={onRetry}>
                         {t('common.reload_page')}
                     </button>
                 )}
@@ -43,7 +43,7 @@ export default function InfiniteScrollList({
     // немає постів взагалі
     if (itemsCount === 0) {
         return emptyState || (
-            <div className="socnet-empty-state with-card">
+            <div className="tetrone-empty-state with-card">
                 {t('common.no_more_data')}
             </div>
         );
@@ -56,27 +56,27 @@ export default function InfiniteScrollList({
 
             {/* підвантаження наступної сторінки */}
             {hasMore && !error && (
-                <div ref={loaderRef} className="socnet-infinite-scroll-msg">
+                <div ref={loaderRef} className="tetrone-infinite-scroll-msg">
                     {isLoadingMore ? t('common.loading') + '...' : ''}
                 </div>
             )}
 
             {/* кінець списку */}
             {!hasMore && itemsCount > 0 && (
-                <div className="socnet-infinite-scroll-msg">
+                <div className="tetrone-infinite-scroll-msg">
                     {endMessage || t('wall.no_more_posts')}
                 </div>
             )}
 
             {/* помилка при підвантаженні наступної сторінки */}
             {error && itemsCount > 0 && (
-                <div className="socnet-infinite-error-box">
-                    <span className="socnet-error-text">
+                <div className="tetrone-infinite-error-box">
+                    <span className="tetrone-error-text">
                         {t('error.connection')}
                     </span>
                     <br />
                     {onRetry && (
-                        <button className="socnet-btn-small socnet-btn-retry-small" onClick={onRetry}>
+                        <button className="tetrone-btn-small tetrone-btn-retry-small" onClick={onRetry}>
                             {t('common.reload_page')}
                         </button>
                     )}

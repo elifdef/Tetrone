@@ -1,4 +1,4 @@
-.socnet-modal-overlay {
+.tetrone-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
     padding-top: 50px;
 }
 
-.socnet-modal-dialog {
+.tetrone-modal-dialog {
     max-width: 400px;
     width: 100%;
     padding: 20px;
@@ -23,15 +23,15 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.socnet-modal-dialog.modal-lg {
+.tetrone-modal-dialog.modal-lg {
     max-width: 600px;
 }
 
-.socnet-modal-dialog.modal-sm {
+.tetrone-modal-dialog.modal-sm {
     max-width: 300px;
 }
 
-.socnet-modal-message {
+.tetrone-modal-message {
     font-weight: bold;
     margin-bottom: 15px;
     color: var(--theme-text-main);
@@ -39,18 +39,18 @@
     line-height: 1.4;
 }
 
-.socnet-modal-input {
+.tetrone-modal-input {
     margin-bottom: 15px;
 }
 
-.socnet-modal-actions {
+.tetrone-modal-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     margin-top: 15px;
 }
 
-.socnet-modal-btn {
+.tetrone-modal-btn {
     min-width: 80px;
 }
 
@@ -67,7 +67,7 @@ body.modal-open {
     overflow: hidden;
 }
 
-.socnet-modal-fullscreen-overlay {
+.tetrone-modal-fullscreen-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -78,7 +78,7 @@ body.modal-open {
     display: flex;
 }
 
-.socnet-modal-close-fullscreen {
+.tetrone-modal-close-fullscreen {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -96,17 +96,17 @@ body.modal-open {
     transition: background 0.2s;
 }
 
-.socnet-modal-close-fullscreen:hover {
+.tetrone-modal-close-fullscreen:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
-.socnet-modal-fullscreen-layout {
+.tetrone-modal-fullscreen-layout {
     display: flex;
     width: 100%;
     height: 100%;
 }
 
-.socnet-modal-media-section {
+.tetrone-modal-media-section {
     flex: 1;
     position: relative;
     display: flex;
@@ -115,7 +115,7 @@ body.modal-open {
     padding: 20px;
 }
 
-.socnet-modal-sidebar-section {
+.tetrone-modal-sidebar-section {
     width: 350px;
     background: var(--theme-bg-box);
     height: 100%;
@@ -124,26 +124,26 @@ body.modal-open {
     border-left: 1px solid var(--theme-border);
 }
 
-.socnet-modal-sidebar-scroll {
+.tetrone-modal-sidebar-scroll {
     overflow-y: auto;
     padding: 20px;
     height: 100%;
 }
 
-.socnet-modal-fullscreen-image,
-.socnet-modal-fullscreen-video {
+.tetrone-modal-fullscreen-image,
+.tetrone-modal-fullscreen-video {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
 }
 
-.socnet-modal-fullscreen-youtube {
+.tetrone-modal-fullscreen-youtube {
     width: 100%;
     max-width: 900px;
     aspect-ratio: 16 / 9;
 }
 
-.socnet-modal-nav-btn {
+.tetrone-modal-nav-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -158,19 +158,19 @@ body.modal-open {
     transition: background 0.2s;
 }
 
-.socnet-modal-nav-btn:hover {
+.tetrone-modal-nav-btn:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
-.socnet-modal-nav-btn.left {
+.tetrone-modal-nav-btn.left {
     left: 0;
 }
 
-.socnet-modal-nav-btn.right {
+.tetrone-modal-nav-btn.right {
     right: 0;
 }
 
-.socnet-modal-counter {
+.tetrone-modal-counter {
     position: absolute;
     top: 20px;
     left: 20px;
@@ -182,35 +182,35 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-    .socnet-modal-overlay {
+    .tetrone-modal-overlay {
         align-items: center;
         padding: 10px;
     }
 
-    .socnet-modal-dialog {
+    .tetrone-modal-dialog {
         max-width: 100%;
         width: 100%;
         margin: 0;
     }
 
-    .socnet-modal-fullscreen-layout {
+    .tetrone-modal-fullscreen-layout {
         flex-direction: column;
         overflow-y: auto;
     }
 
-    .socnet-modal-media-section {
+    .tetrone-modal-media-section {
         height: 60vh;
         flex: none;
     }
 
-    .socnet-modal-sidebar-section {
+    .tetrone-modal-sidebar-section {
         width: 100%;
         height: auto;
         min-height: 40vh;
         border-left: none;
     }
 
-    .socnet-modal-close-fullscreen {
+    .tetrone-modal-close-fullscreen {
         top: 10px;
         right: 10px;
     }

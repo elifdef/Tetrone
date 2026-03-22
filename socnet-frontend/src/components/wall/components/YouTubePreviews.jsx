@@ -4,14 +4,14 @@ export default function YouTubePreviews({ youtubeLinks, removedPreviews, onToggl
     if (!youtubeLinks || youtubeLinks.length === 0) return null;
 
     return (
-        <div className="socnet-post-videos-container">
+        <div className="tetrone-post-videos-container">
             {youtubeLinks.map(yt => {
                 const isAttached = !removedPreviews.includes(yt.videoId);
 
                 return (
-                    <div key={`preview-${yt.id}`} className="socnet-preview-youtube-wrapper">
+                    <div key={`preview-${yt.id}`} className="tetrone-preview-youtube-wrapper">
                         <label
-                            className="socnet-youtube-checkbox-overlay"
+                            className="tetrone-youtube-checkbox-overlay"
                         >
                             <input
                                 type="checkbox"

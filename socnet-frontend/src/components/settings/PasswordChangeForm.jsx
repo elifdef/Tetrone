@@ -11,14 +11,14 @@ const PasswordChangeForm = ({
     const [newPasswordScore, setNewPasswordScore] = useState(0);
 
     return (
-        <div className="socnet-settings-box">
+        <div className="tetrone-settings-box">
             <strong>{t('settings.change_password')}</strong>
             <form onSubmit={onSubmit}>
-                <div className="socnet-form-group">
-                    <label className="socnet-form-label">{t('settings.current_password')}</label>
+                <div className="tetrone-form-group">
+                    <label className="tetrone-form-label">{t('settings.current_password')}</label>
                     <Input
                         type="password"
-                        className="socnet-form-input"
+                        className="tetrone-form-input"
                         required
                         placeholder="********"
                         value={currentPassword}
@@ -26,11 +26,11 @@ const PasswordChangeForm = ({
                     />
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-form-label">{t('settings.new_password')}</label>
+                <div className="tetrone-form-group">
+                    <label className="tetrone-form-label">{t('settings.new_password')}</label>
                     <Input
                         type="password"
-                        className="socnet-form-input"
+                        className="tetrone-form-input"
                         required
                         placeholder="********"
                         value={newPassword}
@@ -38,11 +38,11 @@ const PasswordChangeForm = ({
                     />
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-form-label">{t('auth.password_confirmation')}</label>
+                <div className="tetrone-form-group">
+                    <label className="tetrone-form-label">{t('auth.password_confirmation')}</label>
                     <Input
                         type="password"
-                        className="socnet-form-input"
+                        className="tetrone-form-input"
                         required
                         placeholder="********"
                         value={confirmPassword}
@@ -57,7 +57,7 @@ const PasswordChangeForm = ({
 
                 <button
                     type="submit"
-                    className="socnet-btn-save"
+                    className="tetrone-btn-save"
                     disabled={loading || (newPassword && newPasswordScore < 5)}
                 >
                     {loading ? t('common.saving') : t('common.save')}

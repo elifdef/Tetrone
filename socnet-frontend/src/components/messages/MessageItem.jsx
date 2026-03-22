@@ -8,52 +8,52 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
     return (
         <div
             id={`message-${msg.id}`}
-            className={`socnet-tg-message-wrapper ${msg.isMine ? 'mine' : 'theirs'} ${msg.status === 'error' ? 'error-state' : ''}`}
+            className={`tetrone-modern-message-wrapper ${msg.isMine ? 'mine' : 'theirs'} ${msg.status === 'error' ? 'error-state' : ''}`}
             onMouseEnter={() => !isTemp && setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
         >
-            <div className="socnet-tg-message-content">
-                <div className="socnet-tg-message-bubble">
+            <div className="tetrone-modern-message-content">
+                <div className="tetrone-modern-message-bubble">
 
                     {!msg.isMine && targetUser && (
-                        <div className="socnet-tg-msg-author-name">
+                        <div className="tetrone-modern-msg-author-name">
                             {targetUser.first_name} {targetUser.last_name}
                         </div>
                     )}
 
                     {msg.reply_to && (
-                        <div className="socnet-tg-reply-quote">
+                        <div className="tetrone-modern-reply-quote">
                             <div className="reply-author">{msg.reply_to.sender_name}</div>
                             <div className="reply-text">{msg.reply_to.text}</div>
                         </div>
                     )}
 
                     {msg.files?.length > 0 && (
-                        <div className="socnet-tg-msg-files">
+                        <div className="tetrone-modern-msg-files">
                             {msg.files.map((file, idx) => (
-                                <img key={idx} src={file.url} alt="attachment" className="socnet-tg-image-attachment" />
+                                <img key={idx} src={file.url} alt="attachment" className="tetrone-modern-image-attachment" />
                             ))}
                         </div>
                     )}
 
-                    <div className="socnet-tg-msg-text">
+                    <div className="tetrone-modern-msg-text">
                         {msg.text}
 
                         {msg.status === 'error' && (
-                            <div className="socnet-message-error-indicator" title={msg.errorText}>
+                            <div className="tetrone-message-error-indicator" title={msg.errorText}>
                                 ❌ {t('messages.not_sent')}
                             </div>
                         )}
 
-                        <span className="socnet-tg-msg-meta">
-                            {msg.is_edited && <span className="socnet-tg-edited">{t('common.edited')}</span>}
+                        <span className="tetrone-modern-msg-meta">
+                            {msg.is_edited && <span className="tetrone-modern-edited">{t('common.edited')}</span>}
 
-                            <span className="socnet-tg-time">
+                            <span className="tetrone-modern-time">
                                 {msg.status === 'sending' ? '⏱' : formatDate(msg.created_at, true)}
                             </span>
 
                             {msg.isMine && !isTemp && (
-                                <span className={`socnet-tg-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
+                                <span className={`tetrone-modern-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
                                     {msg.read_at ? '✓✓' : '✓'}
                                 </span>
                             )}
@@ -61,7 +61,7 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
                     </div>
                 </div>
 
-                <div className={`socnet-tg-message-actions-bottom ${showActions && !isTemp ? 'visible' : ''}`}>
+                <div className={`tetrone-modern-message-actions-bottom ${showActions && !isTemp ? 'visible' : ''}`}>
                     <button onClick={() => setReplyingTo(msg)}>{t('common.reply')}</button>
                     <button onClick={() => togglePin(msg.id)}>
                         {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}
@@ -69,7 +69,7 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
                     {msg.isMine && (
                         <>
                             <button onClick={() => handleEditClick(msg)}>{t('common.edit')}</button>
-                            <button onClick={() => handleDelete(msg.id)} className="socnet-text-danger">
+                            <button onClick={() => handleDelete(msg.id)} className="tetrone-text-danger">
                                 {t('common.delete')}
                             </button>
                         </>

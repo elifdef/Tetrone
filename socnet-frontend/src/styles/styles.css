@@ -57,31 +57,31 @@ body {
     background: var(--theme-text-muted);
 }
 
-.socnet-link {
+.tetrone-link {
     color: var(--theme-link);
     text-decoration: none;
     cursor: pointer;
 }
 
-.socnet-link:hover {
+.tetrone-link:hover {
     text-decoration: underline;
 }
 
-.socnet-text-success {
+.tetrone-text-success {
     color: #10b981;
 }
 
-.socnet-text-warning {
+.tetrone-text-warning {
     color: #f59e0b;
 }
 
-.socnet-text-error {
+.tetrone-text-error {
     color: #ef4444;
 }
 
 
 /* базові елементи */
-.socnet-btn {
+.tetrone-btn {
     display: inline-block;
     padding: 6px 12px;
     border: 1px solid var(--theme-border);
@@ -95,16 +95,16 @@ body {
     transition: background 0.2s;
 }
 
-.socnet-btn:hover {
+.tetrone-btn:hover {
     background: var(--theme-btn-hover);
 }
 
-.socnet-btn:disabled {
+.tetrone-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.socnet-btn-small {
+.tetrone-btn-small {
     background: var(--theme-link);
     color: white;
     border: none;
@@ -114,46 +114,46 @@ body {
     font-weight: bold;
 }
 
-.socnet-btn-small:hover {
+.tetrone-btn-small:hover {
     opacity: 0.9;
 }
 
-.socnet-btn-ghost {
+.tetrone-btn-ghost {
     background: transparent !important;
     color: var(--theme-link) !important;
     border-color: var(--theme-border) !important;
 }
 
-.socnet-btn-ghost:hover {
+.tetrone-btn-ghost:hover {
     background: var(--theme-bg-page) !important;
 }
 
-.socnet-btn-cancel {
+.tetrone-btn-cancel {
     background: transparent !important;
     color: var(--theme-text-muted) !important;
     border: 1px solid var(--theme-border) !important;
 }
 
-.socnet-btn-cancel:hover {
+.tetrone-btn-cancel:hover {
     background: var(--theme-bg-page) !important;
     color: var(--theme-text-main) !important;
 }
 
-.socnet-btn-block {
+.tetrone-btn-block {
     width: 100%;
 }
 
-.socnet-btn-full-width {
+.tetrone-btn-full-width {
     width: 100%;
 }
 
-.socnet-btn-auto-width {
+.tetrone-btn-auto-width {
     width: auto;
 }
 
-.socnet-form-input,
-.socnet-form-textarea,
-.socnet-form-select {
+.tetrone-form-input,
+.tetrone-form-textarea,
+.tetrone-form-select {
     width: 100%;
     padding: 6px;
     border: 1px solid var(--theme-input-border);
@@ -163,23 +163,23 @@ body {
     box-sizing: border-box;
 }
 
-.socnet-form-input:focus,
-.socnet-form-textarea:focus,
-.socnet-form-select:focus {
+.tetrone-form-input:focus,
+.tetrone-form-textarea:focus,
+.tetrone-form-select:focus {
     border-color: var(--theme-link);
     outline: none;
 }
 
-.socnet-form-textarea {
+.tetrone-form-textarea {
     resize: vertical;
 }
 
-.socnet-form-textarea.fixed-size {
+.tetrone-form-textarea.fixed-size {
     height: 50px;
     resize: none;
 }
 
-.socnet-form-label {
+.tetrone-form-label {
     display: block;
     margin-bottom: 3px;
     color: var(--theme-text-muted);
@@ -187,7 +187,7 @@ body {
     font-size: 11px;
 }
 
-.socnet-checkbox {
+.tetrone-checkbox {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -204,12 +204,12 @@ body {
     vertical-align: middle;
 }
 
-[data-theme="dark"] .socnet-checkbox {
+[data-theme="dark"] .tetrone-checkbox {
     background-color: var(--theme-input-bg);
     border-color: var(--theme-input-border);
 }
 
-.socnet-checkbox:checked::after {
+.tetrone-checkbox:checked::after {
     content: '';
     position: absolute;
     left: 3px;
@@ -221,16 +221,16 @@ body {
     transform: rotate(45deg);
 }
 
-[data-theme="dark"] .socnet-checkbox:checked::after {
+[data-theme="dark"] .tetrone-checkbox:checked::after {
     border-color: var(--theme-link);
 }
 
-.socnet-checkbox:focus-visible {
+.tetrone-checkbox:focus-visible {
     outline: 1px dotted #2B587A;
     outline-offset: 1px;
 }
 
-.socnet-select {
+.tetrone-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -261,7 +261,7 @@ body {
     background-repeat: no-repeat;
 }
 
-[data-theme="dark"] .socnet-select {
+[data-theme="dark"] .tetrone-select {
     border-color: var(--theme-input-border);
     background-image:
         linear-gradient(45deg, transparent 50%, var(--theme-text-main) 50%),
@@ -270,12 +270,12 @@ body {
         linear-gradient(to bottom, #444 0%, #333 100%);
 }
 
-.socnet-select:focus {
+.tetrone-select:focus {
     outline: 1px dotted #2B587A;
     outline-offset: 0;
 }
 
-.socnet-select:-moz-focusring {
+.tetrone-select:-moz-focusring {
     color: transparent;
     text-shadow: 0 0 0 var(--theme-text-main);
 }
@@ -291,20 +291,20 @@ input:-webkit-autofill:active {
     border: 1px solid var(--theme-input-border);
 }
 
-.socnet-date-input-dark {
+.tetrone-date-input-dark {
     color-scheme: dark;
 }
 
-.socnet-file-input-wrapper {
+.tetrone-file-input-wrapper {
     display: inline-block;
 }
 
-.socnet-hidden-input {
+.tetrone-hidden-input {
     display: none;
 }
 
 /* основний контент сайту */
-.socnet-fullscreen-center {
+.tetrone-fullscreen-center {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -315,7 +315,7 @@ input:-webkit-autofill:active {
     box-sizing: border-box;
 }
 
-.socnet-app-layout {
+.tetrone-app-layout {
     display: flex;
     justify-content: center;
     max-width: 1280px;
@@ -327,16 +327,16 @@ input:-webkit-autofill:active {
     min-height: 100vh;
 }
 
-.socnet-main-content {
+.tetrone-main-content {
     width: 70%;
     flex-shrink: 1;
     min-width: 0;
     padding-top: 15px;
 }
 
-.socnet-card-wrapper,
-.socnet-friends-page,
-.socnet-feed-page {
+.tetrone-card-wrapper,
+.tetrone-friends-page,
+.tetrone-feed-page {
     font-size: 11px;
     color: var(--theme-text-main);
     background-color: var(--theme-bg-page);
@@ -349,20 +349,20 @@ input:-webkit-autofill:active {
     margin: 0 auto;
 }
 
-[data-theme="light"] .socnet-card-wrapper,
-[data-theme="light"] .socnet-friends-page,
-[data-theme="light"] .socnet-feed-page {
+[data-theme="light"] .tetrone-card-wrapper,
+[data-theme="light"] .tetrone-friends-page,
+[data-theme="light"] .tetrone-feed-page {
     background-color: var(--theme-bg-box);
 }
 
-.socnet-container {
+.tetrone-container {
     display: flex;
     gap: 15px;
     flex-wrap: nowrap;
     overflow: visible !important;
 }
 
-.socnet-left-col {
+.tetrone-left-col {
     width: 200px;
     flex-shrink: 0;
     position: relative !important;
@@ -370,7 +370,7 @@ input:-webkit-autofill:active {
     overflow: visible !important;
 }
 
-.socnet-right-col {
+.tetrone-right-col {
     flex-grow: 1;
     min-width: 0;
     padding-right: 5px;
@@ -379,7 +379,7 @@ input:-webkit-autofill:active {
 }
 
 /* лівий сайдбар */
-.socnet-sidebar-left {
+.tetrone-sidebar-left {
     width: 10%;
     min-width: 170px;
     flex-shrink: 0;
@@ -392,7 +392,7 @@ input:-webkit-autofill:active {
     flex-direction: column;
 }
 
-.socnet-logo {
+.tetrone-logo {
     display: block;
     font-weight: bold;
     font-size: 20px;
@@ -402,17 +402,17 @@ input:-webkit-autofill:active {
     padding-left: 10px;
 }
 
-.socnet-nav-list {
+.tetrone-nav-list {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.socnet-nav-list hr {
+.tetrone-nav-list hr {
     width: 100%;
 }
 
-.socnet-nav-item {
+.tetrone-nav-item {
     display: block;
     padding: 6px 10px;
     color: var(--theme-text-main);
@@ -424,25 +424,25 @@ input:-webkit-autofill:active {
     text-overflow: ellipsis;
 }
 
-.socnet-nav-item:hover {
+.tetrone-nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
 }
 
-[data-theme="light"] .socnet-nav-item:hover {
+[data-theme="light"] .tetrone-nav-item:hover {
     background: #E1E5EB;
 }
 
-.socnet-nav-item.active {
+.tetrone-nav-item.active {
     background: rgba(255, 255, 255, 0.1);
     font-weight: bold;
 }
 
-[data-theme="light"] .socnet-nav-item.active {
+[data-theme="light"] .tetrone-nav-item.active {
     background: #E1E5EB;
 }
 
 /* правий сайдбар */
-.socnet-sidebar-right {
+.tetrone-sidebar-right {
     width: 20%;
     min-width: 200px;
     flex-shrink: 0;
@@ -451,14 +451,14 @@ input:-webkit-autofill:active {
 }
 
 /* футер */
-.socnet-footer {
+.tetrone-footer {
     padding: 30px 15px;
     text-align: center;
     border-top: 1px solid var(--theme-border);
     margin-top: 40px;
 }
 
-.socnet-footer-row {
+.tetrone-footer-row {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -467,27 +467,27 @@ input:-webkit-autofill:active {
     margin-bottom: 15px;
 }
 
-.socnet-footer-row:last-child {
+.tetrone-footer-row:last-child {
     margin-bottom: 0;
 }
 
-.socnet-footer-link {
+.tetrone-footer-link {
     font-size: 12px;
     color: var(--theme-link);
     text-decoration: none;
     transition: color 0.2s;
 }
 
-.socnet-footer-link:hover {
+.tetrone-footer-link:hover {
     text-decoration: underline;
 }
 
-.socnet-footer-text {
+.tetrone-footer-text {
     font-size: 11px;
     color: var(--theme-text-muted);
 }
 
-.socnet-lang-btn {
+.tetrone-lang-btn {
     cursor: pointer;
     font-size: 16px;
     opacity: 0.4;
@@ -496,17 +496,17 @@ input:-webkit-autofill:active {
     align-items: center;
 }
 
-.socnet-lang-btn:hover {
+.tetrone-lang-btn:hover {
     opacity: 0.8;
 }
 
-.socnet-lang-btn.active {
+.tetrone-lang-btn.active {
     opacity: 1;
     cursor: default;
 }
 
 /* таби */
-.socnet-tabs {
+.tetrone-tabs {
     display: flex;
     gap: 5px;
     margin-bottom: 15px;
@@ -515,7 +515,7 @@ input:-webkit-autofill:active {
     flex-wrap: wrap;
 }
 
-.socnet-tab {
+.tetrone-tab {
     background: none;
     border: none;
     color: var(--theme-link);
@@ -526,54 +526,54 @@ input:-webkit-autofill:active {
     text-decoration: none;
 }
 
-.socnet-tab:hover {
+.tetrone-tab:hover {
     background-color: var(--theme-btn-hover);
     color: var(--theme-btn-text);
     text-decoration: none;
 }
 
-.socnet-tab.active {
+.tetrone-tab.active {
     color: var(--theme-text-main);
     background-color: var(--theme-btn-hover);
 }
 
-[data-theme="light"] .socnet-tab.active {
+[data-theme="light"] .tetrone-tab.active {
     color: #fff;
 }
 
-.socnet-tab-count {
+.tetrone-tab-count {
     color: var(--theme-text-muted);
     margin-left: 6px;
     font-size: 10px;
     font-weight: normal;
 }
 
-.socnet-tab.active .socnet-tab-count {
+.tetrone-tab.active .tetrone-tab-count {
     color: inherit;
     opacity: 0.8;
 }
 
 /* меню дій та дропдауни */
-.socnet-btn-dropdown-trigger::after {
+.tetrone-btn-dropdown-trigger::after {
     content: ' ▼';
     font-size: 8px;
     vertical-align: middle;
 }
 
-.socnet-dropdown-wrapper {
+.tetrone-dropdown-wrapper {
     position: relative !important;
     width: 100%;
     z-index: 100 !important;
 }
 
-.socnet-actions {
+.tetrone-actions {
     margin-top: 15px !important;
     position: relative !important;
     z-index: 9 !important;
     overflow: visible !important;
 }
 
-.socnet-actions .socnet-btn {
+.tetrone-actions .tetrone-btn {
     width: 100%;
     padding: 0px 0px 10px;
     padding-block: 5px;
@@ -581,7 +581,7 @@ input:-webkit-autofill:active {
     margin-bottom: 5px;
 }
 
-.socnet-btn-dropdown-trigger {
+.tetrone-btn-dropdown-trigger {
     width: 100%;
     color: #45688E;
     text-align: center;
@@ -592,11 +592,11 @@ input:-webkit-autofill:active {
     display: block;
 }
 
-.socnet-btn-dropdown-trigger:hover {
+.tetrone-btn-dropdown-trigger:hover {
     background: #45688E;
 }
 
-.socnet-menu-list {
+.tetrone-menu-list {
     position: absolute !important;
     top: 100%;
     left: 0;
@@ -608,7 +608,7 @@ input:-webkit-autofill:active {
     z-index: 9999 !important;
 }
 
-.socnet-menu-item {
+.tetrone-menu-item {
     display: block;
     width: 100%;
     text-align: left;
@@ -622,16 +622,16 @@ input:-webkit-autofill:active {
     box-sizing: border-box;
 }
 
-.socnet-menu-item:hover {
+.tetrone-menu-item:hover {
     background: var(--theme-bg-page);
 }
 
-.socnet-menu-item.danger {
+.tetrone-menu-item.danger {
     color: var(--theme-error);
 }
 
 /* кастомний випадаючий список для вибору країн */
-.socnet-custom-dropdown-list {
+.tetrone-custom-dropdown-list {
     position: absolute;
     top: 100%;
     left: 0;
@@ -648,7 +648,7 @@ input:-webkit-autofill:active {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.socnet-custom-dropdown-item {
+.tetrone-custom-dropdown-item {
     padding: 8px 10px;
     cursor: pointer;
     display: flex;
@@ -658,98 +658,98 @@ input:-webkit-autofill:active {
     transition: background 0.1s;
 }
 
-.socnet-custom-select-wrapper {
+.tetrone-custom-select-wrapper {
     position: relative;
 }
 
-.socnet-custom-select {
+.tetrone-custom-select {
     display: flex;
     align-items: center;
     cursor: pointer;
     gap: 10px;
 }
 
-.socnet-custom-select.open {
+.tetrone-custom-select.open {
     border-color: var(--theme-link);
 }
 
-.socnet-select-placeholder {
+.tetrone-select-placeholder {
     color: var(--theme-text-muted);
 }
 
-.socnet-select-arrow {
+.tetrone-select-arrow {
     margin-left: auto;
     font-size: 10px;
     color: var(--theme-text-muted);
 }
 
-.socnet-custom-dropdown-item.not-selected {
+.tetrone-custom-dropdown-item.not-selected {
     color: var(--theme-text-muted);
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-custom-dropdown-item:hover {
+.tetrone-custom-dropdown-item:hover {
     background-color: var(--theme-bg-page);
 }
 
-.socnet-custom-dropdown-item.selected {
+.tetrone-custom-dropdown-item.selected {
     background-color: var(--theme-btn-hover);
 }
 
-.socnet-custom-dropdown-list::-webkit-scrollbar {
+.tetrone-custom-dropdown-list::-webkit-scrollbar {
     width: 8px;
 }
 
-.socnet-custom-dropdown-list::-webkit-scrollbar-track {
+.tetrone-custom-dropdown-list::-webkit-scrollbar-track {
     background: var(--theme-bg-box);
 }
 
-.socnet-custom-dropdown-list::-webkit-scrollbar-thumb {
+.tetrone-custom-dropdown-list::-webkit-scrollbar-thumb {
     background: var(--theme-border);
 }
 
-.socnet-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
+.tetrone-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
     background: var(--theme-text-muted);
 }
 
 /* лендінг */
-.socnet-landing-wrapper {
+.tetrone-landing-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-.socnet-landing-hero {
+.tetrone-landing-hero {
     background: var(--theme-bg-box);
     border-bottom: 1px solid var(--theme-border);
     padding: 40px 20px;
     text-align: center;
 }
 
-.socnet-landing-title {
+.tetrone-landing-title {
     font-size: 24px;
     color: var(--theme-text-main);
     margin: 0 0 10px 0;
 }
 
-.socnet-landing-subtitle {
+.tetrone-landing-subtitle {
     font-size: 13px;
     color: var(--theme-text-muted);
     margin: 0 0 20px 0;
 }
 
-.socnet-landing-actions {
+.tetrone-landing-actions {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
 
-.socnet-landing-btn-big {
+.tetrone-landing-btn-big {
     font-size: 13px;
     padding: 8px 20px;
 }
 
-.socnet-landing-features {
+.tetrone-landing-features {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -757,7 +757,7 @@ input:-webkit-autofill:active {
     box-sizing: border-box;
 }
 
-.socnet-feature-block {
+.tetrone-feature-block {
     display: flex;
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
@@ -767,28 +767,28 @@ input:-webkit-autofill:active {
     gap: 20px;
 }
 
-.socnet-feature-block.reversed {
+.tetrone-feature-block.reversed {
     flex-direction: row-reverse;
 }
 
-.socnet-feature-text {
+.tetrone-feature-text {
     flex: 1;
 }
 
-.socnet-feature-text h2 {
+.tetrone-feature-text h2 {
     font-size: 14px;
     color: var(--theme-link);
     margin: 0 0 5px 0;
 }
 
-.socnet-feature-text p {
+.tetrone-feature-text p {
     font-size: 11px;
     color: var(--theme-text-main);
     margin: 0;
     line-height: 1.4;
 }
 
-.socnet-feature-visual {
+.tetrone-feature-visual {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -799,11 +799,11 @@ input:-webkit-autofill:active {
     font-weight: bold;
 }
 
-.socnet-feature-visual img {
+.tetrone-feature-visual img {
     width: 30em;
 }
 
-.socnet-cta-block {
+.tetrone-cta-block {
     text-align: center;
     padding: 30px 20px;
     background: var(--theme-bg-box);
@@ -812,21 +812,21 @@ input:-webkit-autofill:active {
     margin-top: 20px;
 }
 
-.socnet-cta-title {
+.tetrone-cta-title {
     font-size: 16px;
     color: var(--theme-text-main);
     margin-bottom: 10px;
     margin-top: 0;
 }
 
-.socnet-cta-desc {
+.tetrone-cta-desc {
     font-size: 11px;
     color: var(--theme-text-muted);
     margin-bottom: 20px;
 }
 
 /* сторінки входу/реєстрації */
-.socnet-auth-card {
+.tetrone-auth-card {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 25px;
@@ -835,11 +835,11 @@ input:-webkit-autofill:active {
     max-width: 400px;
 }
 
-.socnet-auth-card .socnet-form-input {
+.tetrone-auth-card .tetrone-form-input {
     margin-bottom: 10px;
 }
 
-.socnet-auth-header {
+.tetrone-auth-header {
     background: var(--theme-header-bg);
     padding: 10px;
     margin: -25px -25px 20px -25px;
@@ -847,14 +847,14 @@ input:-webkit-autofill:active {
     text-align: center;
 }
 
-.socnet-auth-title {
+.tetrone-auth-title {
     margin: 0;
     font-size: 14px;
     color: var(--theme-text-main);
     font-weight: bold;
 }
 
-.socnet-auth-msg {
+.tetrone-auth-msg {
     padding: 10px;
     margin-bottom: 15px;
     font-size: 11px;
@@ -862,23 +862,23 @@ input:-webkit-autofill:active {
     border: 1px solid;
 }
 
-.socnet-auth-msg.error {
+.tetrone-auth-msg.error {
     background: rgba(230, 70, 70, 0.1);
     border-color: var(--theme-error);
     color: var(--theme-error);
 }
 
-.socnet-auth-msg.success {
+.tetrone-auth-msg.success {
     background: rgba(75, 179, 75, 0.1);
     border-color: var(--theme-success);
     color: var(--theme-success);
 }
 
-.socnet-auth-msg-link {
+.tetrone-auth-msg-link {
     font-weight: bold;
 }
 
-.socnet-auth-footer {
+.tetrone-auth-footer {
     margin-top: 15px;
     text-align: center;
     font-size: 11px;
@@ -887,29 +887,29 @@ input:-webkit-autofill:active {
     border-top: 1px solid var(--theme-border);
 }
 
-.socnet-auth-success-wrapper {
+.tetrone-auth-success-wrapper {
     text-align: center;
     padding: 20px;
 }
 
-.socnet-auth-success-hero {
+.tetrone-auth-success-hero {
     border: none !important;
     background: transparent !important;
 }
 
-.socnet-auth-success-icon {
+.tetrone-auth-success-icon {
     font-size: 30px;
     margin-bottom: 10px;
 }
 
 /* cторінка першого налаштування */
-.socnet-setup-wrapper {
+.tetrone-setup-wrapper {
     max-width: 900px;
     margin: 40px auto;
     padding: 0 15px;
 }
 
-.socnet-setup-header {
+.tetrone-setup-header {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 20px;
@@ -917,19 +917,19 @@ input:-webkit-autofill:active {
     margin-bottom: 0;
 }
 
-.socnet-setup-title {
+.tetrone-setup-title {
     font-size: 18px;
     color: var(--theme-link);
     margin: 0 0 5px 0;
 }
 
-.socnet-setup-subtitle {
+.tetrone-setup-subtitle {
     font-size: 12px;
     color: var(--theme-text-muted);
     margin: 0;
 }
 
-.socnet-setup-layout {
+.tetrone-setup-layout {
     display: flex;
     align-items: flex-start;
     background: var(--theme-bg-box);
@@ -937,21 +937,21 @@ input:-webkit-autofill:active {
     border-top: none;
 }
 
-.socnet-setup-form-col {
+.tetrone-setup-form-col {
     flex: 1;
     min-width: 0;
     padding: 20px;
     border-right: 1px solid var(--theme-border);
 }
 
-.socnet-setup-preview-col {
+.tetrone-setup-preview-col {
     width: 300px;
     flex-shrink: 0;
     padding: 20px;
     background: var(--theme-bg-page);
 }
 
-.socnet-preview-label {
+.tetrone-preview-label {
     text-align: center;
     color: var(--theme-text-muted);
     font-size: 10px;
@@ -960,25 +960,25 @@ input:-webkit-autofill:active {
     letter-spacing: 1px;
 }
 
-.socnet-setup-preview-col .socnet-card-wrapper {
+.tetrone-setup-preview-col .tetrone-card-wrapper {
     padding: 10px;
 }
 
-.socnet-setup-preview-col .socnet-container {
+.tetrone-setup-preview-col .tetrone-container {
     flex-direction: column;
     gap: 10px;
 }
 
-.socnet-setup-preview-col .socnet-left-col {
+.tetrone-setup-preview-col .tetrone-left-col {
     width: 100%;
 }
 
-.socnet-setup-preview-col .socnet-right-col {
+.tetrone-setup-preview-col .tetrone-right-col {
     width: 100%;
     padding-right: 0;
 }
 
-.socnet-setup-preview-col .socnet-status-box {
+.tetrone-setup-preview-col .tetrone-status-box {
     margin-bottom: 5px;
 }
 
@@ -1015,7 +1015,7 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
-.socnet-profile-error-wrapper {
+.tetrone-profile-error-wrapper {
     padding: 20px;
 }
 
@@ -1060,13 +1060,13 @@ input:-webkit-autofill:active {
 
 
 /* профіль */
-.socnet-photo-box {
+.tetrone-photo-box {
     position: relative;
     z-index: 10;
     overflow: visible !important;
 }
 
-.socnet-avatar {
+.tetrone-avatar {
     width: 100%;
     height: auto;
     display: block;
@@ -1075,12 +1075,12 @@ input:-webkit-autofill:active {
     object-fit: cover;
 }
 
-.socnet-avatar-blocked {
+.tetrone-avatar-blocked {
     opacity: 0.6;
     filter: grayscale(100%);
 }
 
-.socnet-name-row {
+.tetrone-name-row {
     border-bottom: 1px solid var(--theme-border);
     padding-bottom: 5px;
     margin-bottom: 10px;
@@ -1090,7 +1090,7 @@ input:-webkit-autofill:active {
     flex-wrap: wrap;
 }
 
-.socnet-name {
+.tetrone-name {
     margin: 0;
     font-size: 14px;
     color: var(--theme-link);
@@ -1102,7 +1102,7 @@ input:-webkit-autofill:active {
     line-height: 1.2;
 }
 
-.socnet-nick {
+.tetrone-nick {
     font-size: 12px;
     color: var(--theme-text-muted);
     font-weight: normal;
@@ -1110,7 +1110,7 @@ input:-webkit-autofill:active {
     margin-left: 5px;
 }
 
-.socnet-status-box {
+.tetrone-status-box {
     border: 1px solid var(--theme-border);
     background-color: var(--theme-bg-box);
     padding: 8px;
@@ -1121,7 +1121,7 @@ input:-webkit-autofill:active {
     overflow-wrap: break-word;
 }
 
-.socnet-section-title {
+.tetrone-section-title {
     background: var(--theme-bg-box);
     color: var(--theme-link);
     padding: 4px 8px;
@@ -1132,31 +1132,31 @@ input:-webkit-autofill:active {
     border-bottom: 1px solid var(--theme-border);
 }
 
-[data-theme="light"] .socnet-section-title {
+[data-theme="light"] .tetrone-section-title {
     background: var(--theme-header-bg);
     color: #36638E;
 }
 
-.socnet-info-row {
+.tetrone-info-row {
     display: flex;
     margin-bottom: 6px;
 }
 
-.socnet-info-block {
+.tetrone-info-block {
     margin-top: 20px;
 }
 
-.socnet-label {
+.tetrone-label {
     width: 130px;
     color: var(--theme-text-muted);
 }
 
-.socnet-value {
+.tetrone-value {
     color: var(--theme-text-main);
     flex: 1;
 }
 
-.socnet-staff-top-banner {
+.tetrone-staff-top-banner {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1176,14 +1176,14 @@ input:-webkit-autofill:active {
     color: #2b2b2b;
 }
 
-.socnet-verified-badge {
+.tetrone-verified-badge {
     display: flex;
     align-items: center;
     margin-left: 6px;
     cursor: help;
 }
 
-.socnet-badge {
+.tetrone-badge {
     display: inline-block;
     background-color: var(--theme-error);
     color: #fff;
@@ -1196,20 +1196,20 @@ input:-webkit-autofill:active {
 }
 
 /* міні-профіль в сайдбарі */
-.socnet-sidebar-profile {
+.tetrone-sidebar-profile {
     margin-top: auto;
     padding-top: 15px;
     border-top: 1px solid var(--theme-border);
 }
 
-.socnet-mini-profile-link {
+.tetrone-mini-profile-link {
     display: flex;
     align-items: center;
     text-decoration: none;
     margin-bottom: 10px;
 }
 
-.socnet-mini-avatar {
+.tetrone-mini-avatar {
     width: 28px;
     height: 28px;
     margin-right: 8px;
@@ -1217,7 +1217,7 @@ input:-webkit-autofill:active {
     background: #333;
 }
 
-.socnet-mini-name {
+.tetrone-mini-name {
     font-size: 12px;
     color: var(--theme-text-main);
     font-weight: bold;
@@ -1227,7 +1227,7 @@ input:-webkit-autofill:active {
     max-width: 100px;
 }
 
-.socnet-logout-btn {
+.tetrone-logout-btn {
     background: transparent;
     border: none;
     color: #aaa;
@@ -1238,26 +1238,26 @@ input:-webkit-autofill:active {
     transition: all 0.2s;
 }
 
-.socnet-logout-btn:hover {
+.tetrone-logout-btn:hover {
     background: #331111;
     color: #ff5555;
     border-color: #ff5555;
 }
 
-.socnet-sidebar-guest-notice {
+.tetrone-sidebar-guest-notice {
     font-size: 11px;
     color: #777;
     text-align: center;
 }
 
-.socnet-banner-preview {
+.tetrone-banner-preview {
     margin-top: 10px;
     width: 100%;
     height: 60px;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-custom-color-btn {
+.tetrone-custom-color-btn {
     width: 40px;
     height: 40px;
     border: 1px solid var(--theme-border);
@@ -1265,7 +1265,7 @@ input:-webkit-autofill:active {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.socnet-color-popover {
+.tetrone-color-popover {
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
@@ -1273,14 +1273,14 @@ input:-webkit-autofill:active {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.socnet-theme-selector-grid {
+.tetrone-theme-selector-grid {
     display: flex;
     gap: 15px;
     margin-top: 10px;
     justify-content: space-evenly;
 }
 
-.socnet-theme-card {
+.tetrone-theme-card {
     flex: 1;
     max-width: 250px;
     border: 2px solid var(--theme-border);
@@ -1290,22 +1290,22 @@ input:-webkit-autofill:active {
     transition: border-color 0.2s;
 }
 
-.socnet-theme-card:hover {
+.tetrone-theme-card:hover {
     border-color: var(--theme-text-muted);
 }
 
-.socnet-theme-card.active {
+.tetrone-theme-card.active {
     border-color: var(--theme-link);
 }
 
-.socnet-theme-card img {
+.tetrone-theme-card img {
     width: 100%;
     height: 120px;
     object-fit: cover;
     border-bottom: 1px solid var(--theme-border);
 }
 
-.socnet-theme-card-label {
+.tetrone-theme-card-label {
     padding: 10px;
     text-align: center;
     font-size: 12px;
@@ -1314,7 +1314,7 @@ input:-webkit-autofill:active {
 }
 
 /* галерея у пості */
-.socnet-post-gallery {
+.tetrone-post-gallery {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -1322,31 +1322,31 @@ input:-webkit-autofill:active {
     overflow: hidden;
 }
 
-.socnet-gallery-image {
+.tetrone-gallery-image {
     cursor: pointer;
     object-fit: cover;
     flex-grow: 1;
 }
 
-.socnet-post-gallery.count-1 .socnet-gallery-image {
+.tetrone-post-gallery.count-1 .tetrone-gallery-image {
     width: 100%;
     max-height: 400px;
 }
 
-.socnet-post-gallery.count-more .socnet-gallery-image {
+.tetrone-post-gallery.count-more .tetrone-gallery-image {
     width: calc(50% - 2px);
     max-height: 250px;
 }
 
 /* превю при створенні/редагуванні */
-.socnet-post-previews-container {
+.tetrone-post-previews-container {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 10px;
 }
 
-.socnet-post-preview {
+.tetrone-post-preview {
     position: relative;
     display: inline-block;
     margin: 5px 0 5px 0;
@@ -1355,21 +1355,21 @@ input:-webkit-autofill:active {
     background: var(--theme-bg-box);
 }
 
-.socnet-post-preview img {
+.tetrone-post-preview img {
     width: 100px;
     height: 100px;
     object-fit: cover;
 }
 
-.socnet-post-preview.existing img {
+.tetrone-post-preview.existing img {
     border: 2px solid var(--theme-success);
 }
 
-.socnet-post-preview.new img {
+.tetrone-post-preview.new img {
     opacity: 0.8;
 }
 
-.socnet-preview-remove-btn {
+.tetrone-preview-remove-btn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -1386,11 +1386,11 @@ input:-webkit-autofill:active {
     line-height: 1;
 }
 
-.socnet-preview-remove-btn:hover {
+.tetrone-preview-remove-btn:hover {
     background: rgba(255, 0, 0, 0.8);
 }
 
-.socnet-preview-close {
+.tetrone-preview-close {
     position: absolute;
     top: -5px;
     right: -5px;
@@ -1408,12 +1408,12 @@ input:-webkit-autofill:active {
     line-height: 1;
 }
 
-.socnet-preview-close:hover {
+.tetrone-preview-close:hover {
     opacity: 0.8;
 }
 
 /* редагування та дії */
-.socnet-action-icon {
+.tetrone-action-icon {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -1425,17 +1425,17 @@ input:-webkit-autofill:active {
     transition: all 0.2s ease;
 }
 
-.socnet-action-icon:hover {
+.tetrone-action-icon:hover {
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
     color: var(--theme-text-main);
 }
 
-.socnet-action-icon[title="Видалити"]:hover {
+.tetrone-action-icon[title="Видалити"]:hover {
     background-color: rgba(255, 0, 0, 0.1);
     color: #ff4444;
 }
 
-.socnet-post-actions-top {
+.tetrone-post-actions-top {
     margin-left: auto;
     display: flex;
     gap: 5px;
@@ -1443,11 +1443,11 @@ input:-webkit-autofill:active {
     transition: opacity 0.2s;
 }
 
-.socnet-post:hover .socnet-post-actions-top {
+.tetrone-post:hover .tetrone-post-actions-top {
     opacity: 1;
 }
 
-.socnet-post-delete {
+.tetrone-post-delete {
     margin-left: auto;
     background: transparent;
     border: none;
@@ -1457,15 +1457,15 @@ input:-webkit-autofill:active {
     font-weight: bold;
 }
 
-.socnet-post-delete:hover {
+.tetrone-post-delete:hover {
     color: #8e9ba8;
 }
 
-.socnet-edit-mode {
+.tetrone-edit-mode {
     padding: 0 10px;
 }
 
-.socnet-edit-textarea {
+.tetrone-edit-textarea {
     width: 100%;
     min-height: 60px;
     border: 1px solid var(--theme-input-border);
@@ -1477,7 +1477,7 @@ input:-webkit-autofill:active {
     color: var(--theme-text-main);
 }
 
-.socnet-edit-actions {
+.tetrone-edit-actions {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1486,7 +1486,7 @@ input:-webkit-autofill:active {
     margin-top: 8px;
 }
 
-.socnet-btn-attach {
+.tetrone-btn-attach {
     background: #8292a4;
     color: white;
     cursor: pointer;
@@ -1496,23 +1496,23 @@ input:-webkit-autofill:active {
     border: 1px solid transparent;
 }
 
-.socnet-btn-attach:hover {
+.tetrone-btn-attach:hover {
     background: #6f7f91;
 }
 
 /* репост */
-.socnet-repost-wrapper {
+.tetrone-repost-wrapper {
     margin-top: 12px;
     padding: 12px;
     border: 1px solid var(--theme-border);
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
 }
 
-.socnet-repost-wrapper .socnet-post-actions {
+.tetrone-repost-wrapper .tetrone-post-actions {
     display: none;
 }
 
-.socnet-preview-file-stub {
+.tetrone-preview-file-stub {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1524,7 +1524,7 @@ input:-webkit-autofill:active {
     overflow: hidden;
 }
 
-.socnet-preview-filename {
+.tetrone-preview-filename {
     font-size: 12px;
     margin-top: 4px;
     white-space: nowrap;
@@ -1533,15 +1533,15 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
-.socnet-attach-buttons-edit,
-.socnet-attach-buttons {
+.tetrone-attach-buttons-edit,
+.tetrone-attach-buttons {
     display: flex;
     gap: 12px;
     color: var(--theme-btn-bg)
 }
 
 /* ДОДАТКОВІ МАТЕРІАЛИ (ФАЙЛИ, МУЗИКА, ВІДЕО) */
-.socnet-post-documents {
+.tetrone-post-documents {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1550,7 +1550,7 @@ input:-webkit-autofill:active {
     border-top: 1px dashed var(--theme-border);
 }
 
-.socnet-document-item {
+.tetrone-document-item {
     display: flex;
     align-items: center;
     padding: 8px 12px;
@@ -1561,17 +1561,17 @@ input:-webkit-autofill:active {
     transition: background-color 0.2s, border-color 0.2s;
 }
 
-[data-theme="light"] .socnet-document-item {
+[data-theme="light"] .tetrone-document-item {
     background-color: #F7F7F7;
 }
 
-.socnet-document-item:hover {
+.tetrone-document-item:hover {
     background-color: var(--theme-bg-page);
     border-color: var(--theme-link);
     text-decoration: none;
 }
 
-.socnet-document-icon {
+.tetrone-document-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1582,14 +1582,14 @@ input:-webkit-autofill:active {
     color: var(--theme-link);
 }
 
-.socnet-document-info {
+.tetrone-document-info {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     flex: 1;
 }
 
-.socnet-document-name {
+.tetrone-document-name {
     font-size: 12px;
     font-weight: bold;
     color: var(--theme-link);
@@ -1599,20 +1599,20 @@ input:-webkit-autofill:active {
     margin-bottom: 3px;
 }
 
-.socnet-document-size {
+.tetrone-document-size {
     font-size: 10px;
     color: var(--theme-text-muted);
     text-transform: uppercase;
 }
 
-.socnet-repost-branch {
+.tetrone-repost-branch {
     margin-top: 12px;
     margin-left: 16px;
     padding-left: 16px;
     border-left: 2px solid var(--theme-border);
 }
 
-.socnet-deleted-stub {
+.tetrone-deleted-stub {
     padding: 15px;
     margin-top: 10px;
     background-color: var(--theme-bg-page);
@@ -1622,7 +1622,7 @@ input:-webkit-autofill:active {
     font-style: italic;
 }
 
-.socnet-repost-limit-msg {
+.tetrone-repost-limit-msg {
     padding: 12px;
     background-color: var(--theme-bg-page);
     color: var(--theme-text-muted);
@@ -1632,16 +1632,16 @@ input:-webkit-autofill:active {
     margin-top: 10px;
 }
 
-.socnet-post-page-wrapper {
+.tetrone-post-page-wrapper {
     max-width: 600px;
     margin: 0 auto;
     padding-bottom: 50px;
 }
 
 /* коментарі і лайки */
-.socnet-like-btn,
-.socnet-comment-btn,
-.socnet-repost-btn {
+.tetrone-like-btn,
+.tetrone-comment-btn,
+.tetrone-repost-btn {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1656,37 +1656,37 @@ input:-webkit-autofill:active {
     text-decoration: none;
 }
 
-.socnet-like-btn:hover,
-.socnet-comment-btn:hover {
+.tetrone-like-btn:hover,
+.tetrone-comment-btn:hover {
     text-decoration: underline;
     opacity: 0.85;
 }
 
-.socnet-like-btn.liked {
+.tetrone-like-btn.liked {
     color: #FF3347;
 }
 
-.socnet-like-btn svg,
-.socnet-comment-btn svg {
+.tetrone-like-btn svg,
+.tetrone-comment-btn svg {
     display: block;
 }
 
-.socnet-like-btn.readonly,
-.socnet-comment-btn.readonly,
-.socnet-repost-btn.readonly {
+.tetrone-like-btn.readonly,
+.tetrone-comment-btn.readonly,
+.tetrone-repost-btn.readonly {
     cursor: default;
     opacity: 0.7;
 }
 
-.socnet-like-btn.readonly:hover,
-.socnet-comment-btn.readonly:hover,
-.socnet-repost-btn.readonly:hover {
+.tetrone-like-btn.readonly:hover,
+.tetrone-comment-btn.readonly:hover,
+.tetrone-repost-btn.readonly:hover {
     background-color: transparent;
     text-decoration: none;
 }
 
 /* друзі */
-.socnet-friends-title {
+.tetrone-friends-title {
     background-color: var(--theme-header-bg);
     color: var(--theme-link);
     font-size: 11px;
@@ -1696,11 +1696,11 @@ input:-webkit-autofill:active {
     border-bottom: 1px solid var(--theme-border);
 }
 
-[data-theme="light"] .socnet-friends-title {
+[data-theme="light"] .tetrone-friends-title {
     color: #36638E;
 }
 
-.socnet-friends-search-wrapper {
+.tetrone-friends-search-wrapper {
     background-color: var(--theme-bg-box);
     padding: 10px;
     border: 1px solid var(--theme-border);
@@ -1710,11 +1710,11 @@ input:-webkit-autofill:active {
     gap: 10px;
 }
 
-[data-theme="light"] .socnet-friends-search-wrapper {
+[data-theme="light"] .tetrone-friends-search-wrapper {
     background-color: #F7F7F7;
 }
 
-.socnet-friends-search-btn {
+.tetrone-friends-search-btn {
     background: var(--theme-btn-bg);
     border: 2px solid var(--theme-border);
     color: #fff;
@@ -1724,11 +1724,11 @@ input:-webkit-autofill:active {
     cursor: pointer;
 }
 
-.socnet-friends-search-btn:hover {
+.tetrone-friends-search-btn:hover {
     background: var(--theme-btn-hover);
 }
 
-.socnet-friends-list {
+.tetrone-friends-list {
     display: flex;
     flex-direction: column;
 }
@@ -1740,7 +1740,7 @@ input:-webkit-autofill:active {
     background: var(--theme-bg-box);
 }
 
-.socnet-friends-avatar {
+.tetrone-friends-avatar {
     width: 75px;
     height: 75px;
     object-fit: cover;
@@ -1749,14 +1749,14 @@ input:-webkit-autofill:active {
     padding: 1px;
 }
 
-.socnet-friends-info {
+.tetrone-friends-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
 
-.socnet-friends-name {
+.tetrone-friends-name {
     font-size: 12px;
     font-weight: bold;
     color: var(--theme-link);
@@ -1764,17 +1764,17 @@ input:-webkit-autofill:active {
     margin-bottom: 4px;
 }
 
-.socnet-friends-name:hover {
+.tetrone-friends-name:hover {
     text-decoration: underline;
 }
 
-.socnet-friends-username {
+.tetrone-friends-username {
     font-size: 10px;
     color: var(--theme-text-muted);
     margin-bottom: 8px;
 }
 
-.socnet-friends-actions {
+.tetrone-friends-actions {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -1783,7 +1783,7 @@ input:-webkit-autofill:active {
     font-size: 10px;
 }
 
-.socnet-friends-btn {
+.tetrone-friends-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -1793,42 +1793,42 @@ input:-webkit-autofill:active {
     color: var(--theme-link);
 }
 
-.socnet-friends-btn:hover {
+.tetrone-friends-btn:hover {
     text-decoration: underline;
 }
 
-.socnet-friends-status,
-.socnet-friends-btn-secondary,
-.socnet-friends-btn-danger,
-.socnet-friends-btn-primary {
+.tetrone-friends-status,
+.tetrone-friends-btn-secondary,
+.tetrone-friends-btn-danger,
+.tetrone-friends-btn-primary {
     color: var(--theme-link);
     padding-right: 5px;
 }
 
-.socnet-friends-btn-danger {
+.tetrone-friends-btn-danger {
     color: var(--theme-error);
 }
 
-.socnet-friends-status {
+.tetrone-friends-status {
     color: #999;
     font-size: 10px;
 }
 
 
 /* лента постів */
-.socnet-feed-list {
+.tetrone-feed-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.socnet-feed-actions {
+.tetrone-feed-actions {
     display: flex;
     gap: 10px;
     justify-content: center;
 }
 
-.socnet-empty-state {
+.tetrone-empty-state {
     text-align: center;
     color: var(--theme-text-muted);
     padding: 30px 20px;
@@ -1837,7 +1837,7 @@ input:-webkit-autofill:active {
     box-sizing: border-box;
 }
 
-.socnet-empty-state.with-card {
+.tetrone-empty-state.with-card {
     background: var(--theme-bg-box);
     margin-top: 15px;
     white-space: pre-line;
@@ -1845,48 +1845,48 @@ input:-webkit-autofill:active {
     max-width: 500px;
 }
 
-.socnet-empty-state h3 {
+.tetrone-empty-state h3 {
     margin: 0 0 10px 0;
     font-size: 16px;
     color: var(--theme-link);
 }
 
-.socnet-empty-state p {
+.tetrone-empty-state p {
     margin: 0;
     line-height: 1.4;
 }
 
-.socnet-infinite-scroll-msg {
+.tetrone-infinite-scroll-msg {
     padding: 20px;
     text-align: center;
     color: var(--theme-text-muted);
     font-size: 11px;
 }
 
-.socnet-infinite-error-box {
+.tetrone-infinite-error-box {
     padding: 10px;
     text-align: center;
 }
 
-.socnet-error-text {
+.tetrone-error-text {
     color: var(--theme-error);
     font-size: 12px;
 }
 
-.socnet-btn-retry {
+.tetrone-btn-retry {
     margin-top: 10px;
 }
 
-.socnet-btn-retry-small {
+.tetrone-btn-retry-small {
     margin-top: 5px;
 }
 
 /* сповіщення (сторінка) */
-.socnet-notification-list {
+.tetrone-notification-list {
     margin: 0 -20px -20px -20px;
 }
 
-.socnet-notification-item {
+.tetrone-notification-item {
     display: flex;
     align-items: flex-start;
     padding: 12px 20px;
@@ -1896,31 +1896,31 @@ input:-webkit-autofill:active {
     position: relative;
 }
 
-.socnet-notification-item:last-child {
+.tetrone-notification-item:last-child {
     border-bottom: none;
 }
 
-.socnet-notification-item.unread {
+.tetrone-notification-item.unread {
     background-color: rgba(91, 155, 213, 0.1);
     cursor: pointer;
 }
 
-[data-theme="light"] .socnet-notification-item.unread {
+[data-theme="light"] .tetrone-notification-item.unread {
     background-color: #EDF0F5;
 }
 
-.socnet-notification-item.unread:hover {
+.tetrone-notification-item.unread:hover {
     background-color: rgba(91, 155, 213, 0.15);
 }
 
-.socnet-notification-avatar {
+.tetrone-notification-avatar {
     width: 40px;
     height: 40px;
     object-fit: cover;
     border: 1px solid var(--theme-border);
 }
 
-.socnet-notification-avatar.system-avatar {
+.tetrone-notification-avatar.system-avatar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1932,7 +1932,7 @@ input:-webkit-autofill:active {
     color: var(--theme-link);
 }
 
-.socnet-notification-content {
+.tetrone-notification-content {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1940,13 +1940,13 @@ input:-webkit-autofill:active {
     line-height: 1.4;
 }
 
-.socnet-notification-date {
+.tetrone-notification-date {
     font-size: 10px;
     color: var(--theme-text-muted);
     margin-top: 4px;
 }
 
-.socnet-notification-snippet {
+.tetrone-notification-snippet {
     color: var(--theme-text-muted);
     font-style: italic;
     margin-top: 5px;
@@ -1954,7 +1954,7 @@ input:-webkit-autofill:active {
     padding-left: 8px;
 }
 
-.socnet-notification-dot {
+.tetrone-notification-dot {
     width: 8px;
     height: 8px;
     background-color: var(--theme-link);
@@ -1962,7 +1962,7 @@ input:-webkit-autofill:active {
 }
 
 /* сповіщення */
-.socnet-toast-container {
+.tetrone-toast-container {
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -1972,7 +1972,7 @@ input:-webkit-autofill:active {
     gap: 8px;
 }
 
-.socnet-toast {
+.tetrone-toast {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     padding: 10px;
@@ -1983,7 +1983,7 @@ input:-webkit-autofill:active {
     animation: slideInLeft 0.3s ease-out forwards;
 }
 
-.socnet-toast-avatar {
+.tetrone-toast-avatar {
     width: 32px;
     height: 32px;
 }
@@ -2000,29 +2000,29 @@ input:-webkit-autofill:active {
     object-fit: cover;
 }
 
-.socnet-toast-content {
+.tetrone-toast-content {
     display: flex;
     flex-direction: column;
     font-size: 11px;
     line-height: 1.3;
 }
 
-.socnet-toast-name {
+.tetrone-toast-name {
     font-weight: bold;
     color: var(--theme-link);
 }
 
-.socnet-toast-text {
+.tetrone-toast-text {
     color: var(--theme-text-main);
 }
 
-.socnet-toast-snippet {
+.tetrone-toast-snippet {
     color: #777;
     font-style: italic;
     margin-top: 3px;
 }
 
-.socnet-toast-wrapper {
+.tetrone-toast-wrapper {
     font-size: 12px !important;
     color: #FFFFFF !important;
     background: #2b2b2b !important;
@@ -2030,14 +2030,14 @@ input:-webkit-autofill:active {
     padding: 10px 15px !important;
 }
 
-.socnet-toast-inner {
+.tetrone-toast-inner {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 /* активність */
-.socnet-activity-card {
+.tetrone-activity-card {
     padding: 16px;
     border-bottom: 1px solid var(--theme-border);
     display: flex;
@@ -2045,11 +2045,11 @@ input:-webkit-autofill:active {
     gap: 12px;
 }
 
-.socnet-activity-card:last-child {
+.tetrone-activity-card:last-child {
     border-bottom: none;
 }
 
-.socnet-activity-op {
+.tetrone-activity-op {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -2057,25 +2057,25 @@ input:-webkit-autofill:active {
     color: var(--theme-text-muted);
 }
 
-.socnet-activity-op-avatar {
+.tetrone-activity-op-avatar {
     width: 24px;
     height: 24px;
     object-fit: cover;
 }
 
-.socnet-activity-op-name {
+.tetrone-activity-op-name {
     font-weight: bold;
     color: var(--theme-text-main);
 }
 
-.socnet-activity-reply {
+.tetrone-activity-reply {
     display: flex;
     gap: 10px;
     margin-left: 36px;
     position: relative;
 }
 
-.socnet-activity-reply::before {
+.tetrone-activity-reply::before {
     content: '';
     position: absolute;
     left: -24px;
@@ -2085,7 +2085,7 @@ input:-webkit-autofill:active {
     background-color: var(--theme-border);
 }
 
-.socnet-activity-reply-avatar {
+.tetrone-activity-reply-avatar {
     width: 32px;
     height: 32px;
     object-fit: cover;
@@ -2093,11 +2093,11 @@ input:-webkit-autofill:active {
     z-index: 2;
 }
 
-.socnet-activity-bubble-wrapper {
+.tetrone-activity-bubble-wrapper {
     flex: 1;
 }
 
-.socnet-activity-bubble {
+.tetrone-activity-bubble {
     background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
     padding: 10px 14px;
     font-size: 14px;
@@ -2105,56 +2105,56 @@ input:-webkit-autofill:active {
     margin-bottom: 8px;
 }
 
-.socnet-activity-meta {
+.tetrone-activity-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.socnet-activity-link {
+.tetrone-activity-link {
     font-size: 12px;
     font-weight: bold;
 }
 
-.socnet-load-more-btn {
+.tetrone-load-more-btn {
     margin-top: 15px;
 }
 
-.socnet-activity-date {
+.tetrone-activity-date {
     margin: 0 !important;
 }
 
-.socnet-stats-header {
+.tetrone-stats-header {
     text-align: center;
     margin-bottom: 30px;
 }
 
-.socnet-stats-subtitle {
+.tetrone-stats-subtitle {
     color: var(--theme-text-muted);
     font-size: 14px;
     text-transform: uppercase;
     margin-bottom: 8px;
 }
 
-.socnet-stats-total {
+.tetrone-stats-total {
     font-size: 36px;
     font-weight: bold;
     color: var(--theme-link);
 }
 
-.socnet-stats-desc {
+.tetrone-stats-desc {
     color: var(--theme-text-muted);
     font-size: 13px;
     margin-top: 5px;
 }
 
-.socnet-stats-list {
+.tetrone-stats-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.socnet-stats-item {
+.tetrone-stats-item {
     display: flex;
     justify-content: space-between;
     padding: 12px 15px;
@@ -2162,15 +2162,15 @@ input:-webkit-autofill:active {
     border: 1px solid var(--theme-border);
 }
 
-.socnet-stats-date {
+.tetrone-stats-date {
     font-weight: 500;
 }
 
-.socnet-stats-time {
+.tetrone-stats-time {
     color: var(--theme-text-muted);
 }
 
-.socnet-checkbox-label {
+.tetrone-checkbox-label {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -2216,12 +2216,12 @@ input:-webkit-autofill:active {
     color: var(--theme-danger-text);
 }
 
-.socnet-empty-title {
+.tetrone-empty-title {
     font-size: 1.25rem;
     margin-bottom: 8px;
 }
 
-.socnet-empty-desc {
+.tetrone-empty-desc {
     color: var(--theme-text-muted);
 }
 
@@ -2233,21 +2233,21 @@ input:-webkit-autofill:active {
     width: var(--progress-width, 0%);
 }
 
-.socnet-poll-actions-start {
+.tetrone-poll-actions-start {
     justify-content: flex-start;
 }
 
-.socnet-poll-meta-spaced {
+.tetrone-poll-meta-spaced {
     justify-content: space-between;
 }
 
-.socnet-poll-meta-left {
+.tetrone-poll-meta-left {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.socnet-avatar-dropzone {
+.tetrone-avatar-dropzone {
     border: 2px dashed var(--theme-input-border);
     background: var(--theme-input-bg);
     padding: 20px;
@@ -2257,33 +2257,33 @@ input:-webkit-autofill:active {
     margin-bottom: 5px;
 }
 
-.socnet-avatar-dropzone:hover {
+.tetrone-avatar-dropzone:hover {
     border-color: var(--theme-link);
     background: var(--theme-bg-hover, rgba(0, 0, 0, 0.02));
 }
 
-.socnet-avatar-dropzone.drag-active {
+.tetrone-avatar-dropzone.drag-active {
     border-color: var(--theme-success, #4bb34b);
     background: rgba(75, 179, 75, 0.1);
 }
 
-.socnet-dropzone-content {
+.tetrone-dropzone-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
 }
 
-.socnet-dropzone-text {
+.tetrone-dropzone-text {
     font-size: 12px;
     color: var(--theme-text-muted);
 }
 
-.socnet-dropzone-text strong {
+.tetrone-dropzone-text strong {
     color: var(--theme-text-main);
 }
 
-.socnet-dropzone-filename {
+.tetrone-dropzone-filename {
     margin-top: 15px;
     padding-top: 10px;
     border-top: 1px solid var(--theme-border);
@@ -2293,17 +2293,17 @@ input:-webkit-autofill:active {
 }
 
 /* перевірка безпеки пароля */
-.socnet-password-wrapper {
+.tetrone-password-wrapper {
     position: relative;
     width: 100%;
     display: block;
 }
 
-.socnet-password-wrapper .socnet-form-input {
+.tetrone-password-wrapper .tetrone-form-input {
     padding-right: 35px;
 }
 
-.socnet-password-toggle {
+.tetrone-password-toggle {
     position: absolute;
     right: 8px;
     top: 40%;
@@ -2319,27 +2319,27 @@ input:-webkit-autofill:active {
     transition: color 0.2s;
 }
 
-.socnet-password-toggle:hover {
+.tetrone-password-toggle:hover {
     color: var(--theme-link);
 }
 
-.socnet-password-strength-wrapper {
+.tetrone-password-strength-wrapper {
     margin-top: -5px;
     margin-bottom: 10px;
 }
 
-.socnet-password-strength-track {
+.tetrone-password-strength-track {
     height: 4px;
     background: var(--theme-border);
     overflow: hidden;
 }
 
-.socnet-password-strength-bar {
+.tetrone-password-strength-bar {
     height: 100%;
     transition: width 0.3s ease, background-color 0.3s ease;
 }
 
-.socnet-password-strength-text {
+.tetrone-password-strength-text {
     font-size: 10px;
     color: var(--theme-text-muted);
     margin-top: 4px;
@@ -2347,11 +2347,11 @@ input:-webkit-autofill:active {
 }
 
 /* правила сайту */
-.socnet-rules-page {
+.tetrone-rules-page {
     margin: 20px auto;
 }
 
-.socnet-rules-header {
+.tetrone-rules-header {
     font-size: 18px;
     color: var(--theme-link);
     border-bottom: 1px solid var(--theme-border);
@@ -2360,18 +2360,18 @@ input:-webkit-autofill:active {
     margin-top: 0;
 }
 
-.socnet-rule-block {
+.tetrone-rule-block {
     margin-bottom: 20px;
 }
 
-.socnet-rule-title {
+.tetrone-rule-title {
     font-size: 14px;
     color: var(--theme-text-main);
     margin-bottom: 5px;
     margin-top: 0;
 }
 
-.socnet-rule-text {
+.tetrone-rule-text {
     font-size: 12px;
     color: var(--theme-text-muted);
     line-height: 1.5;
@@ -2379,51 +2379,51 @@ input:-webkit-autofill:active {
     white-space: pre-line;
 }
 
-.socnet-rule-sublist {
+.tetrone-rule-sublist {
     margin-top: 10px;
     margin-bottom: 0;
     padding-left: 25px;
 }
 
-.socnet-rule-sublist-item {
+.tetrone-rule-sublist-item {
     font-size: 12px;
     color: var(--theme-text-muted);
     margin-bottom: 8px;
     line-height: 1.5;
 }
 
-.socnet-gradient-builder {
+.tetrone-gradient-builder {
     background: var(--theme-bg-page);
     border: 1px solid var(--theme-border);
     padding: 15px;
     margin-top: 5px;
 }
 
-.socnet-gradient-preview {
+.tetrone-gradient-preview {
     height: 40px;
     margin-bottom: 15px;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.socnet-gradient-controls {
+.tetrone-gradient-controls {
     display: flex;
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
 }
 
-.socnet-gradient-colors {
+.tetrone-gradient-colors {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.socnet-gradient-icon {
+.tetrone-gradient-icon {
     color: var(--theme-text-muted);
     font-weight: bold;
 }
 
-.socnet-gradient-angle {
+.tetrone-gradient-angle {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -2431,20 +2431,20 @@ input:-webkit-autofill:active {
     min-width: 150px;
 }
 
-.socnet-gradient-angle label {
+.tetrone-gradient-angle label {
     font-size: 11px;
     color: var(--theme-text-main);
     font-weight: bold;
 }
 
-.socnet-range-slider {
+.tetrone-range-slider {
     width: 100%;
     height: 6px;
     background: var(--theme-input-border);
     outline: none;
 }
 
-.socnet-range-slider::-webkit-slider-thumb {
+.tetrone-range-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 16px;
@@ -2453,7 +2453,7 @@ input:-webkit-autofill:active {
     cursor: pointer;
 }
 
-.socnet-range-slider::-moz-range-thumb {
+.tetrone-range-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
     background: var(--theme-link);
@@ -2461,11 +2461,11 @@ input:-webkit-autofill:active {
     border: none;
 }
 
-.socnet-feed-video-wrapper {
+.tetrone-feed-video-wrapper {
     position: relative;
 }
 
-.socnet-feed-video-overlay {
+.tetrone-feed-video-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -2915,17 +2915,17 @@ input:-webkit-autofill:active {
 }
 
 /* модерація постів/скарг */
-.admin-feed-wrapper .socnet-post-content {
+.admin-feed-wrapper .tetrone-post-content {
     margin-top: 10px;
     padding-left: 0;
 }
 
-.admin-feed-wrapper .socnet-post-actions-top {
+.admin-feed-wrapper .tetrone-post-actions-top {
     position: static;
     margin-top: -10px;
 }
 
-.admin-feed-wrapper .socnet-post-header {
+.admin-feed-wrapper .tetrone-post-header {
     flex-wrap: wrap;
 }
 
@@ -3079,7 +3079,7 @@ input:-webkit-autofill:active {
 /* для телефонів */
 @media (max-width: 768px) {
 
-    .socnet-app-layout {
+    .tetrone-app-layout {
         flex-direction: column;
         padding: 0;
     }
@@ -3139,11 +3139,11 @@ input:-webkit-autofill:active {
         border: 1px solid var(--theme-border);
     }
 
-    .socnet-sidebar-left {
+    .tetrone-sidebar-left {
         padding-top: 60px;
     }
 
-    .socnet-main-content {
+    .tetrone-main-content {
         padding: 65px 10px 15px 10px;
     }
 
@@ -3166,7 +3166,7 @@ input:-webkit-autofill:active {
         visibility: visible;
     }
 
-    .socnet-sidebar-left {
+    .tetrone-sidebar-left {
         width: 100%;
         min-width: auto;
         height: auto;
@@ -3185,12 +3185,12 @@ input:-webkit-autofill:active {
         box-sizing: border-box;
     }
 
-    .socnet-sidebar-left.mobile-open {
+    .tetrone-sidebar-left.mobile-open {
         transform: translateY(0);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
 
-    .socnet-sidebar-profile {
+    .tetrone-sidebar-profile {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -3200,13 +3200,13 @@ input:-webkit-autofill:active {
         border-top: 1px dashed var(--theme-border);
     }
 
-    .socnet-mini-profile-link {
+    .tetrone-mini-profile-link {
         margin-bottom: 0;
         flex: 1;
         overflow: hidden;
     }
 
-    .socnet-logout-btn {
+    .tetrone-logout-btn {
         background: rgba(230, 70, 70, 0.1);
         color: var(--theme-error);
         border: 1px solid var(--theme-error);
@@ -3215,29 +3215,29 @@ input:-webkit-autofill:active {
         font-weight: bold;
     }
 
-    .socnet-logout-btn:hover {
+    .tetrone-logout-btn:hover {
         background: var(--theme-error);
         color: #fff;
     }
 
-    .socnet-sidebar-right {
+    .tetrone-sidebar-right {
         display: none !important;
     }
 
-    .socnet-main-content {
+    .tetrone-main-content {
         width: 100%;
         padding: 60px 10px 10px 10px;
         box-sizing: border-box;
     }
 
     /* контейнери */
-    .socnet-container {
+    .tetrone-container {
         flex-direction: column;
         gap: 10px;
     }
 
-    .socnet-left-col,
-    .socnet-right-col {
+    .tetrone-left-col,
+    .tetrone-right-col {
         width: 100%;
         padding: 0;
         max-width: none;
@@ -3245,43 +3245,43 @@ input:-webkit-autofill:active {
     }
 
     /* профіль */
-    .socnet-avatar {
+    .tetrone-avatar {
         width: 100%;
         max-width: 300px;
         margin: 0 auto;
         min-height: auto;
     }
 
-    .socnet-name-row {
+    .tetrone-name-row {
         flex-direction: column;
         gap: 10px;
     }
 
     /* налаштування/форми */
-    .socnet-form-row {
+    .tetrone-form-row {
         flex-direction: column;
         gap: 15px;
     }
 
-    .socnet-setup-layout {
+    .tetrone-setup-layout {
         flex-direction: column-reverse;
     }
 
-    .socnet-setup-form-col {
+    .tetrone-setup-form-col {
         border-right: none;
         border-top: 1px solid var(--theme-border);
     }
 
-    .socnet-setup-preview-col {
+    .tetrone-setup-preview-col {
         width: 100%;
         box-sizing: border-box;
     }
 
-    .socnet-setup-preview-col .socnet-container {
+    .tetrone-setup-preview-col .tetrone-container {
         flex-direction: row;
     }
 
-    .socnet-setup-preview-col .socnet-left-col {
+    .tetrone-setup-preview-col .tetrone-left-col {
         width: 150px;
     }
 
@@ -3292,35 +3292,35 @@ input:-webkit-autofill:active {
         text-align: center;
     }
 
-    .socnet-friends-avatar {
+    .tetrone-friends-avatar {
         margin-right: 0;
         margin-bottom: 10px;
     }
 
-    .socnet-friends-actions {
+    .tetrone-friends-actions {
         flex-direction: row;
         justify-content: center;
         margin-top: 10px;
     }
 
-    .socnet-friends-btn {
+    .tetrone-friends-btn {
         text-align: center;
     }
 
     /* лендінг */
-    .socnet-feature-block,
-    .socnet-feature-block.reversed {
+    .tetrone-feature-block,
+    .tetrone-feature-block.reversed {
         flex-direction: column;
         text-align: center;
     }
 
-    .socnet-feature-visual {
+    .tetrone-feature-visual {
         width: 100%;
         height: 100px;
     }
 
     /* таби */
-    .socnet-tabs {
+    .tetrone-tabs {
         flex-wrap: nowrap;
         overflow-x: auto;
         white-space: nowrap;
@@ -3328,7 +3328,7 @@ input:-webkit-autofill:active {
         -webkit-overflow-scrolling: touch;
     }
 
-    .socnet-tabs::-webkit-scrollbar {
+    .tetrone-tabs::-webkit-scrollbar {
         height: 4px;
     }
 
@@ -3341,8 +3341,8 @@ input:-webkit-autofill:active {
         min-width: 500px;
     }
 
-    .socnet-post-text,
-    .socnet-comment-text {
+    .tetrone-post-text,
+    .tetrone-comment-text {
         word-break: break-word;
         overflow-wrap: break-word;
     }
@@ -3350,35 +3350,35 @@ input:-webkit-autofill:active {
 
 @media (max-width: 480px) {
 
-    .socnet-btn,
-    .socnet-btn-save,
-    .socnet-btn-dropdown-trigger {
+    .tetrone-btn,
+    .tetrone-btn-save,
+    .tetrone-btn-dropdown-trigger {
         padding: 12px;
         font-size: 13px;
     }
 
-    .socnet-form-input,
-    .socnet-form-textarea,
-    .socnet-form-select {
+    .tetrone-form-input,
+    .tetrone-form-textarea,
+    .tetrone-form-select {
         padding: 10px;
         font-size: 13px;
     }
 
-    .socnet-label {
+    .tetrone-label {
         width: 100%;
         margin-bottom: 3px;
     }
 
-    .socnet-info-row {
+    .tetrone-info-row {
         flex-direction: column;
         margin-bottom: 10px;
     }
 
-    .socnet-setup-preview-col .socnet-container {
+    .tetrone-setup-preview-col .tetrone-container {
         flex-direction: column;
     }
 
-    .socnet-setup-preview-col .socnet-left-col {
+    .tetrone-setup-preview-col .tetrone-left-col {
         width: 100%;
     }
 

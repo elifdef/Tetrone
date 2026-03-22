@@ -44,16 +44,16 @@ export default function PostPage() {
     };
 
     if (loading)
-        return <div className="socnet-empty-state">{t('common.loading')}</div>;
+        return <div className="tetrone-empty-state">{t('common.loading')}</div>;
 
     if (error)
         return (
-            <div className="socnet-empty-state with-card">
+            <div className="tetrone-empty-state with-card">
                 <h3>{error}</h3>
                 <p>{t('error.loading_post')}</p>
-                <div className="socnet-feed-actions">
+                <div className="tetrone-feed-actions">
                     <button
-                        className="socnet-btn-small"
+                        className="tetrone-btn-small"
                         onClick={() => window.location.reload()}
                     >
                         {t('common.reload_page')}
@@ -63,16 +63,16 @@ export default function PostPage() {
         );
 
     return (
-        <div className="socnet-post-page-wrapper">
+        <div className="tetrone-post-page-wrapper">
             {user && (
-                <button onClick={() => navigate(-1)} className="socnet-back-btn">
+                <button onClick={() => navigate(-1)} className="tetrone-back-btn">
                     {t('common.back')}
                 </button>
             )}
 
             <PostItem post={post} />
 
-            <div className="socnet-post-comments-wrapper">
+            <div className="tetrone-post-comments-wrapper">
                 <CommentsSection
                     postId={post.id}
                     onCountChange={handleCommentCountChange}

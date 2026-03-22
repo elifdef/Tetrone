@@ -213,7 +213,7 @@ const NotificationSettings = () => {
     if (!settings) return null;
 
     return (
-        <div className="socnet-settings-section">
+        <div className="tetrone-settings-section">
             <div className="notification-settings-list">
                 {SETTING_ITEMS.map(({ type, labelKey }) => {
                     const notifyKey = `notify_${type}`;
@@ -227,7 +227,7 @@ const NotificationSettings = () => {
                             <label className="setting-info">
                                 <input
                                     type="checkbox"
-                                    className="socnet-checkbox"
+                                    className="tetrone-checkbox"
                                     checked={isEnabled}
                                     onChange={() => handleToggle(notifyKey)}
                                 />
@@ -237,7 +237,7 @@ const NotificationSettings = () => {
                             {isEnabled && (
                                 <div className="setting-controls">
                                     <select
-                                        className="socnet-select sound-select"
+                                        className="tetrone-select sound-select"
                                         value={currentSelectValue}
                                         onChange={(e) => handleSoundTypeChange(soundKey, e.target.value)}
                                     >
@@ -251,7 +251,7 @@ const NotificationSettings = () => {
                                     {currentSelectValue === 'custom_url' && (
                                         <input
                                             type="text"
-                                            className="socnet-form-input"
+                                            className="tetrone-form-input"
                                             placeholder="https://..."
                                             style={{ width: '200px' }}
                                             value={settings[`${soundKey}_input`] || ''}
@@ -271,14 +271,14 @@ const NotificationSettings = () => {
 
                                             <button
                                                 type="button"
-                                                className="socnet-btn btn-small"
+                                                className="tetrone-btn btn-small"
                                                 onClick={() => fileInputRefs.current[soundKey]?.click()}
                                             >
                                                 {t('common.browse')}
                                             </button>
 
                                             <span
-                                                className="socnet-avatar-file-name"
+                                                className="tetrone-avatar-file-name"
                                                 style={{ maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                                                 title={getDisplayFileName(soundKey)}
                                             >
@@ -290,7 +290,7 @@ const NotificationSettings = () => {
                                     {currentSelectValue !== 'none' && (
                                         <button
                                             type="button"
-                                            className="socnet-btn btn-small"
+                                            className="tetrone-btn btn-small"
                                             onClick={() => handlePlaySound(type)}
                                             title={isPlaying ? "Пауза" : t('common.play_sound')}
                                         >
@@ -306,7 +306,7 @@ const NotificationSettings = () => {
 
             <div className="settings-actions" style={{ marginTop: '20px' }}>
                 <button
-                    className="socnet-btn-save"
+                    className="tetrone-btn-save"
                     onClick={handleSave}
                     disabled={saving}
                 >

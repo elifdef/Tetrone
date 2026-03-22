@@ -26,10 +26,10 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
     const isStaff = currentUser.role >= userRole.Support;
 
     return (
-        <div className="socnet-card-wrapper">
+        <div className="tetrone-card-wrapper">
             {!isPreview && isStaff && !isBanned && <StaffBanner userRole={currentUser.role} />}
-            <div className="socnet-container">
-                <div className="socnet-left-col">
+            <div className="tetrone-container">
+                <div className="tetrone-left-col">
                     <ProfileAvatar
                         user={{ ...currentUser, avatar: displayAvatar }}
                         isPreview={isPreview}
@@ -52,7 +52,7 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
                     )}
                 </div>
 
-                <div className="socnet-right-col">
+                <div className="tetrone-right-col">
                     <ProfileHeader user={currentUser} isPreview={isPreview} />
 
                     <ProfileStatus bio={displayBio} />

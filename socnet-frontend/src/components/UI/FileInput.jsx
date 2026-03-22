@@ -16,19 +16,19 @@ const FileInput = ({
     };
 
     return (
-        <div className={`socnet-file-input-wrapper ${className}`}>
+        <div className={`tetrone-file-input-wrapper ${className}`}>
             <input
                 type="file"
                 ref={inputRef}
                 onChange={onFileSelect}
                 accept={accept}
-                className="socnet-hidden-input"
+                className="tetrone-hidden-input"
                 {...props}
             />
 
             <button
                 type="button"
-                className="socnet-btn socnet-btn-auto-width"
+                className="tetrone-btn tetrone-btn-auto-width"
                 onClick={handleClick}
             >
                 {btnText || t('common.upload')}

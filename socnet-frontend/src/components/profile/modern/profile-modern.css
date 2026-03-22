@@ -1,10 +1,10 @@
-.socnet-modern-wrapper {
+.tetrone-modern-wrapper {
     background: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     overflow: hidden;
 }
 
-.socnet-modern-banner {
+.tetrone-modern-banner {
     width: 100%;
     height: 200px;
     background-size: cover;
@@ -12,7 +12,7 @@
     position: relative;
 }
 
-.socnet-modern-header {
+.tetrone-modern-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -24,13 +24,13 @@
     flex-wrap: wrap;
 }
 
-.socnet-modern-header-main {
+.tetrone-modern-header-main {
     display: flex;
     align-items: flex-end;
     gap: 15px;
 }
 
-.socnet-modern-avatar-wrapper {
+.tetrone-modern-avatar-wrapper {
     width: 130px;
     height: 130px;
     border: 6px solid var(--theme-bg-box);
@@ -42,13 +42,14 @@
     flex-shrink: 0;
 }
 
-.socnet-modern-avatar {
+.tetrone-modern-avatar-wrapper
+.tetrone-modern-avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.socnet-modern-actions {
+.tetrone-modern-actions {
     display: flex;
     gap: 10px;
     align-items: flex-end;
@@ -56,23 +57,23 @@
     z-index: 2;
 }
 
-.socnet-modern-actions-group {
+.tetrone-modern-actions-group {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-bottom: 12px;
 }
 
-.socnet-modern-actions-group .socnet-dropdown-wrapper {
+.tetrone-modern-actions-group .tetrone-dropdown-wrapper {
     width: auto !important;
 }
 
-.socnet-modern-actions-group .modern-trigger {
+.tetrone-modern-actions-group .modern-trigger {
     width: auto !important;
     padding: 6px 15px;
 }
 
-.socnet-modern-actions-group .modern-menu-list {
+.tetrone-modern-actions-group .modern-menu-list {
     right: 0;
     left: auto;
     min-width: 180px;
@@ -91,31 +92,31 @@
     gap: 8px;
 }
 
-.socnet-modern-body {
+.tetrone-modern-body {
     padding: 20px;
     position: relative;
 }
 
-.socnet-modern-name-row {
+.tetrone-modern-name-row {
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
 }
 
-.socnet-modern-name {
+.tetrone-modern-name {
     font-size: 22px;
     font-weight: bold;
     margin: 0;
     line-height: 1.1;
 }
 
-.socnet-modern-nick {
+.tetrone-modern-nick {
     font-size: 13px;
     color: var(--theme-text-muted);
     margin-top: 4px;
 }
 
-.socnet-modern-bio {
+.tetrone-modern-bio {
     background: var(--theme-bg-page);
     padding: 12px;
     border: 1px solid var(--theme-border);
@@ -123,31 +124,31 @@
     margin-bottom: 20px;
 }
 
-.socnet-modern-info-grid {
+.tetrone-modern-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
 }
 
-.socnet-modern-info-item {
+.tetrone-modern-info-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.socnet-modern-info-label {
+.tetrone-modern-info-label {
     font-size: 11px;
     color: var(--theme-text-muted);
     text-transform: uppercase;
     font-weight: bold;
 }
 
-.socnet-modern-info-val {
+.tetrone-modern-info-val {
     font-size: 13px;
     color: var(--theme-text-main);
 }
 
-.socnet-modern-nick-row {
+.tetrone-modern-nick-row {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -155,27 +156,27 @@
     flex-wrap: wrap;
 }
 
-.socnet-modern-nick {
+.tetrone-modern-nick {
     font-size: 13px;
     color: var(--theme-text-muted);
 }
 
-.socnet-modern-status {
+.tetrone-modern-status {
     font-size: 12px;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.socnet-modern-status.online {
+.tetrone-modern-status.online {
     color: var(--theme-success, #4bb34b);
 }
 
-.socnet-modern-status.offline {
+.tetrone-modern-status.offline {
     color: var(--theme-text-muted);
 }
 
-.socnet-modern-online-dot {
+.tetrone-modern-online-dot {
     width: 6px;
     height: 6px;
     background-color: var(--theme-success, #4bb34b);

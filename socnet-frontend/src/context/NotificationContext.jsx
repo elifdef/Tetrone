@@ -130,7 +130,7 @@ export const NotificationProvider = ({ children }) => {
             incomingMessage, echoInstance, onlineUsers
         }}>
             {children}
-            <div className="socnet-toast-container">
+            <div className="tetrone-toast-container">
                 {activeToasts.map(toast => (
                     <Notification key={toast.toastId} notification={toast} onClose={() => removeToast(toast.toastId)} />
                 ))}

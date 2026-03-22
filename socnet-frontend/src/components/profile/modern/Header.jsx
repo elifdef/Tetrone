@@ -48,8 +48,8 @@ export default function Header({
     const getStatusBlock = () => {
         if (isPreview) return null;
         return (
-            <span className={`socnet-modern-status ${currentUser.is_online ? 'online' : 'offline'}`}>
-                {currentUser.is_online && <span className="socnet-modern-online-dot"></span>}
+            <span className={`tetrone-modern-status ${currentUser.is_online ? 'online' : 'offline'}`}>
+                {currentUser.is_online && <span className="tetrone-modern-online-dot"></span>}
                 {getStatusText()}
             </span>
         );
@@ -113,13 +113,13 @@ export default function Header({
     const prevAvatar = () => setCurrentIndex(prev => (prev - 1 + avatarPosts.length) % avatarPosts.length);
 
     return (
-        <div className="socnet-modern-header">
-            <div className="socnet-modern-header-main">
-                <div className="socnet-modern-avatar-wrapper">
+        <div className="tetrone-modern-header">
+            <div className="tetrone-modern-header-main">
+                <div className="tetrone-modern-avatar-wrapper">
                     <img
                         src={displayAvatar}
                         alt="avatar"
-                        className={`socnet-modern-avatar`}
+                        className={`tetrone-modern-avatar`}
                         onClick={handleAvatarClick}
                         style={{
                             cursor: canViewAvatar ? 'pointer' : 'default',
@@ -128,20 +128,20 @@ export default function Header({
                     />
                 </div>
 
-                <div className="socnet-modern-name-row">
-                    <h1 className="socnet-modern-name" style={nameStyle}>
+                <div className="tetrone-modern-name-row">
+                    <h1 className="tetrone-modern-name" style={nameStyle}>
                         {currentUser.first_name} {currentUser.last_name}
                     </h1>
-                    <div className="socnet-modern-nick-row">
-                        <span className="socnet-modern-nick" style={nameStyle}>@{currentUser.username}</span>
+                    <div className="tetrone-modern-nick-row">
+                        <span className="tetrone-modern-nick" style={nameStyle}>@{currentUser.username}</span>
                         {getStatusBlock()}
                     </div>
                 </div>
             </div>
 
-            <div className="socnet-modern-actions-group">
+            <div className="tetrone-modern-actions-group">
                 {sameUser && !isPreview && (
-                    <Link to="/settings" className="socnet-btn-ghost modern-action-btn">
+                    <Link to="/settings" className="tetrone-btn-ghost modern-action-btn">
                         {t('common.edit')}
                     </Link>
                 )}
@@ -150,7 +150,7 @@ export default function Header({
                     <>
                         {!isBlockedByMe && (
                             <button
-                                className="socnet-btn modern-action-btn"
+                                className="tetrone-btn modern-action-btn"
                                 onClick={handleSendMessage}
                                 disabled={isChatLoading || loading}
                             >
@@ -158,9 +158,9 @@ export default function Header({
                             </button>
                         )}
 
-                        <div className="socnet-dropdown-wrapper" ref={menuRef}>
+                        <div className="tetrone-dropdown-wrapper" ref={menuRef}>
                             <button
-                                className="socnet-btn socnet-btn-dropdown-trigger modern-trigger"
+                                className="tetrone-btn tetrone-btn-dropdown-trigger modern-trigger"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 disabled={loading}
                             >
@@ -168,19 +168,19 @@ export default function Header({
                             </button>
 
                             {isMenuOpen && (
-                                <div className="socnet-menu-list modern-menu-list">
+                                <div className="tetrone-menu-list modern-menu-list">
                                     {!isBlockedByMe && (
-                                        <button className="socnet-menu-item" onClick={() => { handleFriendshipAction(); setIsMenuOpen(false); }}>
+                                        <button className="tetrone-menu-item" onClick={() => { handleFriendshipAction(); setIsMenuOpen(false); }}>
                                             {getFriendMenuLabel()}
                                         </button>
                                     )}
 
-                                    <button className="socnet-menu-item modern-menu-item" onClick={() => { onReportAction(); setIsMenuOpen(false); }}>
+                                    <button className="tetrone-menu-item modern-menu-item" onClick={() => { onReportAction(); setIsMenuOpen(false); }}>
                                         {t('reports.title')}
                                     </button>
 
                                     <button
-                                        className={`socnet-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
+                                        className={`tetrone-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
                                         onClick={() => { handleBlockAction(); setIsMenuOpen(false); }}
                                     >
                                         {isBlockedByMe ? t('common.to_unblock') : t('common.to_block')}

@@ -4,71 +4,71 @@ export default function MessageItemOld({ msg, myAvatar, myName, targetUser, form
     const isTemp = msg.status === 'sending' || msg.status === 'error';
 
     return (
-        <div id={`message-${msg.id}`} className={`socnet-messages-old-message-row ${msg.status === 'error' ? 'error-state' : ''}`}>
-            <div className="socnet-messages-old-msg-left">
-                <img src={msg.isMine ? myAvatar : targetUser?.avatar} alt="avatar" className="socnet-messages-old-avatar" />
+        <div id={`message-${msg.id}`} className={`tetrone-messages-old-message-row ${msg.status === 'error' ? 'error-state' : ''}`}>
+            <div className="tetrone-messages-old-msg-left">
+                <img src={msg.isMine ? myAvatar : targetUser?.avatar} alt="avatar" className="tetrone-messages-old-avatar" />
             </div>
 
-            <div className="socnet-messages-old-msg-right">
-                <div className="socnet-im-msg-header">
+            <div className="tetrone-messages-old-msg-right">
+                <div className="tetrone-im-msg-header">
                     <Link
                         to={`/${msg.isMine ? myName : targetUser.username}`}
-                        className="socnet-messages-old-author"
+                        className="tetrone-messages-old-author"
                     >
                         {msg.isMine ? myName : targetUser?.first_name}
                     </Link>
-                    <span className="socnet-messages-old-date">
+                    <span className="tetrone-messages-old-date">
                         {msg.status === 'sending' ? t('common.sending') : formatDate(msg.created_at)}
                     </span>
                 </div>
 
                 {msg.reply_to && (
-                    <div className="socnet-message-reply-quote">
+                    <div className="tetrone-message-reply-quote">
                         <div className="reply-author">{msg.reply_to.sender_name}</div>
                         <div className="reply-text">{msg.reply_to.text}</div>
                     </div>
                 )}
 
-                <div className="socnet-messages-old-msg-text">
+                <div className="tetrone-messages-old-msg-text">
                     {msg.text}
-                    {msg.is_edited && <span className="socnet-edited-mark"> ({t('common.edited')})</span>}
+                    {msg.is_edited && <span className="tetrone-edited-mark"> ({t('common.edited')})</span>}
 
                     {msg.status === 'error' && (
-                        <div className="socnet-message-error-indicator" title={msg.errorText}>
+                        <div className="tetrone-message-error-indicator" title={msg.errorText}>
                             ❌ {t('messages.not_sent')}
                         </div>
                     )}
                 </div>
 
                 {msg.files?.length > 0 && (
-                    <div className="socnet-msg-files">
+                    <div className="tetrone-msg-files">
                         {msg.files.map((file, idx) => (
-                            <img key={idx} src={file.url} alt="attachment" className="socnet-msg-image-attachment" />
+                            <img key={idx} src={file.url} alt="attachment" className="tetrone-msg-image-attachment" />
                         ))}
                     </div>
                 )}
 
-                <div className="socnet-messages-old-actions-bottom">
+                <div className="tetrone-messages-old-actions-bottom">
                     {!isTemp && (
                         <>
-                            <span className="socnet-action-link" onClick={() => setReplyingTo(msg)}>
+                            <span className="tetrone-action-link" onClick={() => setReplyingTo(msg)}>
                                 {t('common.reply')}
                             </span>
-                            <span className="socnet-action-link" onClick={() => togglePin(msg.id)}>
+                            <span className="tetrone-action-link" onClick={() => togglePin(msg.id)}>
                                 {msg.is_pinned ? t('messages.unpin') : t('messages.pin')}
                             </span>
                             {msg.isMine && (
                                 <>
-                                    <span className="socnet-action-link" onClick={() => handleEditClick(msg)}>
+                                    <span className="tetrone-action-link" onClick={() => handleEditClick(msg)}>
                                         {t('common.edit')}
                                     </span>
-                                    <span className="socnet-action-link danger" onClick={() => handleDelete(msg.id)}>
+                                    <span className="tetrone-action-link danger" onClick={() => handleDelete(msg.id)}>
                                         {t('common.delete')}
                                     </span>
                                 </>
                             )}
                             {msg.isMine && (
-                                <span className={`socnet-messages-old-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
+                                <span className={`tetrone-messages-old-read-status ${msg.read_at ? 'is-read' : 'is-sent'}`}>
                                     {msg.read_at ? '✓✓' : '✓'}
                                 </span>
                             )}

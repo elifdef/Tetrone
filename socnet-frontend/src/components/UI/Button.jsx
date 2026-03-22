@@ -1,5 +1,5 @@
 const Button = ({ children, className = "", variant = "primary", ...props }) => {
-    const btnClass = variant === 'save' ? 'socnet-btn-save' : 'socnet-btn';
+    const btnClass = variant === 'save' ? 'tetrone-btn-save' : 'tetrone-btn';
 
     return (
         <button

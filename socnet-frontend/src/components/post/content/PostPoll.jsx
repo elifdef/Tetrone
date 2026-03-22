@@ -119,12 +119,12 @@ export default function PostPoll({ poll, postId, isOwner }) {
     const optionsToRender = quizData ? quizData.options : poll.options;
 
     return (
-        <div className="socnet-poll">
-            <div className="socnet-poll-question">
+        <div className="tetrone-poll">
+            <div className="tetrone-poll-question">
                 {poll.question}
             </div>
 
-            <div className="socnet-poll-options">
+            <div className="tetrone-poll-options">
                 {optionsToRender.map((option) => {
                     const isVoted = votedOptionIds.includes(option.id);
                     const isSelected = draftOptionIds.includes(option.id);
@@ -145,31 +145,31 @@ export default function PostPoll({ poll, postId, isOwner }) {
                     }
 
                     return (
-                        <div key={option.id} className="socnet-poll-option-wrapper">
+                        <div key={option.id} className="tetrone-poll-option-wrapper">
                             <div
                                 onClick={() => handleOptionClick(option.id)}
-                                className={`socnet-poll-option ${isSelected ? 'is-voted' : ''} ${canVoteNow ? 'can-vote' : 'disabled'} ${quizClass}`}
+                                className={`tetrone-poll-option ${isSelected ? 'is-voted' : ''} ${canVoteNow ? 'can-vote' : 'disabled'} ${quizClass}`}
                             >
                                 {showResults && (
-                                    <div className="socnet-poll-fill" style={{ width: `${percent}%` }}></div>
+                                    <div className="tetrone-poll-fill" style={{ width: `${percent}%` }}></div>
                                 )}
 
-                                <div className="socnet-poll-text">
+                                <div className="tetrone-poll-text">
                                     {poll.is_multiple_choice && (
                                         <input
                                             type="checkbox"
                                             checked={isSelected}
                                             readOnly
-                                            className="socnet-poll-multiple-checkbox"
+                                            className="tetrone-poll-multiple-checkbox"
                                         />
                                     )}
                                     {option.text}
-                                    {icon && <span className="socnet-poll-icon">{icon}</span>}
+                                    {icon && <span className="tetrone-poll-icon">{icon}</span>}
                                 </div>
 
                                 {showResults && (
                                     <div
-                                        className={`socnet-poll-percent ${!poll.is_anonymous ? 'clickable' : 'default'}`}
+                                        className={`tetrone-poll-percent ${!poll.is_anonymous ? 'clickable' : 'default'}`}
                                         onClick={(e) => openVotersModal(option.id, e)}
                                         title={!poll.is_anonymous ? t('poll.view_voters') : ''}
                                     >
@@ -183,84 +183,84 @@ export default function PostPoll({ poll, postId, isOwner }) {
             </div>
 
             {isQuiz && showResults && quizData?.explanation && (
-                <div className="socnet-poll-explanation-box">
-                    <span className="socnet-poll-explanation-title">{t('poll.explanation_title')}</span>
+                <div className="tetrone-poll-explanation-box">
+                    <span className="tetrone-poll-explanation-title">{t('poll.explanation_title')}</span>
                     {quizData.explanation}
                 </div>
             )}
 
             {poll.is_multiple_choice && hasDraftChanges && !isClosed && (
-                <div className="socnet-poll-actions socnet-poll-actions-start">
-                    <button className="socnet-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>
+                <div className="tetrone-poll-actions tetrone-poll-actions-start">
+                    <button className="tetrone-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>
                         {t('poll.submit_vote')}
                     </button>
                     {votedOptionIds.length > 0 && (
-                        <button className="socnet-btn socnet-btn-cancel" onClick={cancelDraft} disabled={isLoading}>
+                        <button className="tetrone-btn tetrone-btn-cancel" onClick={cancelDraft} disabled={isLoading}>
                             {t('common.cancel')}
                         </button>
                     )}
                 </div>
             )}
 
-            <div className="socnet-poll-meta socnet-poll-meta-spaced">
-                <div className="socnet-poll-meta-left">
+            <div className="tetrone-poll-meta tetrone-poll-meta-spaced">
+                <div className="tetrone-poll-meta-left">
                     <span>{totalVotes} {t('post.votes_count', { count: totalVotes })}</span>
                     {poll.is_anonymous && <><span className="dot">•</span><span>{t('post.anonymous_poll')}</span></>}
 
                     {isClosed && (
                         <>
                             <span className="dot">•</span>
-                            <span className="socnet-poll-closed-badge">{t('poll.closed_badge')}</span>
+                            <span className="tetrone-poll-closed-badge">{t('poll.closed_badge')}</span>
                         </>
                     )}
                 </div>
 
                 {isOwner && !isClosed && (
-                    <button className="socnet-poll-close-btn" onClick={() => setIsCloseConfirmOpen(true)}>
+                    <button className="tetrone-poll-close-btn" onClick={() => setIsCloseConfirmOpen(true)}>
                         {t('common.close')}
                     </button>
                 )}
             </div>
 
             {isCloseConfirmOpen && (
-                <div className="socnet-modal-overlay" onClick={() => setIsCloseConfirmOpen(false)}>
-                    <div className="socnet-modal-dialog socnet-modal-dialog-sm" onClick={e => e.stopPropagation()}>
-                        <div className="socnet-modal-text-confirm">
+                <div className="tetrone-modal-overlay" onClick={() => setIsCloseConfirmOpen(false)}>
+                    <div className="tetrone-modal-dialog tetrone-modal-dialog-sm" onClick={e => e.stopPropagation()}>
+                        <div className="tetrone-modal-text-confirm">
                             {t('poll.close_confirm_text')}
                         </div>
-                        <div className="socnet-modal-actions">
-                            <button className="socnet-btn-ghost" onClick={() => setIsCloseConfirmOpen(false)}>{t('common.cancel')}</button>
-                            <button className="socnet-btn" onClick={closePoll} disabled={isLoading}>{t('common.close')}</button>
+                        <div className="tetrone-modal-actions">
+                            <button className="tetrone-btn-ghost" onClick={() => setIsCloseConfirmOpen(false)}>{t('common.cancel')}</button>
+                            <button className="tetrone-btn" onClick={closePoll} disabled={isLoading}>{t('common.close')}</button>
                         </div>
                     </div>
                 </div>
             )}
 
             {isVotersModalOpen && !poll.is_anonymous && (
-                <div className="socnet-modal-overlay" onClick={() => setIsVotersModalOpen(false)}>
-                    <div className="socnet-modal-dialog" onClick={e => e.stopPropagation()}>
-                        <button className="socnet-modal-close" onClick={() => setIsVotersModalOpen(false)}>✖</button>
-                        <h3 className="socnet-poll-voters-header">{t('poll.voters_title')}</h3>
-                        <div className="socnet-tabs">
+                <div className="tetrone-modal-overlay" onClick={() => setIsVotersModalOpen(false)}>
+                    <div className="tetrone-modal-dialog" onClick={e => e.stopPropagation()}>
+                        <button className="tetrone-modal-close" onClick={() => setIsVotersModalOpen(false)}>✖</button>
+                        <h3 className="tetrone-poll-voters-header">{t('poll.voters_title')}</h3>
+                        <div className="tetrone-tabs">
                             {optionsToRender.map(opt => (
-                                <button key={opt.id} className={`socnet-tab ${activeTab === opt.id ? 'active' : ''}`} onClick={() => setActiveTab(opt.id)}>
-                                    {opt.text} <span className="socnet-tab-count">{results[opt.id] || 0}</span>
+                                <button key={opt.id} className={`tetrone-tab ${activeTab === opt.id ? 'active' : ''}`} onClick={() => setActiveTab(opt.id)}>
+                                    {opt.text} <span className="tetrone-tab-count">{results[opt.id] || 0}</span>
                                 </button>
                             ))}
                         </div>
-                        <div className="socnet-poll-voters-list-container">
+                        <div className="tetrone-poll-voters-list-container">
                             {isLoadingVoters ? (
-                                <div className="socnet-poll-voters-state-msg">{t('common.loading')}</div>
+                                <div className="tetrone-poll-voters-state-msg">{t('common.loading')}</div>
                             ) : (
                                 votersData && votersData[activeTab] && votersData[activeTab].length > 0 ? (
                                     votersData[activeTab].map(vote => (
-                                        <Link to={`/${vote.user.username}`} key={vote.user.id} className="socnet-poll-voter-row">
-                                            <img src={vote.user.avatar} alt="avatar" className="socnet-poll-voter-img" />
-                                            <span className="socnet-poll-voter-name">{vote.user.first_name} {vote.user.last_name}</span>
+                                        <Link to={`/${vote.user.username}`} key={vote.user.id} className="tetrone-poll-voter-row">
+                                            <img src={vote.user.avatar} alt="avatar" className="tetrone-poll-voter-img" />
+                                            <span className="tetrone-poll-voter-name">{vote.user.first_name} {vote.user.last_name}</span>
                                         </Link>
                                     ))
                                 ) : (
-                                    <div className="socnet-poll-voters-state-msg">{t('poll.no_voters_yet')}</div>
+                                    <div className="tetrone-poll-voters-state-msg">{t('poll.no_voters_yet')}</div>
                                 )
                             )}
                         </div>

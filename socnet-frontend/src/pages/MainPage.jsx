@@ -32,25 +32,25 @@ export default function MainPage() {
     ];
 
     return (
-        <div className="socnet-landing-wrapper">
-            <header className="socnet-landing-hero">
-                <h1 className="socnet-landing-title">
+        <div className="tetrone-landing-wrapper">
+            <header className="tetrone-landing-hero">
+                <h1 className="tetrone-landing-title">
                     {t('main.title', { name: APP_NAME })}
                 </h1>
-                <p className="socnet-landing-subtitle">
+                <p className="tetrone-landing-subtitle">
                     {t('main.subtitle')}
                 </p>
-                <div className="socnet-landing-actions">
-                    <Link to="/register" className="socnet-btn socnet-landing-btn-big">
+                <div className="tetrone-landing-actions">
+                    <Link to="/register" className="tetrone-btn tetrone-landing-btn-big">
                         {t('main.join.signup_btn')}
                     </Link>
-                    <Link to="/login" className="socnet-btn socnet-btn-ghost socnet-landing-btn-big">
+                    <Link to="/login" className="tetrone-btn tetrone-btn-ghost tetrone-landing-btn-big">
                         {t('main.join.signin_btn')}
                     </Link>
                 </div>
             </header>
 
-            <div className="socnet-landing-features">
+            <div className="tetrone-landing-features">
                 {features.map((feature, index) => (
                     <FeatureBlock
                         key={index}
@@ -69,16 +69,16 @@ export default function MainPage() {
                 ))}
             </div>
 
-            <div className="socnet-cta-block">
-                <h2 className="socnet-cta-title">
+            <div className="tetrone-cta-block">
+                <h2 className="tetrone-cta-title">
                     {t('main.join.header')}
                 </h2>
-                <p className="socnet-cta-desc">
+                <p className="tetrone-cta-desc">
                     {t('main.join.description')}
                 </p>
 
-                <div className="socnet-landing-actions">
-                    <Link to="/register" className="socnet-btn socnet-landing-btn-big">
+                <div className="tetrone-landing-actions">
+                    <Link to="/register" className="tetrone-btn tetrone-landing-btn-big">
                         {t('main.join.signup_btn')}
                     </Link>
                 </div>

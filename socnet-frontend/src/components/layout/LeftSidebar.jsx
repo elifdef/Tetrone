@@ -22,7 +22,7 @@ const LeftSidebar = () => {
 
     const getLinkClass = (path) => {
         const isActive = location.pathname === path;
-        return `socnet-nav-item ${isActive ? "active" : ""}`;
+        return `tetrone-nav-item ${isActive ? "active" : ""}`;
     };
 
     const handleLogout = () => {
@@ -63,12 +63,12 @@ const LeftSidebar = () => {
                 onClick={closeMenu}
             />
 
-            <aside className={`socnet-sidebar-left ${isMobileOpen ? 'mobile-open' : ''}`}>
-                <Link to="/" className="socnet-logo" onClick={closeMenu}>
+            <aside className={`tetrone-sidebar-left ${isMobileOpen ? 'mobile-open' : ''}`}>
+                <Link to="/" className="tetrone-logo" onClick={closeMenu}>
                     {APP_NAME}
                 </Link>
 
-                <nav className="socnet-nav-list">
+                <nav className="tetrone-nav-list">
                     {user ? (
                         <>
                             <Link to="/" className={getLinkClass("/")} onClick={closeMenu}>
@@ -79,14 +79,14 @@ const LeftSidebar = () => {
                             </Link>
                             <Link to="/messages" className={getLinkClass("/messages")} onClick={closeMenu}>
                                 {t('common.messages')}
-                                {unreadMessagesCount > 0 && (<span className="socnet-badge">{displayMsgCount}</span>)}
+                                {unreadMessagesCount > 0 && (<span className="tetrone-badge">{displayMsgCount}</span>)}
                             </Link>
                             <Link to="/friends" className={getLinkClass("/friends")} onClick={closeMenu}>
                                 {t('common.friends')}
                             </Link>
                             <Link to="/notifications" className={getLinkClass("/notifications")} onClick={closeMenu}>
                                 {t('common.notifications')}
-                                {unreadCount > 0 && (<span className="socnet-badge">{displayCount}</span>)}
+                                {unreadCount > 0 && (<span className="tetrone-badge">{displayCount}</span>)}
                             </Link>
                             <Link to="/activity" className={getLinkClass("/activity")} onClick={closeMenu}>
                                 {t('common.activity')}
@@ -135,25 +135,25 @@ const LeftSidebar = () => {
                 </nav>
 
                 {user && (
-                    <div className="socnet-sidebar-profile">
-                        <Link to={`/${user.username}`} className="socnet-mini-profile-link" onClick={closeMenu}>
+                    <div className="tetrone-sidebar-profile">
+                        <Link to={`/${user.username}`} className="tetrone-mini-profile-link" onClick={closeMenu}>
                             <img
                                 src={user?.avatar}
                                 alt="avatar"
-                                className="socnet-mini-avatar"
+                                className="tetrone-mini-avatar"
                             />
-                            <div className="socnet-mini-name">
+                            <div className="tetrone-mini-name">
                                 {user.first_name || user.username}
                             </div>
                         </Link>
-                        <button onClick={handleLogout} className="socnet-logout-btn">
+                        <button onClick={handleLogout} className="tetrone-logout-btn">
                             {t('auth.signout')}
                         </button>
                     </div>
                 )}
 
                 {!user && (
-                    <div className="socnet-sidebar-profile socnet-sidebar-guest-notice">
+                    <div className="tetrone-sidebar-profile tetrone-sidebar-guest-notice">
                         {t('sidebar.guest.view_like_guest')}
                     </div>
                 )}

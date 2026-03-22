@@ -5,19 +5,19 @@ export default function FriendCard({ user, viewMode, onAction }) {
     const { t } = useTranslation();
 
     const renderButtons = () => {
-        const btnClass = "socnet-friends-btn";
+        const btnClass = "tetrone-friends-btn";
 
         if (viewMode === 'my') {
             return (
                 <>
                     <button
-                        className={`${btnClass} socnet-friends-btn-secondary`}
+                        className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('delete', user.username)}
                     >
                         {t('common.delete')}
                     </button>
                     <button
-                        className={`${btnClass} socnet-friends-btn-danger`}
+                        className={`${btnClass} tetrone-friends-btn-danger`}
                         onClick={() => onAction('block', user.username)}
                     >
                         {t('common.to_block')}
@@ -30,13 +30,13 @@ export default function FriendCard({ user, viewMode, onAction }) {
             return (
                 <>
                     <button
-                        className={`${btnClass} socnet-friends-btn-primary`}
+                        className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('accept', user.username)}
                     >
                         {t('common.accept')}
                     </button>
                     <button
-                        className={`${btnClass} socnet-friends-btn-secondary`}
+                        className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('cancel_request', user.username)}
                     >
                         {t('common.dismiss')}
@@ -48,7 +48,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
         if (viewMode === 'subscriptions') {
             return (
                 <button
-                    className={`${btnClass} socnet-friends-btn-secondary`}
+                    className={`${btnClass} tetrone-friends-btn-secondary`}
                     onClick={() => onAction('cancel_request', user.username)}
                 >
                     {t('common.cancel')}
@@ -59,7 +59,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
         if (viewMode === 'blocked') {
             return (
                 <button
-                    className={`${btnClass} socnet-friends-btn-primary`}
+                    className={`${btnClass} tetrone-friends-btn-primary`}
                     onClick={() => onAction('unblock', user.username)}
                 >
                     {t('common.to_unblock')}
@@ -70,13 +70,13 @@ export default function FriendCard({ user, viewMode, onAction }) {
         switch (user.friendship_status) {
             case 'friends':
                 return (
-                    <span className="socnet-friends-status">{t('common.your_friends')}</span>
+                    <span className="tetrone-friends-status">{t('common.your_friends')}</span>
                 );
 
             case 'pending_sent':
                 return (
                     <button
-                        className={`${btnClass} socnet-friends-btn-secondary`}
+                        className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('cancel_request', user.username)}
                     >
                         {t('common.cancel')}
@@ -86,7 +86,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
             case 'pending_received':
                 return (
                     <button
-                        className={`${btnClass} socnet-friends-btn-primary`}
+                        className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('accept', user.username)}
                     >
                         {t('common.accept')}
@@ -96,7 +96,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
             case 'blocked_by_me':
                 return (
                     <button
-                        className={`${btnClass} socnet-friends-btn-primary`}
+                        className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('unblock', user.username)}
                     >
                         {t('common.to_unblock')}
@@ -105,13 +105,13 @@ export default function FriendCard({ user, viewMode, onAction }) {
 
             case 'blocked_by_target':
                 return (
-                    <span className="socnet-friends-status">{t('common.blocked')}</span>
+                    <span className="tetrone-friends-status">{t('common.blocked')}</span>
                 );
 
             default:
                 return (
                     <button
-                        className={`${btnClass} socnet-friends-btn-primary`}
+                        className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('add', user.username)}
                     >
                         {t('common.add')}
@@ -122,18 +122,18 @@ export default function FriendCard({ user, viewMode, onAction }) {
 
     return (
         <div className="friend-card">
-            <Link to={`/${user.username}`} className="socnet-friends-avatar-link">
-                <img src={user.avatar} alt={user.username} className="socnet-friends-avatar" />
+            <Link to={`/${user.username}`} className="tetrone-friends-avatar-link">
+                <img src={user.avatar} alt={user.username} className="tetrone-friends-avatar" />
             </Link>
 
-            <div className="socnet-friends-info">
-                <Link to={`/${user.username}`} className="socnet-friends-name">
+            <div className="tetrone-friends-info">
+                <Link to={`/${user.username}`} className="tetrone-friends-name">
                     {user.first_name} {user.last_name}
                 </Link>
-                <div className="socnet-friends-username">@{user.username}</div>
+                <div className="tetrone-friends-username">@{user.username}</div>
             </div>
 
-            <div className="socnet-friends-actions">
+            <div className="tetrone-friends-actions">
                 {renderButtons()}
             </div>
         </div>

@@ -54,16 +54,16 @@ export default function HomePage() {
     };
 
     const EmptyState = () => (
-        <div className="socnet-empty-state with-card">
+        <div className="tetrone-empty-state with-card">
             <h3>{t('common.welcome')}!</h3>
             {activeTab === 'feed' ? (
                 <>
                     <p>{t('feed.my_feed_empty')}</p>
-                    <div className="socnet-feed-actions">
-                        <Link to="/friends?tab=all" className="socnet-btn-small">
+                    <div className="tetrone-feed-actions">
+                        <Link to="/friends?tab=all" className="tetrone-btn-small">
                             {t('feed.find_friends')}
                         </Link>
-                        <button className="socnet-btn-small" onClick={() => handleTabChange('global')}>
+                        <button className="tetrone-btn-small" onClick={() => handleTabChange('global')}>
                             {t('feed.view_global_feed')}
                         </button>
                     </div>
@@ -75,12 +75,12 @@ export default function HomePage() {
     );
 
     return (
-        <div className="socnet-feed-page">
-            <div className="socnet-tabs">
-                <button className={`socnet-tab ${activeTab === 'feed' ? 'active' : ''}`} onClick={() => handleTabChange('feed')}>
+        <div className="tetrone-feed-page">
+            <div className="tetrone-tabs">
+                <button className={`tetrone-tab ${activeTab === 'feed' ? 'active' : ''}`} onClick={() => handleTabChange('feed')}>
                     {t('feed.my_feed')}
                 </button>
-                <button className={`socnet-tab ${activeTab === 'global' ? 'active' : ''}`} onClick={() => handleTabChange('global')}>
+                <button className={`tetrone-tab ${activeTab === 'global' ? 'active' : ''}`} onClick={() => handleTabChange('global')}>
                     {t('feed.global_feed')}
                 </button>
             </div>

@@ -19,12 +19,12 @@ export default function Footer() {
     const isActive = (lang) => i18n.language.startsWith(lang);
 
     return (
-        <footer className="socnet-footer">
-            <div className="socnet-footer-row">
+        <footer className="tetrone-footer">
+            <div className="tetrone-footer-row">
                 {SUPPORTED_LANGUAGES.map((lang) => (
                     <span
                         key={lang.code}
-                        className={`socnet-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
+                        className={`tetrone-lang-btn ${isActive(lang.code) ? 'active' : ''}`}
                         onClick={() => changeLanguage(lang.code)}
                         title={lang.name}
                     >
@@ -33,20 +33,20 @@ export default function Footer() {
                 ))}
             </div>
 
-            <div className="socnet-footer-row">
-                <Link to="/rules" className="socnet-footer-link">
+            <div className="tetrone-footer-row">
+                <Link to="/rules" className="tetrone-footer-link">
                     {t('common.rules')}
                 </Link>
-                <Link to="https://github.com/elifdef/social-network" className="socnet-footer-link">
+                <Link to="https://github.com/elifdef/social-network" className="tetrone-footer-link">
                     Github
                 </Link>
-                <Link to="/developers" className="socnet-footer-link">
+                <Link to="/developers" className="tetrone-footer-link">
                     {t('footer.for_dev')}
                 </Link>
             </div>
 
-            <div className="socnet-footer-row">
-                <span className="socnet-footer-text">
+            <div className="tetrone-footer-row">
+                <span className="tetrone-footer-text">
                     {APP_NAME} © 2025 - 2026. {t('footer.text')}
                 </span>
             </div>

@@ -9,29 +9,29 @@ const EmailChangeForm = ({
     const isVerified = Boolean(user?.email_verified_at);
 
     return (
-        <div className="socnet-settings-box">
+        <div className="tetrone-settings-box">
             <strong>{t('settings.change_email')}</strong>
 
-            <div className="socnet-settings-info-row">
-                <div className="socnet-settings-info-item">
+            <div className="tetrone-settings-info-row">
+                <div className="tetrone-settings-info-item">
                     <span>{t('settings.current_email')}:</span>
                     <span>{user?.email}</span>
                 </div>
 
-                <div className="socnet-settings-info-item">
+                <div className="tetrone-settings-info-item">
                     <span>{t('settings.verification_status')}:</span>
-                    <span className={isVerified ? 'socnet-text-success' : 'socnet-text-warning'}>
+                    <span className={isVerified ? 'tetrone-text-success' : 'tetrone-text-warning'}>
                         {t(`common.${isVerified ? 'confirmed' : 'unconfirmed'}`)}
                     </span>
                 </div>
             </div>
 
-            <form onSubmit={onSubmit} className="socnet-settings-form">
-                <div className="socnet-form-group">
-                    <label className="socnet-form-label">{t('settings.new_email')}</label>
+            <form onSubmit={onSubmit} className="tetrone-settings-form">
+                <div className="tetrone-form-group">
+                    <label className="tetrone-form-label">{t('settings.new_email')}</label>
                     <Input
                         type="email"
-                        className="socnet-form-input"
+                        className="tetrone-form-input"
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -39,11 +39,11 @@ const EmailChangeForm = ({
                     />
                 </div>
 
-                <div className="socnet-form-group">
-                    <label className="socnet-form-label">{t('settings.account_password')}</label>
+                <div className="tetrone-form-group">
+                    <label className="tetrone-form-label">{t('settings.account_password')}</label>
                     <Input
                         type="password"
-                        className="socnet-form-input"
+                        className="tetrone-form-input"
                         required
                         value={passwordForEmail}
                         onChange={(e) => setPasswordForEmail(e.target.value)}
@@ -51,7 +51,7 @@ const EmailChangeForm = ({
                     />
                 </div>
                 <button
-                    className="socnet-btn-save"
+                    className="tetrone-btn-save"
                     type="submit"
                     disabled={loading}
                 >

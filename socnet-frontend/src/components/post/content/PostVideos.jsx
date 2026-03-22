@@ -6,18 +6,18 @@ export default function PostVideos({ localVideos = [], youtubeVideos = [], onMed
     if (localVideos.length === 0 && visibleYouTube.length === 0) return null;
 
     return (
-        <div className="socnet-post-videos-container">
+        <div className="tetrone-post-videos-container">
             {localVideos.map((video) => (
-                <div key={`loc-${video.id}`} className="socnet-feed-video-wrapper">
+                <div key={`loc-${video.id}`} className="tetrone-feed-video-wrapper">
                     <VideoPlayer src={video.url} />
-                    <div className="socnet-feed-video-overlay" onClick={() => onMediaClick(video.id)}></div>
+                    <div className="tetrone-feed-video-overlay" onClick={() => onMediaClick(video.id)}></div>
                 </div>
             ))}
 
             {visibleYouTube.map((yt) => (
-                <div key={yt.id} className="socnet-feed-video-wrapper">
+                <div key={yt.id} className="tetrone-feed-video-wrapper">
                     <VideoPlayer src={yt.videoId} provider="youtube" />
-                    <div className="socnet-feed-video-overlay" onClick={() => onMediaClick(yt.videoId)}></div>
+                    <div className="tetrone-feed-video-overlay" onClick={() => onMediaClick(yt.videoId)}></div>
                 </div>
             ))}
         </div>

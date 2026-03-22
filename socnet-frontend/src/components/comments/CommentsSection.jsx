@@ -27,7 +27,7 @@ export default function CommentsSection({ postId, onCountChange }) {
     };
 
     return (
-        <div className="socnet-comments-container">
+        <div className="tetrone-comments-container">
             <CommentForm
                 user={user}
                 onSubmit={handleAddComment}

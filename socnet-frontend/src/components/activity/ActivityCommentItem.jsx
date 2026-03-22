@@ -12,11 +12,11 @@ export default function ActivityCommentItem({ comment, onDelete }) {
     const opColor = postAuthor?.personalization?.username_color;
 
     return (
-        <div className="socnet-activity-card socnet-relative-card">
+        <div className="tetrone-activity-card tetrone-relative-card">
             {onDelete && (
-                <div className="socnet-absolute-actions">
+                <div className="tetrone-absolute-actions">
                     <button
-                        className="socnet-action-icon"
+                        className="tetrone-action-icon"
                         onClick={onDelete}
                         title={t('common.delete')}
                     >
@@ -26,44 +26,44 @@ export default function ActivityCommentItem({ comment, onDelete }) {
             )}
 
             {postAuthor && (
-                <div className="socnet-activity-op">
+                <div className="tetrone-activity-op">
                     <Link to={`/${postAuthor.username}`}>
                         <img
                             src={postAuthor.avatar}
                             alt={postAuthor.username}
-                            className="socnet-activity-op-avatar"
+                            className="tetrone-activity-op-avatar"
                             style={opColor ? { color: opColor } : undefined}
                         />
                     </Link>
                     <span>
                         {t('activity.comments.you_commented_on')}{' '}
-                        <Link to={`/post/${comment.post_id}`} className="socnet-link">
+                        <Link to={`/post/${comment.post_id}`} className="tetrone-link">
                             {t('common.post')}
                         </Link>{' '}
                         {t('activity.comments.of_user')}{' '}
-                        <Link to={`/${postAuthor.username}`} className="socnet-link socnet-activity-op-name">
+                        <Link to={`/${postAuthor.username}`} className="tetrone-link tetrone-activity-op-name">
                             {postAuthor.first_name} {postAuthor.last_name}
                         </Link>
                     </span>
                 </div>
             )}
 
-            <div className="socnet-activity-reply">
+            <div className="tetrone-activity-reply">
                 {me && (
                     <img
                         src={me.avatar}
                         alt="my avatar"
-                        className="socnet-activity-reply-avatar"
+                        className="tetrone-activity-reply-avatar"
                     />
                 )}
 
-                <div className="socnet-activity-bubble-wrapper">
-                    <div className="socnet-activity-bubble">
+                <div className="tetrone-activity-bubble-wrapper">
+                    <div className="tetrone-activity-bubble">
                         {comment.content}
                     </div>
 
-                    <div className="socnet-activity-meta">
-                        <span className="socnet-notification-date socnet-activity-date">
+                    <div className="tetrone-activity-meta">
+                        <span className="tetrone-notification-date tetrone-activity-date">
                             {formatDate(comment.created_at)}
                         </span>
                     </div>

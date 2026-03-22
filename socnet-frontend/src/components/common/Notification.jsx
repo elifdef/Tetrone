@@ -6,7 +6,7 @@ import ShieldIcon from '../../assets/shield.svg?react';
 const NotificationAvatar = ({ src, isSystem }) => {
     if (isSystem) {
         return (
-            <div className="socnet-toast-avatar system-toast-avatar">
+            <div className="tetrone-toast-avatar system-toast-avatar">
                 <ShieldIcon width={64} height={64} className="system-toast-icon" />
             </div>
         );
@@ -16,21 +16,21 @@ const NotificationAvatar = ({ src, isSystem }) => {
         <img
             src={src}
             alt="avatar"
-            className="socnet-toast-avatar toast-avatar-img"
+            className="tetrone-toast-avatar toast-avatar-img"
         />
     );
 };
 
 const NotificationContent = ({ name, text, snippet }) => (
-    <div className="socnet-toast-content">
-        <span className="socnet-toast-name">
+    <div className="tetrone-toast-content">
+        <span className="tetrone-toast-name">
             {name}
         </span>
-        <span className="socnet-toast-text">
+        <span className="tetrone-toast-text">
             {text}
         </span>
         {snippet && (
-            <span className="socnet-toast-snippet">
+            <span className="tetrone-toast-snippet">
                 "{snippet}"
             </span>
         )}
@@ -60,7 +60,7 @@ export default function Notification({ notification, onClose }) {
     const snippetText = payload.admin_response || payload.post_snippet;
 
     return (
-        <div className="socnet-toast">
+        <div className="tetrone-toast">
             <NotificationAvatar
                 src={notification.user_avatar}
                 isSystem={isSystem}

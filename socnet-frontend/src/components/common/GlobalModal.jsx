@@ -45,37 +45,37 @@ export default function GlobalModal({
     const isSubmitDisabled = (type === 'prompt' || type === 'password') && !allowEmptyPrompt && !inputValue.trim();
 
     return (
-        <div className="socnet-modal-overlay" onClick={handleCancel}>
+        <div className="tetrone-modal-overlay" onClick={handleCancel}>
             {type === 'custom' ? (
                 <div onClick={(e) => e.stopPropagation()}>
                     {children}
                 </div>
             ) : (
-                <div className="socnet-modal-dialog" onClick={(e) => e.stopPropagation()}>
-                    <div className="socnet-modal-message">{message}</div>
+                <div className="tetrone-modal-dialog" onClick={(e) => e.stopPropagation()}>
+                    <div className="tetrone-modal-message">{message}</div>
 
                     {type === 'prompt' && (
                         <input
                             ref={inputRef} type="text" value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && !isSubmitDisabled && handleSubmit()}
-                            className="socnet-form-input socnet-modal-input" placeholder={placeholder}
+                            className="tetrone-form-input tetrone-modal-input" placeholder={placeholder}
                         />
                     )}
 
                     {type === 'password' && (
-                        <div className="socnet-password-wrapper">
+                        <div className="tetrone-password-wrapper">
                             <input
                                 ref={inputRef} type="password" value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && !isSubmitDisabled && handleSubmit()}
-                                className="socnet-form-input socnet-modal-input" placeholder={placeholder || '********'}
+                                className="tetrone-form-input tetrone-modal-input" placeholder={placeholder || '********'}
                             />
                         </div>
                     )}
 
-                    <div className="socnet-modal-actions">
-                        <Button className="socnet-btn-cancel" onClick={handleCancel}>{btnCancel}</Button>
+                    <div className="tetrone-modal-actions">
+                        <Button className="tetrone-btn-cancel" onClick={handleCancel}>{btnCancel}</Button>
                         <Button variant="save" onClick={handleSubmit} disabled={isSubmitDisabled}>{btnSubmit}</Button>
                     </div>
                 </div>

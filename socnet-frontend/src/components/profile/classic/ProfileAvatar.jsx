@@ -37,11 +37,11 @@ export default function ProfileAvatar({ user, isPreview, isBlocked }) {
     const prevAvatar = () => setCurrentIndex(prev => (prev - 1 + avatarPosts.length) % avatarPosts.length);
 
     return (
-        <div className="socnet-photo-box">
+        <div className="tetrone-photo-box">
             <img
                 src={user.avatar}
                 alt={user.username}
-                className={`socnet-avatar ${(!isPreview && isBlocked) ? 'socnet-avatar-blocked' : ''}`}
+                className={`tetrone-avatar ${(!isPreview && isBlocked) ? 'tetrone-avatar-blocked' : ''}`}
                 onClick={handleAvatarClick}
                 style={{
                     cursor: canViewAvatar ? 'pointer' : 'default',
