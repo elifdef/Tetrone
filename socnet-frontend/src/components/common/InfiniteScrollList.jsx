@@ -21,7 +21,7 @@ export default function InfiniteScrollList({
     if (isLoadingInitial) {
         return (
             <div className="socnet-empty-state">
-                {t('common.loading')}...
+                {t('common.loading')}
             </div>
         );
     }

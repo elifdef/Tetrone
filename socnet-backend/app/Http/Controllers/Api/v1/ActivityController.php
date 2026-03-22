@@ -3,23 +3,16 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Resources\CommentResource;
-use App\Models\Post;
+use App\Http\Resources\PostResource;
+use App\Services\ActivityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Resources\PostResource;
 
 class ActivityController extends Controller
 {
-    protected const POST_RELATIONS = [
-        'user',
-        'targetUser',
-        'attachments',
-        'originalPost.user',
-        'originalPost.attachments',
-        'originalPost.originalPost.user',
-        'originalPost.originalPost.attachments'
-    ];
+    public function __construct(protected ActivityService $activityService)
+    {
+    }
 
     /**
      * Повертає список постів де стоїть НАШ лайк
@@ -29,19 +22,7 @@ class ActivityController extends Controller
      */
     public function likedPosts(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        $posts = Post::select('posts.*')
-            ->join('likes', 'posts.id', '=', 'likes.post_id')
-            ->where('likes.user_id', $user->id)
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts'])
-            ->withExists(['likes as is_liked' => function ($query) use ($user)
-            {
-                $query->where('user_id', $user->id);
-            }])
-            ->orderBy('likes.created_at', 'desc')
-            ->paginate(config('posts.max_paginate'));
+        $posts = $this->activityService->getLikedPosts($request->user());
 
         return $this->success('LIKED_POSTS_RETRIEVED', 'Liked posts retrieved',
             PostResource::collection($posts)->response()->getData(true)
@@ -56,13 +37,7 @@ class ActivityController extends Controller
      */
     public function reposts(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        $reposts = $user->posts()
-            ->whereNotNull('original_post_id')
-            ->with(self::POST_RELATIONS)
-            ->latest()
-            ->paginate(config('posts.max_paginate'));
+        $reposts = $this->activityService->getReposts($request->user());
 
         return $this->success('REPOSTS_RETRIEVED', 'Reposts retrieved',
             PostResource::collection($reposts)->response()->getData(true)
@@ -77,17 +52,9 @@ class ActivityController extends Controller
      */
     public function getCounts(Request $request): JsonResponse
     {
-        $user = $request->user();
+        $counts = $this->activityService->getCounts($request->user());
 
-        $likesCount = DB::table('likes')->where('user_id', $user->id)->count();
-        $commentsCount = $user->comments()->count();
-        $repostsCount = $user->posts()->whereNotNull('original_post_id')->count();
-
-        return $this->success('ACTIVITY_COUNTS_RETRIEVED', 'Counts retrieved', [
-            'likes' => $likesCount,
-            'comments' => $commentsCount,
-            'reposts' => $repostsCount
-        ]);
+        return $this->success('ACTIVITY_COUNTS_RETRIEVED', 'Counts retrieved', $counts);
     }
 
     /**
@@ -98,12 +65,7 @@ class ActivityController extends Controller
      */
     public function comments(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        $comments = $user->comments()
-            ->with(['post', 'post.user'])
-            ->latest()
-            ->paginate(config('posts.max_paginate'));
+        $comments = $this->activityService->getComments($request->user());
 
         return $this->success('COMMENTS_RETRIEVED', 'Comments retrieved',
             CommentResource::collection($comments)->response()->getData(true)
@@ -118,18 +80,8 @@ class ActivityController extends Controller
      */
     public function screenTime(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $user->load('activities');
+        $data = $this->activityService->getScreenTime($request->user());
 
-        return $this->success('SCREEN_TIME_RETRIEVED', 'Screen time retrieved', [
-            'total_active_seconds' => $user->activities->sum('active_seconds'),
-            'history' => $user->activities->map(function ($act)
-            {
-                return [
-                    'date' => $act->date,
-                    'seconds' => $act->active_seconds,
-                ];
-            })->sortByDesc('date')->values()
-        ]);
+        return $this->success('SCREEN_TIME_RETRIEVED', 'Screen time retrieved', $data);
     }
 }

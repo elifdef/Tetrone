@@ -6,19 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table)
-        {
-            // За замовчуванням коментарі увімкнені (false)
-            $table->boolean('can_comment')->default(true)->after('is_repost');
+        Schema::table('posts', function (Blueprint $table) {
+            $table->boolean('can_comment')->default(true);
         });
     }
 
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table)
-        {
+        Schema::table('posts', function (Blueprint $table) {
             $table->dropColumn('can_comment');
         });
     }

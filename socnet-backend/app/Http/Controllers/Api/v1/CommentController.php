@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Comment;
 use App\Models\Post;
-use App\Notifications\NewCommentNotification;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
+    public function __construct(protected CommentService $commentService)
+    {
+    }
+
     public function index(Post $post): JsonResponse
     {
         $comments = $post->comments()
@@ -29,54 +33,17 @@ class CommentController extends Controller
 
     public function store(Request $request, Post $post): JsonResponse
     {
-        $currentUser = $request->user('sanctum');
+        $this->authorize('comment', $post);
 
-        if ($currentUser)
-        {
-            // автор поста заблокував коментатора
-            $blockedByAuthor = $currentUser->isBlockedByTarget($currentUser->id, $post->user_id);
-            // коментатор заблокував автора поста
-            $blockedByCommenter = $currentUser->isBlockedByTarget($post->user_id, $currentUser->id);
-
-            if ($blockedByAuthor || $blockedByCommenter)
-            {
-                return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-            }
-        }
-
+        // 2. Валідація
         $request->validate(['content' => 'required|string|max:32768']);
-        $content = $request->input('content');
 
-        $comment = $post->comments()->create([
-            'content' => $content,
-            'user_id' => $currentUser->id
-        ]);
-
-        if ($post->user_id !== $currentUser->id)
-        {
-            $prefs = $post->user->getNotificationPreferencesFor($currentUser->id, 'comments');
-
-            if ($prefs['should_notify'])
-            {
-                $post->user->notify(new NewCommentNotification($currentUser, $post, $comment, $prefs['sound']));
-            }
-        }
-
-        preg_match_all('/@([a-zA-Z0-9_.]+)/', $content, $matches);
-        $mentionedUsernames = array_unique($matches[1]);
-
-        if (!empty($mentionedUsernames))
-        {
-            $mentionedUsers = \App\Models\User::whereIn('username', $mentionedUsernames)->get();
-
-            foreach ($mentionedUsers as $mentionedUser)
-            {
-                if ($mentionedUser->id !== $currentUser->id && $mentionedUser->id !== $post->user_id)
-                {
-                     $mentionedUser->notify(new MentionNotification($currentUser, $post, $comment));
-                }
-            }
-        }
+        // 3. Виклик Сервісу
+        $comment = $this->commentService->createComment(
+            $post,
+            $request->user(),
+            $request->input('content')
+        );
 
         return $this->success('COMMENT_CREATED', 'Comment created', (new CommentResource($comment->load('user')))->resolve(), 201);
     }
@@ -86,10 +53,8 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment): JsonResponse
     {
-        if ($request->user()->id !== $comment->user_id)
-        {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-        }
+        // Перевіряємо, чи має право цей юзер редагувати коментар
+        $this->authorize('update', $comment);
 
         $request->validate(['content' => 'required|string|max:32768']);
 
@@ -100,11 +65,8 @@ class CommentController extends Controller
 
     public function destroy(Request $request, Comment $comment): JsonResponse
     {
-        // Видаляти може ТІЛЬКИ автор коментаря
-        if ($request->user()->id !== $comment->user_id)
-        {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-        }
+        // Перевіряємо, чи має право юзер ВИДАЛЯТИ коментар (Policy дозволяє видаляти і автору поста)
+        $this->authorize('delete', $comment);
 
         $comment->delete();
 
@@ -113,10 +75,8 @@ class CommentController extends Controller
 
     public function myComments(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        $comments = Comment::where('user_id', $user->id)
-            ->with(['user', 'post.user'])
+        $comments = $request->user()->comments()
+            ->with(['post.user'])
             ->orderBy('created_at', 'desc')
             ->paginate(config('comments.max_paginate'));
 

@@ -28,15 +28,14 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
 
+        // сесія закінчилася
         if (response.status === 401) {
-        window.dispatchEvent(new CustomEvent('session-expired'));
-        
-        return { success: false, message: 'Unauthenticated.' };
-    }
+            window.dispatchEvent(new CustomEvent('session-expired'));
+            throw { success: false, message: 'Unauthenticated.' };
+        }
 
         const data = response.status !== 204 ? await response.json() : null;
 
-        // помилки бекенда
         if (!response.ok) {
             const errorCode = data?.code || 'ERR_UNKNOWN';
 
@@ -44,7 +43,7 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
                 ? i18n.t(`api.error.${errorCode}`)
                 : (data?.message || i18n.t('common.error'));
 
-            return {
+            throw {
                 success: false,
                 code: errorCode,
                 message: translatedMessage,
@@ -80,7 +79,10 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
         };
 
     } catch (error) {
-        return {
+        // мережева помилка
+        if (error.success === false) throw error; 
+
+        throw {
             success: false,
             status: 0,
             code: 'ERR_NETWORK',

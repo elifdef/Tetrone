@@ -21,6 +21,22 @@ class UserPolicy
     }
 
     /**
+     * Чи може поточний адмін/модератор забанити/замутити іншого юзера?
+     */
+    public function moderate(User $me, User $target): bool
+    {
+        return $me->role->value > $target->role->value;
+    }
+
+    /**
+     * Чи має юзер доступ до Адмін-панелі взагалі?
+     */
+    public function viewAdminPanel(User $me): bool
+    {
+        return $me->role->value === Role::Admin->value;
+    }
+
+    /**
      * чи він не в чс
      */
     public function interact(User $me, User $target): bool
