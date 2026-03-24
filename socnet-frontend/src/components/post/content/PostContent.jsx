@@ -1,45 +1,45 @@
 import { useState } from "react";
 import { usePostMedia } from "../hooks/usePostMedia";
+import { isOnlyStickers } from "../../../utils/editorHelpers";
 import RichText from "../../common/RichText";
 import PostGallery from "./PostGallery";
 import PostVideos from "./PostVideos";
 import PostDocuments from "./PostDocuments";
 import PostPoll from "./PostPoll";
 import PhotoModal from "../../UI/PhotoModal";
-import VideoPlayer from "../../UI/VideoPlayer";
 
 export default function PostContent({ content: originalContent, post, onUpdate, isOwner, className }) {
     const { content, local, external } = usePostMedia(originalContent, post?.attachments, post?.entities);
-    const [selectedMediaId, setSelectedMediaId] = useState(null);
+    const [selectedImageId, setSelectedImageId] = useState(null);
 
-    const hasOnlyOneVideo = local.videos.length === 1 && local.images.length === 0 && external.youtube.length === 0;
+    const bigStickersClass = isOnlyStickers(content) ? 'tetrone-post-only-stickers' : '';
 
     return (
-        <div className={`tetrone-post-content ${className || ''}`}>
+        <div className={`tetrone-post-content ${bigStickersClass} ${className || ''}`}>
             <RichText text={content} />
 
             {post?.poll && (
                 <PostPoll poll={post.poll} postId={post.id} isOwner={isOwner} />
             )}
 
-            {hasOnlyOneVideo && (
-                <div className="tetrone-post-single-video">
-                    <VideoPlayer src={local.videos[0].url} />
-                </div>
-            )}
-            <>
-                <PostVideos localVideos={local.videos} youtubeVideos={external.youtube} onMediaClick={setSelectedMediaId} />
-                <PostGallery images={local.images} onMediaClick={setSelectedMediaId} />
-            </>
+            <PostVideos
+                localVideos={local.videos}
+                youtubeVideos={external.youtube}
+            />
+
+            <PostGallery
+                images={local.images}
+                onMediaClick={setSelectedImageId}
+            />
 
             <PostDocuments documents={local.documents} />
 
-            {selectedMediaId !== null && (
+            {selectedImageId !== null && (
                 <PhotoModal
-                    isOpen={selectedMediaId !== null}
-                    mediaId={selectedMediaId}
+                    isOpen={selectedImageId !== null}
+                    mediaId={selectedImageId}
                     post={post}
-                    onClose={() => setSelectedMediaId(null)}
+                    onClose={() => setSelectedImageId(null)}
                     onUpdate={onUpdate}
                 />
             )}

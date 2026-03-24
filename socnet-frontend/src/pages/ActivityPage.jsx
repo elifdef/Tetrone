@@ -35,7 +35,7 @@ export default function ActivityPage() {
             if (res.success) {
                 setCounts(res.data);
             } else {
-                console.error("Failed to fetch activity counts:", res.message);
+                // console.error("Failed to fetch activity counts:", res.message);
                 notifyError(res.message);
             }
         });

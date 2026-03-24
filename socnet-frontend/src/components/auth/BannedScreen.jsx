@@ -23,7 +23,7 @@ export const BannedScreen = () => {
             if (res.success) {
                 setHasPendingAppeal(res.data?.has_pending_appeal || false);
             } else {
-                console.error("Failed to check appeal status:", res.message);
+                // console.error("Failed to check appeal status:", res.message);
             }
             setIsLoadingStatus(false);
         };

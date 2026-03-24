@@ -1,7 +1,6 @@
 import { createContext, useState, useContext, useCallback } from 'react';
 import GlobalModal from '../components/common/GlobalModal';
 import i18n from '../i18n';
-import "../components/common/modals.css";
 
 const ModalContext = createContext();
 

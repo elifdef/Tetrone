@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
-import { EditIcon, DeleteIcon, ReplyIcon, ReportIcon, DotsIcon } from './CommentIcons';
+import { EditIcon, DeleteIcon, ReplyIcon, ReportIcon, DotsIcon } from '../ui/Icons';
 import ReportModal from '../common/ReportModal';
-import "../../styles/comment.css"
 import RichText from '../common/RichText';
+import Editor from '../editor/Editor';
+import { isEditorEmpty } from '../../utils/editorHelpers';
 
 export default function CommentItem({ comment, currentUser, onDelete, onEdit, onReply }) {
     const { t } = useTranslation();
@@ -13,7 +14,6 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
     const location = useLocation();
     const commentRef = useRef(null);
 
-    // якщо автор коментаря - редагувати/видаляти. 
     const isOwner = currentUser && currentUser.id === comment.user.id;
     const canReport = currentUser && !isOwner;
 
@@ -46,7 +46,7 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
     }, [location.search, comment.uid]);
 
     const handleSave = async () => {
-        if (!editContent.trim() || editContent === comment.content) {
+        if (isEditorEmpty(editContent) || JSON.stringify(editContent) === JSON.stringify(comment.content)) {
             setIsEditing(false);
             return;
         }
@@ -72,10 +72,10 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
 
                 {isEditing ? (
                     <div className="tetrone-edit-mode-comment">
-                        <textarea
+                        <Editor
                             className="tetrone-edit-textarea"
                             value={editContent}
-                            onChange={(e) => setEditContent(e.target.value)}
+                            onChange={setEditContent}
                         />
                         <div className="tetrone-edit-buttons-right">
                             <button className="tetrone-btn tetrone-btn-small" onClick={handleSave}>
@@ -122,7 +122,7 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
                             )}
                             {canReport && (
                                 <button className="warning" onClick={() => { setIsReportModalOpen(true); setShowMenu(false); }}>
-                                    <ReportIcon /> {t('reports.title', 'Поскаржитись')}
+                                    <ReportIcon /> {t('reports.title')}
                                 </button>
                             )}
                         </div>

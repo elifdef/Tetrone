@@ -121,6 +121,10 @@ const LeftSidebar = () => {
                                     </Link>
                                 </>
                             )}
+
+                            <Link to="/stickers-shop" className={getLinkClass("/stickers-shop")} onClick={closeMenu}>
+                                {t('common.stickers_shop')}
+                            </Link>
                         </>
                     ) : (
                         <>

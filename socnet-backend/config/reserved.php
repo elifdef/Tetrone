@@ -21,6 +21,6 @@ return [
         'admin', 'administrator', 'root', 'sysadmin', 'system', 'moderator', 'support',
 
         // власні
-        'pewdiepie'
+        'pewdiepie', 'bradar', 'heyselcuk'
     ],
 ];

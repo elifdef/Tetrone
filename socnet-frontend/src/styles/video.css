@@ -1,12 +1,8 @@
 :root {
-    --plyr-color-main: #5b9bd5;
+    --plyr-color-main: var(--theme-link);
     --plyr-video-background: var(--theme-bg-box);
     --plyr-menu-background: var(--theme-bg-box);
     --plyr-menu-color: var(--theme-text-main);
-}
-
-[data-theme="light"] {
-    --plyr-color-main: #2B587A;
 }
 
 .tetrone-post-video {
@@ -52,11 +48,12 @@
     border: 2px solid #fff;
     padding: 15px 25px;
     border-radius: 0 !important;
+    transition: all 0.2s ease;
 }
 
 .tetrone-video-player .plyr__control--overlaid:hover {
-    background: #cc181e;
-    border-color: #cc181e;
+    background: var(--theme-link);
+    border-color: var(--theme-link);
 }
 
 .tetrone-post-videos-container {

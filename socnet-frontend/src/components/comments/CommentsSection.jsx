@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { useComments } from "../../hooks/useComments";
+import { useComments } from "./hooks/useComments";
 import CommentForm from "./CommentForm";
 import CommentList from "./CommentList";
 import { useTranslation } from 'react-i18next';

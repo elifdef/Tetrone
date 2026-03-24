@@ -5,7 +5,6 @@ import { NotificationContext } from '../../context/NotificationContext';
 import Textarea from '../UI/Textarea';
 import MessageItem from './MessageItem';
 import ChatScrollContainer from '../common/ChatScrollContainer';
-import "./modernStyle.css";
 
 const ImagePreview = ({ file, onRemove }) => {
     const [url, setUrl] = useState('');

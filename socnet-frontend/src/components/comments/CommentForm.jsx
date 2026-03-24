@@ -1,26 +1,32 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import SendIcon from "../../assets/sendComment.svg?react";
-import { ReplyIcon, DeleteIcon } from "./CommentIcons";
+import { ReplyIcon, DeleteIcon } from "../ui/Icons";
+import Editor from '../editor/Editor';
+import { isEditorEmpty } from "../../utils/editorHelpers";
 
 export default function CommentForm({ user, onSubmit, placeholder, replyToUser, onClearReply }) {
-    const [text, setText] = useState("");
+    const [content, setContent] = useState('');
     const inputRef = useRef(null);
-
-    useEffect(() => {
-        if (replyToUser) {
-            inputRef.current?.focus();
-        }
-    }, [replyToUser]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!text.trim()) return;
+        if (isEditorEmpty(content)) return;
 
-        const finalContent = replyToUser ? `@${replyToUser.username}, ${text}` : text;
+        let finalContent = typeof content === 'object' ? JSON.parse(JSON.stringify(content)) : { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: content }] }] };
+
+        if (replyToUser && finalContent.content && finalContent.content.length > 0) {
+            const firstParagraph = finalContent.content[0];
+            if (!firstParagraph.content) firstParagraph.content = [];
+            
+            firstParagraph.content.unshift(
+                { type: 'text', text: ', ' },
+                { type: 'mention', attrs: { id: replyToUser.id, username: replyToUser.username } }
+            );
+        }
 
         const success = await onSubmit(finalContent);
         if (success) {
-            setText("");
+            setContent('');
             if (onClearReply) onClearReply();
         }
     };
@@ -47,15 +53,14 @@ export default function CommentForm({ user, onSubmit, placeholder, replyToUser, 
                         )}
 
                         <div className="tetrone-comment-input-row">
-                            <textarea
-                                ref={inputRef}
+                            <Editor
                                 className="tetrone-comment-textarea"
                                 placeholder={placeholder}
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                                rows={1}
+                                value={content}
+                                onChange={setContent}
                             />
-                            <button type="submit" className="tetrone-send-btn" disabled={!text.trim()}>
+                            
+                            <button type="submit" className="tetrone-send-btn" disabled={isEditorEmpty(content)}>
                                 <SendIcon width={16} height={16} />
                             </button>
                         </div>

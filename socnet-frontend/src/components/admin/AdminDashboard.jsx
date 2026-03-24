@@ -19,7 +19,7 @@ export default function AdminDashboard() {
         if (res.success) {
             setStats(res.data);
         } else {
-            console.error("Dashboard stats load failed:", res.message);
+            // console.error("Dashboard stats load failed:", res.message);
             notifyError(res.message || t('error.load_stats'));
         }
 

@@ -2,6 +2,22 @@ import { useMemo } from 'react';
 
 const YOUTUBE_REGEX = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/g;
 
+const extractTextFromJSON = (json) => {
+    if (!json) return '';
+    if (typeof json === 'string') return json;
+
+    let text = '';
+    if (json.type === 'text' && json.text) {
+        text += json.text + ' ';
+    }
+    if (json.content && Array.isArray(json.content)) {
+        json.content.forEach(child => {
+            text += extractTextFromJSON(child);
+        });
+    }
+    return text;
+};
+
 export const usePostMedia = (content, attachments = [], entities = null) => {
     const localMedia = useMemo(() => {
         if (!attachments || attachments.length === 0) {
@@ -17,11 +33,13 @@ export const usePostMedia = (content, attachments = [], entities = null) => {
     const externalMedia = useMemo(() => {
         if (!content) return { youtube: [] };
 
+        const plainText = extractTextFromJSON(content);
+
         const youtubeLinks = [];
         let ytMatch;
         YOUTUBE_REGEX.lastIndex = 0;
 
-        while ((ytMatch = YOUTUBE_REGEX.exec(content)) !== null) {
+        while ((ytMatch = YOUTUBE_REGEX.exec(plainText)) !== null) {
             youtubeLinks.push({
                 id: `yt-${ytMatch[1]}`,
                 url: ytMatch[0],

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
-import DeleteIcon from '../../assets/delete.svg?react';
+import { DeleteIcon } from "../ui/Icons";
 
 export default function ActivityCommentItem({ comment, onDelete }) {
     const { t } = useTranslation();

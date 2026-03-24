@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuthForms } from "../../hooks/useAuthForms";
+import { useAuthForms } from "./hooks/useAuthForms";
 import { useTranslation } from 'react-i18next';
 import Input from "../UI/Input";
 

@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthContext } from "./context/AuthContext";
 import AppRoutes from "./routes/AppRoutes";
 import { useTranslation } from "react-i18next";
-import ErrorState from "./components/common/ErrorState";
+import ErrorState from "./components/ui/ErrorState";
 import { BannedScreen } from './components/auth/BannedScreen';
 import { audioManager } from './utils/audioManager';
 

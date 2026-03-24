@@ -12,6 +12,7 @@ class Post extends Model
     public $incrementing = false;
     protected $casts = [
         'entities' => 'array',
+        'content'  => 'array',
     ];
 
     protected static function boot()

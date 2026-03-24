@@ -22,6 +22,7 @@ import { userRole } from "../config";
 import NotificationsPage from "../pages/NotificationsPage";
 import ActivityPage from "../pages/ActivityPage";
 import MessagesPage from "../pages/MessagesPage";
+import StickerShopPage from '../pages/StickerShopPage';
 
 export default function AppRoutes() {
     const { user } = useContext(AuthContext);
@@ -72,6 +73,8 @@ export default function AppRoutes() {
                             <Route path="/control-panel/users/:username" element={<AdminUserInfo />} />
                         </>
                     )}
+
+                    <Route path="/stickers-shop" element={<StickerShopPage />} />
                 </Route>
             </Route>
 

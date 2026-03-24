@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
-import { EditIcon, DeleteIcon, ReportIcon, DotsIcon } from '../comments/CommentIcons';
+import { EditIcon, DeleteIcon, ReportIcon, DotsIcon } from '../ui/Icons';
 
 export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, currentUserId }) {
     const { t } = useTranslation();

@@ -14,23 +14,31 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => 'nullable|string|max:65536',
+            'content' => 'nullable|string',
+            'entities' => 'nullable|string',
             'target_user_id' => 'nullable|exists:users,id',
             'original_post_id' => 'nullable|exists:posts,id',
-            'entities' => 'nullable|json',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm|max:' . config('uploads.max_size', 51200)
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm|max:' . config('uploads.max_size')
         ];
     }
 
-    // пост не може бути абсолютно порожнім
-    public function withValidator($validator)
+    /**
+     * Кастомна перевірка після базової валідації.
+     * Пост не може бути абсолютно порожнім.
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator)
         {
-            if (empty($this->content) && empty($this->media) && empty($this->original_post_id))
+            $hasContent = !empty($this->input('content')) && $this->input('content') !== '""';
+            $hasEntities = !empty($this->input('entities'));
+            $hasMedia = $this->hasFile('media');
+            $isRepost = !empty($this->input('original_post_id'));
+
+            if (!$hasContent && !$hasEntities && !$hasMedia && !$isRepost)
             {
-                $validator->errors()->add('content', 'Post cannot be empty. Add text, media, or repost.');
+                $validator->errors()->add('content', 'Post cannot be empty. Add text, media, poll, or repost.');
             }
         });
     }

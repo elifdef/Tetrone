@@ -8,7 +8,6 @@ import SecuritySettings from '../components/settings/SecuritySettings';
 import PersonalizationSettings from '../components/settings/PersonalizationSettings';
 import NotificationSettings from '../components/settings/NotificationSettings';
 import SessionsSettings from '../components/settings/SessionsSettings';
-import "../components/settings/settings.css";
 
 const SettingsPage = () => {
     const { t } = useTranslation();

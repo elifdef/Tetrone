@@ -1,6 +1,6 @@
 import Input from "../components/UI/Input";
 import FriendCard from "../components/friends/FriendCard";
-import { useFriendsLogic } from "../hooks/useFriendsLogic";
+import { useFriendsLogic } from "../components/friends/hooks/useFriendsLogic";
 
 export default function FriendsPage() {
     const {

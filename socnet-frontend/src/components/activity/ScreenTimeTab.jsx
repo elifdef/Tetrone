@@ -12,7 +12,7 @@ export default function ScreenTimeTab() {
             if (res.success) {
                 setStats(res.data);
             } else {
-                console.error("Failed to fetch screen time stats:", res.message);
+                // console.error("Failed to fetch screen time stats:", res.message);
             }
             setIsLoading(false);
         });

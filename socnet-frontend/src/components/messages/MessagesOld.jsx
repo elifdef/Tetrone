@@ -6,7 +6,6 @@ import Textarea from '../UI/Textarea';
 import Button from '../UI/Button';
 import MessageItemOld from './MessageItemOld';
 import ChatScrollContainer from '../common/ChatScrollContainer';
-import "./oldStyle.css";
 
 export default function MessagesOld(props) {
     const {

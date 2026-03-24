@@ -1,0 +1,694 @@
+.tetrone-messages-old-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    font-family: tahoma, verdana, arial, sans-serif;
+    color: var(--theme-text-main);
+    display: flex;
+    flex-direction: column;
+}
+
+.tetrone-messages-old-container:not(.in-chat) {
+    height: auto;
+    display: block;
+}
+
+.tetrone-messages-old-container.in-chat {
+    height: calc(100vh - 80px);
+    max-height: 800px;
+    overflow: hidden;
+}
+
+.tetrone-messages-old-tabs {
+    display: flex;
+    padding: 12px 15px;
+    background-color: var(--theme-header-bg);
+    border-bottom: 1px solid var(--theme-border);
+    font-size: 11px;
+}
+
+.tetrone-messages-old-tab {
+    color: var(--theme-link);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tetrone-messages-old-tab:hover {
+    text-decoration: underline;
+}
+
+.tetrone-messages-old-chat-header-complex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--theme-header-bg);
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-im-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tetrone-im-header-center:hover .tetrone-im-chat-title {
+    text-decoration: underline;
+}
+
+.tetrone-im-chat-title {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--theme-link);
+}
+
+.tetrone-im-online-indicator {
+    display: inline-flex;
+    align-items: center;
+    color: var(--theme-text-muted);
+    font-size: 10px;
+    font-weight: normal;
+    margin-left: 6px;
+}
+
+.tetrone-im-online-square {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--theme-success);
+    margin-right: 4px;
+}
+
+.tetrone-im-offline-text {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    margin-top: 2px;
+}
+
+.tetrone-btn-old-icon {
+    background: transparent;
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 3px 6px;
+}
+
+.tetrone-btn-old-icon:hover {
+    background-color: var(--theme-bg-page);
+    color: var(--theme-error);
+    border-color: var(--theme-error);
+}
+
+.tetrone-messages-old-history-scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0 15px;
+}
+
+.tetrone-messages-old-message-row {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-messages-old-message-row:last-child {
+    border-bottom: none;
+}
+
+.tetrone-messages-old-msg-left {
+    width: 50px;
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+.tetrone-messages-old-avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--theme-border);
+}
+
+.tetrone-messages-old-msg-right {
+    flex: 1;
+    min-width: 0;
+}
+
+.tetrone-im-msg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.tetrone-messages-old-author {
+    font-weight: bold;
+    color: var(--theme-link);
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.tetrone-messages-old-author:hover {
+    text-decoration: underline;
+}
+
+.tetrone-messages-old-date {
+    color: var(--theme-text-muted);
+    font-size: 10px;
+}
+
+.tetrone-messages-old-msg-text {
+    font-size: 12px;
+    color: var(--theme-text-main);
+    line-height: 1.4;
+    word-break: break-word;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.tetrone-edited-mark {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-messages-old-actions-bottom {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.tetrone-action-link {
+    cursor: pointer;
+    color: var(--theme-link);
+    font-size: 11px;
+}
+
+.tetrone-action-link:hover {
+    text-decoration: underline;
+}
+
+.tetrone-action-link.danger {
+    color: var(--theme-error);
+}
+
+.tetrone-messages-old-read-status {
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.tetrone-messages-old-read-status.is-sent {
+    color: var(--theme-text-muted);
+}
+
+.tetrone-messages-old-read-status.is-read {
+    color: var(--theme-link);
+}
+
+.tetrone-messages-old-dialog-list {
+    padding: 0 15px 15px 15px;
+}
+
+.tetrone-messages-old-dialog-item {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--theme-border);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tetrone-messages-old-dialog-item:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.tetrone-messages-old-dialog-info {
+    flex: 1;
+    margin-left: 15px;
+    min-width: 0;
+}
+
+.tetrone-messages-old-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.tetrone-messages-old-dialog-snippet {
+    font-size: 11px;
+    color: var(--theme-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tetrone-msg-preview-you {
+    color: var(--theme-link);
+}
+
+.tetrone-msg-preview-them {
+    color: var(--theme-text-muted);
+}
+
+.tetrone-message-reply-quote {
+    border-left: 2px solid var(--theme-link);
+    padding-left: 10px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    padding-top: 4px;
+    padding-bottom: 4px;
+    cursor: pointer;
+}
+
+[data-theme="dark"] .tetrone-message-reply-quote {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.reply-author {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--theme-link);
+    margin-bottom: 2px;
+}
+
+.reply-text {
+    font-size: 12px;
+    color: var(--theme-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tetrone-pinned-message-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    background: var(--theme-bg-page);
+    border-bottom: 1px solid var(--theme-border);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.tetrone-pinned-message-bar:hover {
+    background: var(--theme-bg-box);
+}
+
+.pinned-icon {
+    font-size: 16px;
+    margin-right: 12px;
+    color: var(--theme-link);
+}
+
+.pinned-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.pinned-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--theme-link);
+    margin-bottom: 2px;
+}
+
+.pinned-text {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pinned-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--theme-text-muted);
+    padding: 5px;
+}
+
+.pinned-close:hover {
+    color: var(--theme-error);
+}
+
+.tetrone-msg-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.tetrone-msg-image-attachment {
+    max-width: 250px;
+    border: 1px solid var(--theme-border);
+    display: block;
+}
+
+.tetrone-selected-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 15px;
+    background: var(--theme-bg-page);
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-selected-file-item {
+    font-size: 11px;
+    background: var(--theme-bg-box);
+    padding: 4px 10px;
+    border: 1px solid var(--theme-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tetrone-selected-file-item button {
+    background: none;
+    border: none;
+    color: var(--theme-error);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tetrone-messages-old-composer-wrapper {
+    background-color: var(--theme-bg-page);
+    border-top: 1px solid var(--theme-border);
+    padding: 15px;
+}
+
+.tetrone-messages-old-editing {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: var(--theme-bg-box);
+    border-left: 2px solid var(--theme-link);
+    font-size: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--theme-border);
+}
+
+.reply-preview-text {
+    color: var(--theme-text-muted);
+    flex: 1;
+    margin-left: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tetrone-messages-old-composer-inner {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.tetrone-messages-old-composer-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tetrone-messages-old-textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid var(--theme-input-border);
+    padding: 6px;
+    font-size: 12px;
+    resize: vertical;
+    margin-bottom: 8px;
+    background: var(--theme-input-bg);
+    color: var(--theme-text-main);
+    box-sizing: border-box;
+}
+
+.tetrone-messages-old-textarea:focus {
+    border-color: var(--theme-link);
+    outline: none;
+}
+
+.tetrone-messages-old-composer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tetrone-messages-old-send-btn {
+    background-color: var(--theme-btn-bg);
+    color: var(--theme-btn-text);
+    border: 1px solid var(--theme-border);
+    padding: 5px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.tetrone-messages-old-send-btn:hover {
+    background-color: var(--theme-btn-hover);
+}
+
+.tetrone-attach-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.tetrone-messages-old-attach-label {
+    cursor: pointer;
+    color: var(--theme-link);
+    font-size: 11px;
+}
+
+.tetrone-messages-old-attach-label:hover {
+    text-decoration: underline;
+}
+
+.tetrone-attach-dropdown {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 10px;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 100;
+}
+
+.tetrone-attach-dropdown-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-text-main);
+    transition: 0.1s;
+}
+
+.tetrone-attach-dropdown-item:hover {
+    background: var(--theme-bg-page);
+}
+
+.composer-avatar {
+    width: 50px;
+    height: 50px;
+}
+
+.tetrone-hidden-input {
+    display: none;
+}
+
+.tetrone-highlight-msg {
+    animation: highlightFade 2s ease-in-out;
+}
+
+.tetrone-typing-old {
+    color: var(--theme-link);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.typing-pencil-jerky {
+    animation: pencilDrawJerky 0.5s infinite step-end;
+}
+
+@keyframes pencilDrawJerky {
+    0% {
+        transform: translate(0px, 0px);
+    }
+
+    25% {
+        transform: translate(2px, -2px);
+    }
+
+    50% {
+        transform: translate(4px, 0px);
+    }
+
+    75% {
+        transform: translate(2px, 2px);
+    }
+
+    100% {
+        transform: translate(0px, 0px);
+    }
+}
+
+@keyframes highlightFade {
+    0% {
+        background-color: rgba(91, 155, 213, 0.3);
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+.tetrone-messages-old-info-modal {
+    max-width: 450px !important;
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.tetrone-messages-old-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    background-color: var(--theme-btn-bg);
+    color: var(--theme-btn-text);
+    font-weight: bold;
+    font-size: 12px;
+    padding: 10px 15px;
+}
+
+.tetrone-old-modal-close {
+    background: none;
+    border: none;
+    color: var(--theme-btn-text);
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.tetrone-old-modal-close:hover {
+    opacity: 1;
+}
+
+.tetrone-old-info-profile {
+    display: flex;
+    padding: 15px;
+    align-items: flex-start;
+    gap: 15px;
+    background: var(--theme-bg-page);
+}
+
+.tetrone-old-info-profile img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.tetrone-old-info-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4px;
+}
+
+.tetrone-old-info-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.tetrone-messages-old-info-modal .tetrone-messages-old-tabs {
+    margin: 0;
+    padding: 10px 15px 0 15px;
+    border-top: 1px solid var(--theme-border);
+}
+
+.tetrone-old-info-content {
+    padding: 15px;
+    height: 350px;
+    overflow-y: auto;
+    background: var(--theme-bg-box);
+}
+
+.tetrone-old-info-media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.tetrone-old-info-media-wrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: 1px solid var(--theme-border);
+    position: relative;
+}
+
+.tetrone-old-info-media-wrapper:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tetrone-old-info-grid-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.tetrone-old-info-video-stub {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-input-bg);
+    color: var(--theme-link);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.tetrone-old-info-file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-messages-old-container.in-chat {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+}
+
+.tetrone-messages-old-history-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.tetrone-messages-old-composer-wrapper {
+    flex-shrink: 0;
+}

@@ -91,95 +91,63 @@ class PostController extends Controller
     /**
      * Створити новий пост
      *
-     * Цей метод створює новий запис на стіні користувача.
-     * Якщо передати original_post_id, це буде вважатися репостом.
-     * * @responseFile status=201 storage/responses/post_created.json
+     * @responseFile status=201 storage/responses/post_created.json
      */
     public function store(StorePostRequest $request): JsonResponse
     {
-        $user = $request->user();
         $data = $request->validated();
 
-        $data['entities'] = $request->has('entities') && $request->input('entities') ? json_decode($request->input('entities'), true) : null;
+        $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
+        $data['entities'] = !empty($data['entities']) ? json_decode($data['entities'], true) : null;
 
-        if (!empty($data['target_user_id']) && $data['target_user_id'] != $user->id)
-        {
-            if (!empty($data['original_post_id']))
-            {
-                return $this->error(
-                    'ERR_CANNOT_REPOST_TO_WALL',
-                    "You cannot repost to another user's wall.",
-                    403
-                );
-            }
-            if ($user->isBlockedByTarget($user->id, $data['target_user_id']))
-            {
-                return $this->error(
-                    'ERR_USER_BLOCKED',
-                    'You are blocked by this user and cannot post on their wall.',
-                    403
-                );
-            }
-        }
-
-        if (!empty($data['original_post_id']))
-        {
-            $originalPost = Post::findOrFail($data['original_post_id']);
-            if ($user->isBlockedByTarget($user->id, $originalPost->user_id))
-            {
-                return $this->error(
-                    'ERR_USER_BLOCKED',
-                    'You are blocked by the author of the original post.',
-                    403
-                );
-            }
-        }
-
-        $result = $this->postService->createPost($user, $data, $request->file('media'));
-
-        if (is_array($result) && isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
-
-        $result->load(self::POST_RELATIONS)->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $user->id)]);
-
-        return $this->success(
-            'POST_CREATED',
-            'Post created successfully',
-            (new PostResource($result))->resolve(),
-            201
+        $post = $this->postService->createPost(
+            $request->user(),
+            $data,
+            $request->file('media')
         );
+
+        if (is_array($post) && isset($post['error']))
+        {
+            return $this->error($post['error'], $post['message'], $post['status'] ?? 400);
+        }
+
+        $post->load(self::POST_RELATIONS);
+
+        return $this->success('POST_CREATED', 'Post created successfully', (new PostResource($post))->resolve(), 201);
     }
 
+    /**
+     * Оновити існуючий пост
+     */
     public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
         if ($request->user()->id !== $post->user_id && $request->user()->cannot('edit-any-content'))
         {
-            return $this->error(
-                'ERR_EDIT_PERMISSION_DENIED',
-                "You do not have permission to edit someone else's post.",
-                403
-            );
+            return $this->error('ERR_EDIT_PERMISSION_DENIED', "You do not have permission to edit someone else's post.", 403);
         }
 
         $data = $request->validated();
-        $data['entities'] = $request->has('entities') && $request->input('entities') ? json_decode($request->input('entities'), true) : null;
 
-        $result = $this->postService->updatePost($post, $data, $request->file('media'), $request->input('deleted_media'));
+        $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
+        $data['entities'] = !empty($data['entities']) ? json_decode($data['entities'], true) : null;
+
+        $result = $this->postService->updatePost(
+            $post,
+            $data,
+            $request->file('media'),
+            $request->input('deleted_media')
+        );
 
         if (is_array($result) && isset($result['error']))
         {
-            return $this->error($result['error'], $result['message'], $result['status']);
+            return $this->error($result['error'], $result['message'], $result['status'] ?? 400);
         }
 
-        $result->load(self::POST_RELATIONS)->loadCount(['likes', 'comments', 'reposts'])->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $request->user()->id)]);
+        $result->load(self::POST_RELATIONS)
+            ->loadCount(['likes', 'comments', 'reposts'])
+            ->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $request->user()->id)]);
 
-        return $this->success(
-            'POST_UPDATED',
-            'Post updated successfully',
-            (new PostResource($result))->resolve()
-        );
+        return $this->success('POST_UPDATED', 'Post updated successfully', (new PostResource($result))->resolve());
     }
 
     public function destroy(Post $post, Request $request): JsonResponse

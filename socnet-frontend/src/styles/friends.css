@@ -1,0 +1,167 @@
+.tetrone-friends-page {
+    font-size: 11px;
+    color: var(--theme-text-main);
+    background-color: var(--theme-bg-page);
+    padding: 20px;
+    border: 1px solid var(--theme-border);
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    overflow: visible;
+    margin: 0 auto;
+}
+
+[data-theme="light"] .tetrone-friends-page {
+    background-color: var(--theme-bg-box);
+}
+
+.tetrone-friends-title {
+    background-color: var(--theme-header-bg);
+    color: var(--theme-link);
+    font-size: 11px;
+    font-weight: bold;
+    padding: 8px 10px;
+    margin: -15px -15px 15px -15px;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+[data-theme="light"] .tetrone-friends-title {
+    color: #36638E;
+}
+
+.tetrone-friends-search-wrapper {
+    background-color: var(--theme-bg-box);
+    padding: 10px;
+    border: 1px solid var(--theme-border);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: end;
+    gap: 10px;
+}
+
+[data-theme="light"] .tetrone-friends-search-wrapper {
+    background-color: #F7F7F7;
+}
+
+.tetrone-friends-search-btn {
+    background: var(--theme-btn-bg);
+    border: 2px solid var(--theme-border);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.tetrone-friends-search-btn:hover {
+    background: var(--theme-btn-hover);
+}
+
+.tetrone-friends-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.friend-card {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--theme-border);
+    background: var(--theme-bg-box);
+}
+
+.tetrone-friends-avatar {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 1px solid var(--theme-border);
+    padding: 1px;
+}
+
+.tetrone-friends-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.tetrone-friends-name {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--theme-link);
+    text-decoration: none;
+    margin-bottom: 4px;
+}
+
+.tetrone-friends-name:hover {
+    text-decoration: underline;
+}
+
+.tetrone-friends-username {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    margin-bottom: 8px;
+}
+
+.tetrone-friends-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 100px;
+    text-align: right;
+    font-size: 10px;
+}
+
+.tetrone-friends-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    text-align: right;
+    color: var(--theme-link);
+}
+
+.tetrone-friends-btn:hover {
+    text-decoration: underline;
+}
+
+.tetrone-friends-status,
+.tetrone-friends-btn-secondary,
+.tetrone-friends-btn-danger,
+.tetrone-friends-btn-primary {
+    color: var(--theme-link);
+    padding-right: 5px;
+}
+
+.tetrone-friends-btn-danger {
+    color: var(--theme-error);
+}
+
+.tetrone-friends-status {
+    color: #999;
+    font-size: 10px;
+}
+
+@media (max-width: 768px) {
+    .friend-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .tetrone-friends-avatar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .tetrone-friends-actions {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .tetrone-friends-btn {
+        text-align: center;
+    }
+}

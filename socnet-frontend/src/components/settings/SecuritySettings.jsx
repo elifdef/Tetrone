@@ -1,4 +1,4 @@
-import { useSecuritySettings } from '../../hooks/useSecuritySettings';
+import { useSecuritySettings } from './hooks/useSecuritySettings';
 import EmailChangeForm from './EmailChangeForm';
 import PasswordChangeForm from './PasswordChangeForm';
 import DangerZone from './DangerZone';

@@ -14,7 +14,7 @@ class AudioManager {
             this.messageSound.currentTime = 0;
             this.isUnlocked = true;
         }).catch(err => {
-            console.warn('Аудіо ще заблоковано:', err);
+            // console.warn('Аудіо ще заблоковано:', err);
         });
     }
 
@@ -22,7 +22,7 @@ class AudioManager {
         if (customUrl === 'none') return;
 
         if (customUrl && typeof customUrl !== 'string') {
-            console.warn("audioManager отримав не рядок, а:", customUrl);
+            // console.warn("audioManager отримав не рядок, а:", customUrl);
             return;
         }
 
@@ -45,7 +45,8 @@ class AudioManager {
                 this.messageSound.pause();
                 this.messageSound.currentTime = 0;
             }, 5000); // 5000 мілісекунд = 5 секунд
-        }).catch(e => console.warn('Автоплей аудіо заблоковано:', e));
+        }).catch(e => {//console.warn('Автоплей аудіо заблоковано:', e)
+        });
     }
 }
 

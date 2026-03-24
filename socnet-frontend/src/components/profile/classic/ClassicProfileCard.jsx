@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useUserProfileLogic } from "../../../hooks/useUserProfileLogic";
+import { useUserProfileLogic } from "../hooks/useUserProfileLogic";
 import { AuthContext } from "../../../context/AuthContext";
 import ReportModal from "../../common/ReportModal";
 import { userRole } from "../../../config";

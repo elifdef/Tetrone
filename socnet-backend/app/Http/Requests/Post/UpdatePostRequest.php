@@ -14,8 +14,8 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => 'nullable|string|max:65536',
-            'entities' => 'nullable|json',
+            'content' => 'nullable|string',
+            'entities' => 'nullable|string',
             'media' => 'nullable|array|max:10',
             'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm|max:' . config('uploads.max_size'),
             'deleted_media' => 'nullable|array',

@@ -1,0 +1,505 @@
+.tetrone-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-btn-bg);
+    color: var(--theme-btn-text) !important;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.tetrone-btn:hover {
+    background: var(--theme-btn-hover);
+}
+
+.tetrone-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.tetrone-btn-small {
+    background: var(--theme-link);
+    color: white;
+    border: none;
+    padding: 4px 15px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.tetrone-btn-small:hover {
+    opacity: 0.9;
+}
+
+.tetrone-btn-ghost {
+    background: transparent !important;
+    color: var(--theme-link) !important;
+    border-color: var(--theme-border) !important;
+}
+
+.tetrone-btn-ghost:hover {
+    background: var(--theme-bg-page) !important;
+}
+
+.tetrone-btn-cancel {
+    background: transparent !important;
+    color: var(--theme-text-muted) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+.tetrone-btn-cancel:hover {
+    background: var(--theme-bg-page) !important;
+    color: var(--theme-text-main) !important;
+}
+
+.tetrone-btn-block,
+.tetrone-btn-full-width {
+    width: 100%;
+}
+
+.tetrone-btn-auto-width {
+    width: auto;
+}
+
+.tetrone-form-input,
+.tetrone-form-textarea,
+.tetrone-form-select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--theme-input-border);
+    background: var(--theme-input-bg);
+    color: var(--theme-text-main);
+    font-size: 11px;
+    box-sizing: border-box;
+}
+
+.tetrone-form-input:focus,
+.tetrone-form-textarea:focus,
+.tetrone-form-select:focus {
+    border-color: var(--theme-link);
+    outline: none;
+}
+
+.tetrone-form-textarea {
+    resize: vertical;
+}
+
+.tetrone-form-textarea.fixed-size {
+    height: auto;
+    min-height: 40px;
+    resize: none;
+}
+
+.tetrone-form-label {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--theme-text-muted);
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.tetrone-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 13px;
+    height: 13px;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    border: 1px solid #8e8f8f;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    vertical-align: middle;
+}
+
+[data-theme="dark"] .tetrone-checkbox {
+    background-color: var(--theme-input-bg);
+    border-color: var(--theme-input-border);
+}
+
+.tetrone-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 3px;
+    height: 7px;
+    border: solid #2B587A;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+[data-theme="dark"] .tetrone-checkbox:checked::after {
+    border-color: var(--theme-link);
+}
+
+.tetrone-checkbox:focus-visible {
+    outline: 1px dotted #2B587A;
+    outline-offset: 1px;
+}
+
+.tetrone-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--theme-input-bg);
+    color: var(--theme-text-main);
+    border: 1px solid #7f9db9;
+    border-radius: 0;
+    padding: 2px 20px 2px 4px;
+    font-size: 11px;
+    height: 22px;
+    cursor: pointer;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--theme-text-main) 50%),
+        linear-gradient(135deg, var(--theme-text-main) 50%, transparent 50%),
+        linear-gradient(to right, #7f9db9 1px, transparent 1px),
+        linear-gradient(to bottom, var(--theme-input-bg) 0%, var(--theme-input-bg) 100%);
+    background-position: calc(100% - 9px) calc(50% + 1px), calc(100% - 5px) calc(50% + 1px), calc(100% - 17px) 0, 100% 0;
+    background-size: 4px 4px, 4px 4px, 1px 100%, 17px 100%;
+    background-repeat: no-repeat;
+}
+
+[data-theme="dark"] .tetrone-select {
+    border-color: var(--theme-input-border);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--theme-text-main) 50%),
+        linear-gradient(135deg, var(--theme-text-main) 50%, transparent 50%),
+        linear-gradient(to right, var(--theme-border) 1px, transparent 1px),
+        linear-gradient(to bottom, #444 0%, #333 100%);
+}
+
+.tetrone-select:focus {
+    outline: 1px dotted #2B587A;
+    outline-offset: 0;
+}
+
+.tetrone-select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 var(--theme-text-main);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--theme-input-bg) inset !important;
+    -webkit-text-fill-color: var(--theme-text-main) !important;
+    caret-color: var(--theme-text-main);
+    border: 1px solid var(--theme-input-border);
+}
+
+.tetrone-date-input-dark {
+    color-scheme: dark;
+}
+
+.tetrone-file-input-wrapper {
+    display: inline-block;
+}
+
+.tetrone-hidden-input {
+    display: none;
+}
+
+.tetrone-btn-dropdown-trigger::after {
+    content: ' ▼';
+    font-size: 8px;
+    vertical-align: middle;
+}
+
+.tetrone-dropdown-wrapper {
+    position: relative !important;
+    width: 100%;
+    z-index: 100 !important;
+}
+
+.tetrone-actions {
+    margin-top: 15px !important;
+    position: relative !important;
+    z-index: 9 !important;
+    overflow: visible !important;
+}
+
+.tetrone-actions .tetrone-btn {
+    width: 100%;
+    padding: 0px 0px 10px;
+    padding-block: 5px;
+    font-weight: normal;
+    margin-bottom: 5px;
+}
+
+.tetrone-btn-dropdown-trigger {
+    width: 100%;
+    color: #45688E;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 6px;
+    display: block;
+}
+
+.tetrone-btn-dropdown-trigger:hover {
+    background: #45688E;
+}
+
+.tetrone-menu-list {
+    position: absolute !important;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    border-top: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999 !important;
+}
+
+.tetrone-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--theme-bg-box);
+    border: none;
+    border-top: 1px solid var(--theme-border);
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--theme-text-main);
+    box-sizing: border-box;
+}
+
+.tetrone-menu-item:hover {
+    background: var(--theme-bg-page);
+}
+
+.tetrone-menu-item.danger {
+    color: var(--theme-error);
+}
+
+.tetrone-custom-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-link);
+    border-top: none;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.tetrone-custom-dropdown-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-text-main);
+    transition: background 0.1s;
+}
+
+.tetrone-custom-select-wrapper {
+    position: relative;
+}
+
+.tetrone-custom-select {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.tetrone-custom-select.open {
+    border-color: var(--theme-link);
+}
+
+.tetrone-select-placeholder {
+    color: var(--theme-text-muted);
+}
+
+.tetrone-select-arrow {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-custom-dropdown-item.not-selected {
+    color: var(--theme-text-muted);
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-custom-dropdown-item:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.tetrone-custom-dropdown-item.selected {
+    background-color: var(--theme-btn-hover);
+}
+
+.tetrone-custom-dropdown-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tetrone-custom-dropdown-list::-webkit-scrollbar-track {
+    background: var(--theme-bg-box);
+}
+
+.tetrone-custom-dropdown-list::-webkit-scrollbar-thumb {
+    background: var(--theme-border);
+}
+
+.tetrone-custom-dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-muted);
+}
+
+.tetrone-range-slider {
+    width: 100%;
+    height: 6px;
+    background: var(--theme-input-border);
+    outline: none;
+}
+
+.tetrone-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--theme-link);
+    cursor: pointer;
+}
+
+.tetrone-range-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--theme-link);
+    cursor: pointer;
+    border: none;
+}
+
+.tetrone-comment-actions-container,
+.tetrone-post-actions-container {
+    position: relative;
+    margin-left: auto;
+}
+
+.tetrone-comment-action-btn-trigger {
+    background: transparent;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.tetrone-comment-item:hover .tetrone-comment-action-btn-trigger {
+    opacity: 1;
+}
+
+.tetrone-comment-action-btn-trigger:hover {
+    color: var(--theme-link);
+}
+
+.tetrone-post-action-btn-trigger {
+    background: transparent;
+    border: none;
+    color: var(--theme-input-border);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.tetrone-post-action-btn-trigger:hover {
+    color: var(--theme-text-muted);
+}
+
+.tetrone-actions-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.tetrone-actions-dropdown button {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 10px 15px;
+    font-size: 12px;
+    color: var(--theme-text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.tetrone-actions-dropdown button:hover {
+    background-color: var(--theme-bg-page);
+}
+
+.tetrone-actions-dropdown button.danger {
+    color: var(--theme-error);
+}
+
+.tetrone-actions-dropdown button.danger:hover {
+    background-color: rgba(230, 70, 70, 0.1);
+}
+
+.tetrone-actions-dropdown button.warning {
+    color: #f59e0b;
+}
+
+.tetrone-actions-dropdown button.warning:hover {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+@media (max-width: 480px) {
+
+    .tetrone-btn,
+    .tetrone-btn-save,
+    .tetrone-btn-dropdown-trigger {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .tetrone-form-input,
+    .tetrone-form-textarea,
+    .tetrone-form-select {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .tetrone-label {
+        width: 100%;
+        margin-bottom: 3px;
+    }
+}

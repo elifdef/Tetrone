@@ -1,0 +1,223 @@
+.tetrone-comments-container {
+    background-color: var(--theme-bg-page);
+    padding: 15px;
+    border-top: 1px solid var(--theme-border);
+}
+
+[data-theme="light"] .tetrone-comments-container {
+    background-color: #f7f7f7;
+}
+
+.tetrone-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tetrone-comment-item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    transition: background-color 0.5s ease;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.tetrone-highlight-msg {
+    background-color: rgba(91, 155, 213, 0.15);
+}
+
+.tetrone-comment-avatar {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 1px solid var(--theme-border);
+}
+
+.tetrone-comment-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.tetrone-comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.tetrone-comment-author {
+    color: var(--theme-link);
+    font-weight: bold;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.tetrone-comment-author:hover {
+    text-decoration: underline;
+}
+
+.tetrone-comment-date {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-comment-form {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tetrone-comment-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--theme-input-bg);
+    border: 1px solid var(--theme-input-border);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+    overflow: hidden;
+}
+
+.tetrone-comment-input-wrapper:focus-within {
+    border-color: var(--theme-link);
+}
+
+.tetrone-comment-reply-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--theme-input-border);
+    border-left: 3px solid var(--theme-link);
+}
+
+.tetrone-reply-preview-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--theme-link);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.tetrone-reply-preview-close {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tetrone-reply-preview-close:hover {
+    color: var(--theme-error);
+}
+
+.tetrone-comment-input-row {
+    display: flex;
+    align-items: flex-end;
+}
+
+.tetrone-comment-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--theme-text-main);
+    padding: 8px 10px;
+    font-size: 12px;
+    resize: none;
+    outline: none;
+    min-height: 36px;
+    max-height: 150px;
+}
+
+.tetrone-send-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--theme-link);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.tetrone-send-btn:hover:not(:disabled) {
+    opacity: 1;
+}
+
+.tetrone-send-btn:disabled {
+    color: var(--theme-text-muted);
+    cursor: default;
+    opacity: 0.4;
+}
+
+.tetrone-comment-reply-wrapper {
+    margin-top: 4px;
+}
+
+.tetrone-comment-reply-btn {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+}
+
+.tetrone-comment-reply-btn:hover {
+    color: var(--theme-link);
+}
+
+.tetrone-comment-actions-wrapper {
+    opacity: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    transition: opacity 0.2s;
+}
+
+.tetrone-comment-item:hover .tetrone-comment-actions-wrapper {
+    opacity: 1;
+}
+
+.tetrone-comment-action-icon {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    cursor: pointer;
+    color: var(--theme-text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.tetrone-comment-action-icon:hover {
+    color: var(--theme-link);
+    border-color: var(--theme-link);
+}
+
+.tetrone-comment-action-icon.danger:hover {
+    color: var(--theme-error);
+    border-color: var(--theme-error);
+}
+
+.tetrone-edit-mode-comment {
+    margin-top: 5px;
+    width: 100%;
+}

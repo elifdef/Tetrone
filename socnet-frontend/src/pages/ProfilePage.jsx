@@ -5,9 +5,9 @@ import UserService from "../services/user.service";
 import { AuthContext } from "../context/AuthContext";
 import NotFoundPage from "./NotFoundPage";
 import UserProfileCard from "../components/profile/UserProfileCard";
-import UserWall from "../components/wall/UserWall";
+import UserWall from "../components/post/UserWall";
 import { usePageTitle } from "../hooks/usePageTitle";
-import ErrorState from "../components/common/ErrorState";
+import ErrorState from "../components/ui/ErrorState";
 
 export default function ProfilePage() {
     const { t } = useTranslation();
@@ -39,7 +39,7 @@ export default function ProfilePage() {
                             setNotFound(true);
                         } else {
                             setServerError(true);
-                            console.error("Failed to load profile:", res.message);
+                            // console.error("Failed to load profile:", res.message);
                         }
                     }
                 }

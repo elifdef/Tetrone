@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useProfileSettings } from '../../hooks/useProfileSettings';
+import { useProfileSettings } from './hooks/useProfileSettings';
 import UserProfileCard from '../profile/UserProfileCard';
 
 import Input from '../UI/Input';

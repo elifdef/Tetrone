@@ -151,7 +151,7 @@ const NotificationSettings = () => {
                     }, 5000);
                 })
                 .catch(err => {
-                    console.error("Помилка відтворення:", err);
+                    // console.error("Помилка відтворення:", err);
                     notifyError("Неможливо відтворити цей файл/посилання");
                     setPlayingKey(null);
                 });

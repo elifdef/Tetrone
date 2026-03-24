@@ -6,7 +6,6 @@ import PostContent from "./content/PostContent";
 import PostFooter from "./PostFooter";
 import ReportModal from "../common/ReportModal";
 
-import "../../styles/post.css";
 
 export default function PostItem({
     post,
@@ -35,7 +34,6 @@ export default function PostItem({
 
     return (
         <div className={`tetrone-post ${isInner ? 'tetrone-post-inner' : ''} ${readonly ? 'tetrone-post-readonly' : ''}`}>
-
             <PostHeader
                 post={postData}
                 isOwner={isOwner}

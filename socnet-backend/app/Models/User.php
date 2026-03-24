@@ -272,4 +272,23 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserActivity::class);
     }
+
+    public function createdStickerPacks()
+    {
+        return $this->hasMany(StickerPack::class, 'author_id');
+    }
+
+    public function installedStickerPacks()
+    {
+        return $this->belongsToMany(StickerPack::class, 'user_sticker_packs', 'user_id', 'pack_id')
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
+    public function favoriteSticker()
+    {
+        return $this->belongsToMany(CustomSticker::class, 'user_favorite_stickers', 'user_id', 'sticker_id')
+            ->withPivot('sort_order')
+            ->orderByPivot('sort_order');
+    }
 }

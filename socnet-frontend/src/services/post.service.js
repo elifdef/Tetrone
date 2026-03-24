@@ -4,7 +4,13 @@ class PostService {
     async create(data) {
         const formData = new FormData();
 
-        if (data.content) formData.append('content', data.content);
+        if (data.content) {
+            const contentStr = typeof data.content === 'object' 
+                ? JSON.stringify(data.content) 
+                : data.content;
+            formData.append('content', contentStr);
+        }
+
         if (data.target_user_id) formData.append('target_user_id', data.target_user_id);
         if (data.original_post_id) formData.append('original_post_id', data.original_post_id);
 
@@ -32,7 +38,12 @@ class PostService {
         // Laravel очікує POST метод з _method=PUT для передачі файлів (FormData)
         formData.append('_method', 'PUT');
 
-        if (data.content) formData.append('content', data.content);
+        if (data.content) {
+            const contentStr = typeof data.content === 'object' 
+                ? JSON.stringify(data.content) 
+                : data.content;
+            formData.append('content', contentStr);
+        }
 
         if (data.entities) {
             const entitiesStr = typeof data.entities === 'object'

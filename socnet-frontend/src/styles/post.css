@@ -1,56 +1,612 @@
-.tetrone-post-video {
-    margin-top: 10px;
-    overflow: hidden;
+.tetrone-feed-page {
+    font-size: 11px;
+    color: var(--theme-text-main);
+    background-color: var(--theme-bg-page);
+    padding: 20px;
     border: 1px solid var(--theme-border);
-    background: #000;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    overflow: visible;
+    margin: 0 auto;
 }
 
-.tetrone-post-videos-container {
+[data-theme="light"] .tetrone-feed-page {
+    background-color: var(--theme-bg-box);
+}
+
+.tetrone-feed-list {
     display: flex;
     flex-direction: column;
+    gap: 15px;
+}
+
+.tetrone-feed-actions {
+    display: flex;
     gap: 10px;
-    margin-top: 10px;
+    justify-content: center;
 }
 
-.tetrone-preview-youtube-wrapper {
-    position: relative;
-    margin-top: 10px;
+.tetrone-empty-state {
+    text-align: center;
+    color: var(--theme-text-muted);
+    padding: 30px 20px;
+    font-size: 13px;
     width: 100%;
+    box-sizing: border-box;
 }
 
-.tetrone-youtube-checkbox-overlay {
+.tetrone-empty-state.with-card {
+    background: var(--theme-bg-box);
+    margin-top: 15px;
+    white-space: pre-line;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.tetrone-empty-state h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: var(--theme-link);
+}
+
+.tetrone-empty-state p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.tetrone-infinite-scroll-msg {
+    padding: 20px;
+    text-align: center;
+    color: var(--theme-text-muted);
+    font-size: 11px;
+}
+
+.tetrone-infinite-error-box {
+    padding: 10px;
+    text-align: center;
+}
+
+.tetrone-error-text {
+    color: var(--theme-error);
+    font-size: 12px;
+}
+
+.tetrone-btn-retry {
+    margin-top: 10px;
+}
+
+.tetrone-btn-retry-small {
+    margin-top: 5px;
+}
+
+.tetrone-post-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.tetrone-gallery-image {
+    cursor: pointer;
+    object-fit: cover;
+    flex-grow: 1;
+}
+
+.tetrone-post-gallery.count-1 .tetrone-gallery-image {
+    width: 100%;
+    max-height: 400px;
+}
+
+.tetrone-post-gallery.count-more .tetrone-gallery-image {
+    width: calc(50% - 2px);
+    max-height: 250px;
+}
+
+.tetrone-post-previews-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.tetrone-post-preview {
+    position: relative;
+    display: inline-block;
+    margin: 5px 0 5px 0;
+    border: 1px solid var(--theme-border);
+    padding: 2px;
+    background: var(--theme-bg-box);
+}
+
+.tetrone-post-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.tetrone-post-preview.existing img {
+    border: 2px solid var(--theme-success);
+}
+
+.tetrone-post-preview.new img {
+    opacity: 0.8;
+}
+
+.tetrone-preview-remove-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
-    padding: 6px;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    line-height: 1;
 }
 
-.tetrone-youtube-checkbox-overlay input[type="checkbox"] {
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    accent-color: var(--theme-link);
+.tetrone-preview-remove-btn:hover {
+    background: rgba(255, 0, 0, 0.8);
 }
 
-.tetrone-video-preview-inner {
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--theme-border);
-}
-
-.tetrone-preview-youtube-wrapper .tetrone-preview-remove-btn {
+.tetrone-preview-close {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: -5px;
+    right: -5px;
+    background: var(--theme-error);
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.tetrone-preview-close:hover {
+    opacity: 0.8;
+}
+
+.tetrone-preview-file-stub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100px;
+    padding: 8px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.tetrone-preview-filename {
+    font-size: 12px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.tetrone-feed-video-wrapper {
+    position: relative;
+}
+
+.tetrone-feed-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
     z-index: 10;
-    border-radius: 4px;
+    background: transparent;
+}
+
+.tetrone-action-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    color: var(--theme-text-muted);
+    transition: all 0.2s ease;
+}
+
+.tetrone-action-icon:hover {
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    color: var(--theme-text-main);
+}
+
+.tetrone-action-icon[title="Видалити"]:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+}
+
+.tetrone-post-actions-top {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tetrone-post:hover .tetrone-post-actions-top {
+    opacity: 1;
+}
+
+.tetrone-post-delete {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--theme-input-border);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.tetrone-post-delete:hover {
+    color: #8e9ba8;
+}
+
+.tetrone-edit-mode {
+    padding: 0 10px;
+}
+
+.tetrone-edit-textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid var(--theme-input-border);
+    padding: 5px;
+    font-size: 11px;
+    resize: vertical;
+    margin-bottom: 5px;
+    background: var(--theme-input-bg);
+    color: var(--theme-text-main);
+}
+
+.tetrone-edit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-top: 8px;
+}
+
+.tetrone-btn-attach,
+.tetrone-attach-buttons-edit,
+.tetrone-attach-buttons {
+    display: flex;
+    gap: 12px;
+    color: var(--theme-btn-bg);
+    color: white;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+}
+
+.tetrone-btn-attach:hover {
+    background: #6f7f91;
+}
+
+.tetrone-repost-wrapper {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.tetrone-repost-wrapper .tetrone-post-actions {
+    display: none;
+}
+
+.tetrone-repost-branch {
+    margin-top: 12px;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 2px solid var(--theme-border);
+}
+
+.tetrone-deleted-stub {
+    padding: 15px;
+    margin-top: 10px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-size: 13px;
+    text-align: center;
+    font-style: italic;
+}
+
+.tetrone-repost-limit-msg {
+    padding: 12px;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-muted);
+    font-style: italic;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.tetrone-post-page-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+.tetrone-post-documents {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--theme-border);
+}
+
+.tetrone-document-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    border: 1px solid var(--theme-border);
+    text-decoration: none;
+    color: var(--theme-text-main);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+[data-theme="light"] .tetrone-document-item {
+    background-color: #F7F7F7;
+}
+
+.tetrone-document-item:hover {
+    background-color: var(--theme-bg-page);
+    border-color: var(--theme-link);
+    text-decoration: none;
+}
+
+.tetrone-document-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    color: var(--theme-link);
+}
+
+.tetrone-document-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+}
+
+.tetrone-document-name {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--theme-link);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+}
+
+.tetrone-document-size {
+    font-size: 10px;
+    color: var(--theme-text-muted);
+    text-transform: uppercase;
+}
+
+.tetrone-like-btn,
+.tetrone-comment-btn,
+.tetrone-repost-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 0;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--theme-link);
+    transition: opacity 0.2s;
+    text-decoration: none;
+}
+
+.tetrone-like-btn:hover,
+.tetrone-comment-btn:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+}
+
+.tetrone-like-btn.liked {
+    color: #FF3347;
+}
+
+.tetrone-like-btn svg,
+.tetrone-comment-btn svg {
+    display: block;
+}
+
+.tetrone-like-btn.readonly,
+.tetrone-comment-btn.readonly,
+.tetrone-repost-btn.readonly {
+    cursor: default;
+    opacity: 0.7;
+}
+
+.tetrone-like-btn.readonly:hover,
+.tetrone-comment-btn.readonly:hover,
+.tetrone-repost-btn.readonly:hover {
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.tetrone-poll-actions-start {
+    justify-content: flex-start;
+}
+
+.tetrone-poll-meta-spaced {
+    justify-content: space-between;
+}
+
+.tetrone-poll-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tetrone-activity-card {
+    padding: 16px;
+    border-bottom: 1px solid var(--theme-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tetrone-activity-card:last-child {
+    border-bottom: none;
+}
+
+.tetrone-activity-op {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-activity-op-avatar {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+}
+
+.tetrone-activity-op-name {
+    font-weight: bold;
+    color: var(--theme-text-main);
+}
+
+.tetrone-activity-reply {
+    display: flex;
+    gap: 10px;
+    margin-left: 36px;
+    position: relative;
+}
+
+.tetrone-activity-reply::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: -12px;
+    bottom: 12px;
+    width: 2px;
+    background-color: var(--theme-border);
+}
+
+.tetrone-activity-reply-avatar {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+}
+
+.tetrone-activity-bubble-wrapper {
+    flex: 1;
+}
+
+.tetrone-activity-bubble {
+    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--theme-text-main);
+    margin-bottom: 8px;
+}
+
+.tetrone-activity-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tetrone-activity-link {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tetrone-load-more-btn {
+    margin-top: 15px;
+}
+
+.tetrone-activity-date {
+    margin: 0 !important;
+}
+
+.tetrone-post-text,
+.tetrone-comment-text {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.tetrone-avatar-dropzone {
+    border: 2px dashed var(--theme-input-border);
+    background: var(--theme-input-bg);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 5px;
+}
+
+.tetrone-avatar-dropzone:hover {
+    border-color: var(--theme-link);
+    background: var(--theme-bg-hover, rgba(0, 0, 0, 0.02));
+}
+
+.tetrone-avatar-dropzone.drag-active {
+    border-color: var(--theme-success, #4bb34b);
+    background: rgba(75, 179, 75, 0.1);
+}
+
+.tetrone-dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.tetrone-dropzone-text {
+    font-size: 12px;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-dropzone-text strong {
+    color: var(--theme-text-main);
+}
+
+.tetrone-dropzone-filename {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid var(--theme-border);
+    font-size: 11px;
+    color: var(--theme-link);
+    word-break: break-all;
 }
 
 /* стіна ім. Дурова */
@@ -164,19 +720,6 @@
     text-decoration: none;
 }
 
-.tetrone-post-content {
-    font-size: 11px;
-    line-height: 1.4;
-    padding-left: 60px;
-    margin-top: 10px;
-}
-
-.tetrone-post-text {
-    white-space: pre-wrap;
-    word-break: break-word;
-    word-wrap: normal;
-}
-
 .tetrone-post-image {
     margin-top: 10px;
 }
@@ -202,676 +745,29 @@
     padding-top: 15px;
 }
 
-/* Галерея */
-.tetrone-post-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.tetrone-gallery-image {
-    cursor: pointer;
-    object-fit: cover;
-    flex-grow: 1;
-}
-
-.tetrone-post-gallery.count-1 .tetrone-gallery-image {
-    width: 100%;
-    max-height: 400px;
-}
-
-.tetrone-post-gallery.count-more .tetrone-gallery-image {
-    width: calc(50% - 2px);
-    max-height: 250px;
-}
-
-/* Прев'ю файлів та картинок */
-.tetrone-post-previews-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.tetrone-post-preview {
-    position: relative;
-    display: inline-block;
-    margin: 5px 0;
-    border: 1px solid var(--theme-border);
-    padding: 2px;
-    background: var(--theme-bg-box);
-}
-
-.tetrone-post-preview img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-}
-
-.tetrone-post-preview.existing img {
-    border: 2px solid var(--theme-success);
-}
-
-.tetrone-post-preview.new img {
-    opacity: 0.8;
-}
-
-.tetrone-preview-remove-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    line-height: 1;
-}
-
-.tetrone-preview-remove-btn:hover {
-    background: rgba(255, 0, 0, 0.8);
-}
-
-.tetrone-preview-file-stub {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 100px;
-    padding: 8px;
-    text-align: center;
-    overflow: hidden;
-}
-
-.tetrone-preview-filename {
-    font-size: 12px;
-    margin-top: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-}
-
-/* Дії та редагування */
-.tetrone-action-icon {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    color: var(--theme-text-muted);
-    transition: all 0.2s ease;
-}
-
-.tetrone-action-icon:hover {
-    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-    color: var(--theme-text-main);
-}
-
-.tetrone-post-actions-top {
-    margin-left: auto;
-    display: flex;
-    gap: 5px;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.tetrone-post:hover .tetrone-post-actions-top {
-    opacity: 1;
-}
-
-.tetrone-edit-mode {
-    padding: 0 10px;
-}
-
-.tetrone-edit-textarea {
-    width: 100%;
-    min-height: 60px;
-    border: 1px solid var(--theme-input-border);
-    padding: 5px;
-    font-size: 11px;
-    resize: vertical;
-    margin-bottom: 5px;
-    background: var(--theme-input-bg);
-    color: var(--theme-text-main);
-}
-
-.tetrone-edit-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-bottom: 10px;
-    margin-top: 8px;
-}
-
-.tetrone-edit-buttons-right {
-    display: flex;
-    gap: 8px;
-}
-
-.tetrone-btn-attach {
-    background: #8292a4;
-    color: white;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-}
-
-.tetrone-btn-attach:hover {
-    background: #6f7f91;
-}
-
-/* Репости */
-.tetrone-repost-wrapper {
-    margin-top: 12px;
-    padding: 12px;
-    border: 1px solid var(--theme-border);
-    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-}
-
-.tetrone-repost-wrapper .tetrone-post-actions {
-    display: none;
-}
-
-.tetrone-repost-branch {
-    margin-top: 12px;
-    margin-left: 16px;
-    padding-left: 16px;
-    border-left: 2px solid var(--theme-border);
-}
-
-.tetrone-deleted-stub {
-    padding: 15px;
-    margin-top: 10px;
-    background-color: var(--theme-bg-page);
-    color: var(--theme-text-muted);
-    font-size: 13px;
-    text-align: center;
-    font-style: italic;
-}
-
-.tetrone-repost-limit-msg {
-    padding: 12px;
-    background-color: var(--theme-bg-page);
-    color: var(--theme-text-muted);
-    font-style: italic;
-    font-size: 11px;
-    text-align: center;
-    margin-top: 10px;
-}
-
-/* Документи */
-.tetrone-post-documents {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--theme-border);
-}
-
-.tetrone-document-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    background-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-    border: 1px solid var(--theme-border);
-    text-decoration: none;
-    color: var(--theme-text-main);
-    transition: background-color 0.2s, border-color 0.2s;
-}
-
-[data-theme="light"] .tetrone-document-item {
-    background-color: #F7F7F7;
-}
-
-.tetrone-document-item:hover {
-    background-color: var(--theme-bg-page);
-    border-color: var(--theme-link);
-    text-decoration: none;
-}
-
-.tetrone-document-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    margin-right: 12px;
-    flex-shrink: 0;
-    color: var(--theme-link);
-}
-
-.tetrone-document-info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    flex: 1;
-}
-
-.tetrone-document-name {
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--theme-link);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 3px;
-}
-
-.tetrone-document-size {
-    font-size: 10px;
-    color: var(--theme-text-muted);
-    text-transform: uppercase;
-}
-
-/* Опитування */
-.tetrone-poll {
-    margin: 10px 0;
-    border: 1px solid var(--theme-border);
-    background: var(--theme-bg-box);
-    padding: 12px;
-}
-
-.tetrone-poll-question {
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: var(--theme-text-main);
-    word-break: break-word;
-}
-
-.tetrone-poll-options {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.tetrone-poll-option-wrapper {
-    position: relative;
-}
-
-.tetrone-poll-option {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 10px;
-    background: var(--theme-input-bg);
-    border: 1px solid var(--theme-input-border);
-    cursor: pointer;
-    overflow: hidden;
-    min-height: 28px;
-    transition: border-color 0.2s;
-}
-
-.tetrone-poll-option.can-vote:hover {
-    border-color: var(--theme-link);
-}
-
-.tetrone-poll-option.is-voted {
-    border-color: var(--theme-link);
-    font-weight: bold;
-}
-
-.tetrone-poll-option.disabled {
-    cursor: default;
-}
-
-.tetrone-poll-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: var(--theme-btn-bg);
-    opacity: 0.15;
-    z-index: 1;
-    transition: width 0.5s ease-out;
-}
-
-.tetrone-poll-option.is-voted .tetrone-poll-fill {
-    opacity: 0.3;
-}
-
-.tetrone-poll-text,
-.tetrone-poll-percent {
-    position: relative;
-    z-index: 2;
-    font-size: 11px;
-}
-
-.tetrone-poll-text {
-    display: flex;
-    align-items: center;
-    color: var(--theme-text-main);
-}
-
-.tetrone-poll-multiple-checkbox {
-    margin-right: 8px;
-    cursor: pointer;
-    accent-color: var(--theme-link);
-}
-
-.tetrone-poll-percent {
-    color: var(--theme-text-muted);
-}
-
-.tetrone-poll-percent.clickable {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.tetrone-poll-percent.clickable:hover {
-    color: var(--theme-link);
-}
-
-.tetrone-poll-meta {
-    margin-top: 10px;
-    font-size: 11px;
-    color: var(--theme-text-muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding-top: 8px;
-    border-top: 1px solid var(--theme-border);
-}
-
-.tetrone-poll-meta .dot {
-    font-size: 8px;
-}
-
-.tetrone-poll-creator {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.tetrone-poll-creator h3 {
-    margin: 0;
-    font-size: 14px;
-    color: var(--theme-link);
-    border-bottom: 1px solid var(--theme-border);
-    padding-bottom: 5px;
-}
-
-.tetrone-poll-options-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.tetrone-poll-option-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.tetrone-poll-checkbox {
-    cursor: pointer;
-    accent-color: var(--theme-link);
-}
-
-.tetrone-poll-remove-btn {
-    padding: 5px 8px;
-    min-width: 25px;
-}
-
-.tetrone-poll-settings {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: var(--theme-bg-page);
-    padding: 10px;
-    border: 1px solid var(--theme-border);
-}
-
-.tetrone-poll-setting-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 11px;
-    color: var(--theme-text-main);
-}
-
-.tetrone-poll-setting-label.highlight {
-    font-weight: bold;
-    color: var(--theme-link);
-}
-
-.tetrone-poll-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    border-top: 1px solid var(--theme-border);
-    padding-top: 15px;
-}
-
-.tetrone-attached-poll-preview {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.tetrone-wall-input .ProseMirror,
+.tetrone-edit-textarea .ProseMirror {
+    min-height: 40px !important;
     padding: 8px 10px;
-    background: var(--theme-bg-page);
-    border: 1px solid var(--theme-border);
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.tetrone-attached-poll-preview:hover {
-    border-color: var(--theme-link);
-}
-
-.tetrone-attached-poll-preview.disabled {
-    cursor: default;
-}
-
-.tetrone-attached-poll-preview.disabled:hover {
-    border-color: var(--theme-border);
-}
-
-.tetrone-poll-preview-title {
-    font-size: 11px;
-    font-weight: bold;
-    color: var(--theme-text-main);
-}
-
-.tetrone-poll-locked-text {
-    font-size: 10px;
-    color: var(--theme-text-muted);
-    font-style: italic;
-}
-
-.tetrone-remove-poll-btn {
-    background: transparent;
-    border: none;
-    color: var(--theme-error);
-    cursor: pointer;
     font-size: 12px;
-    font-weight: bold;
-    padding: 0 5px;
 }
 
-.tetrone-remove-poll-btn:hover {
-    opacity: 0.8;
-}
-
-.tetrone-add-poll-btn {
-    background: transparent;
-    border: none;
+.tetrone-pointer {
     cursor: pointer;
-    font-size: 14px;
-    color: var(--theme-btn-bg);
+}
+
+.tetrone-attach-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.tetrone-attach-btn {
+    color: #8292a4;
+    transition: color 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.tetrone-add-poll-btn:hover {
-    color: var(--theme-link);
-}
-
-.tetrone-poll-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-}
-
-.tetrone-poll-modal-content {
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    padding: 20px;
-    width: 100%;
-    max-width: 450px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.tetrone-poll-voters-header {
-    margin: 0 0 15px 0;
-    color: var(--theme-link);
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.tetrone-poll-voters-list-container {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 5px;
-    margin-top: 15px;
-}
-
-.tetrone-poll-voter-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--theme-text-main);
-    text-decoration: none;
-    padding: 8px;
-    transition: background 0.2s;
-    border-bottom: 1px solid var(--theme-border);
-}
-
-.tetrone-poll-voter-row:last-child {
-    border-bottom: none;
-}
-
-.tetrone-poll-voter-row:hover {
-    background: var(--theme-bg-page);
-    text-decoration: none;
-}
-
-.tetrone-poll-voter-img {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    border: 1px solid var(--theme-border);
-}
-
-.tetrone-poll-voter-name {
-    font-weight: bold;
-    font-size: 12px;
-    color: var(--theme-link);
-}
-
-.tetrone-poll-voter-name:hover {
-    text-decoration: underline;
-}
-
-.tetrone-poll-voters-state-msg {
-    text-align: center;
-    padding: 30px;
-    color: var(--theme-text-muted);
-    font-size: 12px;
-}
-
-.tetrone-poll-option.quiz-correct {
-    border-color: var(--theme-success, #4bb34b);
-    background-color: rgba(75, 179, 75, 0.05);
-}
-
-.tetrone-poll-option.quiz-incorrect {
-    border-color: var(--theme-error, #e64646);
-    background-color: rgba(230, 70, 70, 0.05);
-}
-
-.tetrone-poll-icon {
-    margin-left: 8px;
-    font-size: 13px;
-    vertical-align: middle;
-}
-
-.tetrone-poll-explanation-box {
-    margin-top: 12px;
-    padding: 10px 12px;
-    background: var(--theme-bg-page);
-    border-left: 3px solid var(--theme-link);
-    font-size: 11px;
-    color: var(--theme-text-main);
-    line-height: 1.4;
-}
-
-.tetrone-poll-explanation-title {
-    font-weight: bold;
-    color: var(--theme-link);
-    margin-bottom: 4px;
-    display: block;
-}
-
-.tetrone-poll-explanation-wrapper {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid var(--theme-border);
-}
-
-.tetrone-poll-closed-badge {
-    color: var(--theme-error);
-    font-weight: bold;
-    font-size: 11px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.tetrone-poll-close-btn {
-    background: transparent;
-    border: none;
-    color: var(--theme-text-muted);
-    font-size: 11px;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.tetrone-poll-close-btn:hover {
-    color: var(--theme-error);
-}
-
-.tetrone-post-page-wrapper {
-    max-width: 600px;
-    margin: 0 auto;
-    padding-bottom: 50px;
 }
 
 .tetrone-post-content {
@@ -879,52 +775,61 @@
     line-height: 1.4;
     padding-left: 60px;
     margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-.tetrone-post-gallery {
+.tetrone-post-footer {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 5px;
-    overflow: hidden;
-}
-
-.tetrone-post-videos-container {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-.tetrone-preview-youtube-wrapper {
-    position: relative;
-    margin-top: 5px;
-    width: 100%;
-}
-
-.tetrone-poll {
-    margin: 5px 0;
-    border: 1px solid var(--theme-border);
-    background: var(--theme-bg-box);
-    padding: 10px;
-}
-
-.tetrone-post-documents {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 5px;
-    padding-top: 5px;
-    border-top: 1px dashed var(--theme-border);
+    align-items: center;
+    gap: 20px;
+    padding: 0 15px 10px 60px;
+    margin-top: 0;
 }
 
 @media (max-width: 768px) {
-    .tetrone-feed-page {
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 10px !important;
-        border: none !important;
+    .tetrone-post-footer {
+        padding-left: 10px;
+        padding-right: 10px;
     }
+
+    .tetrone-post-content {
+        padding-left: 10px;
+    }
+}
+
+.tetrone-attach-btn:hover {
+    color: var(--theme-link);
+    transform: scale(1.1);
+}
+
+.tetrone-post-content .mention,
+.tetrone-comment-text .mention,
+.ProseMirror .mention {
+    color: var(--theme-link);
+    background: rgba(91, 155, 213, 0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.2s;
+    user-select: text;
+}
+
+[data-theme="light"] .tetrone-post-content .mention,
+[data-theme="light"] .tetrone-comment-text .mention,
+[data-theme="light"] .ProseMirror .mention {
+    background: #EDF0F5;
+    color: #2B587A;
+}
+
+.tetrone-post-content .mention:hover,
+.tetrone-comment-text .mention:hover,
+.ProseMirror .mention:hover {
+    background: rgba(91, 155, 213, 0.2);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
 
     .tetrone-wall,
     .tetrone-post {
@@ -953,14 +858,5 @@
         width: 100%;
         max-height: 500px;
         object-fit: cover;
-    }
-
-    .tetrone-post-actions-top {
-        opacity: 1;
-    }
-
-    .tetrone-post-text {
-        word-break: break-word;
-        overflow-wrap: break-word;
     }
 }

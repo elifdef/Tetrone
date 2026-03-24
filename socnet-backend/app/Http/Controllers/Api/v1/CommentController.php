@@ -35,10 +35,10 @@ class CommentController extends Controller
     {
         $this->authorize('comment', $post);
 
-        // 2. Валідація
-        $request->validate(['content' => 'required|string|max:32768']);
+        $request->validate([
+            'content' => 'required|array'
+        ]);
 
-        // 3. Виклик Сервісу
         $comment = $this->commentService->createComment(
             $post,
             $request->user(),
@@ -48,15 +48,13 @@ class CommentController extends Controller
         return $this->success('COMMENT_CREATED', 'Comment created', (new CommentResource($comment->load('user')))->resolve(), 201);
     }
 
-    /**
-     * Редагування коментаря
-     */
     public function update(Request $request, Comment $comment): JsonResponse
     {
-        // Перевіряємо, чи має право цей юзер редагувати коментар
         $this->authorize('update', $comment);
 
-        $request->validate(['content' => 'required|string|max:32768']);
+        $request->validate([
+            'content' => 'required|array'
+        ]);
 
         $comment->update(['content' => $request->input('content')]);
 
@@ -65,7 +63,6 @@ class CommentController extends Controller
 
     public function destroy(Request $request, Comment $comment): JsonResponse
     {
-        // Перевіряємо, чи має право юзер ВИДАЛЯТИ коментар (Policy дозволяє видаляти і автору поста)
         $this->authorize('delete', $comment);
 
         $comment->delete();
