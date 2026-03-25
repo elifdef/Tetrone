@@ -115,8 +115,6 @@
 }
 
 .tetrone-sticker-picker-header {
-    background: #DAE2E8;
-    border-bottom: 1px solid #B9C4DA;
     display: flex;
     gap: 2px;
     padding: 4px;
@@ -144,7 +142,6 @@
 
 .tetrone-sticker-picker-tab.active {
     opacity: 1;
-    background: #DAE2E8;
     border-color: #45688E;
 }
 

@@ -40,7 +40,7 @@ export const ModalProvider = ({ children }) => {
         });
     }, []);
 
-    const openPassword = useCallback((message = i18n.t('settings.enter_password_confirm'), btnSubmit = i18n.t('common.confirm')) => {
+    const openPassword = useCallback((message = i18n.t('error.enter_confirm_password'), btnSubmit = i18n.t('common.confirm')) => {
         return new Promise((resolve) => {
             setModalState({
                 isOpen: true, type: 'password', message, placeholder: '••••••••', allowEmptyPrompt: false, btnSubmit, btnCancel: i18n.t('common.cancel'), resolve, inputValue: '', customContent: null

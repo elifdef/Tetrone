@@ -7,8 +7,8 @@ export default function ErrorState({ title, description, onRetry }) {
 
     return (
         <div className="tetrone-empty-state with-card">
-            <h3>{title || t('error.connection')}</h3>
-            <p>{description || t('error.loading', { resource: t('common.profile') })}</p>
+            <h3>{title}</h3>
+            <p>{description}</p>
 
             <div className="tetrone-feed-actions">
                 <button

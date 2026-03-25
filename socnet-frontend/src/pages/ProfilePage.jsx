@@ -58,7 +58,7 @@ export default function ProfilePage() {
             <div className="tetrone-profile-error-wrapper">
                 <ErrorState
                     title={t('error.connection')}
-                    description={t('error.loading', { resource: t('common.profile').toLowerCase() })}
+                    description={t('error.load_profile')}
                 />
             </div>
         );

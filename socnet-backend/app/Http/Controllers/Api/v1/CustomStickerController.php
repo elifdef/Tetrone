@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Emoji\StoreStickerRequest;
-use App\Http\Requests\Emoji\UpdateStickerRequest;
-use App\Http\Resources\Emoji\StickerPackResource;
-use App\Http\Resources\Emoji\StickerResource;
+use App\Http\Requests\Sticker\StoreStickerRequest;
+use App\Http\Requests\Sticker\UpdateStickerRequest;
+use App\Http\Resources\Sticker\StickerPackResource;
+use App\Http\Resources\Sticker\StickerResource;
 use App\Models\CustomSticker;
 use App\Models\StickerPack;
 use App\Services\StickerService;
@@ -13,34 +13,37 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * @group Мікростікери (Емодзі)
+ * @group Стікери
  */
 class CustomStickerController extends Controller
 {
-    public function __construct(protected StickerService $emojiService)
+    public function __construct(protected StickerService $stickerService)
     {
     }
 
     /**
      * Інформація для вспливаючого вікна (Tooltip)
-     *
-     * Віддає дані про емодзі, його пак та 4 інші картинки для прикладу.
      */
-    public function info(Request $request, CustomSticker $emoji): JsonResponse
+    public function info(Request $request, CustomSticker $sticker): JsonResponse
     {
-        $pack = $emoji->pack()->with(['author', 'emojis'])->first();
-        return $this->success('EMOJI_INFO_RETRIEVED', 'Emoji info retrieved', [
-            'emoji' => new StickerResource($emoji),
+        $pack = $sticker->pack;
+
+        if (!$pack)
+        {
+            return $this->error('ERR_PACK_NOT_FOUND', 'Pack not found', 404);
+        }
+
+        $pack->load(['author', 'stickers']);
+
+        return $this->success('STICKER_INFO_RETRIEVED', 'Sticker info retrieved', [
+            'sticker' => new StickerResource($sticker),
             'pack' => new StickerPackResource($pack),
-            'samples' => StickerResource::collection($pack->emojis->take(4))
+            'samples' => StickerResource::collection($pack->stickers->take(4))
         ]);
     }
 
     /**
-     * Пошук емодзі (Інлайн)
-     *
-     * Шукає емодзі по тегах (keywords) або шорткоду серед встановлених паків юзера.
-     * Викликається, коли користувач вводить ":" в текстове поле.
+     * Пошук стікерів (Інлайн)
      */
     public function search(Request $request): JsonResponse
     {
@@ -56,7 +59,7 @@ class CustomStickerController extends Controller
             ->orWhereHas('installedByUsers', fn($q) => $q->where('user_id', $user->id))
             ->pluck('id');
 
-        $emojis = CustomSticker::whereIn('pack_id', $myPackIds)
+        $stickers = CustomSticker::whereIn('pack_id', $myPackIds)
             ->where(function ($q) use ($query)
             {
                 $q->where('shortcode', 'like', $query . '%')
@@ -65,75 +68,68 @@ class CustomStickerController extends Controller
             ->limit(20)
             ->get();
 
-        return $this->success('EMOJIS_FOUND', 'Emojis retrieved', StickerResource::collection($emojis));
+        return $this->success('STICKERS_FOUND', 'Stickers retrieved', StickerResource::collection($stickers));
     }
 
     /**
-     * Завантажити емодзі в пак
+     * Завантажити стікер в пак
      */
     public function store(StoreStickerRequest $request, StickerPack $pack): JsonResponse
     {
-        if ($pack->author_id !== $request->user()->id)
+        if ($pack?->author_id !== $request->user()?->id)
         {
-            return $this->error('ERR_FORBIDDEN', 'You can only add emojis to your own packs.', 403);
+            return $this->error('ERR_FORBIDDEN', 'You can only add stickers to your own packs.', 403);
         }
 
-        $path = $this->emojiService->uploadImage($request->file('file'), $pack->short_name);
+        $path = $this->stickerService->uploadImage($request->file('file'), $pack->short_name);
 
-        $maxOrder = $pack->emojis()->max('sort_order') ?? 0;
+        $maxOrder = $pack->stickers()->max('sort_order') ?? 0;
 
-        $emoji = $pack->emojis()->create([
+        $sticker = $pack->stickers()->create([
             'file_path' => $path,
             'shortcode' => $request->validated('shortcode'),
             'keywords' => $request->validated('keywords'),
             'sort_order' => $request->input('sort_order', $maxOrder + 1)
         ]);
 
-        return $this->success('EMOJI_ADDED', 'Emoji added to pack', $emoji, 201);
+        return $this->success('STICKER_ADDED', 'Sticker added to pack', new StickerResource($sticker), 201);
     }
 
     /**
-     * Оновити емодзі (Замінити картинку або теги)
+     * Оновити стікер (Теги)
      */
-    public function update(UpdateStickerRequest $request, CustomSticker $emoji): JsonResponse
+    public function update(UpdateStickerRequest $request, CustomSticker $sticker): JsonResponse
     {
-        if ($emoji->pack->author_id !== $request->user()->id)
+        if ($sticker?->pack?->author_id !== $request->user()?->id)
         {
-            return $this->error('ERR_FORBIDDEN', 'You can only edit your own emojis.', 403);
+            return $this->error('ERR_FORBIDDEN', 'You can only edit your own stickers.', 403);
         }
 
         $data = $request->only(['shortcode', 'keywords']);
 
-        if ($request->hasFile('file'))
-        {
-            $this->emojiService->deleteImage($emoji->file_path);
-            $data['file_path'] = $this->emojiService->uploadImage($request->file('file'), $emoji->pack->short_name);
-        }
+        $sticker->update($data);
 
-        $emoji->update($data);
-
-        return $this->success('EMOJI_UPDATED', 'Emoji updated successfully', $emoji);
+        return $this->success('STICKER_UPDATED', 'Sticker updated successfully', new StickerResource($sticker));
     }
 
     /**
-     * Видалити емодзі
+     * Видалити стікер
      */
-    public function destroy(Request $request, CustomSticker $emoji): JsonResponse
+    public function destroy(Request $request, CustomSticker $sticker): JsonResponse
     {
-        if ($emoji->pack->author_id !== $request->user()->id && $request->user()->cannot('delete-any-content'))
+        if ($sticker->pack->author_id !== $request->user()->id && $request->user()->cannot('delete-any-content'))
         {
-            return $this->error('ERR_FORBIDDEN', 'You can only delete your own emojis.', 403);
+            return $this->error('ERR_FORBIDDEN', 'You can only delete your own stickers.', 403);
         }
 
-        $this->emojiService->deleteImage($emoji->file_path);
-        $emoji->delete();
+        $this->stickerService->deleteImage($sticker->file_path);
+        $sticker->delete();
 
-        return $this->success('EMOJI_DELETED', 'Emoji deleted successfully');
+        return $this->success('STICKER_DELETED', 'Sticker deleted successfully');
     }
 
     /**
-     * Змінити порядок емодзі в паку
-     *
+     * Змінити порядок стікерів в паку
      */
     public function reorder(Request $request, StickerPack $pack): JsonResponse
     {
@@ -144,31 +140,17 @@ class CustomStickerController extends Controller
 
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'required|exists:custom_emojis,id',
+            'items.*.id' => 'required|exists:stickers,id',
             'items.*.sort_order' => 'required|integer'
         ]);
 
         foreach ($request->items as $item)
         {
             CustomSticker::where('id', $item['id'])
-                ->where('pack_id', $pack->id) // Захист щоб юзер не міняв чужі емодзі
+                ->where('pack_id', $pack->id) // Захист щоб юзер не міняв чужі стікери
                 ->update(['sort_order' => $item['sort_order']]);
         }
 
-        return $this->success('EMOJIS_REORDERED', 'Emoji order updated');
-    }
-
-    /**
-     * Поскаржитись на стікерпак
-     */
-    public function report(Request $request, StickerPack $pack): JsonResponse
-    {
-        $request->validate([
-            'reason' => 'required|string|max:255'
-        ]);
-
-        // TODO: реалізувати
-
-        return $this->success('PACK_REPORTED', 'Pack reported successfully');
+        return $this->success('STICKERS_REORDERED', 'Sticker order updated');
     }
 }

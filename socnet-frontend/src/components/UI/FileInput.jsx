@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const FileInput = ({
     onFileSelect,
@@ -8,7 +7,6 @@ const FileInput = ({
     className = "",
     ...props
 }) => {
-    const { t } = useTranslation();
     const inputRef = useRef(null);
 
     const handleClick = () => {
@@ -31,7 +29,7 @@ const FileInput = ({
                 className="tetrone-btn tetrone-btn-auto-width"
                 onClick={handleClick}
             >
-                {btnText || t('common.upload')}
+                {btnText}
             </button>
         </div>
     );

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Emoji;
+namespace App\Http\Resources\Sticker;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

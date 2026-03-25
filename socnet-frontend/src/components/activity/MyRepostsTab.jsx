@@ -67,7 +67,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
             setReposts(prev => prev.filter(p => p.id !== postId));
             if (onCountUpdate) onCountUpdate(-1);
         } else {
-            notifyError(res.message || t('error.deleting'));
+            notifyError(res.message || t('error.delete_data'));
         }
     };
 

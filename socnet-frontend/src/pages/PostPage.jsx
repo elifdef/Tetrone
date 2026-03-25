@@ -46,6 +46,7 @@ export default function PostPage() {
     if (loading)
         return <div className="tetrone-empty-state">{t('common.loading')}</div>;
 
+    // переробити на окремий компонент помилки загрузки
     if (error)
         return (
             <div className="tetrone-empty-state with-card">

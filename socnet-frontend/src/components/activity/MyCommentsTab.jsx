@@ -67,7 +67,7 @@ export default function MyCommentsTab({ onCountUpdate }) {
             setComments(prev => prev.filter(c => c.id !== commentId));
             if (onCountUpdate) onCountUpdate(-1);
         } else {
-            notifyError(res.message || t('error.deleting'));
+            notifyError(res.message || t('error.delete_comment'));
         }
     };
 

@@ -431,6 +431,276 @@ body.modal-open {
     padding: 4px 10px;
 }
 
+.tetrone-modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.tetrone-mt-10 {
+    margin-top: 10px;
+}
+
+.tetrone-create-pack-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 155, 213, 0.05);
+    border: 2px dashed var(--theme-link) !important;
+    min-height: 100px;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.tetrone-create-pack-card:hover {
+    background: rgba(91, 155, 213, 0.15);
+}
+
+.tetrone-create-pack-icon {
+    font-size: 24px;
+    color: var(--theme-link);
+}
+
+.tetrone-create-pack-text {
+    font-size: 11px;
+    color: var(--theme-link);
+    font-weight: bold;
+    text-align: center;
+    padding: 0 5px;
+}
+
+.tetrone-sticker-upload-preview {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px auto;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-bg-page);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.tetrone-sticker-upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.tetrone-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--theme-text-muted);
+    font-size: 10px;
+    gap: 5px;
+}
+
+.tetrone-modal-content-large {
+    width: 750px !important;
+    max-width: 95vw !important;
+}
+
+.tetrone-modal-content-small {
+    width: 350px !important;
+}
+
+.tetrone-padded-body {
+    padding: 20px;
+}
+
+.tetrone-text-center {
+    text-align: center;
+}
+
+.tetrone-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.tetrone-img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.tetrone-modal-header.vk-blue {
+    background: var(--theme-header-bg);
+    color: var(--theme-text-main);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-modal-header.vk-blue h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--theme-link);
+}
+
+.vk-close-btn {
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--theme-text-muted);
+    transition: color 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vk-close-btn:hover {
+    color: var(--theme-error);
+}
+
+.tetrone-modal-footer.vk-gray {
+    background: var(--theme-bg-page);
+    border-top: 1px solid var(--theme-border);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tetrone-edit-actions,
+.tetrone-setup-actions-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tetrone-section-title-spaced {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tetrone-modal-content-split {
+    width: 800px !important;
+    max-width: 95vw !important;
+}
+
+.tetrone-sticker-editor-layout {
+    display: flex;
+    background: var(--theme-bg-box);
+}
+
+.tetrone-sticker-editor-form {
+    width: 300px;
+    padding: 20px;
+    border-right: 1px solid var(--theme-border);
+    flex-shrink: 0;
+}
+
+.tetrone-sticker-editor-preview {
+    flex: 1;
+    padding: 20px;
+    background: var(--theme-bg-page);
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+.tetrone-sticker-preview-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    pointer-events: none;
+}
+
+.tetrone-fake-post {
+    border: 1px solid var(--theme-border);
+    background: var(--theme-bg-box);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.tetrone-pack-manager-scrollable {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.tetrone-modal-header.vk-blue {
+    background: var(--theme-header-bg);
+    color: var(--theme-text-main);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-modal-header.vk-blue h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--theme-link);
+}
+
+.vk-close-btn {
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--theme-text-muted);
+    transition: color 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vk-close-btn:hover {
+    color: var(--theme-error);
+}
+
+.tetrone-modal-footer.vk-gray {
+    background: var(--theme-bg-page);
+    border-top: 1px solid var(--theme-border);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tetrone-modal-footer-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.tetrone-hidden {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .tetrone-sticker-editor-layout {
+        flex-direction: column;
+    }
+
+    .tetrone-sticker-editor-form {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--theme-border);
+    }
+}
+
 @media (max-width: 768px) {
     .tetrone-modal-overlay {
         align-items: center;

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomSticker extends Model
 {
-    protected $table = 'custom_emojis';
+    protected $table = 'custom_stickers';
     protected $guarded = [];
 
     public function pack()
@@ -16,7 +16,7 @@ class CustomSticker extends Model
 
     public function favoritedByUsers()
     {
-        return $this->belongsToMany(User::class, 'user_favorite_emojis', 'emoji_id', 'user_id')
+        return $this->belongsToMany(User::class, 'user_favorite_stickers', 'sticker_id', 'user_id')
             ->withPivot('sort_order')
             ->withTimestamps();
     }

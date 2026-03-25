@@ -8,7 +8,6 @@ import StickerPackModal from '../components/editor/StickerPackModal';
 
 import CatalogTab from '../components/stickers/CatalogTab';
 import MyPacksTab from '../components/stickers/MyPacksTab';
-import StickerPackManager from '../components/stickers/StickerPackManager';
 
 const StickerShopPage = () => {
     const { t } = useTranslation();
@@ -76,7 +75,7 @@ const StickerShopPage = () => {
                 <h2 className="tetrone-section-title">{t('stickers.shop_title')}</h2>
 
                 <div className="tetrone-tabs">
-                    {['catalog', 'my', 'create'].map(tab => (
+                    {['catalog', 'my'].map(tab => (
                         <button
                             key={tab}
                             className={`tetrone-tab ${currentTab === tab ? 'active' : ''}`}
@@ -103,12 +102,6 @@ const StickerShopPage = () => {
                         packs={myPacks}
                         isLoading={isLoadingMy}
                         onSelectPack={setSelectedPack}
-                    />
-                )}
-
-                {currentTab === 'create' && (
-                    <StickerPackManager
-                        onSuccess={() => handleTabChange('my')}
                     />
                 )}
             </div>

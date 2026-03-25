@@ -16,14 +16,14 @@ class StickerPack extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function emojis()
+    public function stickers()
     {
         return $this->hasMany(CustomSticker::class, 'pack_id')->orderBy('sort_order');
     }
 
     public function installedByUsers()
     {
-        return $this->belongsToMany(User::class, 'user_emoji_packs', 'pack_id', 'user_id')
+        return $this->belongsToMany(User::class, 'user_sticker_packs', 'pack_id', 'user_id')
             ->withPivot('sort_order')
             ->withTimestamps();
     }

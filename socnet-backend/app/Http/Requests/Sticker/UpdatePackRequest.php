@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Emoji;
+namespace App\Http\Requests\Sticker;
 
 use Illuminate\Foundation\Http\FormRequest;
 

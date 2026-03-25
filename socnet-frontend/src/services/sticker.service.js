@@ -70,6 +70,20 @@ class StickerService {
         });
     }
 
+    async updateSticker(id, data) {
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
+
+        if (data.file) formData.append('file', data.file);
+        if (data.shortcode) formData.append('shortcode', data.shortcode);
+        if (data.keywords) formData.append('keywords', data.keywords);
+
+        return await fetchClient(`/stickers/${id}`, {
+            method: 'POST',
+            body: formData
+        });
+    }
+
     async deleteSticker(id) {
         return await fetchClient(`/stickers/${id}`, { method: 'DELETE' });
     }
@@ -81,8 +95,8 @@ class StickerService {
         });
     }
 
-    async getStickerInfo(emojiId) {
-        return await fetchClient(`/stickers/${emojiId}/info`);
+    async getStickerInfo(stickerId) {
+        return await fetchClient(`/stickers/${stickerId}/info`);
     }
 
     async reportPack(packId, reason) {

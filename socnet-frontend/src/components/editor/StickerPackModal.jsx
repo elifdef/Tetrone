@@ -2,11 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifyError, notifySuccess } from '../common/Notify';
 import StickerService from '../../services/sticker.service';
+import { DotsIcon,  ReportIcon } from '../ui/Icons';
 
 export default function StickerPackModal({ pack, onClose, onRefresh }) {
     const { t } = useTranslation();
     const [selectedSticker, setSelectedSticker] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isInstalled, setIsInstalled] = useState(pack.is_installed);
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const detailRef = useRef(null);
+    const menuRef = useRef(null);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -23,18 +29,28 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
         if (selectedSticker && detailRef.current && !detailRef.current.contains(e.target)) {
             setSelectedSticker(null);
         }
+        if (isMenuOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+            setIsMenuOpen(false);
+        }
     };
 
-    const handleInstall = async () => {
+    const handleToggleInstall = async () => {
+        setIsProcessing(true);
         try {
-            const response = await StickerService.installPack(pack.id);
-            if (response.success) {
-                notifySuccess(t(`api.${response.code}`));
-                if (onRefresh) onRefresh();
-                onClose();
+            if (isInstalled) {
+                await StickerService.uninstallPack(pack.id);
+                setIsInstalled(false);
+                notifySuccess(t('stickers.pack_uninstalled'));
+            } else {
+                await StickerService.installPack(pack.id);
+                setIsInstalled(true);
+                notifySuccess(t('stickers.pack_installed'));
             }
+            if (onRefresh) onRefresh();
         } catch (error) {
             notifyError(error.message || t('common.error'));
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -44,10 +60,10 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
 
         if (favs.find(f => f.id === sticker.id)) {
             favs = favs.filter(f => f.id !== sticker.id);
-            notifySuccess('Видалено з обраних');
+            notifySuccess(t('stickers.removed_from_favorites'));
         } else {
             favs.unshift(sticker);
-            notifySuccess('Збережено в обрані');
+            notifySuccess(t('stickers.saved_to_favorites'));
         }
 
         localStorage.setItem('tetrone_favorite_emojis', JSON.stringify(favs));
@@ -59,7 +75,27 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
 
                 <div className="tetrone-modal-header vk-blue">
                     <h3>{t('stickers.view_pack')}</h3>
-                    <div className="vk-close-btn" onClick={onClose}>&times;</div>
+
+                    <div className="tetrone-modal-header-actions">
+                        <div className="tetrone-post-actions-container" ref={menuRef}>
+                            <button
+                                className="vk-close-btn"
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                title={t('common.actions')}
+                            >
+                                <DotsIcon width={16} height={16} />
+                            </button>
+
+                            {isMenuOpen && (
+                                <div className="tetrone-actions-dropdown">
+                                    <button className="warning" onClick={() => { setIsMenuOpen(false); notifySuccess(t('reports.reported')); }}>
+                                        <ReportIcon /> {t('reports.title')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="vk-close-btn" onClick={onClose} title={t('common.close')}>&times;</div>
+                    </div>
                 </div>
 
                 <div className="tetrone-modal-body tetrone-pack-body">
@@ -68,44 +104,49 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                         <div className="tetrone-pack-text-info">
                             <span className="tetrone-pack-title-label">{pack.title}</span>
                             <span className="tetrone-pack-meta-label">{t('stickers.by_author')} {pack.author}</span>
-                            <span className="tetrone-pack-meta-label">{pack.stickers_count} {t('stickers.stickers_count')}</span>
+                            <span className="tetrone-pack-meta-label">{pack.stickers_count} / 120 {t('stickers.stickers_count')}</span>
                         </div>
                     </div>
 
-                    <div className="tetrone-sticker-grid-scroll">
-                        {pack.stickers?.map(sticker => (
-                            <div
-                                key={sticker.id}
-                                className="tetrone-grid-item"
-                                onClick={() => setSelectedSticker(sticker)}
-                            >
-                                <img src={sticker.url} alt={sticker.shortcode} />
-                            </div>
-                        ))}
-                    </div>
+                    {pack.stickers?.length > 0 ? (
+                        <div className="tetrone-sticker-grid-scroll">
+                            {pack.stickers.map(sticker => (
+                                <div
+                                    key={sticker.id}
+                                    className="tetrone-grid-item"
+                                    onClick={() => setSelectedSticker(sticker)}
+                                >
+                                    <img src={sticker.url} alt={sticker.shortcode} />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="tetrone-empty-state">
+                            <p>{t('stickers.no_stickers_yet')}</p>
+                        </div>
+                    )}
 
                     {selectedSticker && (
-                        <div className="tetrone-sticker-detail-popover" ref={detailRef}>
+                        <div className="tetrone-emoji-detail-popover" ref={detailRef}>
                             <div className="tetrone-modal-header vk-blue">
-                                <h3>Інформація</h3>
+                                <h3>{t('stickers.info_title')}</h3>
                                 <div className="vk-close-btn" onClick={() => setSelectedSticker(null)}>&times;</div>
                             </div>
                             <div className="tetrone-detail-content">
                                 <img src={selectedSticker.url} className="tetrone-detail-big-img" alt="" />
                                 <div className="tetrone-detail-row">
-                                    <span className="tetrone-detail-label">Код для вводу:</span>
+                                    <span className="tetrone-detail-label">{t('stickers.code_to_type')}:</span>
                                     <span className="tetrone-detail-value">:{selectedSticker.shortcode}:</span>
                                 </div>
                                 {selectedSticker.keywords && (
                                     <div className="tetrone-detail-row">
-                                        <span className="tetrone-detail-label">Теги:</span>
+                                        <span className="tetrone-detail-label">{t('stickers.tags')}:</span>
                                         <span className="tetrone-detail-value">{selectedSticker.keywords}</span>
                                     </div>
                                 )}
                             </div>
                             <button
-                                className="tetrone-btn tetrone-btn-small tetrone-btn-full-width"
-                                style={{ marginTop: '10px' }}
+                                className="tetrone-btn tetrone-btn-small tetrone-btn-full-width tetrone-mt-10"
                                 onClick={() => toggleFavorite(selectedSticker)}
                             >
                                 ⭐ {t('stickers.save_to_favorites')}
@@ -115,11 +156,17 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                 </div>
 
                 <div className="tetrone-modal-footer vk-gray">
-                    <button className="tetrone-btn tetrone-btn-ghost" onClick={() => notifySuccess('Reported')}>
-                        {t('reports.title')}
-                    </button>
-                    <button className="tetrone-btn" onClick={handleInstall}>
-                        {t('stickers.add_pack')}
+                    <button
+                        className={`tetrone-btn ${isInstalled ? 'tetrone-btn-cancel' : ''}`}
+                        onClick={handleToggleInstall}
+                        disabled={isProcessing}
+                    >
+                        {isProcessing
+                            ? t('common.loading')
+                            : isInstalled
+                                ? t('stickers.remove_pack')
+                                : t('stickers.add_pack')
+                        }
                     </button>
                 </div>
             </div>
