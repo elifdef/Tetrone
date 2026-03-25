@@ -102,6 +102,7 @@ const StickerShopPage = () => {
                         packs={myPacks}
                         isLoading={isLoadingMy}
                         onSelectPack={setSelectedPack}
+                        onRefresh={fetchMyPacks}
                     />
                 )}
             </div>

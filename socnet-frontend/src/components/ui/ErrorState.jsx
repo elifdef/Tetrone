@@ -1,23 +1,25 @@
 import { useTranslation } from 'react-i18next';
 
-export default function ErrorState({ title, description, onRetry }) {
+export default function ErrorState({ title, description, onRetry, buttonText, showButton = true }) {
     const { t } = useTranslation();
 
     const handleRetry = onRetry || (() => window.location.reload());
 
     return (
         <div className="tetrone-empty-state with-card">
-            <h3>{title}</h3>
-            <p>{description}</p>
+            {title && <h3>{title}</h3>}
+            {description && <p>{description}</p>}
 
-            <div className="tetrone-feed-actions">
-                <button
-                    className="tetrone-btn-small"
-                    onClick={handleRetry}
-                >
-                    {t('common.reload_page')}
-                </button>
-            </div>
+            {showButton && (
+                <div className="tetrone-feed-actions tetrone-mt-10">
+                    <button
+                        className="tetrone-btn tetrone-btn-small"
+                        onClick={handleRetry}
+                    >
+                        {buttonText || t('common.reload_page')}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

@@ -49,15 +49,6 @@
     opacity: 1;
 }
 
-.tetrone-modal-footer.vk-gray {
-    background: var(--theme-bg-page);
-    border-top: 1px solid var(--theme-border);
-    padding: 10px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
 [data-theme="dark"] .tetrone-modal-footer.vk-gray {
     background: #222;
 }
@@ -128,7 +119,6 @@
     border: none;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
     z-index: 10000;
@@ -198,7 +188,6 @@
     border: none;
     width: 50px;
     height: 50px;
-    border-radius: 50%;
     font-size: 30px;
     cursor: pointer;
     display: flex;
@@ -228,7 +217,6 @@
     background: rgba(0, 0, 0, 0.6);
     color: #fff;
     padding: 5px 15px;
-    border-radius: 15px;
     font-size: 12px;
     font-weight: bold;
     z-index: 1000;
@@ -449,7 +437,6 @@ body.modal-open {
     background: rgba(91, 155, 213, 0.05);
     border: 2px dashed var(--theme-link) !important;
     min-height: 100px;
-    gap: 8px;
     transition: all 0.2s;
 }
 
@@ -514,13 +501,6 @@ body.modal-open {
     text-align: center;
 }
 
-.tetrone-flex-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
 .tetrone-img-cover {
     width: 100%;
     height: 100%;
@@ -560,16 +540,6 @@ body.modal-open {
 
 .vk-close-btn:hover {
     color: var(--theme-error);
-}
-
-.tetrone-modal-footer.vk-gray {
-    background: var(--theme-bg-page);
-    border-top: 1px solid var(--theme-border);
-    padding: 10px 15px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    flex-wrap: wrap;
 }
 
 .tetrone-edit-actions,
@@ -629,7 +599,6 @@ body.modal-open {
 .tetrone-pack-manager-scrollable {
     max-height: 60vh;
     overflow-y: auto;
-    padding-right: 5px;
 }
 
 .tetrone-modal-header.vk-blue {

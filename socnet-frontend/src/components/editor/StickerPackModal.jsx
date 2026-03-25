@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifyError, notifySuccess } from '../common/Notify';
 import StickerService from '../../services/sticker.service';
-import { DotsIcon,  ReportIcon } from '../ui/Icons';
+import { DotsIcon, ReportIcon } from '../ui/Icons';
 
 export default function StickerPackModal({ pack, onClose, onRefresh }) {
     const { t } = useTranslation();
@@ -81,14 +81,13 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                             <button
                                 className="vk-close-btn"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                title={t('common.actions')}
                             >
                                 <DotsIcon width={16} height={16} />
                             </button>
 
                             {isMenuOpen && (
                                 <div className="tetrone-actions-dropdown">
-                                    <button className="warning" onClick={() => { setIsMenuOpen(false); notifySuccess(t('reports.reported')); }}>
+                                    <button className="warning" onClick={() => { setIsMenuOpen(false); notifySuccess(t('api.success.PACK_REPORTED')); }}>
                                         <ReportIcon /> {t('reports.title')}
                                     </button>
                                 </div>

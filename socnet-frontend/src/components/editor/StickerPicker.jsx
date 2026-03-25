@@ -54,7 +54,6 @@ export default function StickerPicker({ onSelect, onClose }) {
                     type="button"
                     className={`tetrone-sticker-picker-tab ${activeTab === 'favorites' ? 'active' : ''}`}
                     onClick={() => setActiveTab('favorites')}
-                    title={t('stickers.tab_favorites')}
                 >
                     ⭐
                 </button>

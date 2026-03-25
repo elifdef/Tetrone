@@ -439,7 +439,6 @@ input:-webkit-autofill:active {
     background-color: var(--theme-bg-box);
     border: 1px solid var(--theme-border);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
     display: flex;
     flex-direction: column;
     min-width: 150px;

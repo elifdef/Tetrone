@@ -35,7 +35,7 @@ export default function LikedPostsTab({ onCountUpdate }) {
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
         } else {
-            notifyError(res.message || t('error.loading_likes'));
+            notifyError(res.message || t('error.load_data'));
             setError(true);
         }
 

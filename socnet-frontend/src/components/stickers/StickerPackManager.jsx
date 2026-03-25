@@ -24,16 +24,16 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
 
     const [isSaving, setIsSaving] = useState(false);
     const [editorModal, setEditorModal] = useState({ isOpen: false, sticker: null });
-
     const [confirmConfig, setConfirmConfig] = useState({ isOpen: false, type: null });
 
+    const [stickersChanged, setStickersChanged] = useState(false);
     const fileInputRef = useRef(null);
 
     const hasChanges =
         title !== initialState.title ||
         isPublished !== initialState.isPublished ||
         coverFile !== null ||
-        localStickers !== (existingPack?.stickers || []) ||
+        stickersChanged ||
         deletedStickerIds.length > 0;
 
     const handleCloseAttempt = () => {
@@ -86,13 +86,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                     });
                 } else if (!sticker.isNew && existingPack) {
                     const original = existingPack.stickers.find(s => s.id === sticker.id);
-
-                    const hasStickerChanged =
-                        original && (
-                            original.shortcode !== sticker.shortcode ||
-                            original.keywords !== sticker.keywords ||
-                            sticker.file
-                        );
+                    const hasStickerChanged = original && (original.shortcode !== sticker.shortcode || original.keywords !== sticker.keywords || sticker.file);
 
                     if (hasStickerChanged) {
                         await StickerService.updateSticker(sticker.id, {
@@ -103,6 +97,11 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                     }
                 }
             }
+
+            setInitialState({ title, isPublished });
+            setCoverFile(null);
+            setStickersChanged(false);
+            setDeletedStickerIds([]);
 
             notifySuccess(t('common.saved'));
             if (onSuccess) onSuccess();
@@ -126,16 +125,16 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
     };
 
     const handleStickerSavedLocal = (stickerData) => {
+        setStickersChanged(true);
         setLocalStickers(prev => {
             const exists = prev.find(s => s.id === stickerData.id);
-            if (exists) {
-                return prev.map(s => s.id === stickerData.id ? stickerData : s);
-            }
+            if (exists) return prev.map(s => s.id === stickerData.id ? stickerData : s);
             return [...prev, stickerData];
         });
     };
 
     const handleStickerDeleteLocal = (id) => {
+        setStickersChanged(true);
         setLocalStickers(prev => prev.filter(s => s.id !== id));
         if (existingPack?.stickers?.find(s => s.id === id)) {
             setDeletedStickerIds(prev => [...prev, id]);

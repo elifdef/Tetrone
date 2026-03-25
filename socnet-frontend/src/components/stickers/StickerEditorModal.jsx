@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
 import { notifyError } from '../common/Notify';
@@ -52,61 +52,62 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
         onClose();
     };
 
-    const fakePostBig = {
+    const fakePostBig = useMemo(() => ({
         id: -1,
         content: {
             type: 'doc',
-            content: [
-                {
-                    type: 'paragraph',
-                    content: [
-                        {
-                            type: 'customSticker',
-                            attrs: {
-                                id: stickerToEdit?.id || 'preview',
-                                shortcode: shortcode || 'preview',
-                                src: preview
-                            }
-                        }
-                    ]
-                }
-            ]
+            content: [{
+                type: 'paragraph',
+                content: [{
+                    type: 'customSticker',
+                    attrs: {
+                        id: stickerToEdit?.id,
+                        shortcode: 'demo_code',
+                        src: preview
+                    }
+                }]
+            }]
         },
-        user: user,
-        created_at: new Date().toISOString(),
-        likes_count: 0, comments_count: 0, reposts_count: 0,
-        is_liked: false, is_repost: false, original_post_id: null
-    };
 
-    const fakePostSmall = {
-        id: -1,
+        user: user,
+        created_at: new Date().toISOString(),
+        likes_count: 0, comments_count: 0, reposts_count: 0,
+        is_liked: false, is_repost: false, original_post_id: null
+    }), [preview, stickerToEdit?.id, user]);
+
+    const fakePostSmall = useMemo(() => ({
+        id: 999992,
         content: {
             type: 'doc',
-            content: [
+            content: [{
+                type: 'paragraph',
+                content: [{
+                    type: 'text',
+                    text: t(`stickers.preview_text_${Math.floor(Math.random() * 8 + 1)}`)
+                },
                 {
-                    type: 'paragraph',
-                    content: [
-                        {
-                            type: 'text',
-                            text: t('stickers.preview_text') + ' '
-                        },
-                        {
-                            type: 'customSticker',
-                            attrs: {
-                                id: stickerToEdit?.id || 'preview',
-                                shortcode: shortcode || 'preview',
-                                src: preview
-                            }
-                        }
-                    ]
-                }
-            ]
+                    type: 'customSticker',
+                    attrs:
+                    {
+                        id: stickerToEdit?.id,
+                        shortcode: 'demo_code',
+                        src: preview
+                    }
+                }]
+            }]
         },
         user: user,
         created_at: new Date().toISOString(),
         likes_count: 0, comments_count: 0, reposts_count: 0,
         is_liked: false, is_repost: false, original_post_id: null
-    };
+    }), [preview, stickerToEdit?.id, user, t]);
+
+    const previewPostsJSX = useMemo(() => (
+        <div className="tetrone-sticker-preview-posts">
+            <PostItem post={fakePostBig} isOwner={false} currentUserId={user?.id} readonly={true} isInner={true} />
+            <PostItem post={fakePostSmall} isOwner={false} currentUserId={user?.id} readonly={true} isInner={true} />
+        </div>
+    ), [fakePostBig, fakePostSmall, user?.id]);
 
     return (
         <div className="tetrone-modal-overlay" onClick={onClose}>
@@ -167,12 +168,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
 
                     <div className="tetrone-sticker-editor-preview">
                         <div className="tetrone-preview-label">{t('stickers.preview_label')}</div>
-                        {preview ? (
-                            <div className="tetrone-sticker-preview-posts">
-                                <PostItem post={fakePostBig} isOwner={false} currentUserId={user?.id} readonly={true} isInner={true} />
-                                <PostItem post={fakePostSmall} isOwner={false} currentUserId={user?.id} readonly={true} isInner={true} />
-                            </div>
-                        ) : (
+                        {preview ? previewPostsJSX : (
                             <div className="tetrone-empty-state">
                                 <p>{t('stickers.err_no_file')}</p>
                             </div>
@@ -185,7 +181,6 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                         {isEditMode && (
                             <button
                                 className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
-                                style={{ color: 'var(--theme-error)', borderColor: 'var(--theme-error)' }}
                                 onClick={() => setConfirmDelete(true)}
                             >
                                 {t('common.delete')}

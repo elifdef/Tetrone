@@ -79,8 +79,8 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
                 </Link>
             </div>
 
-            {showActions && (
-                <div className="tetrone-post-actions-container">
+           {showActions && (
+                <div className="tetrone-post-actions-container" style={{ position: 'relative', marginLeft: 'auto' }}>
                     <button
                         className="tetrone-post-action-btn-trigger"
                         onClick={() => setShowMenu(!showMenu)}
