@@ -1,3 +1,7 @@
+body.modal-open {
+    overflow: hidden;
+}
+
 .tetrone-modal-overlay {
     position: fixed;
     top: 0;
@@ -9,301 +13,90 @@
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    padding: 20px;
+    overflow-y: auto;
 }
 
-.tetrone-modal-content.vk-style {
-    background: var(--theme-bg-box) !important;
+.tetrone-modal-dialog {
+    background: var(--theme-bg-box);
     border: 1px solid #555;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    padding: 0 !important;
     width: 500px;
     max-width: 100%;
-    position: relative;
+    display: flex;
+    flex-direction: column;
     color: var(--theme-text-main);
+    margin: auto;
+    border-radius: 2px;
+    overflow: hidden;
 }
 
-.tetrone-modal-header.vk-blue {
+.tetrone-modal-dialog.modal-lg {
+    width: 700px;
+}
+
+.tetrone-modal-dialog.modal-sm {
+    width: 350px;
+}
+
+.tetrone-modal-header {
     background: #597DA3;
-    color: #fff;
-    padding: 6px 10px;
+    padding: 8px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.tetrone-modal-header.vk-blue h3 {
+.tetrone-modal-header h3 {
     margin: 0;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
+    color: #ffffff;
 }
 
-.vk-close-btn {
-    cursor: pointer;
+.tetrone-modal-close {
+    background: transparent;
+    border: none;
+    color: #ffffff;
     font-size: 16px;
     line-height: 1;
-    color: #fff;
-    opacity: 0.8;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
 
-.vk-close-btn:hover {
+.tetrone-modal-close:hover {
     opacity: 1;
 }
 
-[data-theme="dark"] .tetrone-modal-footer.vk-gray {
-    background: #222;
-}
-
-.tetrone-sticker-detail-popover {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 220px;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-link);
-    z-index: 2100;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.tetrone-detail-content {
+.tetrone-modal-body {
     padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.tetrone-detail-big-img {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 10px;
-}
-
-.tetrone-detail-row {
+    overflow-y: auto;
+    max-height: 60vh;
     font-size: 11px;
-    margin-top: 5px;
-    width: 100%;
-}
-
-.tetrone-detail-label {
-    color: var(--theme-text-muted);
-    display: block;
-    font-size: 9px;
-    text-transform: uppercase;
-}
-
-.tetrone-detail-value {
-    font-weight: bold;
-    color: var(--theme-text-main);
-}
-
-.tetrone-modal-fullscreen-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tetrone-modal-close-fullscreen {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    border: none;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
-
-.tetrone-modal-close-fullscreen:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.tetrone-modal-fullscreen-layout {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-}
-
-.tetrone-modal-media-section {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background: transparent;
-    overflow: hidden;
-}
-
-.tetrone-modal-fullscreen-image,
-.tetrone-modal-fullscreen-video {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.tetrone-modal-fullscreen-youtube {
-    width: 80%;
-    max-width: 900px;
-    aspect-ratio: 16 / 9;
-}
-
-.tetrone-modal-sidebar-section {
-    width: 350px;
-    background: var(--theme-bg-box);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    border-left: 1px solid var(--theme-border);
-}
-
-.tetrone-modal-sidebar-scroll {
-    overflow-y: auto;
-    flex: 1;
-    padding: 15px;
-}
-
-.tetrone-modal-nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    border: none;
-    width: 50px;
-    height: 50px;
-    font-size: 30px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    transition: background 0.2s;
-}
-
-.tetrone-modal-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.tetrone-modal-nav-btn.left {
-    left: 20px;
-}
-
-.tetrone-modal-nav-btn.right {
-    right: 20px;
-}
-
-.tetrone-modal-counter {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    padding: 5px 15px;
-    font-size: 12px;
-    font-weight: bold;
-    z-index: 1000;
-}
-
-.tetrone-post-only-stickers .tetrone-micro-sticker {
-    height: 100px;
-    width: 100px;
-    margin: 5px;
-    object-fit: contain;
-    display: inline-block;
-}
-
-.tetrone-post-only-stickers p {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.tetrone-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    overflow-y: auto;
-    padding-top: 50px;
-}
-
-.tetrone-modal-dialog {
-    max-width: 400px;
-    width: 100%;
-    padding: 20px;
-    margin: auto;
-    background-color: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.tetrone-modal-dialog.modal-lg {
-    max-width: 600px;
-}
-
-.tetrone-modal-dialog.modal-sm {
-    max-width: 300px;
 }
 
 .tetrone-modal-message {
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: var(--theme-text-main);
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 15px 0;
 }
 
-.tetrone-modal-input {
-    margin-bottom: 15px;
-}
-
-.tetrone-modal-actions {
+.tetrone-modal-footer {
+    background: var(--theme-bg-page);
+    border-top: 1px solid var(--theme-border);
+    padding: 10px 15px;
     display: flex;
-    gap: 10px;
     justify-content: flex-end;
-    margin-top: 15px;
+    align-items: center;
+    gap: 10px;
 }
 
-.tetrone-modal-btn {
-    min-width: 80px;
+[data-theme="dark"] .tetrone-modal-footer {
+    background: #222222;
 }
 
-.report-modal-title {
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.report-modal-actions {
-    margin-top: 20px;
-}
-
-body.modal-open {
-    overflow: hidden;
-}
 
 .tetrone-modal-fullscreen-overlay {
     position: fixed;
@@ -318,7 +111,7 @@ body.modal-open {
 
 .tetrone-modal-close-fullscreen {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 20px;
     background: rgba(0, 0, 0, 0.5);
     color: #fff;
@@ -331,7 +124,7 @@ body.modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    border-radius: 2px;
 }
 
 .tetrone-modal-close-fullscreen:hover {
@@ -353,21 +146,6 @@ body.modal-open {
     padding: 20px;
 }
 
-.tetrone-modal-sidebar-section {
-    width: 350px;
-    background: var(--theme-bg-box);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid var(--theme-border);
-}
-
-.tetrone-modal-sidebar-scroll {
-    overflow-y: auto;
-    padding: 20px;
-    height: 100%;
-}
-
 .tetrone-modal-fullscreen-image,
 .tetrone-modal-fullscreen-video {
     max-width: 100%;
@@ -375,10 +153,13 @@ body.modal-open {
     object-fit: contain;
 }
 
-.tetrone-modal-fullscreen-youtube {
-    width: 100%;
-    max-width: 900px;
-    aspect-ratio: 16 / 9;
+.tetrone-modal-sidebar-section {
+    width: 350px;
+    background: var(--theme-bg-box);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--theme-border);
 }
 
 .tetrone-modal-nav-btn {
@@ -393,7 +174,6 @@ body.modal-open {
     height: 80px;
     cursor: pointer;
     z-index: 10;
-    transition: background 0.2s;
 }
 
 .tetrone-modal-nav-btn:hover {
@@ -408,363 +188,68 @@ body.modal-open {
     right: 0;
 }
 
-.tetrone-modal-counter {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 4px 10px;
+.tetrone-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tetrone-modal-header-actions {
     display: flex;
     align-items: center;
     gap: 15px;
-}
-
-.tetrone-mt-10 {
-    margin-top: 10px;
-}
-
-.tetrone-create-pack-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(91, 155, 213, 0.05);
-    border: 2px dashed var(--theme-link) !important;
-    min-height: 100px;
-    transition: all 0.2s;
-}
-
-.tetrone-create-pack-card:hover {
-    background: rgba(91, 155, 213, 0.15);
-}
-
-.tetrone-create-pack-icon {
-    font-size: 24px;
-    color: var(--theme-link);
-}
-
-.tetrone-create-pack-text {
-    font-size: 11px;
-    color: var(--theme-link);
-    font-weight: bold;
-    text-align: center;
-    padding: 0 5px;
-}
-
-.tetrone-sticker-upload-preview {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 15px auto;
-    border: 1px solid var(--theme-border);
-    background: var(--theme-bg-page);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.tetrone-sticker-upload-preview img {
-    width: 100%;
     height: 100%;
-    object-fit: contain;
 }
 
-.tetrone-upload-placeholder {
+.tetrone-modal-header-actions .tetrone-post-actions-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    color: var(--theme-text-muted);
-    font-size: 10px;
-    gap: 5px;
-}
-
-.tetrone-modal-content-large {
-    width: 750px !important;
-    max-width: 95vw !important;
-}
-
-.tetrone-modal-content-small {
-    width: 350px !important;
-}
-
-.tetrone-padded-body {
-    padding: 20px;
-}
-
-.tetrone-text-center {
-    text-align: center;
-}
-
-.tetrone-img-cover {
-    width: 100%;
+    justify-content: center;
     height: 100%;
-    object-fit: contain;
 }
 
-.tetrone-modal-header.vk-blue {
-    background: var(--theme-header-bg);
-    color: var(--theme-text-main);
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--theme-border);
-}
-
-.tetrone-modal-header.vk-blue h3 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--theme-link);
-}
-
-.vk-close-btn {
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    color: var(--theme-text-muted);
-    transition: color 0.2s;
-    background: transparent;
-    border: none;
-    padding: 0;
+.tetrone-modal-header-actions .tetrone-modal-close {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.vk-close-btn:hover {
-    color: var(--theme-error);
-}
-
-.tetrone-edit-actions,
-.tetrone-setup-actions-wrapper {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.tetrone-section-title-spaced {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.tetrone-modal-content-split {
-    width: 800px !important;
-    max-width: 95vw !important;
-}
-
-.tetrone-sticker-editor-layout {
-    display: flex;
-    background: var(--theme-bg-box);
-}
-
-.tetrone-sticker-editor-form {
-    width: 300px;
-    padding: 20px;
-    border-right: 1px solid var(--theme-border);
-    flex-shrink: 0;
-}
-
-.tetrone-sticker-editor-preview {
-    flex: 1;
-    padding: 20px;
-    background: var(--theme-bg-page);
-    overflow-y: auto;
-    max-height: 70vh;
-}
-
-.tetrone-sticker-preview-posts {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    pointer-events: none;
-}
-
-.tetrone-fake-post {
-    border: 1px solid var(--theme-border);
-    background: var(--theme-bg-box);
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.tetrone-pack-manager-scrollable {
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.tetrone-modal-header.vk-blue {
-    background: var(--theme-header-bg);
-    color: var(--theme-text-main);
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--theme-border);
-}
-
-.tetrone-modal-header.vk-blue h3 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--theme-link);
-}
-
-.vk-close-btn {
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    color: var(--theme-text-muted);
-    transition: color 0.2s;
-    background: transparent;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.vk-close-btn:hover {
-    color: var(--theme-error);
-}
-
-.tetrone-modal-footer.vk-gray {
-    background: var(--theme-bg-page);
-    border-top: 1px solid var(--theme-border);
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.tetrone-modal-footer-right {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-left: auto;
-}
-
-.tetrone-hidden {
-    display: none !important;
-}
-
-@media (max-width: 768px) {
-    .tetrone-sticker-editor-layout {
-        flex-direction: column;
-    }
-
-    .tetrone-sticker-editor-form {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--theme-border);
-    }
+    height: 100%;
 }
 
 @media (max-width: 768px) {
     .tetrone-modal-overlay {
-        align-items: center;
         padding: 10px;
     }
 
     .tetrone-modal-dialog {
-        max-width: 100%;
         width: 100%;
-        margin: 0;
+        margin: auto;
     }
 
     .tetrone-modal-fullscreen-layout {
         flex-direction: column;
-        overflow-y: auto;
-    }
-
-    .tetrone-modal-media-section {
-        height: 60vh;
-        flex: none;
-    }
-
-    .tetrone-modal-sidebar-section {
-        width: 100%;
-        height: auto;
-        min-height: 40vh;
-        border-left: none;
-    }
-
-    .tetrone-modal-close-fullscreen {
-        top: 10px;
-        right: 10px;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .tetrone-modal-content.vk-style {
-        width: 95%;
-        margin: 0 auto;
-    }
-
-    .tetrone-sticker-detail-popover {
-        width: 80%;
-    }
-
-    .tetrone-modal-fullscreen-layout {
-        flex-direction: column;
-        overflow-y: auto;
-        height: 100%;
     }
 
     .tetrone-modal-media-section {
         flex: none;
         width: 100%;
-        height: auto;
-        min-height: 45vh;
-        max-height: 70vh;
+        height: 50vh;
+        padding: 0;
         background: #000;
     }
 
     .tetrone-modal-sidebar-section {
         width: 100%;
-        flex: none;
-        height: auto;
+        flex: 1;
         min-height: 50vh;
         border-left: none;
-        border-top: 1px solid var(--theme-border);
-    }
-
-    .tetrone-modal-sidebar-scroll {
-        overflow-y: visible;
-        padding: 15px 10px;
+        border-top: 1px solid #333;
     }
 
     .tetrone-modal-close-fullscreen {
-        position: fixed;
-        top: 10px;
-        right: 10px;
         width: 35px;
         height: 35px;
         font-size: 18px;
-    }
-
-    .tetrone-modal-nav-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 24px;
-    }
-
-    .tetrone-modal-nav-btn.left {
-        left: 10px;
-    }
-
-    .tetrone-modal-nav-btn.right {
-        right: 10px;
     }
 }

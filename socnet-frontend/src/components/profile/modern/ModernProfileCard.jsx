@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useUserProfileLogic } from "../hooks/useUserProfileLogic";
 import { AuthContext } from "../../../context/AuthContext";
-import ReportModal from "../../common/ReportModal";
+import ReportModal from "../../modals/ReportModal";
 import { userRole } from "../../../config";
 import StaffBanner from "../classic/StaffBanner";
 import Banner from "./Banner";

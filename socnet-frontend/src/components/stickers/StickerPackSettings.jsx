@@ -56,7 +56,7 @@ export default function StickerPackSettings({
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     accept="image/png, image/jpeg, image/webp"
-                    className="tetrone-hidden-input"
+                    className="tetrone-hidden"
                 />
             </div>
         </div>

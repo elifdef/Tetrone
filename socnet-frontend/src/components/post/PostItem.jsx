@@ -4,7 +4,7 @@ import { usePostActions } from "./hooks/usePostActions";
 import PostHeader from "./PostHeader";
 import PostContent from "./content/PostContent";
 import PostFooter from "./PostFooter";
-import ReportModal from "../common/ReportModal";
+import ReportModal from "../modals/ReportModal";
 
 
 export default function PostItem({

@@ -2,11 +2,12 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import StickerService from '../../services/sticker.service';
 import { notifyError, notifySuccess } from '../common/Notify';
-import StickerEditorModal from './StickerEditorModal';
-import GlobalModal from '../common/GlobalModal';
+import StickerEditorModal from '../modals/StickerEditorModal';
+import { useModal } from '../../context/ModalContext';
 
 export default function StickerPackManager({ existingPack = null, onSuccess, onCancel, onRefresh }) {
     const { t } = useTranslation();
+    const { openConfirm } = useModal();
 
     const [packId, setPackId] = useState(existingPack?.id || null);
     const [title, setTitle] = useState(existingPack?.title || '');
@@ -24,7 +25,6 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
 
     const [isSaving, setIsSaving] = useState(false);
     const [editorModal, setEditorModal] = useState({ isOpen: false, sticker: null });
-    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false, type: null });
 
     const [stickersChanged, setStickersChanged] = useState(false);
     const fileInputRef = useRef(null);
@@ -36,11 +36,26 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
         stickersChanged ||
         deletedStickerIds.length > 0;
 
-    const handleCloseAttempt = () => {
+    const handleCloseAttempt = async () => {
         if (hasChanges) {
-            setConfirmConfig({ isOpen: true, type: 'close' });
+            const isConfirmed = await openConfirm(t('stickers.unsaved_changes_confirm'), t('common.confirm'));
+            if (isConfirmed) onCancel();
         } else {
             onCancel();
+        }
+    };
+
+    const executeDeletePack = async () => {
+        const isConfirmed = await openConfirm(t('stickers.confirm_delete_pack'), t('common.confirm'));
+        if (!isConfirmed) return;
+
+        try {
+            await StickerService.deletePack(packId);
+            notifySuccess(t('stickers.deleted'));
+            if (onSuccess) onSuccess();
+            if (onRefresh) onRefresh();
+        } catch (error) {
+            notifyError(error.message);
         }
     };
 
@@ -113,17 +128,6 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
         }
     };
 
-    const executeDeletePack = async () => {
-        try {
-            await StickerService.deletePack(packId);
-            notifySuccess(t('stickers.deleted'));
-            if (onSuccess) onSuccess();
-            if (onRefresh) onRefresh();
-        } catch (error) {
-            notifyError(error.message);
-        }
-    };
-
     const handleStickerSavedLocal = (stickerData) => {
         setStickersChanged(true);
         setLocalStickers(prev => {
@@ -139,15 +143,6 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
         if (existingPack?.stickers?.find(s => s.id === id)) {
             setDeletedStickerIds(prev => [...prev, id]);
         }
-    };
-
-    const handleConfirmResolve = (result) => {
-        if (result && confirmConfig.type === 'close') {
-            onCancel();
-        } else if (result && confirmConfig.type === 'deletePack') {
-            executeDeletePack();
-        }
-        setConfirmConfig({ isOpen: false, type: null });
     };
 
     return (
@@ -188,7 +183,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                             ref={fileInputRef}
                             onChange={handleCoverChange}
                             accept="image/png, image/jpeg, image/webp"
-                            className="tetrone-hidden-input"
+                            className="tetrone-hidden"
                         />
                     </div>
                 </div>
@@ -223,12 +218,12 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                 )}
             </div>
 
-            <div className="tetrone-modal-footer vk-gray">
+            <div className="tetrone-modal-footer tetrone-flex-between">
                 <div>
                     {packId && (
                         <button
                             className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
-                            onClick={() => setConfirmConfig({ isOpen: true, type: 'deletePack' })}
+                            onClick={executeDeletePack}
                         >
                             {t('stickers.delete_pack')}
                         </button>
@@ -252,16 +247,6 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                     onDelete={handleStickerDeleteLocal}
                 />
             )}
-
-            <GlobalModal
-                isOpen={confirmConfig.isOpen}
-                type="confirm"
-                message={confirmConfig.type === 'close' ? t('stickers.unsaved_changes_confirm') : t('stickers.confirm_delete_pack')}
-                btnSubmit={t('common.yes')}
-                btnCancel={t('common.no')}
-                onClose={() => setConfirmConfig({ isOpen: false, type: null })}
-                onResolve={handleConfirmResolve}
-            />
         </div>
     );
 }

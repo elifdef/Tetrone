@@ -71,15 +71,15 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
 
     return (
         <div className="tetrone-modal-overlay" onClick={handleOverlayClick}>
-            <div className="tetrone-modal-content vk-style" onClick={e => e.stopPropagation()}>
+            <div className="tetrone-modal-dialog" onClick={e => e.stopPropagation()}>
 
-                <div className="tetrone-modal-header vk-blue">
+                <div className="tetrone-modal-header">
                     <h3>{t('stickers.view_pack')}</h3>
 
                     <div className="tetrone-modal-header-actions">
                         <div className="tetrone-post-actions-container" ref={menuRef}>
                             <button
-                                className="vk-close-btn"
+                                className="tetrone-modal-close"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                             >
                                 <DotsIcon width={16} height={16} />
@@ -93,11 +93,11 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                                 </div>
                             )}
                         </div>
-                        <div className="vk-close-btn" onClick={onClose} title={t('common.close')}>&times;</div>
+                        <button className="tetrone-modal-close" onClick={onClose} title={t('common.close')}>✖</button>
                     </div>
                 </div>
 
-                <div className="tetrone-modal-body tetrone-pack-body">
+                <div className="tetrone-modal-body">
                     <div className="tetrone-pack-info-block">
                         <img src={pack.cover_url} className="tetrone-pack-cover-img" alt="" />
                         <div className="tetrone-pack-text-info">
@@ -112,7 +112,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                             {pack.stickers.map(sticker => (
                                 <div
                                     key={sticker.id}
-                                    className="tetrone-grid-item"
+                                    className="tetrone-grid-item tetrone-pointer"
                                     onClick={() => setSelectedSticker(sticker)}
                                 >
                                     <img src={sticker.url} alt={sticker.shortcode} />
@@ -126,10 +126,10 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                     )}
 
                     {selectedSticker && (
-                        <div className="tetrone-emoji-detail-popover" ref={detailRef}>
-                            <div className="tetrone-modal-header vk-blue">
+                        <div className="tetrone-sticker-detail-popover" ref={detailRef}>
+                            <div className="tetrone-modal-header">
                                 <h3>{t('stickers.info_title')}</h3>
-                                <div className="vk-close-btn" onClick={() => setSelectedSticker(null)}>&times;</div>
+                                <button className="tetrone-modal-close" onClick={() => setSelectedSticker(null)}>✖</button>
                             </div>
                             <div className="tetrone-detail-content">
                                 <img src={selectedSticker.url} className="tetrone-detail-big-img" alt="" />
@@ -144,17 +144,22 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                                     </div>
                                 )}
                             </div>
-                            <button
-                                className="tetrone-btn tetrone-btn-small tetrone-btn-full-width tetrone-mt-10"
-                                onClick={() => toggleFavorite(selectedSticker)}
-                            >
-                                ⭐ {t('stickers.save_to_favorites')}
-                            </button>
+                            <div className="tetrone-modal-footer" style={{ justifyContent: 'center' }}>
+                                <button
+                                    className="tetrone-btn tetrone-btn-small tetrone-btn-full-width"
+                                    onClick={() => toggleFavorite(selectedSticker)}
+                                >
+                                    ⭐ {t('stickers.save_to_favorites')}
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
 
-                <div className="tetrone-modal-footer vk-gray">
+                <div className="tetrone-modal-footer">
+                    <button className="tetrone-btn-ghost" onClick={onClose}>
+                        {t('common.close')}
+                    </button>
                     <button
                         className={`tetrone-btn ${isInstalled ? 'tetrone-btn-cancel' : ''}`}
                         onClick={handleToggleInstall}

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import Button from "../UI/Button";
+import Button from "../ui/Button";
 
 export default function GlobalModal({
-    isOpen, onClose, onResolve, type, message, placeholder, inputValue,
+    isOpen, onClose, onResolve, type, title, message, placeholder, inputValue,
     setInputValue, btnSubmit, btnCancel, allowEmptyPrompt, children
 }) {
     const inputRef = useRef(null);
@@ -51,31 +51,38 @@ export default function GlobalModal({
                     {children}
                 </div>
             ) : (
-                <div className="tetrone-modal-dialog" onClick={(e) => e.stopPropagation()}>
-                    <div className="tetrone-modal-message">{message}</div>
+                <div className="tetrone-modal-dialog modal-sm" onClick={(e) => e.stopPropagation()}>
+                    <div className="tetrone-modal-header">
+                        <h3>{title}</h3>
+                        <button className="tetrone-modal-close" onClick={handleCancel}>✖</button>
+                    </div>
 
-                    {type === 'prompt' && (
-                        <input
-                            ref={inputRef} type="text" value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && !isSubmitDisabled && handleSubmit()}
-                            className="tetrone-form-input tetrone-modal-input" placeholder={placeholder}
-                        />
-                    )}
+                    <div className="tetrone-modal-body">
+                        <div className="tetrone-modal-message">{message}</div>
 
-                    {type === 'password' && (
-                        <div className="tetrone-password-wrapper">
+                        {type === 'prompt' && (
                             <input
-                                ref={inputRef} type="password" value={inputValue}
+                                ref={inputRef} type="text" value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && !isSubmitDisabled && handleSubmit()}
-                                className="tetrone-form-input tetrone-modal-input" placeholder={placeholder || '********'}
+                                className="tetrone-form-input tetrone-modal-input" placeholder={placeholder}
                             />
-                        </div>
-                    )}
+                        )}
 
-                    <div className="tetrone-modal-actions">
-                        <Button className="tetrone-btn-cancel" onClick={handleCancel}>{btnCancel}</Button>
+                        {type === 'password' && (
+                            <div className="tetrone-password-wrapper">
+                                <input
+                                    ref={inputRef} type="password" value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && !isSubmitDisabled && handleSubmit()}
+                                    className="tetrone-form-input tetrone-modal-input" placeholder={placeholder || '********'}
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="tetrone-modal-footer">
+                        <Button className="tetrone-btn-ghost" onClick={handleCancel}>{btnCancel}</Button>
                         <Button variant="save" onClick={handleSubmit} disabled={isSubmitDisabled}>{btnSubmit}</Button>
                     </div>
                 </div>

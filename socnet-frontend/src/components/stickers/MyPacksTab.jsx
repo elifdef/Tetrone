@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import StickerPackManager from './StickerPackManager';
-import StickerPackModal from '../editor/StickerPackModal';
+import StickerPackModal from '../modals/StickerPackModal';
 
 export default function MyPacksTab({ packs, onRefresh }) {
     const { t } = useTranslation();
@@ -39,56 +39,61 @@ export default function MyPacksTab({ packs, onRefresh }) {
                         className="tetrone-grid-item tetrone-pointer"
                         onClick={() => handlePackClick(pack)}
                     >
-                        <img src={pack.cover_url} alt={pack.title} title={pack.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img
+                            src={pack.cover_url}
+                            alt={pack.title}
+                            title={pack.title}
+                            className="tetrone-img-cover"
+                        />
                     </div>
                 ))}
             </div>
 
             {isCreating && (
                 <div className="tetrone-modal-overlay" onClick={() => setIsCreating(false)}>
-                    <div className="tetrone-modal-content vk-style tetrone-modal-content-large" onClick={e => e.stopPropagation()}>
-                        <div className="tetrone-modal-header vk-blue">
+                    <div className="tetrone-modal-dialog modal-lg" onClick={e => e.stopPropagation()}>
+
+                        <div className="tetrone-modal-header">
                             <h3>{t('stickers.create_pack')}</h3>
-                            <button className="vk-close-btn" onClick={() => {
+                            <button className="tetrone-modal-close" onClick={() => {
                                 setIsCreating(false);
                                 if (onRefresh) onRefresh();
                             }}>✖</button>
                         </div>
-                        <div className="tetrone-pack-body" style={{ padding: '15px' }}>
-                            <StickerPackManager
-                                onSuccess={() => {
-                                    setIsCreating(false);
-                                    if (onRefresh) onRefresh();
-                                }}
-                                onCancel={() => setIsCreating(false)}
-                                onRefresh={onRefresh}
-                            />
-                        </div>
+
+                        <StickerPackManager
+                            onSuccess={() => {
+                                setIsCreating(false);
+                                if (onRefresh) onRefresh();
+                            }}
+                            onCancel={() => setIsCreating(false)}
+                            onRefresh={onRefresh}
+                        />
                     </div>
                 </div>
             )}
 
             {editingPackId && editingPack && (
                 <div className="tetrone-modal-overlay" onClick={() => setEditingPackId(null)}>
-                    <div className="tetrone-modal-content vk-style tetrone-modal-content-large" onClick={e => e.stopPropagation()}>
-                        <div className="tetrone-modal-header vk-blue">
+                    <div className="tetrone-modal-dialog modal-lg" onClick={e => e.stopPropagation()}>
+
+                        <div className="tetrone-modal-header">
                             <h3>{t('stickers.edit_pack')}</h3>
-                            <button className="vk-close-btn" onClick={() => {
+                            <button className="tetrone-modal-close" onClick={() => {
                                 setEditingPackId(null);
                                 if (onRefresh) onRefresh();
                             }}>✖</button>
                         </div>
-                        <div className="tetrone-pack-body" style={{ padding: '15px' }}>
-                            <StickerPackManager
-                                existingPack={editingPack}
-                                onSuccess={() => {
-                                    setEditingPackId(null);
-                                    if (onRefresh) onRefresh();
-                                }}
-                                onCancel={() => setEditingPackId(null)}
-                                onRefresh={onRefresh}
-                            />
-                        </div>
+
+                        <StickerPackManager
+                            existingPack={editingPack}
+                            onSuccess={() => {
+                                setEditingPackId(null);
+                                if (onRefresh) onRefresh();
+                            }}
+                            onCancel={() => setEditingPackId(null)}
+                            onRefresh={onRefresh}
+                        />
                     </div>
                 </div>
             )}

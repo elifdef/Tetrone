@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useCallback } from 'react';
-import GlobalModal from '../components/common/GlobalModal';
+import GlobalModal from '../components/modals/GlobalModal';
 import i18n from '../i18n';
 
 const ModalContext = createContext();
@@ -9,7 +9,8 @@ export const useModal = () => useContext(ModalContext);
 export const ModalProvider = ({ children }) => {
     const [modalState, setModalState] = useState({
         isOpen: false,
-        type: null, // 'confirm', 'prompt', 'password', 'custom'
+        type: null,
+        title: '',
         message: '',
         placeholder: '',
         inputValue: '',
@@ -24,26 +25,26 @@ export const ModalProvider = ({ children }) => {
         setModalState(prev => ({ ...prev, isOpen: false, inputValue: '', customContent: null }));
     };
 
-    const openConfirm = useCallback((message, btnYes = i18n.t('common.yes'), btnNo = i18n.t('common.no')) => {
+    const openConfirm = useCallback((message, title = i18n.t('common.confirm'), btnYes = i18n.t('common.yes'), btnNo = i18n.t('common.cancel')) => {
         return new Promise((resolve) => {
             setModalState({
-                isOpen: true, type: 'confirm', message, btnSubmit: btnYes, btnCancel: btnNo, resolve, inputValue: '', customContent: null
+                isOpen: true, type: 'confirm', title, message, btnSubmit: btnYes, btnCancel: btnNo, resolve, inputValue: '', customContent: null
             });
         });
     }, []);
 
-    const openPrompt = useCallback((message, placeholder = '', allowEmpty = false, btnSubmit = i18n.t('common.save'), btnCancel = i18n.t('common.cancel')) => {
+    const openPrompt = useCallback((message, title = i18n.t('common.action'), placeholder = '', allowEmpty = false, btnSubmit = i18n.t('common.save'), btnCancel = i18n.t('common.cancel')) => {
         return new Promise((resolve) => {
             setModalState({
-                isOpen: true, type: 'prompt', message, placeholder, allowEmptyPrompt: allowEmpty, btnSubmit, btnCancel, resolve, inputValue: '', customContent: null
+                isOpen: true, type: 'prompt', title, message, placeholder, allowEmptyPrompt: allowEmpty, btnSubmit, btnCancel, resolve, inputValue: '', customContent: null
             });
         });
     }, []);
 
-    const openPassword = useCallback((message = i18n.t('error.enter_confirm_password'), btnSubmit = i18n.t('common.confirm')) => {
+    const openPassword = useCallback((message = i18n.t('error.enter_confirm_password'), title = i18n.t('common.security'), btnSubmit = i18n.t('common.confirm')) => {
         return new Promise((resolve) => {
             setModalState({
-                isOpen: true, type: 'password', message, placeholder: '••••••••', allowEmptyPrompt: false, btnSubmit, btnCancel: i18n.t('common.cancel'), resolve, inputValue: '', customContent: null
+                isOpen: true, type: 'password', title, message, placeholder: '********', allowEmptyPrompt: false, btnSubmit, btnCancel: i18n.t('common.cancel'), resolve, inputValue: '', customContent: null
             });
         });
     }, []);
@@ -59,11 +60,11 @@ export const ModalProvider = ({ children }) => {
     return (
         <ModalContext.Provider value={{ openConfirm, openPrompt, openPassword, openCustom, closeModal: closeAndReset }}>
             {children}
-
             <GlobalModal
                 isOpen={modalState.isOpen}
                 onClose={closeAndReset}
                 type={modalState.type}
+                title={modalState.title}
                 message={modalState.message}
                 placeholder={modalState.placeholder}
                 inputValue={modalState.inputValue}

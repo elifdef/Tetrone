@@ -5,7 +5,7 @@ import AttachBar from './components/AttachBar';
 import FormatBar from './components/FormatBar';
 import MediaPreviews from './components/MediaPreviews';
 import YouTubePreviews from './components/YouTubePreviews';
-import PollCreator from './components/PollCreator';
+import PollCreatorModal from '../modals/PollCreatorModal';
 import { PollIcon } from '../ui/Icons';
 
 export default function CreatePostForm({ onSubmitSuccess }) {
@@ -90,26 +90,15 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                 </button>
             </div>
 
-            {showPollCreator && (
-                <div className="tetrone-modal-overlay" onClick={() => setShowPollCreator(false)}>
-                    <div className="tetrone-modal-content vk-style tetrone-poll-modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="tetrone-modal-header vk-blue">
-                            <h3>{t('poll.create_title')}</h3>
-                            <button className="vk-close-btn" onClick={() => setShowPollCreator(false)}>✖</button>
-                        </div>
-                        <div className="tetrone-pack-body">
-                            <PollCreator
-                                initialData={pollData}
-                                onSave={(data) => {
-                                    setPollData(data);
-                                    setShowPollCreator(false);
-                                }}
-                                onCancel={() => setShowPollCreator(false)}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
+            <PollCreatorModal
+                isOpen={showPollCreator}
+                onClose={() => setShowPollCreator(false)}
+                pollData={pollData}
+                onSave={(data) => {
+                    setPollData(data);
+                    setShowPollCreator(false);
+                }}
+            />
         </div>
     );
 }

@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PostService from '../../../services/post.service';
 import { notifyError } from '../../common/Notify';
-import { Link } from 'react-router-dom';
+import { useModal } from '../../../context/ModalContext';
+import PollVotersModal from '../../modals/PollVotersModal';
 
 export default function PostPoll({ poll, postId, isOwner }) {
     const { t } = useTranslation();
+    const { openConfirm } = useModal();
 
     const [results, setResults] = useState({});
     const [votedOptionIds, setVotedOptionIds] = useState([]);
@@ -31,7 +33,6 @@ export default function PostPoll({ poll, postId, isOwner }) {
     const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(null);
     const [isLoadingVoters, setIsLoadingVoters] = useState(false);
-    const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
 
     if (!poll) return null;
 
@@ -47,7 +48,6 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
     const submitVote = async (idsToSubmit) => {
         if (idsToSubmit.length === 0 || isClosed) return;
-
         setIsLoading(true);
         const res = await PostService.votePoll(postId, idsToSubmit);
 
@@ -55,7 +55,6 @@ export default function PostPoll({ poll, postId, isOwner }) {
             setResults(res.data.results);
             setVotedOptionIds(res.data.voted_option_ids);
             setDraftOptionIds(res.data.voted_option_ids);
-
             if (res.data.quiz_data) setQuizData(res.data.quiz_data);
         } else {
             notifyError(res.message || t('error.connection'));
@@ -70,32 +69,27 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
         setActiveTab(optionId);
         setIsVotersModalOpen(true);
-
-        // Якщо дані вже завантажені раніше, не робимо зайвий запит
         if (votersData) return;
 
         setIsLoadingVoters(true);
         const res = await PostService.getPollVoters(postId);
 
-        if (res.success) {
-            setVotersData(res.data?.voters || res.data);
-        } else {
+        if (res.success) setVotersData(res.data?.voters || res.data);
+        else {
             notifyError(res.message || t('poll.error_voters'));
             setIsVotersModalOpen(false);
         }
         setIsLoadingVoters(false);
     };
 
-    const closePoll = async () => {
+    const handleClosePollClick = async () => {
+        const isConfirmed = await openConfirm(t('poll.close_confirm_text'), t('poll.close_poll_title'));
+        if (!isConfirmed) return;
+
         setIsLoading(true);
         const res = await PostService.closePoll(postId);
-
-        if (res.success) {
-            setIsClosed(true);
-            setIsCloseConfirmOpen(false);
-        } else {
-            notifyError(res.message || t('error.connection'));
-        }
+        if (res.success) setIsClosed(true);
+        else notifyError(res.message || t('error.connection'));
         setIsLoading(false);
     };
 
@@ -105,11 +99,8 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
         if (poll.is_multiple_choice) {
             let newDraft = [...draftOptionIds];
-            if (newDraft.includes(optionId)) {
-                newDraft = newDraft.filter(id => id !== optionId);
-            } else {
-                newDraft.push(optionId);
-            }
+            if (newDraft.includes(optionId)) newDraft = newDraft.filter(id => id !== optionId);
+            else newDraft.push(optionId);
             setDraftOptionIds(newDraft);
         } else {
             if (draftOptionIds.includes(optionId)) return;
@@ -126,9 +117,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
     return (
         <div className="tetrone-poll">
-            <div className="tetrone-poll-question">
-                {poll.question}
-            </div>
+            <div className="tetrone-poll-question">{poll.question}</div>
 
             <div className="tetrone-poll-options">
                 {optionsToRender.map((option) => {
@@ -136,49 +125,25 @@ export default function PostPoll({ poll, postId, isOwner }) {
                     const isSelected = draftOptionIds.includes(option.id);
                     const percent = getPercentage(option.id);
                     const canVoteNow = (votedOptionIds.length === 0 || poll.can_change_vote) && !isClosed;
-
                     let quizClass = '';
                     let icon = null;
 
                     if (showResults && isQuiz && quizData) {
-                        if (option.is_correct) {
-                            quizClass = 'quiz-correct';
-                            icon = '✅';
-                        } else if (isVoted) {
-                            quizClass = 'quiz-incorrect';
-                            icon = '❌';
-                        }
+                        if (option.is_correct) { quizClass = 'quiz-correct'; icon = '✅'; }
+                        else if (isVoted) { quizClass = 'quiz-incorrect'; icon = '❌'; }
                     }
 
                     return (
                         <div key={option.id} className="tetrone-poll-option-wrapper">
-                            <div
-                                onClick={() => handleOptionClick(option.id)}
-                                className={`tetrone-poll-option ${isSelected ? 'is-voted' : ''} ${canVoteNow ? 'can-vote' : 'disabled'} ${quizClass}`}
-                            >
-                                {showResults && (
-                                    <div className="tetrone-poll-fill" style={{ width: `${percent}%` }}></div>
-                                )}
-
+                            <div onClick={() => handleOptionClick(option.id)} className={`tetrone-poll-option ${isSelected ? 'is-voted' : ''} ${canVoteNow ? 'can-vote' : 'disabled'} ${quizClass}`}>
+                                {showResults && <div className="tetrone-poll-fill" style={{ width: `${percent}%` }}></div>}
                                 <div className="tetrone-poll-text">
-                                    {poll.is_multiple_choice && (
-                                        <input
-                                            type="checkbox"
-                                            checked={isSelected}
-                                            readOnly
-                                            className="tetrone-poll-multiple-checkbox"
-                                        />
-                                    )}
+                                    {poll.is_multiple_choice && <input type="checkbox" checked={isSelected} readOnly className="tetrone-poll-multiple-checkbox" />}
                                     {option.text}
                                     {icon && <span className="tetrone-poll-icon">{icon}</span>}
                                 </div>
-
                                 {showResults && (
-                                    <div
-                                        className={`tetrone-poll-percent ${!poll.is_anonymous ? 'clickable' : 'default'}`}
-                                        onClick={(e) => openVotersModal(option.id, e)}
-                                        title={!poll.is_anonymous ? t('poll.view_voters') : ''}
-                                    >
+                                    <div className={`tetrone-poll-percent ${!poll.is_anonymous ? 'clickable' : 'default'}`} onClick={(e) => openVotersModal(option.id, e)} title={!poll.is_anonymous ? t('poll.view_voters') : ''}>
                                         {percent}%
                                     </div>
                                 )}
@@ -197,14 +162,8 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
             {poll.is_multiple_choice && hasDraftChanges && !isClosed && (
                 <div className="tetrone-poll-actions tetrone-poll-actions-start">
-                    <button className="tetrone-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>
-                        {t('poll.submit_vote')}
-                    </button>
-                    {votedOptionIds.length > 0 && (
-                        <button className="tetrone-btn tetrone-btn-cancel" onClick={cancelDraft} disabled={isLoading}>
-                            {t('common.cancel')}
-                        </button>
-                    )}
+                    <button className="tetrone-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>{t('poll.submit_vote')}</button>
+                    {votedOptionIds.length > 0 && <button className="tetrone-btn tetrone-btn-cancel" onClick={cancelDraft} disabled={isLoading}>{t('common.cancel')}</button>}
                 </div>
             )}
 
@@ -212,67 +171,24 @@ export default function PostPoll({ poll, postId, isOwner }) {
                 <div className="tetrone-poll-meta-left">
                     <span>{totalVotes} {t('post.votes_count', { count: totalVotes })}</span>
                     {poll.is_anonymous && <><span className="dot">•</span><span>{t('post.anonymous_poll')}</span></>}
-
-                    {isClosed && (
-                        <>
-                            <span className="dot">•</span>
-                            <span className="tetrone-poll-closed-badge">{t('poll.closed_badge')}</span>
-                        </>
-                    )}
+                    {isClosed && <><span className="dot">•</span><span className="tetrone-poll-closed-badge">{t('poll.closed_badge')}</span></>}
                 </div>
 
                 {isOwner && !isClosed && (
-                    <button className="tetrone-poll-close-btn" onClick={() => setIsCloseConfirmOpen(true)}>
-                        {t('common.close')}
-                    </button>
+                    <button className="tetrone-poll-close-btn" onClick={handleClosePollClick}>{t('common.close')}</button>
                 )}
             </div>
 
-            {isCloseConfirmOpen && (
-                <div className="tetrone-modal-overlay" onClick={() => setIsCloseConfirmOpen(false)}>
-                    <div className="tetrone-modal-dialog tetrone-modal-dialog-sm" onClick={e => e.stopPropagation()}>
-                        <div className="tetrone-modal-text-confirm">
-                            {t('poll.close_confirm_text')}
-                        </div>
-                        <div className="tetrone-modal-actions">
-                            <button className="tetrone-btn-ghost" onClick={() => setIsCloseConfirmOpen(false)}>{t('common.cancel')}</button>
-                            <button className="tetrone-btn" onClick={closePoll} disabled={isLoading}>{t('common.close')}</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {isVotersModalOpen && !poll.is_anonymous && (
-                <div className="tetrone-modal-overlay" onClick={() => setIsVotersModalOpen(false)}>
-                    <div className="tetrone-modal-dialog" onClick={e => e.stopPropagation()}>
-                        <button className="tetrone-modal-close" onClick={() => setIsVotersModalOpen(false)}>✖</button>
-                        <h3 className="tetrone-poll-voters-header">{t('poll.voters_title')}</h3>
-                        <div className="tetrone-tabs">
-                            {optionsToRender.map(opt => (
-                                <button key={opt.id} className={`tetrone-tab ${activeTab === opt.id ? 'active' : ''}`} onClick={() => setActiveTab(opt.id)}>
-                                    {opt.text} <span className="tetrone-tab-count">{results[opt.id] || 0}</span>
-                                </button>
-                            ))}
-                        </div>
-                        <div className="tetrone-poll-voters-list-container">
-                            {isLoadingVoters ? (
-                                <div className="tetrone-poll-voters-state-msg">{t('common.loading')}</div>
-                            ) : (
-                                votersData && votersData[activeTab] && votersData[activeTab].length > 0 ? (
-                                    votersData[activeTab].map(voter => (
-                                        <Link to={`/${voter.username}`} key={voter.id} className="tetrone-poll-voter-row">
-                                            <img src={voter.avatar} alt="avatar" className="tetrone-poll-voter-img" />
-                                            <span className="tetrone-poll-voter-name">{voter.first_name} {voter.last_name}</span>
-                                        </Link>
-                                    ))
-                                ) : (
-                                    <div className="tetrone-poll-voters-state-msg">{t('poll.no_voters_yet')}</div>
-                                )
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
+            <PollVotersModal
+                isOpen={isVotersModalOpen}
+                onClose={() => setIsVotersModalOpen(false)}
+                pollData={votersData}
+                optionsToRender={optionsToRender}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isLoadingVoters={isLoadingVoters}
+                results={results}
+            />
         </div>
     );
 }

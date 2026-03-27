@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import { EditIcon, DeleteIcon, ReplyIcon, ReportIcon, DotsIcon } from '../ui/Icons';
-import ReportModal from '../common/ReportModal';
+import ReportModal from '../modals/ReportModal';
 import RichText from '../common/RichText';
 import Editor from '../editor/Editor';
 import { isEditorEmpty } from '../../utils/editorHelpers';

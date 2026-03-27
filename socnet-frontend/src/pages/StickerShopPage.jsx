@@ -4,7 +4,7 @@ import StickerService from '../services/sticker.service';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { notifyError } from '../components/common/Notify';
 import { useTranslation } from 'react-i18next';
-import StickerPackModal from '../components/editor/StickerPackModal';
+import StickerPackModal from '../components/modals/StickerPackModal';
 
 import CatalogTab from '../components/stickers/CatalogTab';
 import MyPacksTab from '../components/stickers/MyPacksTab';

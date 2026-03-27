@@ -1,14 +1,15 @@
 import React, { useState, useRef, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
+import { useModal } from '../../context/ModalContext';
 import { notifyError } from '../common/Notify';
 import { ImageIcon } from '../ui/Icons';
 import PostItem from '../post/PostItem';
-import GlobalModal from '../common/GlobalModal';
 
 export default function StickerEditorModal({ stickerToEdit = null, onClose, onSuccess, onDelete }) {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
+    const { openConfirm } = useModal();
 
     const isEditMode = !!stickerToEdit;
 
@@ -17,7 +18,6 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
     const [shortcode, setShortcode] = useState(stickerToEdit?.shortcode || '');
     const [keywords, setKeywords] = useState(stickerToEdit?.keywords || '');
 
-    const [confirmDelete, setConfirmDelete] = useState(false);
     const fileInputRef = useRef(null);
 
     const isFormValid = preview !== null && shortcode.trim().length >= 2;
@@ -52,6 +52,14 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
         onClose();
     };
 
+    const handleDeleteClick = async () => {
+        const isConfirmed = await openConfirm(t('common.are_u_sure'), t('common.confirm'));
+        if (isConfirmed && onDelete) {
+            onDelete(stickerToEdit.id);
+            onClose();
+        }
+    };
+
     const fakePostBig = useMemo(() => ({
         id: -1,
         content: {
@@ -68,7 +76,6 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                 }]
             }]
         },
-
         user: user,
         created_at: new Date().toISOString(),
         likes_count: 0, comments_count: 0, reposts_count: 0,
@@ -76,24 +83,15 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
     }), [preview, stickerToEdit?.id, user]);
 
     const fakePostSmall = useMemo(() => ({
-        id: 999992,
+        id: -1,
         content: {
             type: 'doc',
             content: [{
                 type: 'paragraph',
-                content: [{
-                    type: 'text',
-                    text: t(`stickers.preview_text_${Math.floor(Math.random() * 8 + 1)}`)
-                },
-                {
-                    type: 'customSticker',
-                    attrs:
-                    {
-                        id: stickerToEdit?.id,
-                        shortcode: 'demo_code',
-                        src: preview
-                    }
-                }]
+                content: [
+                    { type: 'text', text: t(`stickers.preview_text_${Math.floor(Math.random() * 8 + 1)}`) },
+                    { type: 'customSticker', attrs: { id: stickerToEdit?.id, shortcode: 'demo_code', src: preview } }
+                ]
             }]
         },
         user: user,
@@ -111,77 +109,80 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
 
     return (
         <div className="tetrone-modal-overlay" onClick={onClose}>
-            <div className="tetrone-modal-content vk-style tetrone-modal-content-split" onClick={e => e.stopPropagation()}>
-                <div className="tetrone-modal-header vk-blue">
+            <div className="tetrone-modal-dialog modal-lg" onClick={e => e.stopPropagation()}>
+
+                <div className="tetrone-modal-header">
                     <h3>{isEditMode ? t('stickers.edit_sticker') : t('stickers.add_sticker')}</h3>
-                    <button className="vk-close-btn" onClick={onClose}>✖</button>
+                    <button className="tetrone-modal-close" onClick={onClose}>✖</button>
                 </div>
 
-                <div className="tetrone-sticker-editor-layout">
-                    <div className="tetrone-sticker-editor-form">
-                        <div className="tetrone-form-group tetrone-text-center">
-                            <div
-                                className="tetrone-sticker-upload-preview tetrone-pointer"
-                                onClick={() => fileInputRef.current.click()}
-                                title={t('stickers.click_to_upload')}
-                            >
-                                {preview ? (
-                                    <img src={preview} alt="Preview" className="tetrone-img-cover" />
-                                ) : (
-                                    <div className="tetrone-upload-placeholder">
-                                        <ImageIcon width={32} height={32} />
-                                        <span>{t('stickers.click_to_upload')}</span>
-                                    </div>
-                                )}
+                <div className="tetrone-modal-body">
+                    <div className="tetrone-sticker-editor-layout">
+                        <div className="tetrone-sticker-editor-form">
+                            <div className="tetrone-form-group tetrone-text-center">
+                                <div
+                                    className="tetrone-sticker-upload-preview tetrone-pointer"
+                                    onClick={() => fileInputRef.current.click()}
+                                    title={t('stickers.click_to_upload')}
+                                >
+                                    {preview ? (
+                                        <img src={preview} alt="Preview" className="tetrone-img-cover" />
+                                    ) : (
+                                        <div className="tetrone-upload-placeholder">
+                                            <ImageIcon width={32} height={32} />
+                                            <span>{t('stickers.click_to_upload')}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="image/png, image/webp, image/gif"
+                                    className="tetrone-hidden"
+                                />
                             </div>
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleFileChange}
-                                accept="image/png, image/webp, image/gif"
-                                className="tetrone-hidden-input"
-                            />
-                        </div>
 
-                        <div className="tetrone-form-group">
-                            <label className="tetrone-form-label">{t('stickers.table_shortcode')}</label>
-                            <input
-                                type="text"
-                                className="tetrone-form-input"
-                                value={shortcode}
-                                onChange={e => setShortcode(e.target.value)}
-                                placeholder={t('stickers.placeholder_shortcode')}
-                            />
-                        </div>
-
-                        <div className="tetrone-form-group">
-                            <label className="tetrone-form-label">{t('stickers.tags')}</label>
-                            <input
-                                type="text"
-                                className="tetrone-form-input"
-                                value={keywords}
-                                onChange={e => setKeywords(e.target.value)}
-                                placeholder={t('stickers.placeholder_tags')}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="tetrone-sticker-editor-preview">
-                        <div className="tetrone-preview-label">{t('stickers.preview_label')}</div>
-                        {preview ? previewPostsJSX : (
-                            <div className="tetrone-empty-state">
-                                <p>{t('stickers.err_no_file')}</p>
+                            <div className="tetrone-form-group">
+                                <label className="tetrone-form-label">{t('stickers.table_shortcode')}</label>
+                                <input
+                                    type="text"
+                                    className="tetrone-form-input"
+                                    value={shortcode}
+                                    onChange={e => setShortcode(e.target.value)}
+                                    placeholder={t('stickers.placeholder_shortcode')}
+                                />
                             </div>
-                        )}
+
+                            <div className="tetrone-form-group">
+                                <label className="tetrone-form-label">{t('stickers.tags')}</label>
+                                <input
+                                    type="text"
+                                    className="tetrone-form-input"
+                                    value={keywords}
+                                    onChange={e => setKeywords(e.target.value)}
+                                    placeholder={t('stickers.placeholder_tags')}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="tetrone-sticker-editor-preview">
+                            <div className="tetrone-preview-label">{t('stickers.preview_label')}</div>
+                            {preview ? previewPostsJSX : (
+                                <div className="tetrone-empty-state">
+                                    <p>{t('stickers.err_no_file')}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                <div className="tetrone-modal-footer vk-gray tetrone-flex-between">
+                <div className="tetrone-modal-footer tetrone-flex-between">
                     <div>
                         {isEditMode && (
                             <button
                                 className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
-                                onClick={() => setConfirmDelete(true)}
+                                onClick={handleDeleteClick}
                             >
                                 {t('common.delete')}
                             </button>
@@ -198,21 +199,6 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                     </div>
                 </div>
             </div>
-
-            <GlobalModal
-                isOpen={confirmDelete}
-                type="confirm"
-                message={t('common.are_u_sure')}
-                btnSubmit={t('common.yes')}
-                btnCancel={t('common.no')}
-                onClose={() => setConfirmDelete(false)}
-                onResolve={(result) => {
-                    if (result && onDelete) {
-                        onDelete(stickerToEdit.id);
-                        onClose();
-                    }
-                }}
-            />
         </div>
     );
 }
