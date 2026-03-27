@@ -7,33 +7,100 @@ use App\Models\User;
 use App\Notifications\MentionNotification;
 use App\Notifications\NewRepostNotification;
 use App\Notifications\NewWallPostNotification;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class PostService
 {
+    public const POST_RELATIONS = [
+        'user', 'targetUser', 'attachments', 'pollVotes.user', 'myPollVotes',
+        'originalPost.user', 'originalPost.attachments',
+        'originalPost.originalPost.user', 'originalPost.originalPost.attachments'
+    ];
+
     public function __construct(protected FileStorageService $fileService)
     {
     }
 
-    /**
-     * Створення нового посту.
-     */
-    public function createPost(User $user, array $data, ?array $mediaFiles): array|Post
+    public function getWallPosts(User $targetUser): LengthAwarePaginator
     {
+        $currentUser = auth('sanctum')->user();
+
+        $query = Post::select('posts.*')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->where('users.is_banned', false)
+            ->where(function ($q) use ($targetUser)
+            {
+                $q->where('posts.target_user_id', $targetUser->id)
+                    ->orWhere(function ($q2) use ($targetUser)
+                    {
+                        $q2->where('posts.user_id', $targetUser->id)->whereNull('posts.target_user_id');
+                    });
+            })
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts']);
+
+        if ($currentUser)
+        {
+            $query->withExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
+        }
+
+        return $query->latest('posts.created_at')->paginate(config('posts.max_paginate'));
+    }
+
+    public function loadPostRelations(Post $post): Post
+    {
+        $currentUser = auth('sanctum')->user();
+        $post->load(self::POST_RELATIONS)->loadCount(['likes', 'comments', 'reposts']);
+
+        if ($currentUser)
+        {
+            $post->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
+        } else
+        {
+            $post->is_liked = false;
+        }
+
+        return $post;
+    }
+
+    public function getUserAvatarPosts(User $targetUser): Collection
+    {
+        $currentUser = auth('sanctum')->user();
+
+        $posts = Post::where('user_id', $targetUser->id)
+            ->where('content->is_avatar_update', true) // Змінено пошук по JSON
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->latest()
+            ->get();
+
+        if ($currentUser)
+        {
+            $posts->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
+        }
+
+        return $posts;
+    }
+
+    public function createPost(User $user, array $data, ?array $mediaFiles): Post
+    {
+        $payload = $data['payload'] ?? [];
         $targetUserId = $data['target_user_id'] ?? null;
         $originalPostId = $data['original_post_id'] ?? null;
-        $entities = $data['entities'] ?? null;
 
-        // Перевіряємо опитування перед створенням посту
-        $pollValidation = $this->validatePoll($entities);
-        if (is_array($pollValidation))
-        {
-            return $pollValidation;
-        }
+        $this->validatePoll($payload['poll'] ?? null);
+
+        $contentData = [];
+        if (!empty($payload['text'])) $contentData['text'] = $payload['text'];
+        if (!empty($payload['poll'])) $contentData['poll'] = $payload['poll'];
+        if (!empty($payload['youtube'])) $contentData['youtube'] = $payload['youtube'];
+        if (!empty($payload['is_avatar_update'])) $contentData['is_avatar_update'] = true;
 
         $post = $user->posts()->create([
             'target_user_id' => $targetUserId == $user->id ? null : $targetUserId,
-            'content' => $data['content'] ?? null,
-            'entities' => $entities,
+            'content' => empty($contentData) ? null : $contentData,
             'original_post_id' => $originalPostId,
             'is_repost' => (bool)$originalPostId
         ]);
@@ -49,50 +116,35 @@ class PostService
         return $post;
     }
 
-    /**
-     * Оновлення посту (Текст, Медіа, Опитування).
-     */
-    public function updatePost(Post $post, array $data, ?array $newMedia, ?array $deletedMediaIds): array|Post
+    public function updatePost(Post $post, array $data, ?array $newMedia, ?array $deletedMediaIds): Post
     {
+        $payload = $data['payload'] ?? [];
         $currentMediaCount = $post->attachments()->count();
         $deletedMediaCount = !empty($deletedMediaIds) ? count($deletedMediaIds) : 0;
         $newMediaCount = !empty($newMedia) ? count($newMedia) : 0;
 
         if (($currentMediaCount - $deletedMediaCount + $newMediaCount) > 10)
         {
-            return [
-                'error' => 'ERR_MAX_MEDIA_EXCEEDED',
-                'message' => 'A post cannot have more than 10 media attachments.',
-                'status' => 422
-            ];
+            throw ValidationException::withMessages(['media' => 'A post cannot have more than 10 media attachments.']);
         }
 
-        $updateData = [];
+        $contentData = is_array($post->content) ? $post->content : [];
 
-        if (array_key_exists('content', $data))
+        if (array_key_exists('text', $payload))
         {
-            $updateData['content'] = $data['content'];
+            $contentData['text'] = $payload['text'] ?: null;
         }
-
-        if (array_key_exists('entities', $data))
+        if (array_key_exists('youtube', $payload))
         {
-            $newEntities = $data['entities'] ?? [];
-
-            // Забороняємо видаляти старе опитування при редагуванні
-            if (isset($post->entities['poll']))
-            {
-                $newEntities['poll'] = $post->entities['poll'];
-            }
-
-            $updateData['entities'] = empty($newEntities) ? null : $newEntities;
+            $contentData['youtube'] = $payload['youtube'] ?: null;
         }
 
-        if (!empty($updateData))
-        {
-            $post->update($updateData);
-        }
+        $contentData = array_filter($contentData, fn($val) => !is_null($val));
 
-        // Видалення старих медіа
+        $post->update([
+            'content' => empty($contentData) ? null : $contentData
+        ]);
+
         if (!empty($deletedMediaIds))
         {
             $attachmentsToDelete = $post->attachments()->whereIn('id', $deletedMediaIds)->get();
@@ -103,7 +155,6 @@ class PostService
             }
         }
 
-        // Завантаження нових медіа
         if (!empty($newMedia))
         {
             $this->uploadMedia($post, $post->user->username, $newMedia);
@@ -112,9 +163,6 @@ class PostService
         return $post;
     }
 
-    /**
-     * Повне видалення посту разом із файлами.
-     */
     public function deletePost(Post $post): void
     {
         $attachments = $post->attachments;
@@ -125,32 +173,21 @@ class PostService
         $post->delete();
     }
 
-    /**
-     * Валідація структури опитування.
-     */
-    private function validatePoll(?array $entities): bool|array
+    private function validatePoll(?array $poll): void
     {
-        if (!isset($entities['poll']))
-        {
-            return true;
-        }
-
-        $poll = $entities['poll'];
+        if (empty($poll)) return;
 
         if (empty(trim($poll['question'] ?? '')))
         {
-            return ['error' => 'ERR_POLL_QUESTION_EMPTY', 'message' => 'Poll question cannot be empty.', 'status' => 422];
+            throw ValidationException::withMessages(['poll' => 'Poll question cannot be empty.']);
         }
-
         if (!isset($poll['options']) || !is_array($poll['options']))
         {
-            return ['error' => 'ERR_POLL_OPTIONS_INVALID', 'message' => 'Poll options must be a valid array.', 'status' => 422];
+            throw ValidationException::withMessages(['poll' => 'Poll options must be a valid array.']);
         }
-
-        $optionsCount = count($poll['options']);
-        if ($optionsCount < 2 || $optionsCount > 10)
+        if (count($poll['options']) < 2 || count($poll['options']) > 10)
         {
-            return ['error' => 'ERR_POLL_OPTIONS_LIMIT', 'message' => 'Poll must have between 2 and 10 options.', 'status' => 422];
+            throw ValidationException::withMessages(['poll' => 'Poll must have between 2 and 10 options.']);
         }
 
         $hasCorrectOption = false;
@@ -158,55 +195,24 @@ class PostService
         {
             if (empty(trim($option['text'] ?? '')))
             {
-                return ['error' => 'ERR_POLL_OPTION_EMPTY', 'message' => 'Poll options cannot be empty.', 'status' => 422];
+                throw ValidationException::withMessages(['poll' => 'Poll options cannot be empty.']);
             }
-            if (!empty($option['is_correct']))
-            {
-                $hasCorrectOption = true;
-            }
+            if (!empty($option['is_correct'])) $hasCorrectOption = true;
         }
 
         if (($poll['type'] ?? 'regular') === 'quiz' && !$hasCorrectOption)
         {
-            return ['error' => 'ERR_QUIZ_NO_CORRECT_OPTION', 'message' => 'Quiz must have at least one correct option.', 'status' => 422];
-        }
-
-        return true;
-    }
-
-    /**
-     * Завантаження масиву файлів до посту.
-     */
-    private function uploadMedia(Post $post, string $username, array $mediaFiles): void
-    {
-        $lastOrder = $post->attachments()->max('sort_order') ?? -1;
-
-        foreach ($mediaFiles as $index => $file)
-        {
-            $mime = $file->getMimeType();
-            $type = str_starts_with($mime, 'image/') ? 'image' :
-                (str_starts_with($mime, 'video/') ? 'video' :
-                    (str_starts_with($mime, 'audio/') ? 'audio' : 'document'));
-
-            $path = $this->fileService->upload($file, $username, 'media');
-
-            $post->attachments()->create([
-                'type' => $type,
-                'file_path' => $path,
-                'sort_order' => $lastOrder + 1 + $index,
-                'file_name' => basename($path),
-                'original_name' => $file->getClientOriginalName(),
-                'file_size' => $file->getSize()
-            ]);
+            throw ValidationException::withMessages(['poll' => 'Quiz must have at least one correct option.']);
         }
     }
 
     private function handleMentions(Post $post, User $user, ?int $targetUserId): void
     {
-        if (empty($post->content) || !is_array($post->content)) return;
+        $textNode = $post->content['text'] ?? null;
+        if (empty($textNode) || !is_array($textNode)) return;
 
         $mentionedUsernames = [];
-        $this->extractMentions($post->content, $mentionedUsernames);
+        $this->extractMentions($textNode, $mentionedUsernames);
         $mentionedUsernames = array_unique($mentionedUsernames);
 
         if (!empty($mentionedUsernames))
@@ -219,6 +225,29 @@ class PostService
                     $mentionedUser->notify(new MentionNotification($user, $post));
                 }
             }
+        }
+    }
+
+    private function uploadMedia(Post $post, string $username, array $mediaFiles): void
+    {
+        $lastOrder = $post->attachments()->max('sort_order') ?? -1;
+
+        foreach ($mediaFiles as $index => $file)
+        {
+            $mime = $file->getMimeType();
+            $type = str_starts_with($mime, 'image/') ? 'image' :
+                (str_starts_with($mime, 'video/') ? 'video' :
+                    (str_starts_with($mime, 'audio/') ? 'audio' : 'document'));
+            $path = $this->fileService->upload($file, $username, 'media');
+
+            $post->attachments()->create([
+                'type' => $type,
+                'file_path' => $path,
+                'sort_order' => $lastOrder + 1 + $index,
+                'file_name' => basename($path),
+                'original_name' => $file->getClientOriginalName(),
+                'file_size' => $file->getSize()
+            ]);
         }
     }
 

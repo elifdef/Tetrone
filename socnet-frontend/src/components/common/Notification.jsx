@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNotificationText } from '../../hooks/useNotificationText';
 import { useTranslation } from 'react-i18next';
 import ShieldIcon from '../../assets/shield.svg?react';
+import RichText from './RichText';
 
 const NotificationAvatar = ({ src, isSystem }) => {
     if (isSystem) {
@@ -21,21 +22,40 @@ const NotificationAvatar = ({ src, isSystem }) => {
     );
 };
 
-const NotificationContent = ({ name, text, snippet }) => (
-    <div className="tetrone-toast-content">
-        <span className="tetrone-toast-name">
-            {name}
-        </span>
-        <span className="tetrone-toast-text">
-            {text}
-        </span>
-        {snippet && (
-            <span className="tetrone-toast-snippet">
-                "{snippet}"
+const NotificationContent = ({ name, text, snippet, t }) => {
+    let renderedSnippet = null;
+
+    if (snippet) {
+        if (typeof snippet === 'object') {
+            renderedSnippet = (
+                <div className="tetrone-toast-richtext-wrapper">
+                    <RichText text={snippet} />
+                </div>
+            );
+        } else if (typeof snippet === 'string') {
+            if (snippet === 'POLL') renderedSnippet = `📊 ${t('post.poll')}`;
+            else if (snippet === 'ATTACHMENT') renderedSnippet = `📎 ${t('post.attachment')}`;
+            else if (snippet === 'AVATAR_UPDATE') renderedSnippet = `🖼 ${t('post.avatar_update')}`;
+            else renderedSnippet = `"${snippet}"`;
+        }
+    }
+
+    return (
+        <div className="tetrone-toast-content">
+            <span className="tetrone-toast-name">
+                {name}
             </span>
-        )}
-    </div>
-);
+            <span className="tetrone-toast-text">
+                {text}
+            </span>
+            {renderedSnippet && (
+                <span className="tetrone-toast-snippet">
+                    {renderedSnippet}
+                </span>
+            )}
+        </div>
+    );
+};
 
 export default function Notification({ notification, onClose }) {
     const { getNotificationData } = useNotificationText();
@@ -70,6 +90,7 @@ export default function Notification({ notification, onClose }) {
                 name={senderName}
                 text={fullText}
                 snippet={snippetText}
+                t={t}
             />
         </div>
     );

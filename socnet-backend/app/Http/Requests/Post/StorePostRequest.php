@@ -11,34 +11,40 @@ class StorePostRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $payload = $this->input('payload');
+
+        $this->merge([
+            'payload' => is_string($payload) ? json_decode($payload, true) : $payload,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
-            'content' => 'nullable|string',
-            'entities' => 'nullable|string',
+            'payload' => 'nullable|array',
             'target_user_id' => 'nullable|exists:users,id',
             'original_post_id' => 'nullable|exists:posts,id',
             'media' => 'nullable|array|max:10',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm|max:' . config('uploads.max_size')
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,m4a,mp3,wav,pdf,doc,docx|max:' . config('uploads.max_size')
         ];
     }
 
-    /**
-     * Кастомна перевірка після базової валідації.
-     * Пост не може бути абсолютно порожнім.
-     */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator)
         {
-            $hasContent = !empty($this->input('content')) && $this->input('content') !== '""';
-            $hasEntities = !empty($this->input('entities'));
+            $payload = $this->input('payload') ?? [];
+
+            $hasText = !empty($payload['text']);
+            $hasPoll = !empty($payload['poll']);
             $hasMedia = $this->hasFile('media');
             $isRepost = !empty($this->input('original_post_id'));
 
-            if (!$hasContent && !$hasEntities && !$hasMedia && !$isRepost)
+            if (!$hasText && !$hasPoll && !$hasMedia && !$isRepost)
             {
-                $validator->errors()->add('content', 'Post cannot be empty. Add text, media, poll, or repost.');
+                $validator->errors()->add('payload', 'Post cannot be empty. Add text, media, poll, or repost.');
             }
         });
     }

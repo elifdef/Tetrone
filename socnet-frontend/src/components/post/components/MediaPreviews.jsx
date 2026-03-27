@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import VideoPlayer from '../../UI/VideoPlayer';
+import { DocumentIcon } from "../../ui/Icons";
 
 export default function MediaPreviews({ previews, onRemove, isExisting = false }) {
     const { t } = useTranslation();
@@ -44,7 +45,7 @@ export default function MediaPreviews({ previews, onRemove, isExisting = false }
                                     <img src={srcUrl} alt={t('common.preview')} />
                                 ) : (
                                     <div className="tetrone-preview-file-stub">
-                                        <DocumentAttach width={24} height={24} />
+                                        <DocumentIcon width={24} height={24} />
                                         <span className="tetrone-preview-filename" title={nameStr}>
                                             {nameStr}
                                         </span>

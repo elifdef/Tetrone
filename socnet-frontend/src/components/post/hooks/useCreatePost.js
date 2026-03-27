@@ -13,13 +13,10 @@ export const useCreatePost = (onSubmitSuccess) => {
     const [showPollCreator, setShowPollCreator] = useState(false);
 
     const { external } = usePostMedia(content, [], { removed_previews: removedPreviews });
-
     const formTools = usePostForm(0);
 
     const toggleYouTubePreview = (videoId) => {
-        setRemovedPreviews(prev =>
-            prev.includes(videoId) ? prev.filter(id => id !== videoId) : [...prev, videoId]
-        );
+        setRemovedPreviews(prev => prev.includes(videoId) ? prev.filter(id => id !== videoId) : [...prev, videoId]);
     };
 
     const handleSubmit = async () => {
@@ -30,12 +27,12 @@ export const useCreatePost = (onSubmitSuccess) => {
             return;
         }
 
-        const entities = { removed_previews: removedPreviews };
-        if (pollData) entities.poll = pollData;
+        const payload = {};
+        if (!emptyEditor) payload.text = content;
+        if (pollData) payload.poll = pollData;
+        if (removedPreviews.length > 0) payload.youtube = { removed_previews: removedPreviews };
 
-        const finalContent = emptyEditor ? null : content;
-
-        const success = await onSubmitSuccess(finalContent, formTools.files, entities);
+        const success = await onSubmitSuccess(payload, formTools.files);
 
         if (success) {
             setContent('');
@@ -46,12 +43,7 @@ export const useCreatePost = (onSubmitSuccess) => {
     };
 
     return {
-        content, setContent,
-        pollData, setPollData,
-        showPollCreator, setShowPollCreator,
-        removedPreviews, toggleYouTubePreview,
-        external,
-        handleSubmit,
-        ...formTools
+        content, setContent, pollData, setPollData, showPollCreator, setShowPollCreator,
+        removedPreviews, toggleYouTubePreview, external, handleSubmit, ...formTools
     };
 };

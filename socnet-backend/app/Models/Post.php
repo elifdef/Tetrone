@@ -7,12 +7,21 @@ use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    protected $fillable = ['user_id', 'target_user_id', 'content', 'image', 'original_post_id', 'is_repost', 'entities'];
+    protected $fillable = [
+        'user_id',
+        'target_user_id',
+        'content',
+        'original_post_id',
+        'is_repost',
+        'can_comment'
+    ];
+
     protected $keyType = 'string';
     public $incrementing = false;
     protected $casts = [
-        'entities' => 'array',
-        'content'  => 'array',
+        'content' => 'array',
+        'is_repost' => 'boolean',
+        'can_comment' => 'boolean',
     ];
 
     protected static function boot()
@@ -26,15 +35,14 @@ class Post extends Model
         });
     }
 
-    // звязок з автором
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function getImageUrlAttribute()
+    public function targetUser()
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->belongsTo(User::class, 'target_user_id');
     }
 
     public function comments()
@@ -47,53 +55,31 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
-    // чи лайкнув пост конкретний юзер
     public function isLikedBy(User $user)
     {
         return $this->likes()->where('user_id', $user->id)->exists();
     }
 
-    /**
-     * пост може бути репостом ІНШОГО поста.
-     */
     public function originalPost()
     {
         return $this->belongsTo(Post::class, 'original_post_id');
     }
 
-    /**
-     * звязок з власником стіни, на якій написаний пост
-     */
-    public function targetUser()
-    {
-        return $this->belongsTo(User::class, 'target_user_id');
-    }
-
-    /**
-     * у поста може бути багато репостів
-     */
     public function reposts()
     {
         return $this->hasMany(Post::class, 'original_post_id');
     }
 
-    /**
-     * вкладення
-     */
     public function attachments()
     {
         return $this->hasMany(PostAttachment::class);
     }
 
-    /**
-     * голосування/вікторина
-     */
     public function pollVotes()
     {
         return $this->hasMany(PollVote::class);
     }
 
-    // Зв'язок для отримання голосів конкретного користувача
     public function myPollVotes()
     {
         return $this->hasMany(PollVote::class)

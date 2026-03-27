@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Str;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
@@ -30,7 +29,25 @@ class NewWallPostNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $snippet = $this->post->content ? Str::limit(strip_tags($this->post->content), 40) : null;
+        $contentMap = is_array($this->post->content) ? $this->post->content : [];
+
+        // Віддаємо СИРИЙ JSON-об'єкт тексту
+        $snippet = $contentMap['text'] ?? null;
+
+        // Якщо тексту немає, відправляємо системні КОДИ
+        if (empty($snippet))
+        {
+            if (isset($contentMap['poll']))
+            {
+                $snippet = 'POLL';
+            } elseif (isset($contentMap['youtube']) || $this->post->attachments()->exists())
+            {
+                $snippet = 'ATTACHMENT';
+            } elseif (isset($contentMap['is_avatar_update']))
+            {
+                $snippet = 'AVATAR_UPDATE';
+            }
+        }
 
         return [
             'type' => 'wall_post',

@@ -6,21 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table)
         {
             $table->string('id')->primary();
-
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
             $table->foreignId('target_user_id')->nullable()->constrained('users')->onDelete('cascade');
 
-            $table->text('content')->nullable();
-            $table->json('entities')->nullable();
+            $table->json('content')->nullable();
+
             $table->string('original_post_id')->nullable();
             $table->boolean('is_repost')->default(false);
             $table->boolean('can_comment')->default(true);
@@ -47,9 +42,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table)

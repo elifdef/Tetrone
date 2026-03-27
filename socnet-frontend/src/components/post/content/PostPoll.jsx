@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PostService from '../../../services/post.service';
 import { notifyError } from '../../common/Notify';
@@ -7,34 +7,39 @@ import { Link } from 'react-router-dom';
 export default function PostPoll({ poll, postId, isOwner }) {
     const { t } = useTranslation();
 
-    if (!poll) return null;
+    const [results, setResults] = useState({});
+    const [votedOptionIds, setVotedOptionIds] = useState([]);
+    const [draftOptionIds, setDraftOptionIds] = useState([]);
+    const [isClosed, setIsClosed] = useState(false);
+    const [quizData, setQuizData] = useState(null);
 
-    const [results, setResults] = useState(poll.results || {});
-    const [votedOptionIds, setVotedOptionIds] = useState(poll.voted_option_ids || []);
-    const [draftOptionIds, setDraftOptionIds] = useState(poll.voted_option_ids || []);
+    useEffect(() => {
+        if (poll) {
+            setResults(poll.results || {});
+            setVotedOptionIds(poll.voted_option_ids || []);
+            setDraftOptionIds(poll.voted_option_ids || []);
+            setIsClosed(poll.is_closed || false);
 
-    const [isClosed, setIsClosed] = useState(poll.is_closed || false);
+            if (poll.type === 'quiz' && poll.voted_option_ids?.length > 0) {
+                setQuizData({ options: poll.options, explanation: poll.explanation });
+            }
+        }
+    }, [poll]);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [quizData, setQuizData] = useState(() => {
-        if (poll.type === 'quiz' && poll.voted_option_ids?.length > 0) {
-            return { options: poll.options, explanation: poll.explanation };
-        }
-        return null;
-    });
-
     const [votersData, setVotersData] = useState(null);
     const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(null);
     const [isLoadingVoters, setIsLoadingVoters] = useState(false);
-
     const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
 
-    const totalVotes = Object.values(results).reduce((sum, current) => sum + current, 0);
+    if (!poll) return null;
+
+    const totalVotes = Object.values(results).reduce((sum, current) => sum + Number(current), 0);
 
     const getPercentage = (optionId) => {
         if (totalVotes === 0) return 0;
-        const count = results[optionId] || 0;
+        const count = Number(results[optionId]) || 0;
         return Math.round((count / totalVotes) * 100);
     };
 
@@ -65,6 +70,8 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
         setActiveTab(optionId);
         setIsVotersModalOpen(true);
+
+        // Якщо дані вже завантажені раніше, не робимо зайвий запит
         if (votersData) return;
 
         setIsLoadingVoters(true);
@@ -94,7 +101,6 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
     const handleOptionClick = (optionId) => {
         if (isLoading || isClosed) return;
-
         if (votedOptionIds.length > 0 && !poll.can_change_vote) return;
 
         if (poll.is_multiple_choice) {
@@ -253,10 +259,10 @@ export default function PostPoll({ poll, postId, isOwner }) {
                                 <div className="tetrone-poll-voters-state-msg">{t('common.loading')}</div>
                             ) : (
                                 votersData && votersData[activeTab] && votersData[activeTab].length > 0 ? (
-                                    votersData[activeTab].map(vote => (
-                                        <Link to={`/${vote.user.username}`} key={vote.user.id} className="tetrone-poll-voter-row">
-                                            <img src={vote.user.avatar} alt="avatar" className="tetrone-poll-voter-img" />
-                                            <span className="tetrone-poll-voter-name">{vote.user.first_name} {vote.user.last_name}</span>
+                                    votersData[activeTab].map(voter => (
+                                        <Link to={`/${voter.username}`} key={voter.id} className="tetrone-poll-voter-row">
+                                            <img src={voter.avatar} alt="avatar" className="tetrone-poll-voter-img" />
+                                            <span className="tetrone-poll-voter-name">{voter.first_name} {voter.last_name}</span>
                                         </Link>
                                     ))
                                 ) : (
