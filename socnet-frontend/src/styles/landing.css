@@ -1,170 +1,219 @@
-.tetrone-landing-wrapper {
+.tetrone-landing-root {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
-
-.tetrone-landing-hero {
-    background: var(--theme-bg-box);
-    border-bottom: 1px solid var(--theme-border);
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.tetrone-landing-title {
-    font-size: 24px;
+    font-size: 11px;
+    background: var(--theme-bg-page);
     color: var(--theme-text-main);
-    margin: 0 0 10px 0;
 }
 
-.tetrone-landing-subtitle {
-    font-size: 13px;
-    color: var(--theme-text-muted);
-    margin: 0 0 20px 0;
-}
-
-.tetrone-landing-actions {
+.tetrone-landing-container {
+    width: 67%;
+    margin: 20px auto;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.tetrone-landing-btn-big {
-    font-size: 13px;
-    padding: 8px 20px;
-}
-
-.tetrone-landing-features {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.tetrone-feature-block {
-    display: flex;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    margin-bottom: 15px;
-    padding: 15px;
-    align-items: center;
-    gap: 20px;
-}
-
-.tetrone-feature-block.reversed {
-    flex-direction: row-reverse;
-}
-
-.tetrone-feature-text {
+    gap: 15px;
     flex: 1;
 }
 
-.tetrone-feature-text h2 {
-    font-size: 14px;
-    color: var(--theme-link);
-    margin: 0 0 5px 0;
+.tetrone-landing-left-col {
+    width: 80%;
 }
 
-.tetrone-feature-text p {
-    font-size: 11px;
-    color: var(--theme-text-main);
+.tetrone-landing-right-col {
+    width: 30%;
+}
+
+.tetrone-landing-welcome-box {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+}
+
+.tetrone-landing-welcome-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--theme-link);
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 5px;
+}
+
+.tetrone-landing-welcome-text {
     margin: 0;
     line-height: 1.4;
+    color: var(--theme-text-main);
 }
 
-.tetrone-feature-visual {
+.tetrone-landing-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tetrone-feature-classic-item {
+    display: flex;
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    padding: 15px;
+    align-items: flex-start;
+}
+
+.tetrone-feature-classic-thumb {
+    flex-shrink: 0;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-border);
+    padding: 5px;
+    margin-right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--theme-bg-page);
-    border: 1px solid var(--theme-border);
-    color: var(--theme-text-muted);
-    font-size: 10px;
+}
+
+.tetrone-feature-classic-thumb img {
+    max-width: 300px;
+    max-height: 250px;
+    width: auto;
+    height: auto;
+    display: block;
+}
+
+.tetrone-feature-classic-content {
+    flex: 1;
+    padding-top: 5px;
+}
+
+.tetrone-feature-classic-title {
+    font-size: 12px;
     font-weight: bold;
+    margin: 0 0 8px 0;
 }
 
-.tetrone-feature-visual img {
-    width: 30em;
-}
-
-.tetrone-cta-block {
-    text-align: center;
-    padding: 30px 20px;
-    background: var(--theme-bg-box);
-    border-top: 1px solid var(--theme-border);
-    border-bottom: 1px solid var(--theme-border);
-    margin-top: 20px;
-}
-
-.tetrone-cta-title {
-    font-size: 16px;
-    color: var(--theme-text-main);
-    margin-bottom: 10px;
-    margin-top: 0;
-}
-
-.tetrone-cta-desc {
-    font-size: 11px;
-    color: var(--theme-text-muted);
-    margin-bottom: 20px;
-}
-
-.tetrone-rules-page {
-    margin: 20px auto;
-}
-
-.tetrone-rules-header {
-    font-size: 18px;
-    color: var(--theme-link);
-    border-bottom: 1px solid var(--theme-border);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    margin-top: 0;
-}
-
-.tetrone-rule-block {
-    margin-bottom: 20px;
-}
-
-.tetrone-rule-title {
-    font-size: 14px;
-    color: var(--theme-text-main);
-    margin-bottom: 5px;
-    margin-top: 0;
-}
-
-.tetrone-rule-text {
-    font-size: 12px;
-    color: var(--theme-text-muted);
-    line-height: 1.5;
+.tetrone-feature-classic-desc {
     margin: 0;
-    white-space: pre-line;
-}
-
-.tetrone-rule-sublist {
-    margin-top: 10px;
-    margin-bottom: 0;
-    padding-left: 25px;
-}
-
-.tetrone-rule-sublist-item {
-    font-size: 12px;
-    color: var(--theme-text-muted);
-    margin-bottom: 8px;
     line-height: 1.5;
+    color: var(--theme-text-main);
 }
 
-@media (max-width: 768px) {
+.tetrone-landing-auth-panel {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+}
 
-    .tetrone-feature-block,
-    .tetrone-feature-block.reversed {
+.tetrone-landing-auth-header {
+    background: var(--theme-header-bg);
+    color: var(--theme-btn-text);
+    font-weight: bold;
+    padding: 6px 10px;
+    font-size: 11px;
+}
+
+.tetrone-landing-auth-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+}
+
+.tetrone-landing-auth-text {
+    margin: 0 0 5px 0;
+    color: var(--theme-text-muted);
+}
+
+.tetrone-landing-btn-primary {
+    display: block;
+    background: var(--theme-btn-bg);
+    color: var(--theme-btn-text);
+    text-decoration: none;
+    padding: 6px 15px;
+    font-weight: bold;
+    border: 1px solid var(--theme-border);
+    cursor: pointer;
+}
+
+.tetrone-landing-btn-primary:hover {
+    background: var(--theme-btn-hover);
+    text-decoration: none;
+}
+
+.tetrone-landing-btn-secondary {
+    display: block;
+    background: var(--theme-input-bg);
+    color: var(--theme-link);
+    text-decoration: none;
+    padding: 6px 15px;
+    border: 1px solid var(--theme-border);
+    cursor: pointer;
+}
+
+.tetrone-landing-btn-secondary:hover {
+    background: var(--theme-bg-page);
+    text-decoration: none;
+}
+
+.tetrone-landing-stats-panel {
+    background: var(--theme-bg-box);
+    border: 1px solid var(--theme-border);
+    margin-top: 15px;
+}
+
+.tetrone-landing-stats-header {
+    background: var(--theme-input-bg);
+    color: var(--theme-text-main);
+    font-weight: bold;
+    padding: 6px 10px;
+    font-size: 11px;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.tetrone-landing-stats-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tetrone-landing-stat-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+}
+
+.tetrone-landing-stat-label {
+    color: var(--theme-text-muted);
+}
+
+.tetrone-landing-stat-value {
+    font-weight: bold;
+    color: var(--theme-text-main);
+}
+
+.tetrone-landing-stat-online {
+    color: var(--theme-success);
+}
+
+@media (max-width: 820px) {
+    .tetrone-landing-container {
+        width: 100%;
         flex-direction: column;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    .tetrone-landing-left-col,
+    .tetrone-landing-right-col {
+        width: 100%;
+    }
+
+    .tetrone-feature-classic-item {
+        flex-direction: column;
+        align-items: center;
         text-align: center;
     }
 
-    .tetrone-feature-visual {
-        width: 100%;
-        height: 100px;
+    .tetrone-feature-classic-thumb {
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 }

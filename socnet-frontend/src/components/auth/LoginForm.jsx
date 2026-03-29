@@ -9,7 +9,7 @@ export default function LoginForm() {
     const { loginUser, loading, error, setError } = useAuthForms();
 
     const [formData, setFormData] = useState({
-        email: "",
+        login: "",
         password: ""
     });
 
@@ -20,18 +20,18 @@ export default function LoginForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        loginUser(formData.email, formData.password);
+        loginUser(formData.login, formData.password);
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <Input
-                type="email"
-                name="email"
-                id="login-email"
-                label={t('auth.email')}
+                type="text"
+                name="login"
+                id="login-id"
+                label={t('auth.email_or_username')}
                 autoComplete="username"
-                value={formData.email}
+                value={formData.login}
                 onChange={handleChange}
                 required
             />

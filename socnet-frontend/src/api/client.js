@@ -27,17 +27,27 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
 
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
-
-        // сесія закінчилася
-        if (response.status === 401) {
-            window.dispatchEvent(new CustomEvent('session-expired'));
-            throw { success: false, message: 'Unauthenticated.' };
+        
+        let data = null;
+        if (response.status !== 204) {
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = { code: 'ERR_SERVER', message: 'Internal Server Error' };
+            }
         }
-
-        const data = response.status !== 204 ? await response.json() : null;
 
         if (!response.ok) {
             const errorCode = data?.code || 'ERR_UNKNOWN';
+
+            if (response.status === 401 && errorCode !== 'ERR_INVALID_CREDENTIALS') {
+                window.dispatchEvent(new CustomEvent('session-expired'));
+                throw { 
+                    success: false, 
+                    code: 'ERR_UNAUTHENTICATED', 
+                    message: i18n.t('api.error.ERR_UNAUTHENTICATED') 
+                };
+            }
 
             const translatedMessage = i18n.exists(`api.error.${errorCode}`)
                 ? i18n.t(`api.error.${errorCode}`)
@@ -45,6 +55,7 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
 
             throw {
                 success: false,
+                status: response.status,
                 code: errorCode,
                 message: translatedMessage,
                 data
@@ -60,7 +71,6 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
         let meta = data?.meta || null;
         let extraParams = {};
 
-        // якщо Laravel загорнув Resource всередину data
         if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
             if ('data' in payload) {
                 if ('meta' in payload && !meta) {
@@ -85,7 +95,6 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
         };
 
     } catch (error) {
-        // мережева помилка
         if (error.success === false) throw error;
 
         throw {

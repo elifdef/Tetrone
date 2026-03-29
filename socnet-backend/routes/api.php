@@ -7,6 +7,7 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::prefix('v1')->group(function ()
 {
+    require __DIR__ . '/api/public.php';
     require __DIR__ . '/api/auth.php';
     require __DIR__ . '/api/users.php';
     require __DIR__ . '/api/friends.php';

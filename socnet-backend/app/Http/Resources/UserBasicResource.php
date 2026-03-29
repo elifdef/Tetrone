@@ -19,7 +19,7 @@ class UserBasicResource extends JsonResource
             'username' => $this->username,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'avatar' => $this->avatar_url,
+            'avatar' => $this->avatar,
             'gender' => $this->gender,
             'is_banned' => (bool)$this->is_banned,
             'personalization' => $this->personalization ? [

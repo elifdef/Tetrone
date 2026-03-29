@@ -136,7 +136,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return Attribute::make(
             get: function ($value)
             {
-                // якщо забанений
                 if ($this->is_banned)
                 {
                     return self::bannedAvatar;

@@ -8,10 +8,10 @@ class AuthService {
         });
     }
 
-    async signIn(email, password) {
+    async signIn(login, password) {
         return await fetchClient('/sign-in', {
             method: 'POST',
-            body: { email, password }
+            body: { login, password }
         });
     }
 
@@ -40,7 +40,7 @@ class AuthService {
     async revokeSession(tokenId) {
         return await fetchClient(`/settings/sessions/${tokenId}`, { method: 'DELETE' });
     }
-    
+
     async revokeAllOtherSessions() {
         return await fetchClient('/settings/sessions', { method: 'DELETE' });
     }

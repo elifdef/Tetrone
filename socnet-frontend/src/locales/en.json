@@ -296,32 +296,38 @@
     "for_dev": "For developers"
   },
   "main": {
-    "title": "Welcome to {{name}}",
-    "subtitle": "A small corner of the internet with no AI slop.",
-    "blocks": {
-      "share": {
-        "title": "Share your moments",
-        "description": "Share your thoughts, photos, and ideas. Find like-minded people and create your own news feed."
+    "landing_title": "Welcome to {{name}}",
+    "landing_subtitle": "A small corner of the internet with no neural slop.",
+    "landing_join_header": "Ready to join?",
+    "landing_join_desc": "Create an account now and become part of our community.",
+    "landing_signup_btn": "Create an account",
+    "landing_signin_btn": "Sign in",
+    "landing_stats_title": "Network Statistics",
+    "landing_stats_users": "Users",
+    "landing_stats_posts": "Posts",
+    "landing_stats_online": "Online now",
+    "landing_features": [
+      {
+        "title": "Share moments",
+        "description": "Share your thoughts, photos, and ideas. Find like-minded people and build your own news feed.",
+        "image": "moments.png"
       },
-      "connect": {
+      {
         "title": "Stay connected",
-        "description": "Communicate with friends, comment on posts, and talk in real time."
+        "description": "Communicate with friends, comment on posts, and chat in real time.",
+        "image": "post.png"
       },
-      "personalize": {
+      {
         "title": "Express yourself",
-        "description": "Create a unique profile that reflects your personality. Add a bio, upload your best photos, and stand out from the crowd."
+        "description": "Create a unique profile that reflects your individuality. Add information about yourself, upload your best photos, and stand out.",
+        "image": "personalize.png"
       },
-      "friends": {
+      {
         "title": "Build your community",
-        "description": "Find your friends and meet new people. Grow your network to always keep track of what your close ones are up to."
+        "description": "Find friends and meet new people. Expand your network to always stay updated on what your close ones are up to.",
+        "image": "friends.png"
       }
-    },
-    "join": {
-      "header": "Ready to join?",
-      "description": "Create an account now and become part of our community.",
-      "signup_btn": "Create account",
-      "signin_btn": "Sign in"
-    }
+    ]
   },
   "first_setup": {
     "title": "First profile setup",

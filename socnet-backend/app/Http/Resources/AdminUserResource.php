@@ -16,7 +16,7 @@ class AdminUserResource extends JsonResource
             'email' => $this->email,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'avatar' => $this->avatar_url,
+            'avatar' => $this->avatar,
             'bio' => $this->bio,
             'role' => $this->role,
             'is_muted' => (bool)$this->is_muted,

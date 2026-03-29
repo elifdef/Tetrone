@@ -15,68 +15,81 @@ export const AuthProvider = ({ children }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    // перед загрузкою перевіряєм чи правильний токен і чи не лежить бекенд
     useEffect(() => {
-        if (token) {
-            setLoading(true);
-            setInitError(false);
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
-            const controller = new AbortController();
+        if (!user) setLoading(true);
+        setInitError(false);
 
-            fetchClient('/me', { signal: controller.signal }).then(res => {
-                if (controller.signal.aborted) return; // Ігноруємо, якщо запит скасовано
+        const controller = new AbortController();
+
+        fetchClient('/me', { signal: controller.signal })
+            .then(res => {
+                if (controller.signal.aborted) return;
 
                 if (res.success) {
                     setUser(res.data);
                 } else {
                     if (res.status === 401) {
-                        localStorage.removeItem('token');
-                        setToken(null);
-                        setUser(null);
+                        logoutLocally();
                     } else {
                         setInitError(true);
                     }
                 }
-                setLoading(false);
+            })
+            .catch(err => {
+                if (controller.signal.aborted) return;
+
+                if (err.status === 401) {
+                    logoutLocally();
+                } else {
+                    setInitError(true);
+                }
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             });
 
-            return () => controller.abort();
-        } else {
-            setLoading(false);
-        }
+        return () => controller.abort();
     }, [token]);
+
+    const logoutLocally = () => {
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+    };
 
     useEffect(() => {
         const handleSessionExpired = () => {
-            localStorage.removeItem('token');
-            setUser(null);
+            logoutLocally();
             notifyError(t('api.error.ERR_UNAUTHORIZED'));
-
             navigate('/login');
         };
 
         window.addEventListener('session-expired', handleSessionExpired);
-
         return () => window.removeEventListener('session-expired', handleSessionExpired);
     }, [navigate, t]);
 
-    // трекер онлайну
     useEffect(() => {
         if (!user) return;
 
-        let isOfflineSent = false; // захист від подвійного відправлення
+        let isOfflineSent = false;
 
         const pingServer = () => {
             if (document.visibilityState === 'visible') {
-                isOfflineSent = false; // Скидаємо прапорець, коли юзер повернувся
+                isOfflineSent = false;
                 fetchClient('/user/ping', { method: 'POST', body: { active: true } });
             }
         };
 
         const sendOfflineStatus = () => {
-            if (isOfflineSent) return; // Якщо вже відправили - ігноруємо
+            if (isOfflineSent) return;
             isOfflineSent = true;
-
             fetchClient('/user/offline', { method: 'POST', keepalive: true });
         };
 
@@ -101,16 +114,13 @@ export const AuthProvider = ({ children }) => {
         };
     }, [user]);
 
-    // для моментальної зміни статусу підтвердження пошти
     useEffect(() => {
         if (!user) return;
         const channel = new BroadcastChannel('auth_channel');
         channel.onmessage = (event) => {
-            if (event.data.type === 'EMAIL_VERIFIED' && user)
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    email_verified_at: event.data.date
-                }));
+            if (event.data.type === 'EMAIL_VERIFIED') {
+                setUser(prev => ({ ...prev, email_verified_at: event.data.date }));
+            }
         };
         return () => channel.close();
     }, [user]);
@@ -120,17 +130,15 @@ export const AuthProvider = ({ children }) => {
         if (!localStorage.getItem('lang')) {
             localStorage.setItem('lang', getSystemLanguage());
         }
-        localStorage.setItem('dark_theme', true);
-        setToken(newToken);
+        localStorage.setItem('dark_theme', 'true');
         setUser(newUser);
+        setToken(newToken);
         setInitError(false);
     };
 
     const logout = async () => {
-        await fetchClient('/sign-out', { method: 'POST' });
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
+        await fetchClient('/sign-out', { method: 'POST' }).catch(() => { });
+        logoutLocally();
     };
 
     return (

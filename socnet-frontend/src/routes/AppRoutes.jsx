@@ -6,7 +6,7 @@ import SettingsPage from '../pages/SettingsPage';
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import SetupProfilePage from "../pages/SetupProfilePage";
-import MainPage from "../pages/MainPage";
+import IndexPage from "../pages/IndexPage";
 import HomePage from "../pages/HomePage";
 import ProfilePage from "../pages/ProfilePage";
 import FriendsPage from "../pages/FriendsPage";
@@ -29,7 +29,7 @@ export default function AppRoutes() {
 
     return (
         <Routes>
-            {!user && <Route path="/" element={<MainPage />} />}
+            {!user && <Route path="/" element={<IndexPage />} />}
             {/* тільки для гостей */}
             <Route element={<GuestGuard />}>
                 <Route path="/login" element={<LoginPage />} />

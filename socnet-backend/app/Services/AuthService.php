@@ -4,21 +4,30 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-    public function login(string $email, string $password, Request $request): array
+    public function login(string $login, string $password, Request $request): ?array
     {
-        $user = User::where('email', $email)->first();
+        $loginType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (!$user || !Hash::check($password, $user->password))
+        $credentials = [
+            $loginType => $login,
+            'password' => $password
+        ];
+
+        if (!auth()->attempt($credentials))
         {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid email or password'],
-            ]);
+            return null;
         }
+
+        $user = auth()->user();
+
+        // Запобігаємо дублюванню сесій з одного і того ж браузера/IP
+        $user->tokens()
+            ->where('ip_address', $request->ip())
+            ->where('user_agent', $request->userAgent())
+            ->delete();
 
         $tokenResult = $user->createToken('auth_token');
         $tokenModel = $tokenResult->accessToken;
@@ -32,7 +41,10 @@ class AuthService
             'user_agent' => $request->userAgent(),
         ]);
 
-        return ['token' => $tokenResult->plainTextToken];
+        return [
+            'token' => $tokenResult->plainTextToken,
+            'user' => $user
+        ];
     }
 
     public function register(array $data): User

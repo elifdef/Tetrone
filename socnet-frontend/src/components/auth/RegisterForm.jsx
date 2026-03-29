@@ -30,9 +30,9 @@ export default function RegisterForm() {
         setMsg({ text: "", type: "" });
         setLoading(true);
 
-        const res = await AuthService.signUp(formData);
-
-        if (res.success) {
+        try {
+            const res = await AuthService.signUp(formData);
+            
             setMsg({
                 text: (
                     <span className="tetrone-auth-success-text">
@@ -45,11 +45,11 @@ export default function RegisterForm() {
                 type: "success"
             });
             setFormData({ username: "", email: "", password: "", password_confirmation: "" });
-        } else {
-            setMsg({ text: res.message || t('error.registration'), type: "error" });
+        } catch (error) {
+            setMsg({ text: error.message || t('error.registration'), type: "error" });
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     if (msg.type === "success") {
