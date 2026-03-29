@@ -21,7 +21,7 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
         return () => document.removeEventListener('click', handleClickOutside);
     }, [showMenu]);
 
-    const isAvatarUpdate = post.entities?.is_avatar_update === true;
+    const isAvatarUpdate = post.is_avatar_update === true;
     const showTargetUser = !isAvatarUpdate && post.target_user && post.target_user.username !== currentProfileUsername;
     const isAuthor = currentUserId ? currentUserId == post.user?.id : isOwner;
 

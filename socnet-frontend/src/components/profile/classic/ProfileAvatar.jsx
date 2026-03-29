@@ -12,7 +12,8 @@ export default function ProfileAvatar({ user, isPreview, isBlocked }) {
     const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const canViewAvatar = !isPreview && !isBlocked;
+    const hasCustomAvatar = user?.avatar && !user.avatar.includes('defaultAvatar');
+    const canViewAvatar = !isPreview && !isBlocked && hasCustomAvatar;
 
     const handleAvatarClick = async () => {
         if (!canViewAvatar || isLoading) return;
@@ -41,12 +42,8 @@ export default function ProfileAvatar({ user, isPreview, isBlocked }) {
             <img
                 src={user.avatar}
                 alt={user.username}
-                className={`tetrone-avatar ${(!isPreview && isBlocked) ? 'tetrone-avatar-blocked' : ''}`}
+                className={`tetrone-avatar ${(!isPreview && isBlocked) ? 'tetrone-avatar-blocked' : ''} ${canViewAvatar ? 'tetrone-clickable' : ''} ${isLoading ? 'tetrone-loading' : ''}`}
                 onClick={handleAvatarClick}
-                style={{
-                    cursor: canViewAvatar ? 'pointer' : 'default',
-                    opacity: isLoading ? 0.7 : 1
-                }}
             />
 
             {avatarPosts.length > 0 && (

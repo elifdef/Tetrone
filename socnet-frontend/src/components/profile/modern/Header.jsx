@@ -59,7 +59,7 @@ export default function Header({
         if (loading) return "...";
         if (isBlockedByMe) return t('profile.menu.you_have_blocked');
         switch (status) {
-            case 'friends': return `${t('common.your_friends')} ✓`;
+            case 'friends': return t('common.your_friends');
             case 'pending_sent': return t('friends.request_sent');
             case 'pending_received': return t('profile.menu.request_received');
             default: return t('profile.menu.add_friends');
@@ -87,7 +87,8 @@ export default function Header({
         setIsChatLoading(false);
     };
 
-    const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned);
+    const hasCustomAvatar = displayAvatar && !displayAvatar.includes('defaultAvatar');
+    const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned) && hasCustomAvatar;
     const nameStyle = { color: customNameColor };
 
     const handleAvatarClick = async () => {
@@ -119,12 +120,8 @@ export default function Header({
                     <img
                         src={displayAvatar}
                         alt="avatar"
-                        className={`tetrone-modern-avatar`}
+                        className={`tetrone-modern-avatar ${canViewAvatar ? 'tetrone-clickable' : ''} ${isLoadingAvatar ? 'tetrone-loading' : ''}`}
                         onClick={handleAvatarClick}
-                        style={{
-                            cursor: canViewAvatar ? 'pointer' : 'default',
-                            opacity: isLoadingAvatar ? 0.7 : 1
-                        }}
                     />
                 </div>
 

@@ -16,11 +16,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasApiTokens, HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'username',
         'email',
@@ -28,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'first_name',
         'last_name',
         'avatar',
+        'avatar_post_id',
         'birth_date',
         'bio',
         'country',
@@ -36,26 +32,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_banned'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    const defaultAvatar = "/defaultAvatar.jpg"; // bill gates mugshot
-    const bannedAvatar = "/blockedAvatar.jpg"; // hacker
+    const defaultAvatar = "/defaultAvatar.jpg";
+    const bannedAvatar = "/blockedAvatar.jpg";
     const GENDER_MALE = 1;
     const GENDER_FEMALE = 2;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -117,8 +103,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $settings = $this->notificationSettings;
 
-        $notifyColumn = "notify_{$type}"; // наприклад, 'notify_likes'
-        $soundColumn = "sound_{$type}";   // наприклад, 'sound_likes'
+        $notifyColumn = "notify_{$type}";
+        $soundColumn = "sound_{$type}";
 
         // базова перевірка (чи ввімкнені взагалі лайки/повідомлення)
         $shouldNotify = $settings->$notifyColumn ?? true;
@@ -145,52 +131,44 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    protected function avatarUrl(): Attribute
+    protected function avatar(): Attribute
     {
         return Attribute::make(
-            get: function ()
+            get: function ($value)
             {
                 // якщо забанений
                 if ($this->is_banned)
+                {
                     return self::bannedAvatar;
+                }
 
-                return $this->avatar ? asset('storage/' . $this->avatar) : self::defaultAvatar;
+                return $value ? asset('storage/' . $value) : self::defaultAvatar;
             }
         );
     }
 
-    /**
-     * Перевірка для того, щоб заблокований не може бачити пости блокувальника.
-     * Але гості можуть бачити)00)) Тому це обходиться приватною вкладкою.
-     *
-     * @param int $viewerId
-     * @param int $targetId
-     * @return bool
-     */
     public function isBlockedByTarget(int $viewerId, int $targetId): bool
     {
         if ($viewerId === $targetId) return false;
+
         return Friendship::where('user_id', $targetId)
             ->where('friend_id', $viewerId)
             ->where('status', Friendship::STATUS_BLOCKED)
             ->exists();
     }
 
-    // заявки які Я кинув
     public function sentFriendships()
     {
         return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
             ->withPivot('status');
     }
 
-    // заявки які МЕНІ прийшли
     public function receivedFriendships()
     {
         return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
             ->withPivot('status');
     }
 
-    // отримання ID друзів
     public function getAllFriendIds(): Collection
     {
         $initiated = $this->sentFriendships()->wherePivot('status', Friendship::STATUS_ACCEPTED)->pluck('users.id');
@@ -199,11 +177,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $initiated->merge($received)->unique();
     }
 
-    // отримання статусу дружби між двома користувачами
     public function getFriendshipStatusWith(?User $currentUser): string
     {
         if (!$currentUser || $currentUser->id === $this->id)
+        {
             return 'none';
+        }
 
         $friendship = Friendship::between($this, $currentUser)->first();
 
@@ -212,10 +191,14 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($friendship->status === Friendship::STATUS_ACCEPTED) return 'friends';
 
         if ($friendship->status === Friendship::STATUS_PENDING)
+        {
             return $friendship->user_id === $currentUser->id ? 'pending_sent' : 'pending_received';
+        }
 
         if ($friendship->status === Friendship::STATUS_BLOCKED)
+        {
             return $friendship->user_id === $currentUser->id ? 'blocked_by_me' : 'blocked_by_target';
+        }
 
         return 'none';
     }
@@ -225,7 +208,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return Cache::has('user-online-' . $this->id);
     }
 
-    // для статистики
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -251,7 +233,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(ModerationLog::class)->latest();
     }
 
-    /* генерація власного кольору для профілю */
     public function personalization()
     {
         return $this->hasOne(UserPersonalization::class)->withDefault(function ($personalization, $user)
@@ -267,7 +248,6 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
-    /* активність користувача */
     public function activities()
     {
         return $this->hasMany(UserActivity::class);

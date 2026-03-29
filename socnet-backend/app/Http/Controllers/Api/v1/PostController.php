@@ -88,17 +88,11 @@ class PostController extends Controller
         return $this->success('SUCCESS', 'Post retrieved successfully', (new PostResource($post))->resolve());
     }
 
-    /**
-     * Створити новий пост
-     *
-     * @responseFile status=201 storage/responses/post_created.json
-     */
     public function store(StorePostRequest $request): JsonResponse
     {
         $data = $request->validated();
 
         $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
-        $data['entities'] = !empty($data['entities']) ? json_decode($data['entities'], true) : null;
 
         $post = $this->postService->createPost(
             $request->user(),
@@ -116,9 +110,6 @@ class PostController extends Controller
         return $this->success('POST_CREATED', 'Post created successfully', (new PostResource($post))->resolve(), 201);
     }
 
-    /**
-     * Оновити існуючий пост
-     */
     public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
         if ($request->user()->id !== $post->user_id && $request->user()->cannot('edit-any-content'))
@@ -129,7 +120,6 @@ class PostController extends Controller
         $data = $request->validated();
 
         $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
-        $data['entities'] = !empty($data['entities']) ? json_decode($data['entities'], true) : null;
 
         $result = $this->postService->updatePost(
             $post,
@@ -180,25 +170,21 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
         {
-            return $this->error(
-                'ERR_USER_BLOCKED',
-                'Access denied.',
-                403
-            );
+            return $this->error('ERR_USER_BLOCKED', '', 403);
         }
 
-        $posts = Post::where('user_id', $targetUser->id)->where('entities->is_avatar_update', true)
-            ->with(self::POST_RELATIONS)->withCount(['likes', 'comments', 'reposts'])->latest()->get();
+        $posts = Post::where('user_id', $targetUser->id)
+            ->whereJsonContains('content', ['is_avatar_update' => true])
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->latest()
+            ->get();
 
         if ($currentUser)
         {
             $posts->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
         }
 
-        return $this->success(
-            'SUCCESS',
-            'Avatars retrieved',
-            PostResource::collection($posts)
-        );
+        return $this->success('SUCCESS', '', PostResource::collection($posts));
     }
 }

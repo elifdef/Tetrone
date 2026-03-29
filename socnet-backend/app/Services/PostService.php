@@ -70,7 +70,7 @@ class PostService
         $currentUser = auth('sanctum')->user();
 
         $posts = Post::where('user_id', $targetUser->id)
-            ->where('content->is_avatar_update', true) // Змінено пошук по JSON
+            ->whereJsonContains('content->is_avatar_update', true)
             ->with(self::POST_RELATIONS)
             ->withCount(['likes', 'comments', 'reposts'])
             ->latest()
@@ -165,6 +165,36 @@ class PostService
 
     public function deletePost(Post $post): void
     {
+        $content = $post->content;
+
+        if (is_array($content) && isset($content['is_avatar_update']) && $content['is_avatar_update'])
+        {
+            $user = $post->user;
+
+            if ($user->avatar_post_id === $post->id)
+            {
+                $previousAvatarPost = Post::where('user_id', $user->id)
+                    ->where('id', '!=', $post->id)
+                    ->whereJsonContains('content->is_avatar_update', true)
+                    ->latest()
+                    ->first();
+
+                if ($previousAvatarPost && $previousAvatarPost->attachments->isNotEmpty())
+                {
+                    $user->update([
+                        'avatar' => $previousAvatarPost->attachments->first()->file_path,
+                        'avatar_post_id' => $previousAvatarPost->id
+                    ]);
+                } else
+                {
+                    $user->update([
+                        'avatar' => null,
+                        'avatar_post_id' => null
+                    ]);
+                }
+            }
+        }
+
         $attachments = $post->attachments;
         foreach ($attachments as $attachment)
         {
