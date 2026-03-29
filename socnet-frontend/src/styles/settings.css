@@ -399,3 +399,17 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.socnet-theme-selector-grid {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    justify-content: space-evenly;
+}
+
+.socnet-theme-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--theme-border);
+}

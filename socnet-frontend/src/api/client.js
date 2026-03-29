@@ -58,6 +58,7 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
 
         let payload = data?.data !== undefined ? data.data : data;
         let meta = data?.meta || null;
+        let extraParams = {};
 
         // якщо Laravel загорнув Resource всередину data
         if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
@@ -65,6 +66,10 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
                 if ('meta' in payload && !meta) {
                     meta = payload.meta;
                 }
+
+                const { data: _d, meta: _m, ...rest } = payload;
+                extraParams = rest;
+
                 payload = payload.data;
             }
         }
@@ -75,12 +80,13 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
             code: successCode,
             message: successMessage,
             data: payload,
-            meta: meta
+            meta: meta,
+            ...extraParams
         };
 
     } catch (error) {
         // мережева помилка
-        if (error.success === false) throw error; 
+        if (error.success === false) throw error;
 
         throw {
             success: false,

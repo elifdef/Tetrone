@@ -16,13 +16,15 @@ class ChatService
     public function getUserChats(int $userId)
     {
         return Chat::whereHas('participants', fn($q) => $q->where('user_id', $userId))
+            ->has('messages')
+            ->withCount(['messages as unread_count' => fn($q) => $q->where('sender_id', '!=', $userId)->whereNull('read_at')])
             ->with([
                 'participants' => fn($q) => $q->withTrashed()->where('user_id', '!=', $userId)->with('user'),
                 'messages' => fn($q) => $q->latest()->limit(1)
             ])
             ->orderBy('updated_at', 'desc')
             ->get()
-            ->map(function ($chat)
+            ->map(function ($chat) use ($userId)
             {
                 $lastMsg = $chat->messages->first();
                 $targetParticipant = $chat->participants->first();
@@ -32,6 +34,14 @@ class ChatService
                 if ($lastMsg)
                 {
                     $payload = ChatEncryptionService::decryptPayload($lastMsg->encrypted_payload, $chat->encrypted_dek);
+
+                    if ($payload === null)
+                    {
+                        $payload = [
+                            'text' => 'Message unavailable (decryption failed)',
+                            'files' => []
+                        ];
+                    }
                     $lastMsgText = $payload['text'] ?? (empty($payload['files']) ? 'Post' : 'Media');
                 }
 
@@ -45,7 +55,7 @@ class ChatService
                         : null,
                     'last_message' => $lastMsgText,
                     'last_message_sender_id' => $lastMsg?->sender_id,
-                    'unread_count' => 0
+                    'unread_count' => $chat->unread_count
                 ];
             });
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -11,8 +11,15 @@ import Messages from '../components/messages/Messages';
 import MessagesOld from '../components/messages/MessagesOld';
 import MessageService from '../services/chat.service';
 import FriendService from '../services/friend.service';
-import ChatInfoModal from '../components/messages/ChatInfoModal';
+import ChatInfoModal from '../components/modals/ChatInfoModal';
 import { notifyError, notifySuccess } from '../components/common/Notify';
+
+const CloseIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+);
 
 export default function MessagesPage() {
     const { t } = useTranslation();
@@ -33,29 +40,37 @@ export default function MessagesPage() {
 
     const {
         messages, fetchMessages, loadMoreMessages, sendMessage, updateMessage, deleteMessage, togglePin,
-        isLoadingInitial, isLoadingMore, hasMore, targetIsTyping, emitTyping, chatWasDeletedExternally
+        isLoadingInitial, isLoadingMore, hasMore, targetIsTyping, emitTyping, chatWasDeletedExternally,
+        currentChatInfo
     } = useMessages(dmSlug, echoInstance);
+
+    const refreshInbox = useCallback(() => {
+        fetchChats();
+    }, [fetchChats]);
 
     useEffect(() => {
         if (chatWasDeletedExternally) {
             notifyError(t('messages.chat_was_deleted_or_blocked'));
             setSearchParams({});
-            fetchChats();
+            refreshInbox();
         }
-    }, [chatWasDeletedExternally, fetchChats, setSearchParams, t]);
+    }, [chatWasDeletedExternally, refreshInbox, setSearchParams, t]);
 
     useEffect(() => {
-        fetchChats();
-    }, [fetchChats]);
+        refreshInbox();
+    }, [refreshInbox]);
 
     useEffect(() => {
         if (chats && chats.length > 0) {
-            const totalUnread = chats.reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+            const totalUnread = chats.reduce((sum, chat) => {
+                if (chat.slug === dmSlug) return sum;
+                return sum + (chat.unread_count || 0);
+            }, 0);
             setUnreadMessagesCount(totalUnread);
         } else {
             setUnreadMessagesCount(0);
         }
-    }, [chats, setUnreadMessagesCount]);
+    }, [chats, dmSlug, setUnreadMessagesCount]);
 
     useEffect(() => {
         if (dmSlug) {
@@ -69,12 +84,12 @@ export default function MessagesPage() {
 
     useEffect(() => {
         if (incomingMessage) {
-            fetchChats();
+            refreshInbox();
             if (incomingMessage.chat_slug === dmSlug) {
                 fetchMessages({ silent: true });
             }
         }
-    }, [incomingMessage, dmSlug, fetchMessages, fetchChats]);
+    }, [incomingMessage, dmSlug, fetchMessages, refreshInbox]);
 
     useEffect(() => {
         const handlePaste = (e) => {
@@ -91,61 +106,94 @@ export default function MessagesPage() {
                 });
             }
         };
-
         window.addEventListener('paste', handlePaste);
         return () => window.removeEventListener('paste', handlePaste);
     }, [dmSlug, t]);
 
-    const activeChatObj = chats.find(c => c.slug === dmSlug);
+    const activeChatObj = useMemo(() => {
+        return dmSlug ? (chats.find(c => c.slug === dmSlug) || currentChatInfo) : null;
+    }, [dmSlug, chats, currentChatInfo]);
 
-    const handleSelectChat = (slug) => setSearchParams({ dm: slug });
-    const handleBackToInbox = () => setSearchParams({});
+    const displayChats = useMemo(() => {
+        const mapped = chats.map(c => c.slug === dmSlug ? { ...c, unread_count: 0 } : c);
+        if (currentChatInfo && !chats.find(c => c.slug === currentChatInfo.slug)) {
+            mapped.unshift({
+                slug: currentChatInfo.slug,
+                target_user: currentChatInfo.target_user,
+                updated_at: new Date().toISOString(),
+                last_message: t('messages.no_messages_yet'),
+                last_message_sender_id: null,
+                unread_count: 0
+            });
+        }
+        return mapped;
+    }, [chats, dmSlug, currentChatInfo, t]);
+
+    const getReplyName = useCallback(() => {
+        if (!replyingTo) return '';
+        return replyingTo.isMine ? currentUser?.first_name : activeChatObj?.target_user?.first_name;
+    }, [replyingTo, currentUser, activeChatObj]);
+
+    const handleSelectChat = useCallback((slug) => {
+        setSearchParams({ dm: slug });
+    }, [setSearchParams]);
+
+    const handleBackToInbox = useCallback(() => {
+        setSearchParams({});
+        refreshInbox();
+    }, [setSearchParams, refreshInbox]);
 
     const handleSend = async () => {
-        if (!text.trim() && files.length === 0) return;
+        const isTextEmpty = !text ||
+            (typeof text === 'object' && text.content?.length === 1 && !text.content[0].content) ||
+            (typeof text === 'string' && !text.trim());
+
+        if (isTextEmpty && files.length === 0) return;
+
+        const textToSend = typeof text === 'object' ? JSON.stringify(text) : text;
+
         let success = false;
         if (editingMessage) {
-            success = await updateMessage(editingMessage.id, text, files, []);
+            success = await updateMessage(editingMessage.id, textToSend, files, []);
             if (success) setEditingMessage(null);
         } else {
-            success = await sendMessage(text, files, null, replyingTo ? replyingTo.id : null);
+            success = await sendMessage(textToSend, files, null, replyingTo ? replyingTo.id : null);
         }
+
         if (success) {
             setText('');
             setFiles([]);
             setReplyingTo(null);
-            fetchChats();
+            refreshInbox();
         }
     };
 
-    const handleCancelReplyEdit = () => {
+    const handleCancelReplyEdit = useCallback(() => {
         setEditingMessage(null);
         setReplyingTo(null);
         setText('');
         setFiles([]);
-    };
+    }, []);
 
-    const handleEditClick = (msg) => {
+    const handleEditClick = useCallback((msg) => {
         setEditingMessage(msg);
-        setText(msg.text || '');
+        try {
+            setText(typeof msg.text === 'string' ? JSON.parse(msg.text) : msg.text);
+        } catch {
+            setText(msg.text || '');
+        }
         setFiles([]);
-    };
+    }, []);
 
-    const handleCancelEdit = () => {
-        setEditingMessage(null);
-        setText('');
-        setFiles([]);
-    };
-
-    const handleDeleteClick = async (msgId) => {
+    const handleDeleteClick = useCallback(async (msgId) => {
         const confirmed = await openConfirm(t('messages.delete_confirm'), t('common.delete'));
         if (confirmed) {
             await deleteMessage(msgId);
-            fetchChats();
+            refreshInbox();
         }
-    };
+    }, [openConfirm, deleteMessage, refreshInbox, t]);
 
-    const handleFileChange = (e) => {
+    const handleFileChange = useCallback((e) => {
         if (e.target.files && e.target.files.length > 0) {
             const selectedFiles = Array.from(e.target.files);
             setFiles(prev => {
@@ -158,107 +206,93 @@ export default function MessagesPage() {
             });
             e.target.value = null;
         }
-    };
+    }, [t]);
 
-    const handleRemoveFile = (indexToRemove) => setFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+    const handleRemoveFile = useCallback((indexToRemove) => {
+        setFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+    }, []);
 
-    const handleDeleteChat = async () => {
+    const handleDeleteChat = useCallback(async () => {
         closeModal();
         let isForBoth = false;
-        const confirmContent = (
-            <div className="tetrone-delete-chat-modal">
-                <p>{t('messages.delete_chat_confirm')}</p>
-                <label className="tetrone-checkbox-label" onClick={(e) => e.stopPropagation()}>
-                    <input
-                        type="checkbox"
-                        onChange={(e) => { isForBoth = e.target.checked; }}
-                    />
-                    {t('messages.delete_for_both')}
-                </label>
-            </div>
-        );
-
         openCustom(
             <div className="tetrone-modal-dialog">
-                {confirmContent}
-                <div className="tetrone-modal-actions">
-                    <button className="tetrone-btn-cancel" onClick={() => closeModal()}>{t('common.cancel')}</button>
+                <div className="tetrone-modal-header">
+                    <h3>{t('messages.delete_chat')}</h3>
+                    <button className="tetrone-modal-close" onClick={() => closeModal()}>
+                        <CloseIcon />
+                    </button>
+                </div>
+                <div className="tetrone-modal-body">
+                    <p className="tetrone-modal-message">{t('messages.delete_chat_confirm')}</p>
+                    <label className="tetrone-checkbox-label">
+                        <input type="checkbox" onChange={(e) => { isForBoth = e.target.checked; }} />
+                        <span>{t('messages.delete_for_both')}</span>
+                    </label>
+                </div>
+                <div className="tetrone-modal-footer">
+                    <button className="tetrone-btn-ghost" onClick={() => closeModal()}>{t('common.cancel')}</button>
                     <button className="tetrone-btn-danger" onClick={async () => {
                         closeModal();
                         const res = await MessageService.deleteChat(dmSlug, isForBoth);
                         if (res.success) {
                             setSearchParams({});
-                            fetchChats();
+                            refreshInbox();
                         } else {
-                            notifyError(res.message || t('error.delete_data'));
+                            notifyError(res.message);
                         }
                     }}>{t('common.delete')}</button>
                 </div>
             </div>
         );
-    };
+    }, [closeModal, openCustom, t, dmSlug, setSearchParams, refreshInbox]);
 
-    const handleBlockUser = async () => {
+    const handleBlockUser = useCallback(async () => {
         closeModal();
         const targetUser = activeChatObj?.target_user?.username;
         if (!targetUser) return;
 
-        const confirmed = await openConfirm(t('common.are_u_sure', 'Ви впевнені?'), t('common.to_block'));
+        const confirmed = await openConfirm(t('common.are_u_sure'), t('common.to_block'));
         if (confirmed) {
             const res = await FriendService.blockUser(targetUser);
             if (res.success) {
                 notifySuccess(res.message);
                 setSearchParams({});
-                fetchChats();
+                refreshInbox();
             } else {
-                notifyError(res.message || t('error.block_user'));
+                notifyError(res.message);
             }
         }
-    };
+    }, [closeModal, activeChatObj, openConfirm, t, setSearchParams, refreshInbox]);
 
-    const handleScrollToMessage = (msgId) => {
+    const handleScrollToMessage = useCallback((msgId) => {
         const el = document.getElementById(`message-${msgId}`);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             el.classList.add('tetrone-modern-highlight-msg');
             setTimeout(() => el.classList.remove('tetrone-modern-highlight-msg'), 2000);
         }
-    };
+    }, []);
 
-    const handleOpenInfo = () => {
-        openCustom(
-            <ChatInfoModal
-                chat={activeChatObj}
-                messages={messages}
-                onClose={closeModal}
-                onScrollToMessage={handleScrollToMessage}
-                onDeleteChat={handleDeleteChat}
-                onBlockUser={handleBlockUser}
-            />
-        );
-    };
+    const handleOpenInfo = useCallback(() => {
+        openCustom(<ChatInfoModal chat={activeChatObj} messages={messages} onClose={closeModal} />);
+    }, [openCustom, activeChatObj, messages, closeModal]);
 
     const childProps = {
-        isLoadingInitial, isLoadingMore, hasMore,
-        onLoadMore: loadMoreMessages,
-        onOpenInfo: handleOpenInfo,
-        onDeleteChatClick: handleDeleteChat,
-        currentUser, chats, messages,
-        activeChat: activeChatObj,
+        isLoadingInitial, isLoadingMore, hasMore, onLoadMore: loadMoreMessages,
+        onOpenInfo: handleOpenInfo, onDeleteChatClick: handleDeleteChat,
+        currentUser, chats: displayChats, replyingToName: getReplyName(),
+        messages, activeChat: activeChatObj,
         dmSlug, text, setText, files, editingMessage,
         handleSend, handleSelectChat, handleBackToInbox,
-        handleEditClick, handleCancelEdit, handleDelete: handleDeleteClick,
+        handleEditClick, handleDelete: handleDeleteClick,
         replyingTo, setReplyingTo, togglePin, handleCancelReplyEdit,
-        handleFileChange, handleRemoveFile,
-        isTyping: targetIsTyping, onTyping: emitTyping,
+        handleFileChange, handleRemoveFile, isTyping: targetIsTyping, onTyping: emitTyping,
     };
 
     return (
         <>
-            {localStorage.getItem('old_style')
-                ? <MessagesOld {...childProps} />
-                : <Messages {...childProps} />
-            }
+            {localStorage.getItem('old_style') ? <MessagesOld {...childProps} /> : <Messages {...childProps} />}
         </>
     );
 }

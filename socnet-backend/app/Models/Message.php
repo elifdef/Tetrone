@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Message extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'chat_id', 'sender_id', 'shared_post_id', 'encrypted_payload',
         'is_system', 'is_edited', 'is_pinned', 'reply_to_id'

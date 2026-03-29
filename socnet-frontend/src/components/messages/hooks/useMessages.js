@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect, useRef, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 import MessageService from '../../../services/chat.service';
 import { notifyError } from "../../common/Notify";
 import { AuthContext } from '../../../context/AuthContext';
 
 export const useMessages = (slug, echoInstance) => {
-    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const [chatWasDeletedExternally, setChatWasDeletedExternally] = useState(false);
+
+    const [currentChatInfo, setCurrentChatInfo] = useState(null);
 
     const pageRef = useRef(1);
     const [hasMore, setHasMore] = useState(true);
@@ -86,6 +86,12 @@ export const useMessages = (slug, echoInstance) => {
             const meta = res.meta || res.data?.meta;
             const reversedData = [...items].reverse();
 
+            if (res.chat_info) {
+                setCurrentChatInfo(res.chat_info);
+            } else if (res.data?.chat_info) {
+                setCurrentChatInfo(res.data.chat_info);
+            }
+
             if (isLoadMore) {
                 setMessages(prev => {
                     const existingIds = new Set(prev.map(m => m.id));
@@ -99,16 +105,14 @@ export const useMessages = (slug, echoInstance) => {
             }
 
             setHasMore(meta && meta.current_page < meta.last_page);
-            if (!isLoadMore) MessageService.markAsRead(slug).catch(e => 
-                {//console.error("Failed to mark as read", e)
-                });
+            if (!isLoadMore) MessageService.markAsRead(slug).catch(e => { });
         } else {
             if (!silent) notifyError(res.message);
         }
 
         setIsLoadingInitial(false);
         setIsLoadingMore(false);
-    }, [slug, t]);
+    }, [slug]);
 
     const loadMoreMessages = () => {
         if (!isLoadingMore && hasMore) fetchMessages({ isLoadMore: true });
@@ -129,7 +133,7 @@ export const useMessages = (slug, echoInstance) => {
         };
 
         setMessages(prev => [...prev, tempMessage]);
-        
+
         const res = await MessageService.sendMessage(slug, text, files, sharedPostId, replyToId);
 
         if (res.success) {
@@ -167,5 +171,10 @@ export const useMessages = (slug, echoInstance) => {
         else notifyError(res.message);
     };
 
-    return { messages, isLoadingInitial, isLoadingMore, hasMore, targetIsTyping, chatWasDeletedExternally, fetchMessages, loadMoreMessages, sendMessage, updateMessage, deleteMessage, togglePin, emitTyping };
+    return {
+        messages, isLoadingInitial, isLoadingMore, hasMore, targetIsTyping,
+        chatWasDeletedExternally, fetchMessages, loadMoreMessages, sendMessage,
+        updateMessage, deleteMessage, togglePin, emitTyping,
+        currentChatInfo
+    };
 };

@@ -1,52 +1,34 @@
-import { useState, useRef, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import { NotificationContext } from '../../context/NotificationContext';
-import Textarea from '../UI/Textarea';
-import Button from '../UI/Button';
 import MessageItemOld from './MessageItemOld';
 import ChatScrollContainer from '../common/ChatScrollContainer';
+import ChatComposer from './ChatComposer';
+import { extractPreviewText } from '../../utils/messageParser';
+import { DeleteIcon, CloseIcon, PencilIcon } from '../ui/Icons';
+import "../../styles/chat-old.css";
 
 export default function MessagesOld(props) {
     const {
         currentUser, chats, messages, activeChat, dmSlug, text, setText, files, editingMessage,
         handleSend, handleSelectChat, handleBackToInbox, handleEditClick,
-        handleCancelEdit, handleDelete, handleFileChange, handleRemoveFile,
+        handleDelete, handleFileChange, handleRemoveFile,
         isLoadingInitial, isLoadingMore, hasMore, onLoadMore, onOpenInfo, onDeleteChatClick,
         setReplyingTo, togglePin, replyingTo, handleCancelReplyEdit,
-        isTyping, onTyping
+        isTyping, onTyping, replyingToName
     } = props;
 
     const { t } = useTranslation();
     const formatDate = useDateFormatter();
-    const [isAttachOpen, setIsAttachOpen] = useState(false);
-    const attachMenuRef = useRef(null);
+    const { onlineUsers } = useContext(NotificationContext);
 
-    const { onlineUsers } = useContext(NotificationContext) || { onlineUsers: [] };
+    const safeMessages = Array.isArray(messages) ? messages : [];
+    const safeChats = Array.isArray(chats) ? chats : [];
 
-    const pinnedMessage = messages.find(m => m.is_pinned);
-    const myAvatar = currentUser?.avatar;
-    const myName = currentUser?.first_name;
-
-    const isOnline = (lastSeenDate) => {
-        if (!lastSeenDate) return false;
-        return (new Date() - new Date(lastSeenDate)) < 3 * 60 * 1000;
-    };
-
-    const targetOnline = onlineUsers?.includes(activeChat?.target_user?.id) || isOnline(activeChat?.target_user?.last_seen_at);
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (attachMenuRef.current && !attachMenuRef.current.contains(e.target)) setIsAttachOpen(false);
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    const handleTextChange = (e) => {
-        setText(e.target.value);
-        if (onTyping) onTyping();
-    };
+    const pinnedMessage = messages.find(m => m.is_pinned); 
+    const targetOnline = onlineUsers?.includes(activeChat?.target_user?.id) ||
+        (activeChat?.target_user?.last_seen_at && (new Date() - new Date(activeChat.target_user.last_seen_at)) < 3 * 60 * 1000);
 
     const handleScrollToMessage = (msgId) => {
         const el = document.getElementById(`message-${msgId}`);
@@ -57,11 +39,14 @@ export default function MessagesOld(props) {
         }
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
+    const getPinnedAvatar = () => {
+        if (!pinnedMessage) return null;
+        return pinnedMessage.isMine ? currentUser?.avatar : activeChat?.target_user?.avatar;
+    };
+
+    const getPinnedName = () => {
+        if (!pinnedMessage) return '';
+        return pinnedMessage.isMine ? currentUser?.first_name : activeChat?.target_user?.first_name;
     };
 
     if (!activeChat) {
@@ -71,26 +56,35 @@ export default function MessagesOld(props) {
                     <span className="tetrone-messages-old-tab active">{t('common.messages')}</span>
                 </div>
                 <div className="tetrone-messages-old-dialog-list">
-                    {chats.map(chat => (
-                        <div key={chat.slug} className="tetrone-messages-old-dialog-item" onClick={() => handleSelectChat(chat.slug)}>
-                            <img src={chat.target_user?.avatar} alt="avatar" className="tetrone-messages-old-avatar" />
+                    {safeChats.map(chat => (
+                        <div
+                            key={chat.slug}
+                            className={`tetrone-messages-old-dialog-item ${chat.unread_count > 0 ? 'unread' : ''}`}
+                            onClick={() => handleSelectChat(chat.slug)}
+                        >
+                            <img src={chat.target_user?.avatar} alt={t('chat.avatar')} className="tetrone-messages-old-avatar" />
                             <div className="tetrone-messages-old-dialog-info">
                                 <div className="tetrone-messages-old-dialog-header">
                                     <span className="tetrone-messages-old-link">{chat.target_user?.first_name} {chat.target_user?.last_name}</span>
                                     <span className="tetrone-messages-old-date">{formatDate(chat.updated_at)}</span>
                                 </div>
-                                <div className="tetrone-messages-old-dialog-snippet">
-                                    {chat.last_message_sender_id === currentUser?.id ? (
-                                        <span className="tetrone-msg-preview-you">{t('common.you')}: </span>
-                                    ) : (
-                                        chat.last_message_sender_id ? <span className="tetrone-msg-preview-them">{chat.target_user?.first_name}: </span> : ''
+
+                                <div className="tetrone-old-preview-row">
+                                    <span className="tetrone-old-preview-text">
+                                        {chat.last_message_sender_id === currentUser?.id ? <span className="tetrone-msg-preview-you">{t('common.you')}</span> : null}
+                                        {extractPreviewText(chat.last_message, t)}
+                                    </span>
+
+                                    {chat.unread_count > 0 && (
+                                        <span className="tetrone-old-badge">
+                                            {chat.unread_count > 99 ? '99+' : chat.unread_count}
+                                        </span>
                                     )}
-                                    {chat.last_message}
                                 </div>
                             </div>
                         </div>
                     ))}
-                    {chats.length === 0 && <div className="tetrone-empty-state">{t('messages.empty_inbox')}</div>}
+                    {safeChats.length === 0 && <div className="tetrone-empty-state">{t('messages.empty_inbox')}</div>}
                 </div>
             </div>
         );
@@ -99,122 +93,64 @@ export default function MessagesOld(props) {
     return (
         <div className="tetrone-messages-old-container in-chat">
             <div className="tetrone-messages-old-chat-header-complex">
-                <span className="tetrone-messages-old-tab link" onClick={handleBackToInbox}>← {t('common.back', 'Назад')}</span>
-
+                <span className="tetrone-messages-old-tab link" onClick={handleBackToInbox}>{t('common.back')}</span>
                 <div className="tetrone-im-header-center" onClick={onOpenInfo}>
-                    <span className="tetrone-im-chat-title">
-                        {activeChat.target_user?.first_name} {activeChat.target_user?.last_name}
-                    </span>
+                    <span className="tetrone-im-chat-title">{activeChat.target_user?.first_name} {activeChat.target_user?.last_name}</span>
                     <span className="tetrone-im-offline-text">
                         {isTyping ? (
                             <span className="tetrone-typing-old">
-                                <svg className="typing-pencil-jerky" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                {t('common.typing')}...
+                                <PencilIcon className="typing-pencil-jerky" />
+                                {t('common.typing')}
                             </span>
                         ) : targetOnline ? (
                             <span className="tetrone-im-online-indicator">
-                                <span className="tetrone-im-online-square"></span> {t('common.online')}
+                                <span className="tetrone-im-online-square" /> {t('messages.online')}
                             </span>
-                        ) : (
-                            activeChat.target_user?.last_seen_at ? `${t('messages.was_online')} ${formatDate(activeChat.target_user.last_seen_at)}` : ""
-                        )}
+                        ) : ''}
                     </span>
                 </div>
-
                 <div className="tetrone-im-header-actions">
-                    <button onClick={onDeleteChatClick} className="tetrone-btn-old-icon" title={t('messages.delete_chat')}>🗑</button>
+                    <button onClick={onDeleteChatClick} className="tetrone-btn-old-icon"><DeleteIcon /></button>
                 </div>
             </div>
 
             {pinnedMessage && (
                 <div className="tetrone-pinned-message-bar" onClick={() => handleScrollToMessage(pinnedMessage.id)}>
-                    <div className="pinned-icon">📌</div>
-                    <div className="pinned-content">
-                        <div className="pinned-title">{t('messages.pinned_message')}</div>
-                        <div className="pinned-text">{pinnedMessage.text || t('messages.media')}</div>
+                    <img src={getPinnedAvatar()} alt={t('chat.avatar')} className="pinned-quote-avatar" />
+                    <div className="pinned-quote-content">
+                        <div className="pinned-author">{t('messages.pinned_message')} {getPinnedName()}</div>
+                        <div className="pinned-text">{extractPreviewText(pinnedMessage.text, t)}</div>
                     </div>
-                    <button className="pinned-close" onClick={(e) => { e.stopPropagation(); togglePin(pinnedMessage.id); }}>✖</button>
+                    <button className="pinned-close" onClick={(e) => { e.stopPropagation(); togglePin(pinnedMessage.id); }}><CloseIcon /></button>
                 </div>
             )}
 
             <ChatScrollContainer
                 className="tetrone-messages-old-history-scroll"
-                messagesLength={messages.length}
-                isLoadingMore={isLoadingMore}
-                isLoadingInitial={isLoadingInitial}
-                hasMore={hasMore}
-                onLoadMore={onLoadMore}
+                messagesLength={safeMessages.length} isLoadingMore={isLoadingMore}
+                isLoadingInitial={isLoadingInitial} hasMore={hasMore} onLoadMore={onLoadMore}
             >
-                {messages.length === 0 && !isLoadingInitial ? (
-                    <div className="tetrone-empty-state tetrone-empty-messages-list">{t('messages.no_messages_yet')}</div>
+                {safeMessages.length === 0 && !isLoadingInitial ? (
+                    <div className="tetrone-empty-state">{t('messages.no_messages_yet')}</div>
                 ) : (
                     <div className="tetrone-messages-old-history">
-                        {messages.map(msg => (
-                            <MessageItemOld
-                                key={`old-${msg.id}`} msg={msg} myAvatar={myAvatar} myName={myName} targetUser={activeChat.target_user}
-                                formatDate={formatDate} t={t} handleEditClick={handleEditClick} handleDelete={handleDelete}
-                                setReplyingTo={setReplyingTo} togglePin={togglePin}
-                            />
+                        {safeMessages.map(msg => (
+                            <MessageItemOld key={`old-${msg.id}`} msg={msg} myAvatar={currentUser?.avatar} myName={currentUser?.first_name} targetUser={activeChat.target_user} formatDate={formatDate} t={t} handleEditClick={handleEditClick} handleDelete={handleDelete} setReplyingTo={setReplyingTo} togglePin={togglePin} />
                         ))}
                     </div>
                 )}
             </ChatScrollContainer>
 
-            <div className="tetrone-messages-old-composer-wrapper">
-                {(editingMessage || replyingTo) && (
-                    <div className="tetrone-messages-old-editing">
-                        {editingMessage ? t('messages.editing') : `${t('common.reply')}: ${replyingTo.sender_name}`}
-                        <div className="reply-preview-text">
-                            {editingMessage ? '' : replyingTo.text}
-                        </div>
-                        <button className="tetrone-btn-old-icon" onClick={handleCancelReplyEdit}>✖</button>
-                    </div>
-                )}
-
-                {files.length > 0 && (
-                    <div className="tetrone-selected-files">
-                        {files.map((f, idx) => (
-                            <div key={idx} className="tetrone-selected-file-item">
-                                {f.name} <button className="tetrone-btn-old-icon" onClick={() => handleRemoveFile(idx)}>✖</button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                <div className="tetrone-messages-old-composer-inner">
-                    <img src={myAvatar} alt="My Avatar" className="tetrone-messages-old-avatar composer-avatar" />
-
-                    <div className="tetrone-messages-old-composer-center">
-                        <Textarea
-                            className="tetrone-messages-old-textarea"
-                            value={text}
-                            onChange={handleTextChange}
-                            onKeyDown={handleKeyDown}
-                            placeholder={t('messages.type_message')}
-                        />
-                        <div className="tetrone-messages-old-composer-actions">
-                            <Button className="tetrone-messages-old-send-btn" onClick={handleSend}>
-                                {editingMessage ? t('common.save') : t('messages.send', 'Надіслати')}
-                            </Button>
-
-                            <div className="tetrone-attach-wrapper" ref={attachMenuRef}>
-                                <span className="tetrone-messages-old-attach-label" onClick={() => setIsAttachOpen(!isAttachOpen)}>
-                                    {t('messages.attach', 'Прикріпити')}
-                                </span>
-                                {isAttachOpen && (
-                                    <div className="tetrone-attach-dropdown">
-                                        <label className="tetrone-attach-dropdown-item"><span className="tetrone-attach-icon">📸</span> {t('messages.attach_image')} <input type="file" accept="image/*" multiple className="tetrone-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} /></label>
-                                        <label className="tetrone-attach-dropdown-item"><span className="tetrone-attach-icon">🎥</span> {t('messages.attach_video')} <input type="file" accept="video/*" multiple className="tetrone-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} /></label>
-                                        <label className="tetrone-attach-dropdown-item"><span className="tetrone-attach-icon">📎</span> {t('messages.attach_file')} <input type="file" multiple className="tetrone-hidden-input" onChange={(e) => { handleFileChange(e); setIsAttachOpen(false); }} /></label>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <img src={activeChat.target_user?.avatar} alt="Target Avatar" className="tetrone-messages-old-avatar composer-avatar" />
-                </div>
-            </div>
+            <ChatComposer
+                theme="old"
+                text={text} setText={setText} files={files}
+                editingMessage={editingMessage} replyingTo={replyingTo}
+                replyingToName={replyingToName}
+                handleCancelReplyEdit={handleCancelReplyEdit} handleRemoveFile={handleRemoveFile}
+                handleFileChange={handleFileChange} handleSend={handleSend} onTyping={onTyping}
+                myAvatar={currentUser?.avatar}
+                targetAvatar={activeChat.target_user?.avatar}
+            />
         </div>
     );
 }

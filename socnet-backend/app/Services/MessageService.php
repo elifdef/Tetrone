@@ -24,11 +24,7 @@ class MessageService
                 ->orWhere(fn($q) => $q->where('user_id', $targetParticipant->user_id)->where('friend_id', $sender->id))
                 ->where('status', Friendship::STATUS_BLOCKED)->exists();
 
-            if ($isBlocked) return [
-                'error' => 'ERR_USER_BLOCKED',
-                'message' => 'User blocked.',
-                'status' => 403
-            ];
+            if ($isBlocked) return ['error' => 'ERR_USER_BLOCKED', 'message' => 'User blocked.', 'status' => 403];
 
             if ($targetParticipant->trashed())
             {
@@ -36,7 +32,7 @@ class MessageService
             }
         }
 
-        $savedFiles = $this->uploadFiles($sender->username, $files);
+        $savedFiles = $this->uploadFiles($chat->slug, $files);
 
         $payload = [
             'text' => $data['text'] ?? '',
@@ -68,15 +64,22 @@ class MessageService
     public function updateMessage(Message $message, Chat $chat, array $data, ?array $newFiles, ?array $deletedMedia): array|Message
     {
         $oldPayload = ChatEncryptionService::decryptPayload($message->encrypted_payload, $chat->encrypted_dek);
+
+        if ($oldPayload === null)
+        {
+            return ['error' => 'ERR_DECRYPTION_FAILED', 'message' => 'Cannot edit corrupted message', 'status' => 500];
+        }
+
         $currentFiles = $oldPayload['files'] ?? [];
 
+        // при редагуванні видаляємо файли одразу, бо це не видалення повідомлення, а зміна контенту
         if (!empty($deletedMedia))
         {
             foreach ($deletedMedia as $fileToDelete)
             {
                 if (in_array($fileToDelete, $currentFiles))
                 {
-                    Storage::disk('public')->delete($fileToDelete);
+                    Storage::disk('local')->delete("private/chats/{$chat->slug}/" . basename($fileToDelete));
                     $currentFiles = array_diff($currentFiles, [$fileToDelete]);
                 }
             }
@@ -85,7 +88,7 @@ class MessageService
 
         if (!empty($newFiles))
         {
-            $currentFiles = array_merge($currentFiles, $this->uploadFiles($message->sender->username, $newFiles));
+            $currentFiles = array_merge($currentFiles, $this->uploadFiles($chat->slug, $newFiles));
         }
 
         if (empty($data['text']) && empty($currentFiles) && !$message->shared_post_id)
@@ -105,15 +108,6 @@ class MessageService
 
     public function deleteMessage(Message $message, Chat $chat): void
     {
-        $payload = ChatEncryptionService::decryptPayload($message->encrypted_payload, $chat->encrypted_dek);
-        if (!empty($payload['files']))
-        {
-            foreach ($payload['files'] as $file)
-            {
-                Storage::disk('public')->delete($file);
-            }
-        }
-
         $message->delete();
 
         $targetParticipant = $chat->participants()->where('user_id', '!=', $message->sender_id)->first();
@@ -136,15 +130,17 @@ class MessageService
         }
     }
 
-    private function uploadFiles(string $username, ?array $files): array
+    // файли зберігаються в storage/app/private/chats/{SLUG}/
+    private function uploadFiles(string $chatSlug, ?array $files): array
     {
         $savedFiles = [];
         if (!empty($files))
         {
             foreach ($files as $file)
             {
-                $filename = Str::random(64) . '.' . $file->getClientOriginalExtension();
-                $savedFiles[] = $file->storeAs($username . '/messages', $filename, 'public');
+                $filename = Str::random(40) . '.' . $file->getClientOriginalExtension();
+                $file->storeAs("private/chats/{$chatSlug}", $filename, 'local');
+                $savedFiles[] = $filename;
             }
         }
         return $savedFiles;

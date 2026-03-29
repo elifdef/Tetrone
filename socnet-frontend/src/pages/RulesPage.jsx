@@ -20,17 +20,20 @@ export default function RulesPage() {
                         </h3>
 
                         {rule.text && (
-                            <p className="tetrone-rule-text">
-                                {rule.text}
-                            </p>
+                            <p 
+                                className="tetrone-rule-text" 
+                                dangerouslySetInnerHTML={{ __html: rule.text }} 
+                            />
                         )}
 
                         {Array.isArray(rule.subItems) && rule.subItems.length > 0 && (
                             <ol className="tetrone-rule-sublist">
                                 {rule.subItems.map((subItem, subIndex) => (
-                                    <li key={subIndex} className="tetrone-rule-sublist-item">
-                                        {subItem}
-                                    </li>
+                                    <li 
+                                        key={subIndex} 
+                                        className="tetrone-rule-sublist-item"
+                                        dangerouslySetInnerHTML={{ __html: subItem }}
+                                    />
                                 ))}
                             </ol>
                         )}

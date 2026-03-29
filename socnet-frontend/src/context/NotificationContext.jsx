@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
 import fetchClient from '../api/client';
 import Notification from '../components/common/Notification';
@@ -18,24 +18,27 @@ export const NotificationProvider = ({ children }) => {
     const [echoInstance, setEchoInstance] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchClient('/notifications').then(res => {
-                if (res.success) {
-                    setNotifications(res.data?.notifications || []);
-                    setUnreadCount(res.data?.unread_count || 0);
-                }
-            });
+    const fetchInitialData = useCallback(async () => {
+        if (!user) return;
+        const [notifRes, chatRes] = await Promise.all([
+            fetchClient('/notifications'),
+            fetchClient('/chat')
+        ]);
 
-            fetchClient('/chat').then(res => {
-                if (res.success) {
-                    const chats = res.data || [];
-                    const totalUnreadMsg = chats.reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
-                    setUnreadMessagesCount(totalUnreadMsg);
-                }
-            });
+        if (notifRes.success) {
+            setNotifications(notifRes.data?.notifications || []);
+            setUnreadCount(notifRes.data?.unread_count || 0);
+        }
+        if (chatRes.success) {
+            const chats = chatRes.data || [];
+            const totalUnreadMsg = chats.reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+            setUnreadMessagesCount(totalUnreadMsg);
         }
     }, [user]);
+
+    useEffect(() => {
+        fetchInitialData();
+    }, [fetchInitialData]);
 
     useEffect(() => {
         if (!user || !token) return;
@@ -47,9 +50,6 @@ export const NotificationProvider = ({ children }) => {
 
         const channelName = `App.Models.User.${user.id}`;
         const channel = echo.private(channelName);
-
-        channel.subscribed(() => console.log(`Socket connected (Private).`));
-        channel.error((err) => console.error(`Error connecting to Socket: `, err));
 
         channel.notification((notification) => {
             const toastId = Date.now();
@@ -97,18 +97,42 @@ export const NotificationProvider = ({ children }) => {
             });
         });
 
-        echo.join('online')
-            .here((users) => setOnlineUsers(users.map(u => u.id)))
-            .joining((joiningUser) => {
-                setOnlineUsers(prev => !prev.includes(joiningUser.id) ? [...prev, joiningUser.id] : prev);
-            })
-            .leaving((leavingUser) => {
-                setOnlineUsers(prev => prev.filter(id => id !== leavingUser.id));
-            });
+        let isOnlineJoined = false;
+
+        const joinPresence = () => {
+            if (!isOnlineJoined) {
+                echo.join('online')
+                    .here((users) => setOnlineUsers(users.map(u => u.id)))
+                    .joining((joiningUser) => {
+                        setOnlineUsers(prev => !prev.includes(joiningUser.id) ? [...prev, joiningUser.id] : prev);
+                    })
+                    .leaving((leavingUser) => {
+                        setOnlineUsers(prev => prev.filter(id => id !== leavingUser.id));
+                    });
+                isOnlineJoined = true;
+            }
+        };
+
+        const leavePresence = () => {
+            if (isOnlineJoined) {
+                echo.leave('online');
+                isOnlineJoined = false;
+            }
+        };
+
+        if (document.visibilityState === 'visible') joinPresence();
+
+        const handleVisibility = () => {
+            if (document.visibilityState === 'visible') joinPresence();
+            else leavePresence();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
 
         return () => {
+            document.removeEventListener('visibilitychange', handleVisibility);
+            leavePresence();
             echo.leaveChannel(channelName);
-            echo.leave('online');
             echo.disconnect();
             setEchoInstance(null);
         };

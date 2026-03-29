@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Extension } from '@tiptap/core';
 import { CustomStickerNode } from './CustomStickerNode';
 import StickerPicker from './StickerPicker';
 
@@ -9,15 +10,35 @@ export default function Editor({
     value,
     onChange,
     placeholder = "",
-    className = ""
+    className = "",
+    onEnter = null
 }) {
     const [showPicker, setShowPicker] = useState(false);
+
+    const EnterHandler = Extension.create({
+        name: 'enterHandler',
+        addOptions() {
+            return { onEnter: null }
+        },
+        addKeyboardShortcuts() {
+            return {
+                'Enter': () => {
+                    if (this.options.onEnter) {
+                        this.options.onEnter();
+                        return true;
+                    }
+                    return false;
+                },
+            }
+        }
+    });
 
     const editor = useEditor({
         extensions: [
             StarterKit.configure({ heading: false }),
             Placeholder.configure({ placeholder }),
             CustomStickerNode,
+            EnterHandler.configure({ onEnter })
         ],
         content: value,
         onUpdate: ({ editor }) => {

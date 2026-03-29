@@ -248,7 +248,7 @@
     "reset": "Reset",
     "id": "ID",
     "you": "You",
-    "typing": "is typing...",
+    "typing": "is typing",
     "online": "Online",
     "change": "Change",
     "block_user": "Block user",
@@ -686,6 +686,10 @@
       {
         "title": "Privacy of Correspondence (updated 07.03.2026)",
         "text": "Your personal messages are protected by encryption. We respect your privacy and do not read your chats. However, in the event of reports regarding the distribution of illegal materials or the detection of a direct threat to life and safety (e.g., crime planning, violence, exploitation, or terrorism), we are obligated to disclose this data to law enforcement authorities. We cooperate with authorities strictly within the framework of the law: any requests for access to correspondence without proper legal and verified justification will be categorically rejected."
+      },
+      {
+        "title": "Chat Privacy (updated 27.03.2026)",
+        "text": "Your personal messages and media files are securely protected using the AES-256-GCM cryptographic algorithm, which ensures confidentiality and protection against data tampering. All message attachments are stored in closed storage systems without public access. We respect your privacy and do not analyze your everyday chats. However, since encryption keys are generated and securely stored on our servers (Server-Side Encryption), <b>our platform cannot be used as a tool for illegal activities</b>. In case of receiving substantiated complaints or detecting threats (violence, exploitation, terrorism planning, child pornography), we have the technical capability to decrypt data and transfer it to law enforcement authorities. For security purposes and to prevent concealment of offenses, after a user deletes a message, it (along with attached files) is stored in a hidden form for 14 days before irreversible physical destruction. Any requests from authorities are processed strictly within the law and only upon presentation of an official court order and clear justification.\n\nP.S. Official platform position: we fundamentally do not cooperate with jurisdictions whose legislation requires the implementation of backdoors, mass surveillance, or violation of the presumption of anonymity (including certain initiatives of the United Kingdom). Additionally, we categorically do not process any requests, under no circumstances provide keys or transfer data to state authorities or intelligence agencies of the Russian Federation (FSB, RKN)."
       },
       {
         "title": "Content Publishing",

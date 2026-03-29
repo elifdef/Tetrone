@@ -13,7 +13,7 @@ class MessageService {
     }
 
     async getMessages(slug, page = 1) {
-        return await fetchClient(`/chat/${slug}/messages?page=${page}`);
+        return await fetchClient(`/chat/${slug}/messages?page=${page}&_t=${Date.now()}`);
     }
 
     async sendMessage(slug, text, files = [], sharedPostId = null, replyToId = null) {

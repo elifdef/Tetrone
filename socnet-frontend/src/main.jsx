@@ -9,8 +9,6 @@ import './i18n'
 
 import "./styles/admin.css";
 import "./styles/auth.css";
-import "./styles/chat-modern.css";
-import "./styles/chat-old.css";
 import "./styles/comments.css";
 import "./styles/sticker.css";
 import "./styles/friends.css";
