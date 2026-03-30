@@ -386,6 +386,14 @@
     "updated_avatar_male": "оновив аватар",
     "updated_avatar_female": "оновила аватар"
   },
+  "editor": {
+    "toolbar_bold": "Жирний (Ctrl+B)",
+    "toolbar_italic": "Курсив (Ctrl+I)",
+    "toolbar_underline": "Підкреслений (Ctrl+U)",
+    "toolbar_strike": "Закреслений (Ctrl+Shift+X)",
+    "toolbar_spoiler": "Спойлер (Ctrl+Shift+S)",
+    "toolbar_stickers": "Стікери"
+  },
   "comment": {
     "no_comments": "Коментарів ще немає.",
     "create_comment": "Написати коментар...",

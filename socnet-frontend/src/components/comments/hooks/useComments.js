@@ -68,34 +68,18 @@ export const useComments = (postId) => {
         }
     });
 
-    const deleteMutation = useMutation({
-        mutationFn: (id) => CommentService.delete(id),
-        onSuccess: (res, deletedId) => {
-            if (res.success) {
-                queryClient.setQueryData(queryKey, (oldData) => {
-                    if (!oldData) return oldData;
-                    return {
-                        ...oldData,
-                        pages: oldData.pages.map(page => ({
-                            ...page,
-                            data: page.data.filter(c => c.id !== deletedId)
-                        }))
-                    };
-                });
-            } else {
-                notifyError(res.message || t('error.delete_comment'));
-            }
-        }
-    });
-
     const addComment = async (content) => {
-        if (!content.trim()) return false;
+        if (!content) return false;
+        if (typeof content === 'string' && !content.trim()) return false;
+        
         await addMutation.mutateAsync(content);
         return true;
     };
 
     const editComment = async (commentId, newContent) => {
-        if (!newContent.trim()) return false;
+        if (!newContent) return false;
+        if (typeof newContent === 'string' && !newContent.trim()) return false;
+
         await editMutation.mutateAsync({ id: commentId, content: newContent });
         return true;
     };

@@ -9,6 +9,7 @@ use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
 use App\Notifications\NewMessageNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -25,40 +26,55 @@ class MessageService
                 ->where('status', Friendship::STATUS_BLOCKED)->exists();
 
             if ($isBlocked) return ['error' => 'ERR_USER_BLOCKED', 'message' => 'User blocked.', 'status' => 403];
-
-            if ($targetParticipant->trashed())
-            {
-                $targetParticipant->restore();
-            }
         }
 
-        $savedFiles = $this->uploadFiles($chat->slug, $files);
+        $savedFiles = [];
 
-        $payload = [
-            'text' => $data['text'] ?? '',
-            'files' => $savedFiles
-        ];
-
-        $message = Message::create([
-            'chat_id' => $chat->id,
-            'sender_id' => $sender->id,
-            'shared_post_id' => $data['shared_post_id'] ?? null,
-            'reply_to_id' => $data['reply_to_id'] ?? null,
-            'encrypted_payload' => ChatEncryptionService::encryptPayload($payload, $chat->encrypted_dek),
-            'is_system' => false
-        ]);
-
-        if ($targetParticipant)
+        try
         {
-            $prefs = $targetParticipant->user->getNotificationPreferencesFor($sender->id, 'messages');
-            if ($prefs['should_notify'])
+            return DB::transaction(function () use ($chat, $sender, $data, $files, &$savedFiles, $targetParticipant)
             {
-                $targetParticipant->user->notify(new NewMessageNotification($sender, $message, $chat->slug, $chat->encrypted_dek, $prefs['sound']));
-            }
-        }
+                if ($targetParticipant && $targetParticipant->trashed())
+                {
+                    $targetParticipant->restore();
+                }
 
-        $chat->touch();
-        return $message;
+                $savedFiles = $this->uploadFiles($chat->slug, $files);
+
+                $payload = [
+                    'text' => $data['text'] ?? '',
+                    'files' => $savedFiles
+                ];
+
+                $message = Message::create([
+                    'chat_id' => $chat->id,
+                    'sender_id' => $sender->id,
+                    'shared_post_id' => $data['shared_post_id'] ?? null,
+                    'reply_to_id' => $data['reply_to_id'] ?? null,
+                    'encrypted_payload' => ChatEncryptionService::encryptPayload($payload, $chat->encrypted_dek),
+                    'is_system' => false
+                ]);
+
+                if ($targetParticipant)
+                {
+                    $prefs = $targetParticipant->user->getNotificationPreferencesFor($sender->id, 'messages');
+                    if ($prefs['should_notify'])
+                    {
+                        $targetParticipant->user->notify(new NewMessageNotification($sender, $message, $chat->slug, $chat->encrypted_dek, $prefs['sound']));
+                    }
+                }
+
+                $chat->touch();
+                return $message;
+            });
+        } catch (\Exception $e)
+        {
+            foreach ($savedFiles as $file)
+            {
+                Storage::disk('local')->delete("private/chats/{$chat->slug}/" . $file);
+            }
+            throw $e;
+        }
     }
 
     public function updateMessage(Message $message, Chat $chat, array $data, ?array $newFiles, ?array $deletedMedia): array|Message
@@ -71,55 +87,77 @@ class MessageService
         }
 
         $currentFiles = $oldPayload['files'] ?? [];
+        $newUploadedFiles = [];
 
-        // при редагуванні видаляємо файли одразу, бо це не видалення повідомлення, а зміна контенту
-        if (!empty($deletedMedia))
+        try
         {
-            foreach ($deletedMedia as $fileToDelete)
+            return DB::transaction(function () use ($message, $chat, $data, $newFiles, $deletedMedia, $currentFiles, &$newUploadedFiles)
             {
-                if (in_array($fileToDelete, $currentFiles))
+
+                if (!empty($deletedMedia))
                 {
-                    Storage::disk('local')->delete("private/chats/{$chat->slug}/" . basename($fileToDelete));
-                    $currentFiles = array_diff($currentFiles, [$fileToDelete]);
+                    foreach ($deletedMedia as $fileToDelete)
+                    {
+                        if (in_array($fileToDelete, $currentFiles))
+                        {
+                            Storage::disk('local')->delete("private/chats/{$chat->slug}/" . basename($fileToDelete));
+                            $currentFiles = array_diff($currentFiles, [$fileToDelete]);
+                        }
+                    }
+                    $currentFiles = array_values($currentFiles);
                 }
+
+                if (!empty($newFiles))
+                {
+                    $newUploadedFiles = $this->uploadFiles($chat->slug, $newFiles);
+                    $currentFiles = array_merge($currentFiles, $newUploadedFiles);
+                }
+
+                if (empty($data['text']) && empty($currentFiles) && !$message->shared_post_id)
+                {
+                    return ['error' => 'ERR_EMPTY_MESSAGE', 'message' => 'Message cannot be empty', 'status' => 422];
+                }
+
+                $newPayload = ['text' => $data['text'] ?? '', 'files' => $currentFiles];
+
+                $message->update([
+                    'encrypted_payload' => ChatEncryptionService::encryptPayload($newPayload, $chat->encrypted_dek),
+                    'is_edited' => true
+                ]);
+
+                return $message;
+            });
+        } catch (\Exception $e)
+        {
+            foreach ($newUploadedFiles as $file)
+            {
+                Storage::disk('local')->delete("private/chats/{$chat->slug}/" . $file);
             }
-            $currentFiles = array_values($currentFiles);
+            throw $e;
         }
-
-        if (!empty($newFiles))
-        {
-            $currentFiles = array_merge($currentFiles, $this->uploadFiles($chat->slug, $newFiles));
-        }
-
-        if (empty($data['text']) && empty($currentFiles) && !$message->shared_post_id)
-        {
-            return ['error' => 'ERR_EMPTY_MESSAGE', 'message' => 'Message cannot be empty', 'status' => 422];
-        }
-
-        $newPayload = ['text' => $data['text'] ?? '', 'files' => $currentFiles];
-
-        $message->update([
-            'encrypted_payload' => ChatEncryptionService::encryptPayload($newPayload, $chat->encrypted_dek),
-            'is_edited' => true
-        ]);
-
-        return $message;
     }
 
     public function deleteMessage(Message $message, Chat $chat): void
     {
-        $message->delete();
-
-        $targetParticipant = $chat->participants()->where('user_id', '!=', $message->sender_id)->first();
-        if ($targetParticipant)
+        DB::transaction(function () use ($message, $chat)
         {
-            broadcast(new MessageDeletedEvent($chat->slug, $message->id, $targetParticipant->user_id));
-        }
+            $message->delete();
+
+            $targetParticipant = $chat->participants()->where('user_id', '!=', $message->sender_id)->first();
+            if ($targetParticipant)
+            {
+                broadcast(new MessageDeletedEvent($chat->slug, $message->id, $targetParticipant->user_id));
+            }
+        });
     }
 
     public function markAsRead(Chat $chat, User $user): void
     {
-        $updatedCount = Message::where('chat_id', $chat->id)->where('sender_id', '!=', $user->id)->whereNull('read_at')->update(['read_at' => now()]);
+        $updatedCount = Message::where('chat_id', $chat->id)
+            ->where('sender_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
         if ($updatedCount > 0)
         {
             $targetParticipant = $chat->participants()->where('user_id', '!=', $user->id)->first();
@@ -130,7 +168,6 @@ class MessageService
         }
     }
 
-    // файли зберігаються в storage/app/private/chats/{SLUG}/
     private function uploadFiles(string $chatSlug, ?array $files): array
     {
         $savedFiles = [];

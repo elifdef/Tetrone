@@ -3,42 +3,56 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import StickerService from '../../services/sticker.service';
 
-export default function StickerTooltip({ emojiId, position, onMouseLeave }) {
+// щоб не довбати сервер до долбаного отказа своїми стікерами
+const stickerInfoCache = {};
+
+export default function StickerTooltip({ shortcode, position, onMouseLeave }) {
     const { t } = useTranslation();
     const [info, setInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         let isMounted = true;
+
         const fetchInfo = async () => {
+            if (stickerInfoCache[shortcode]) {
+                setInfo(stickerInfoCache[shortcode]);
+                setIsLoading(false);
+                return;
+            }
+
             try {
-                const response = await StickerService.getStickerInfo(emojiId);
+                const response = await StickerService.getStickerInfo(shortcode);
                 if (isMounted && response.success) {
+                    stickerInfoCache[shortcode] = response.data;
                     setInfo(response.data);
                 }
             } catch (error) {
-                // console.error("Failed to load sticker info");
+                // error handling
             } finally {
                 if (isMounted) setIsLoading(false);
             }
         };
 
-        if (emojiId) fetchInfo();
+        if (shortcode) fetchInfo();
+
         return () => { isMounted = false; };
-    }, [emojiId]);
+    }, [shortcode]);
 
     const handleInstall = async () => {
-        if (!info?.pack?.id) return;
+        if (!info?.pack?.short_name) return;
         try {
-            const response = await StickerService.installPack(info.pack.id);
+            const response = await StickerService.installPack(info.pack.short_name);
             if (response.success) {
-                setInfo(prev => ({
-                    ...prev,
-                    pack: { ...prev.pack, is_installed: true }
-                }));
+                const updatedInfo = {
+                    ...info,
+                    pack: { ...info.pack, is_installed: true }
+                };
+                stickerInfoCache[shortcode] = updatedInfo;
+                setInfo(updatedInfo);
             }
         } catch (error) {
-            // console.error("Failed to install pack");
+            // error handling
         }
     };
 
@@ -56,7 +70,7 @@ export default function StickerTooltip({ emojiId, position, onMouseLeave }) {
                         <div className="tetrone-sticker-tooltip-pack-info">
                             <span className="tetrone-sticker-tooltip-title">{info.pack.title}</span>
                             <span className="tetrone-sticker-tooltip-author">
-                                {t('stickers.by_author')} {info.pack.author}
+                                {t('stickers.by_author')} {info.pack.author?.name || info.pack.author}
                             </span>
                         </div>
                     </div>
@@ -73,21 +87,28 @@ export default function StickerTooltip({ emojiId, position, onMouseLeave }) {
                     </div>
 
                     <div className="tetrone-sticker-tooltip-actions">
-                        <Link
-                            to={`/stickers-shop?tab=catalog&search=${info.pack.id}`}
-                            className="tetrone-btn tetrone-btn-small tetrone-btn-ghost tetrone-btn-full-width"
-                        >
-                            {t('stickers.view_pack')}
-                        </Link>
+                        {info.pack.is_deleted ? (
+                            <span className="tetrone-text-muted tetrone-sticker-tooltip-deleted-text">
+                                {t('stickers.pack_deleted')}
+                            </span>
+                        ) : (
+                            <>
+                                <Link
+                                    to={`/stickers-shop?tab=catalog&search=${info.pack.short_name}`}
+                                    className="tetrone-btn tetrone-btn-small tetrone-btn-ghost tetrone-btn-full-width"
+                                >
+                                    {t('stickers.view_pack')}
+                                </Link>
 
-                        {!info.pack.is_installed && (
-                            <button
-                                className="tetrone-btn tetrone-btn-small tetrone-btn-full-width"
-                                onClick={handleInstall}
-                                style={{ marginTop: '4px' }}
-                            >
-                                {t('stickers.add_pack')}
-                            </button>
+                                {!info.pack.is_installed && (
+                                    <button
+                                        className="tetrone-btn tetrone-btn-small tetrone-btn-full-width tetrone-mt-4"
+                                        onClick={handleInstall}
+                                    >
+                                        {t('stickers.add_pack')}
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 </>

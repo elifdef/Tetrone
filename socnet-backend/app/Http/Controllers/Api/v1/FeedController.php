@@ -26,7 +26,15 @@ class FeedController extends Controller
         $friendIds = $user->getAllFriendIds();
         $friendIds->push($user->id);
 
+        $blockedIds = $this->getBlockedUserIds($user->id);
+
         $posts = Post::whereIn('user_id', $friendIds)
+            ->whereNotIn('user_id', $blockedIds)
+            ->where(function ($q) use ($blockedIds)
+            {
+                $q->whereNotIn('target_user_id', $blockedIds)
+                    ->orWhereNull('target_user_id');
+            })
             ->with(self::POST_RELATIONS)
             ->withCount(['likes', 'comments', 'reposts'])
             ->withExists(['likes as is_liked' => function ($query) use ($user)
@@ -49,15 +57,14 @@ class FeedController extends Controller
 
         if ($user)
         {
-            $blockedBy = Friendship::where('friend_id', $user->id)
-                ->where('status', Friendship::STATUS_BLOCKED)
-                ->pluck('user_id');
+            $blockedIds = $this->getBlockedUserIds($user->id);
 
-            $blockedByMe = Friendship::where('user_id', $user->id)
-                ->where('status', Friendship::STATUS_BLOCKED)
-                ->pluck('friend_id');
-
-            $query->whereNotIn('user_id', $blockedBy->merge($blockedByMe));
+            $query->whereNotIn('user_id', $blockedIds)
+                ->where(function ($q) use ($blockedIds)
+                {
+                    $q->whereNotIn('target_user_id', $blockedIds)
+                        ->orWhereNull('target_user_id');
+                });
 
             $query->withExists(['likes as is_liked' => function ($q) use ($user)
             {
@@ -72,5 +79,21 @@ class FeedController extends Controller
         return $this->success('GLOBAL_FEED_RETRIEVED', 'Global feed retrieved',
             PostResource::collection($posts)->response()->getData(true)
         );
+    }
+
+    /**
+     * Отримати об'єднаний масив ID (кого я заблокував + хто заблокував мене)
+     */
+    private function getBlockedUserIds(int $userId)
+    {
+        $blockedBy = Friendship::where('friend_id', $userId)
+            ->where('status', Friendship::STATUS_BLOCKED)
+            ->pluck('user_id');
+
+        $blockedByMe = Friendship::where('user_id', $userId)
+            ->where('status', Friendship::STATUS_BLOCKED)
+            ->pluck('friend_id');
+
+        return $blockedBy->merge($blockedByMe);
     }
 }

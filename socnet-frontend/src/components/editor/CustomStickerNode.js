@@ -4,30 +4,28 @@ export const CustomStickerNode = Node.create({
     name: 'customSticker',
     group: 'inline',
     inline: true,
-    selectable: true, // Дозволяє виділити емодзі мишкою і видалити
+    selectable: true,
     draggable: false,
 
     addAttributes() {
         return {
-            id: { default: null },
             shortcode: { default: null },
             src: { default: null },
+            packName: { default: null },
         };
     },
 
     parseHTML() {
-        return [
-            {
-                tag: 'img.tetrone-micro-sticker',
-            },
-        ];
+        return [{ tag: 'img.tetrone-micro-sticker' }];
     },
 
     renderHTML({ HTMLAttributes }) {
         return ['img', mergeAttributes(HTMLAttributes, {
             class: 'tetrone-micro-sticker',
+            src: HTMLAttributes.src,
             alt: `:${HTMLAttributes.shortcode}:`,
-            'data-sticker-id': HTMLAttributes.id
+            // 'data-shortcode': HTMLAttributes.shortcode,
+            'data-pack-name': HTMLAttributes.packName
         })];
     },
 });

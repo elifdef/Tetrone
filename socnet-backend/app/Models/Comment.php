@@ -7,7 +7,15 @@ use Illuminate\Support\Str;
 
 class Comment extends Model
 {
-    protected $fillable = ['content', 'user_id', 'post_id', 'uid'];
+    protected $fillable = [
+        'post_id',
+        'user_id',
+        'content'
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+    ];
 
     protected static function boot()
     {

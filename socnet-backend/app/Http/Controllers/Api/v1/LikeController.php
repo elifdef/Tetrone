@@ -11,18 +11,10 @@ use Illuminate\Support\Facades\Cache;
 
 class LikeController extends Controller
 {
-    /**
-     * Поставити або забрати лайк
-     *
-     * @param Request $request
-     * @param Post $post
-     * @return JsonResponse
-     */
     public function toggle(Request $request, Post $post): JsonResponse
     {
         $user = $request->user();
 
-        // шукаєм чи вже є лайк
         $existingLike = Like::where('user_id', $user->id)
             ->where('post_id', $post->id)
             ->first();
@@ -32,7 +24,6 @@ class LikeController extends Controller
             $existingLike->delete();
             $liked = false;
 
-            // якщо юзер забрав лайк видаляєм сповіщення з бази (щоб воно зникло з меню)
             if ($post->user_id !== $user->id)
             {
                 $post->user->notifications()
@@ -43,7 +34,7 @@ class LikeController extends Controller
             }
         } else
         {
-            Like::create([
+            Like::firstOrCreate([
                 'user_id' => $user->id,
                 'post_id' => $post->id
             ]);
@@ -51,7 +42,6 @@ class LikeController extends Controller
 
             if ($post->user_id !== $user->id)
             {
-                // захист від спаму поставив лайк - забрав лайк
                 $spamCacheKey = "like_spam_user_{$user->id}_post_{$post->id}";
 
                 if (!Cache::has($spamCacheKey))

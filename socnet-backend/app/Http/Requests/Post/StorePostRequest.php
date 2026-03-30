@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\SanitizesProseMirror;
 
 class StorePostRequest extends FormRequest
 {
+    use SanitizesProseMirror;
+
     public function authorize(): bool
     {
         return true;
@@ -14,9 +17,15 @@ class StorePostRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $payload = $this->input('payload');
+        $payloadArray = is_string($payload) ? json_decode($payload, true) : $payload;
+
+        if (is_array($payloadArray) && isset($payloadArray['text']) && is_array($payloadArray['text']))
+        {
+            $payloadArray['text'] = $this->sanitizeProseMirrorNode($payloadArray['text']);
+        }
 
         $this->merge([
-            'payload' => is_string($payload) ? json_decode($payload, true) : $payload,
+            'payload' => $payloadArray,
         ]);
     }
 
@@ -37,7 +46,14 @@ class StorePostRequest extends FormRequest
         {
             $payload = $this->input('payload') ?? [];
 
-            $hasText = !empty($payload['text']);
+            $hasText = false;
+            if (!empty($payload['text']))
+            {
+                $hasText = is_array($payload['text'])
+                    ? $this->hasActualContent($payload['text'])
+                    : trim((string)$payload['text']) !== '';
+            }
+
             $hasPoll = !empty($payload['poll']);
             $hasMedia = $this->hasFile('media');
             $isRepost = !empty($this->input('original_post_id'));
@@ -47,5 +63,27 @@ class StorePostRequest extends FormRequest
                 $validator->errors()->add('payload', 'Post cannot be empty. Add text, media, poll, or repost.');
             }
         });
+    }
+
+    // Рекурсивно шукаємо текст або стікер у масиві ProseMirror
+    private function hasActualContent(array $node): bool
+    {
+        if (isset($node['type']) && in_array($node['type'], ['text', 'customSticker', 'mention']))
+        {
+            return true;
+        }
+
+        if (isset($node['content']) && is_array($node['content']))
+        {
+            foreach ($node['content'] as $child)
+            {
+                if (is_array($child) && $this->hasActualContent($child))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

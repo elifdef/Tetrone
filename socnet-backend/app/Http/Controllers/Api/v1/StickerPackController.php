@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Requests\Sticker\StorePackRequest;
 use App\Http\Requests\Sticker\UpdatePackRequest;
 use App\Http\Resources\Sticker\StickerPackResource;
+use App\Http\Resources\Sticker\StickerResource;
+use App\Models\CustomSticker;
 use App\Models\StickerPack;
 use App\Services\StickerService;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +21,22 @@ class StickerPackController extends Controller
 {
     public function __construct(protected StickerService $stickerService)
     {
+    }
+
+    /**
+     * Інформація про пак
+     */
+    public function info(Request $request, StickerPack $pack): JsonResponse
+    {
+        $pack->load(['author', 'stickers']);
+
+        $packData = (new StickerPackResource($pack))->resolve();
+        $packData['is_deleted'] = $pack->trashed();
+
+        return $this->success('STICKER_INFO_RETRIEVED', 'Pack info retrieved', [
+            'pack' => $packData,
+            'samples' => StickerResource::collection($pack->stickers->take(4))
+        ]);
     }
 
     public function store(StorePackRequest $request): JsonResponse
@@ -104,15 +122,20 @@ class StickerPackController extends Controller
     public function reorder(Request $request): JsonResponse
     {
         $request->validate([
-            'packIds' => 'required|array',
-            'packIds.*' => 'exists:sticker_packs,id'
+            'packShortNames' => 'required|array',
+            'packShortNames.*' => 'exists:sticker_packs,short_name'
         ]);
 
-        foreach ($request->packIds as $index => $packId)
+        $packs = StickerPack::whereIn('short_name', $request->packShortNames)->pluck('id', 'short_name');
+
+        foreach ($request->packShortNames as $index => $shortName)
         {
-            $request->user()->installedStickerPacks()->updateExistingPivot($packId, [
-                'sort_order' => $index
-            ]);
+            if (isset($packs[$shortName]))
+            {
+                $request->user()->installedStickerPacks()->updateExistingPivot($packs[$shortName], [
+                    'sort_order' => $index
+                ]);
+            }
         }
 
         return $this->success('PACKS_REORDERED', 'Packs order updated');
@@ -140,6 +163,7 @@ class StickerPackController extends Controller
         }
 
         $packs = $user->installedStickerPacks()
+            ->withTrashed()
             ->with('stickers')
             ->orderBy('user_sticker_packs.sort_order', 'asc')
             ->get();

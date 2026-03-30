@@ -12,6 +12,14 @@ class StorePackRequest extends FormRequest
         return !auth()->user()->is_banned;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('is_published'))
+        {
+            $this->merge(['is_published' => $this->boolean('is_published')]);
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -21,9 +29,6 @@ class StorePackRequest extends FormRequest
         ];
     }
 
-    /**
-     * Перевірка на ліміт створених паків (Максимум 255)
-     */
     public function withValidator($validator)
     {
         $validator->after(function ($validator)

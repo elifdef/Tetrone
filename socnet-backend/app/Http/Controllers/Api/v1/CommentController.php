@@ -24,7 +24,7 @@ class CommentController extends Controller
                 $query->where('is_banned', false);
             })
             ->latest()
-            ->paginate(config('comments.max_paginate'));
+            ->paginate(config('comments.max_paginate', 30));
 
         return $this->success('COMMENTS_RETRIEVED', 'Comments retrieved',
             CommentResource::collection($comments)->response()->getData(true)
@@ -56,9 +56,12 @@ class CommentController extends Controller
             'content' => 'required|array'
         ]);
 
-        $comment->update(['content' => $request->input('content')]);
+        $updatedComment = $this->commentService->updateComment(
+            $comment,
+            $request->input('content')
+        );
 
-        return $this->success('COMMENT_UPDATED', 'Comment updated', (new CommentResource($comment->load('user')))->resolve());
+        return $this->success('COMMENT_UPDATED', 'Comment updated', (new CommentResource($updatedComment->load('user')))->resolve());
     }
 
     public function destroy(Request $request, Comment $comment): JsonResponse
@@ -75,7 +78,7 @@ class CommentController extends Controller
         $comments = $request->user()->comments()
             ->with(['post.user'])
             ->orderBy('created_at', 'desc')
-            ->paginate(config('comments.max_paginate'));
+            ->paginate(config('comments.max_paginate', 30));
 
         return $this->success('MY_COMMENTS_RETRIEVED', 'My comments',
             CommentResource::collection($comments)->response()->getData(true)

@@ -9,7 +9,7 @@ use App\Notifications\NewRepostNotification;
 use App\Notifications\NewWallPostNotification;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class PostService
 {
@@ -65,142 +65,134 @@ class PostService
         return $post;
     }
 
-    public function getUserAvatarPosts(User $targetUser): Collection
-    {
-        $currentUser = auth('sanctum')->user();
-
-        $posts = Post::where('user_id', $targetUser->id)
-            ->whereJsonContains('content->is_avatar_update', true)
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts'])
-            ->latest()
-            ->get();
-
-        if ($currentUser)
-        {
-            $posts->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
-        }
-
-        return $posts;
-    }
-
     public function createPost(User $user, array $data, ?array $mediaFiles): Post
     {
-        $payload = $data['payload'] ?? [];
-        $targetUserId = $data['target_user_id'] ?? null;
-        $originalPostId = $data['original_post_id'] ?? null;
-
-        $this->validatePoll($payload['poll'] ?? null);
-
-        $contentData = [];
-        if (!empty($payload['text'])) $contentData['text'] = $payload['text'];
-        if (!empty($payload['poll'])) $contentData['poll'] = $payload['poll'];
-        if (!empty($payload['youtube'])) $contentData['youtube'] = $payload['youtube'];
-        if (!empty($payload['is_avatar_update'])) $contentData['is_avatar_update'] = true;
-
-        $post = $user->posts()->create([
-            'target_user_id' => $targetUserId == $user->id ? null : $targetUserId,
-            'content' => empty($contentData) ? null : $contentData,
-            'original_post_id' => $originalPostId,
-            'is_repost' => (bool)$originalPostId
-        ]);
-
-        $this->handleMentions($post, $user, $targetUserId);
-        $this->handleNotifications($post, $user, $targetUserId, $originalPostId);
-
-        if (!empty($mediaFiles))
+        return DB::transaction(function () use ($user, $data, $mediaFiles)
         {
-            $this->uploadMedia($post, $user->username, $mediaFiles);
-        }
+            $payload = $data['payload'] ?? [];
 
-        return $post;
+            $targetUserId = $data['target_user_id'] ?? null;
+            $originalPostId = $data['original_post_id'] ?? null;
+
+            $this->validatePoll($payload['poll'] ?? null);
+
+            $contentData = [];
+            if (!empty($payload['text'])) $contentData['text'] = $payload['text'];
+            if (!empty($payload['poll'])) $contentData['poll'] = $payload['poll'];
+            if (!empty($payload['youtube'])) $contentData['youtube'] = $payload['youtube'];
+            if (!empty($payload['is_avatar_update'])) $contentData['is_avatar_update'] = true;
+
+            $post = $user->posts()->create([
+                'target_user_id' => $targetUserId == $user->id ? null : $targetUserId,
+                'content' => empty($contentData) ? null : $contentData,
+                'original_post_id' => $originalPostId,
+                'is_repost' => (bool)$originalPostId
+            ]);
+
+            if (!empty($mediaFiles))
+            {
+                $this->uploadMedia($post, $user->username, $mediaFiles);
+            }
+
+            $this->handleMentions($post, $user, $targetUserId);
+            $this->handleNotifications($post, $user, $targetUserId, $originalPostId);
+
+            return $post;
+        });
     }
 
     public function updatePost(Post $post, array $data, ?array $newMedia, ?array $deletedMediaIds): Post
     {
-        $payload = $data['payload'] ?? [];
-        $currentMediaCount = $post->attachments()->count();
-        $deletedMediaCount = !empty($deletedMediaIds) ? count($deletedMediaIds) : 0;
-        $newMediaCount = !empty($newMedia) ? count($newMedia) : 0;
-
-        if (($currentMediaCount - $deletedMediaCount + $newMediaCount) > 10)
+        return DB::transaction(function () use ($post, $data, $newMedia, $deletedMediaIds)
         {
-            throw ValidationException::withMessages(['media' => 'A post cannot have more than 10 media attachments.']);
-        }
+            $payload = $data['payload'] ?? [];
 
-        $contentData = is_array($post->content) ? $post->content : [];
+            $currentMediaCount = $post->attachments()->count();
+            $deletedMediaCount = !empty($deletedMediaIds) ? count($deletedMediaIds) : 0;
+            $newMediaCount = !empty($newMedia) ? count($newMedia) : 0;
 
-        if (array_key_exists('text', $payload))
-        {
-            $contentData['text'] = $payload['text'] ?: null;
-        }
-        if (array_key_exists('youtube', $payload))
-        {
-            $contentData['youtube'] = $payload['youtube'] ?: null;
-        }
-
-        $contentData = array_filter($contentData, fn($val) => !is_null($val));
-
-        $post->update([
-            'content' => empty($contentData) ? null : $contentData
-        ]);
-
-        if (!empty($deletedMediaIds))
-        {
-            $attachmentsToDelete = $post->attachments()->whereIn('id', $deletedMediaIds)->get();
-            foreach ($attachmentsToDelete as $attachment)
+            if (($currentMediaCount - $deletedMediaCount + $newMediaCount) > 10)
             {
-                $this->fileService->delete($attachment->file_path);
-                $attachment->delete();
+                throw ValidationException::withMessages(['media' => 'A post cannot have more than 10 media attachments.']);
             }
-        }
 
-        if (!empty($newMedia))
-        {
-            $this->uploadMedia($post, $post->user->username, $newMedia);
-        }
+            $contentData = is_array($post->content) ? $post->content : [];
 
-        return $post;
+            if (array_key_exists('text', $payload))
+            {
+                $contentData['text'] = $payload['text'] ?: null;
+            }
+            if (array_key_exists('youtube', $payload))
+            {
+                $contentData['youtube'] = $payload['youtube'] ?: null;
+            }
+
+            $contentData = array_filter($contentData, fn($val) => !is_null($val));
+
+            $post->update([
+                'content' => empty($contentData) ? null : $contentData
+            ]);
+
+            if (!empty($deletedMediaIds))
+            {
+                $attachmentsToDelete = $post->attachments()->whereIn('id', $deletedMediaIds)->get();
+                foreach ($attachmentsToDelete as $attachment)
+                {
+                    $this->fileService->delete($attachment->file_path);
+                    $attachment->delete();
+                }
+            }
+
+            if (!empty($newMedia))
+            {
+                $this->uploadMedia($post, $post->user->username, $newMedia);
+            }
+
+            return $post;
+        });
     }
 
     public function deletePost(Post $post): void
     {
-        $content = $post->content;
-
-        if (is_array($content) && isset($content['is_avatar_update']) && $content['is_avatar_update'])
+        DB::transaction(function () use ($post)
         {
-            $user = $post->user;
+            $content = $post->content;
 
-            if ($user->avatar_post_id === $post->id)
+            if (is_array($content) && isset($content['is_avatar_update']) && $content['is_avatar_update'])
             {
-                $previousAvatarPost = Post::where('user_id', $user->id)
-                    ->where('id', '!=', $post->id)
-                    ->whereJsonContains('content->is_avatar_update', true)
-                    ->latest()
-                    ->first();
+                $user = $post->user;
 
-                if ($previousAvatarPost && $previousAvatarPost->attachments->isNotEmpty())
+                if ($user->avatar_post_id === $post->id)
                 {
-                    $user->update([
-                        'avatar' => $previousAvatarPost->attachments->first()->file_path,
-                        'avatar_post_id' => $previousAvatarPost->id
-                    ]);
-                } else
-                {
-                    $user->update([
-                        'avatar' => null,
-                        'avatar_post_id' => null
-                    ]);
+                    $previousAvatarPost = Post::where('user_id', $user->id)
+                        ->where('id', '!=', $post->id)
+                        ->whereJsonContains('content->is_avatar_update', true)
+                        ->latest()
+                        ->first();
+
+                    if ($previousAvatarPost && $previousAvatarPost->attachments->isNotEmpty())
+                    {
+                        $user->update([
+                            'avatar' => $previousAvatarPost->attachments->first()->file_path,
+                            'avatar_post_id' => $previousAvatarPost->id
+                        ]);
+                    } else
+                    {
+                        $user->update([
+                            'avatar' => null,
+                            'avatar_post_id' => null
+                        ]);
+                    }
                 }
             }
-        }
 
-        $attachments = $post->attachments;
-        foreach ($attachments as $attachment)
-        {
-            $this->fileService->delete($attachment->file_path);
-        }
-        $post->delete();
+            $attachments = $post->attachments;
+            foreach ($attachments as $attachment)
+            {
+                $this->fileService->delete($attachment->file_path);
+            }
+            $post->delete();
+        });
     }
 
     private function validatePoll(?array $poll): void

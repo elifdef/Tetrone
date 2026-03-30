@@ -11,7 +11,7 @@ class CustomSticker extends Model
 
     public function pack()
     {
-        return $this->belongsTo(StickerPack::class, 'pack_id');
+        return $this->belongsTo(StickerPack::class, 'pack_id')->withTrashed();
     }
 
     public function favoritedByUsers()

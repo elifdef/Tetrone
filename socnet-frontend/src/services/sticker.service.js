@@ -21,7 +21,7 @@ class StickerService {
         });
     }
 
-    async updatePack(id, data) {
+    async updatePack(shortName, data) {
         const formData = new FormData();
         formData.append('_method', 'PUT');
 
@@ -29,28 +29,28 @@ class StickerService {
         if (data.is_published !== undefined) formData.append('is_published', data.is_published ? '1' : '0');
         if (data.cover) formData.append('cover', data.cover);
 
-        return await fetchClient(`/stickers/packs/${id}`, {
+        return await fetchClient(`/stickers/packs/${shortName}`, {
             method: 'POST',
             body: formData
         });
     }
 
-    async deletePack(id) {
-        return await fetchClient(`/stickers/packs/${id}`, { method: 'DELETE' });
+    async deletePack(shortName) {
+        return await fetchClient(`/stickers/packs/${shortName}`, { method: 'DELETE' });
     }
 
-    async installPack(id) {
-        return await fetchClient(`/stickers/packs/${id}/install`, { method: 'POST' });
+    async installPack(shortName) {
+        return await fetchClient(`/stickers/packs/${shortName}/install`, { method: 'POST' });
     }
 
-    async uninstallPack(id) {
-        return await fetchClient(`/stickers/packs/${id}/uninstall`, { method: 'DELETE' });
+    async uninstallPack(shortName) {
+        return await fetchClient(`/stickers/packs/${shortName}/uninstall`, { method: 'DELETE' });
     }
 
-    async reorderPacks(packIds) {
+    async reorderPacks(packShortNames) {
         return await fetchClient('/stickers/reorder-packs', {
             method: 'PUT',
-            body: { packIds }
+            body: { packShortNames }
         });
     }
 
@@ -58,13 +58,13 @@ class StickerService {
         return await fetchClient(`/stickers/search?q=${query}`);
     }
 
-    async addSticker(packId, data) {
+    async addSticker(shortName, data) {
         const formData = new FormData();
         formData.append('file', data.file);
         formData.append('shortcode', data.shortcode);
         if (data.keywords) formData.append('keywords', data.keywords);
 
-        return await fetchClient(`/stickers/packs/${packId}/items`, {
+        return await fetchClient(`/stickers/packs/${shortName}/items`, {
             method: 'POST',
             body: formData
         });
@@ -88,19 +88,19 @@ class StickerService {
         return await fetchClient(`/stickers/${id}`, { method: 'DELETE' });
     }
 
-    async reorderStickers(packId, items) {
-        return await fetchClient(`/stickers/packs/${packId}/reorder`, {
+    async reorderStickers(shortName, items) {
+        return await fetchClient(`/stickers/packs/${shortName}/reorder`, {
             method: 'PUT',
             body: { items }
         });
     }
 
-    async getStickerInfo(stickerId) {
-        return await fetchClient(`/stickers/${stickerId}/info`);
+    async getStickerInfo(shortcode) {
+        return await fetchClient(`/stickers/${shortcode}/info`);
     }
 
-    async reportPack(packId, reason) {
-        return await fetchClient(`/stickers/packs/${packId}/report`, {
+    async reportPack(shortName, reason) {
+        return await fetchClient(`/stickers/packs/${shortName}/report`, {
             method: 'POST',
             body: { reason }
         });

@@ -22,27 +22,6 @@ class CustomStickerController extends Controller
     }
 
     /**
-     * Інформація для вспливаючого вікна (Tooltip)
-     */
-    public function info(Request $request, CustomSticker $sticker): JsonResponse
-    {
-        $pack = $sticker->pack;
-
-        if (!$pack)
-        {
-            return $this->error('ERR_PACK_NOT_FOUND', 'Pack not found', 404);
-        }
-
-        $pack->load(['author', 'stickers']);
-
-        return $this->success('STICKER_INFO_RETRIEVED', 'Sticker info retrieved', [
-            'sticker' => new StickerResource($sticker),
-            'pack' => new StickerPackResource($pack),
-            'samples' => StickerResource::collection($pack->stickers->take(4))
-        ]);
-    }
-
-    /**
      * Пошук стікерів (Інлайн)
      */
     public function search(Request $request): JsonResponse

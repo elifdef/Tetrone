@@ -38,11 +38,11 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
         setIsProcessing(true);
         try {
             if (isInstalled) {
-                await StickerService.uninstallPack(pack.id);
+                await StickerService.uninstallPack(pack.short_name);
                 setIsInstalled(false);
                 notifySuccess(t('stickers.pack_uninstalled'));
             } else {
-                await StickerService.installPack(pack.id);
+                await StickerService.installPack(pack.short_name);
                 setIsInstalled(true);
                 notifySuccess(t('stickers.pack_installed'));
             }
@@ -144,7 +144,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                                     </div>
                                 )}
                             </div>
-                            <div className="tetrone-modal-footer" style={{ justifyContent: 'center' }}>
+                            <div className="tetrone-modal-footer">
                                 <button
                                     className="tetrone-btn tetrone-btn-small tetrone-btn-full-width"
                                     onClick={() => toggleFavorite(selectedSticker)}

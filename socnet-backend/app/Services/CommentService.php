@@ -7,33 +7,57 @@ use App\Models\Post;
 use App\Models\User;
 use App\Notifications\NewCommentNotification;
 use App\Notifications\MentionNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CommentService
 {
     public function createComment(Post $post, User $author, array $content): Comment
     {
-        $comment = $post->comments()->create([
-            'content' => $content,
-            'user_id' => $author->id
-        ]);
+        if (!$this->hasActualContent($content))
+        {
+            throw ValidationException::withMessages(['content' => 'Comment cannot be empty.']);
+        }
 
-        $this->sendNotifications($post, $comment, $author);
+        return DB::transaction(function () use ($post, $author, $content)
+        {
+            $comment = $post->comments()->create([
+                'content' => $content,
+                'user_id' => $author->id
+            ]);
+
+            $this->sendNotifications($post, $comment, $author);
+
+            return $comment;
+        });
+    }
+
+    public function updateComment(Comment $comment, array $content): Comment
+    {
+        // Захист від видалення всього тексту при редагуванні
+        if (!$this->hasActualContent($content))
+        {
+            throw ValidationException::withMessages(['content' => 'Comment cannot be empty.']);
+        }
+
+        $comment->update(['content' => $content]);
 
         return $comment;
     }
 
     private function sendNotifications(Post $post, Comment $comment, User $author): void
     {
-        // сповіщення автору поста
+        // Сповіщення автору поста
         if ($post->user_id !== $author->id)
         {
             $prefs = $post->user->getNotificationPreferencesFor($author->id, 'comments');
             if ($prefs['should_notify'])
             {
-                $post->user->notify(new NewCommentNotification($author, $post, $comment, $prefs['sound']));
+                $post->user->notify(new NewCommentNotification($author, $post, $comment, $prefs['sound'] ?? 'default'));
             }
         }
 
+        // Обробка згадок (mentions)
         $mentionedUsernames = [];
         if (is_array($comment->content))
         {
@@ -72,5 +96,26 @@ class CommentService
                 }
             }
         }
+    }
+
+    private function hasActualContent(array $node): bool
+    {
+        if (isset($node['type']) && in_array($node['type'], ['text', 'customSticker', 'mention']))
+        {
+            return true;
+        }
+
+        if (isset($node['content']) && is_array($node['content']))
+        {
+            foreach ($node['content'] as $child)
+            {
+                if (is_array($child) && $this->hasActualContent($child))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

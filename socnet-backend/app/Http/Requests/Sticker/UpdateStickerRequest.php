@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Sticker;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStickerRequest extends FormRequest
 {
@@ -14,12 +15,20 @@ class UpdateStickerRequest extends FormRequest
     public function rules(): array
     {
         $sticker = $this->route('sticker');
-        $stickerId = $sticker ? $sticker->id : null;
 
         return [
             'file' => 'nullable|file|mimes:webp,gif,png|max:512',
-            'shortcode' => 'sometimes|string|min:2|max:30|regex:/^[a-zA-Z0-9_]+$/|unique:custom_stickers,shortcode,' . $stickerId,
-
+            'shortcode' => [
+                'sometimes',
+                'string',
+                'min:2',
+                'max:30',
+                'regex:/^[a-zA-Z0-9_]+$/',
+                // Перевіряємо унікальність в межах пака цього стікера, ігноруючи сам стікер
+                Rule::unique('custom_stickers', 'shortcode')
+                    ->where('pack_id', $sticker ? $sticker->pack_id : null)
+                    ->ignore($sticker ? $sticker->id : null)
+            ],
             'keywords' => 'nullable|string|max:255'
         ];
     }

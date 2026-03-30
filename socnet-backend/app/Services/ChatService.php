@@ -15,49 +15,56 @@ class ChatService
 {
     public function getUserChats(int $userId)
     {
-        return Chat::whereHas('participants', fn($q) => $q->where('user_id', $userId))
+        $chats = Chat::whereHas('participants', fn($q) => $q->where('user_id', $userId))
             ->has('messages')
             ->withCount(['messages as unread_count' => fn($q) => $q->where('sender_id', '!=', $userId)->whereNull('read_at')])
             ->with([
                 'participants' => fn($q) => $q->withTrashed()->where('user_id', '!=', $userId)->with('user'),
                 'messages' => fn($q) => $q->latest()->limit(1)
             ])
+            ->addSelect(['initiator_id' => Message::select('sender_id')
+                ->whereColumn('chat_id', 'chats.id')
+                ->oldest()
+                ->limit(1)
+            ])
             ->orderBy('updated_at', 'desc')
-            ->get()
-            ->map(function ($chat) use ($userId)
+            ->paginate(20);
+
+        $chats->getCollection()->transform(function ($chat)
+        {
+            $lastMsg = $chat->messages->first();
+            $targetParticipant = $chat->participants->first();
+
+            $lastMsgText = '';
+            if ($lastMsg)
             {
-                $lastMsg = $chat->messages->first();
-                $targetParticipant = $chat->participants->first();
-                $firstMsg = Message::where('chat_id', $chat->id)->oldest()->first();
+                $payload = ChatEncryptionService::decryptPayload($lastMsg->encrypted_payload, $chat->encrypted_dek);
 
-                $lastMsgText = '';
-                if ($lastMsg)
+                if ($payload === null)
                 {
-                    $payload = ChatEncryptionService::decryptPayload($lastMsg->encrypted_payload, $chat->encrypted_dek);
-
-                    if ($payload === null)
-                    {
-                        $payload = [
-                            'text' => 'Message unavailable (decryption failed)',
-                            'files' => []
-                        ];
-                    }
-                    $lastMsgText = $payload['text'] ?? (empty($payload['files']) ? 'Post' : 'Media');
+                    $payload = [
+                        'text' => 'Message unavailable',
+                        'files' => []
+                    ];
                 }
+                $lastMsgText = $payload['text'] ?? (empty($payload['files']) ? 'Post' : 'Media');
+            }
 
-                return [
-                    'slug' => $chat->slug,
-                    'created_at' => $chat->created_at,
-                    'initiator_id' => $firstMsg?->sender_id,
-                    'updated_at' => $chat->updated_at,
-                    'target_user' => ($targetParticipant && $targetParticipant->user)
-                        ? (new UserBasicResource($targetParticipant->user))->resolve()
-                        : null,
-                    'last_message' => $lastMsgText,
-                    'last_message_sender_id' => $lastMsg?->sender_id,
-                    'unread_count' => $chat->unread_count
-                ];
-            });
+            return [
+                'slug' => $chat->slug,
+                'created_at' => $chat->created_at,
+                'initiator_id' => $chat->initiator_id,
+                'updated_at' => $chat->updated_at,
+                'target_user' => ($targetParticipant && $targetParticipant->user)
+                    ?  (new UserBasicResource($targetParticipant->user))->resolve()
+                    : null,
+                'last_message' => $lastMsgText,
+                'last_message_sender_id' => $lastMsg?->sender_id,
+                'unread_count' => $chat->unread_count
+            ];
+        });
+
+        return $chats;
     }
 
     public function getOrCreatePrivateChat(User $user, int $targetId): array|Chat
@@ -82,17 +89,14 @@ class ChatService
 
         if ($chat)
         {
-            // Якщо я раніше видалив цей чат - відновлюю свою участь
             $myParticipant = $chat->participants()->withTrashed()->where('user_id', $user->id)->first();
             if ($myParticipant && $myParticipant->trashed())
             {
                 $myParticipant->restore();
             }
-
             return $chat;
         }
 
-        // Якщо чату реально ніколи не було - створюємо новий
         $chat = Chat::create([
             'slug' => Str::random(12),
             'type' => 'private',

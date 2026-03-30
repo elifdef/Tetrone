@@ -8,26 +8,13 @@ use App\Models\User;
 use App\Services\FriendshipService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * @group Друзі та Блокування
- *
- * API для керування заявками в друзі, списком друзів та чорним списком.
- */
 class FriendshipController extends Controller
 {
     public function __construct(protected FriendshipService $friendService)
     {
     }
 
-    /**
-     * Надіслати заявку в друзі
-     *
-     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
-     * * @responseFile status=200 storage/responses/friend_success.json
-     * @responseFile status=403 storage/responses/friend_error_403.json
-     */
     public function sendRequest(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -41,13 +28,6 @@ class FriendshipController extends Controller
         return $this->success('FRIEND_REQUEST_SENT', 'Friend request sent');
     }
 
-    /**
-     * Прийняти заявку в друзі
-     *
-     * @urlParam username string required Нікнейм користувача, який надіслав заявку. Example: Tetrone_84
-     * * @responseFile status=200 storage/responses/friend_success.json
-     * @response 404 {"success": false, "code": "ERR_NO_PENDING_REQUEST", "message": "No pending request found"}
-     */
     public function acceptRequest(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -61,12 +41,6 @@ class FriendshipController extends Controller
         return $this->success('FRIEND_REQUEST_ACCEPTED', 'Friend request accepted');
     }
 
-    /**
-     * Видалити з друзів або скасувати заявку
-     *
-     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
-     * * @responseFile status=200 storage/responses/friend_success.json
-     */
     public function destroy(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -75,12 +49,6 @@ class FriendshipController extends Controller
         return $this->success('FRIEND_REMOVED', 'Relationship removed');
     }
 
-    /**
-     * Заблокувати користувача
-     *
-     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
-     * * @responseFile status=200 storage/responses/friend_success.json
-     */
     public function block(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -94,13 +62,6 @@ class FriendshipController extends Controller
         return $this->success('USER_BLOCKED', 'User blocked');
     }
 
-    /**
-     * Зняти блокування з користувача
-     *
-     * @urlParam username string required Нікнейм цільового користувача. Example: Tetrone_84
-     * * @responseFile status=200 storage/responses/friend_success.json
-     * @response 404 {"success": false, "code": "ERR_NOT_IN_BLACKLIST", "message": "User was not in blacklist"}
-     */
     public function unblock(Request $request, string $username): JsonResponse
     {
         $targetUser = User::where('username', $username)->firstOrFail();
@@ -114,25 +75,18 @@ class FriendshipController extends Controller
         return $this->success('USER_UNBLOCKED', 'User unblocked');
     }
 
-    /**
-     * Отримати список друзів
-     *
-     * @responseFile status=200 storage/responses/friend_list.json
-     */
-    public function listFriends(Request $request): AnonymousResourceCollection
+    public function listFriends(Request $request): JsonResponse
     {
         $me = $request->user();
         $friendIds = $me->getAllFriendIds();
-        $friends = User::whereIn('id', $friendIds)->get();
 
-        return PublicUserResource::collection($friends);
+        $friends = User::whereIn('id', $friendIds)->paginate(30);
+
+        return $this->success('FRIENDS_RETRIEVED', 'Friends list retrieved',
+            PublicUserResource::collection($friends)->response()->getData(true)
+        );
     }
 
-    /**
-     * Отримати кількість вхідних заявок
-     *
-     * @responseFile status=200 storage/responses/friend_counts.json
-     */
     public function getCounts(Request $request): JsonResponse
     {
         $me = $request->user();
@@ -143,51 +97,42 @@ class FriendshipController extends Controller
         return $this->success('SUCCESS', 'Counts retrieved', ['requests_count' => $requestsCount]);
     }
 
-    /**
-     * Отримати список надісланих мною заявок (підписок)
-     *
-     * @responseFile status=200 storage/responses/friend_list.json
-     */
-    public function sentRequests(Request $request): AnonymousResourceCollection
+    public function sentRequests(Request $request): JsonResponse
     {
         $me = $request->user();
         $users = User::whereHas('receivedFriendships', function ($q) use ($me)
         {
             $q->where('user_id', $me->id)->where('status', Friendship::STATUS_PENDING);
-        })->get();
+        })->paginate(30);
 
-        return PublicUserResource::collection($users);
+        return $this->success('SENT_REQUESTS_RETRIEVED', 'Sent requests retrieved',
+            PublicUserResource::collection($users)->response()->getData(true)
+        );
     }
 
-    /**
-     * Отримати список вхідних заявок
-     *
-     * @responseFile status=200 storage/responses/friend_list.json
-     */
-    public function requests(Request $request): AnonymousResourceCollection
+    public function requests(Request $request): JsonResponse
     {
         $me = $request->user();
         $users = User::whereHas('sentFriendships', function ($q) use ($me)
         {
             $q->where('friend_id', $me->id)->where('status', Friendship::STATUS_PENDING);
-        })->get();
+        })->paginate(30);
 
-        return PublicUserResource::collection($users);
+        return $this->success('INCOMING_REQUESTS_RETRIEVED', 'Incoming requests retrieved',
+            PublicUserResource::collection($users)->response()->getData(true)
+        );
     }
 
-    /**
-     * Отримати чорний список
-     *
-     * @responseFile status=200 storage/responses/friend_list.json
-     */
-    public function blocked(Request $request): AnonymousResourceCollection
+    public function blocked(Request $request): JsonResponse
     {
         $me = $request->user();
         $users = User::whereHas('receivedFriendships', function ($q) use ($me)
         {
             $q->where('user_id', $me->id)->where('status', Friendship::STATUS_BLOCKED);
-        })->get();
+        })->paginate(30);
 
-        return PublicUserResource::collection($users);
+        return $this->success('BLOCKED_USERS_RETRIEVED', 'Blocked users retrieved',
+            PublicUserResource::collection($users)->response()->getData(true)
+        );
     }
 }

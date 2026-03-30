@@ -46,7 +46,23 @@ class PostApiTest extends TestCase
     public function test_can_create_post_with_text_only(): void
     {
         $user = User::factory()->create();
-        $payload = ['text' => ['type' => 'doc', 'content' => [['type' => 'paragraph']]]];
+
+        $payload = [
+            'text' => [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Тестовий пост'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
         $response = $this->actingAs($user, 'sanctum')
             ->postJson('/api/v1/posts', ['payload' => json_encode($payload)]);

@@ -8,8 +8,7 @@ Route::prefix('stickers')->group(function ()
 {
     Route::get('/catalog', [StickerPackController::class, 'catalog']);
     Route::get('/search', [CustomStickerController::class, 'search']);
-    Route::get('/{emoji}/info', [CustomStickerController::class, 'info']);
-
+    Route::get('/{pack:short_name}/info', [StickerPackController::class, 'info']);
     Route::get('/my', [StickerPackController::class, 'myPacks']);
 
     Route::middleware('auth:sanctum')->group(function ()

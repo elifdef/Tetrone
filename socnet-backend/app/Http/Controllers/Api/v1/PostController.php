@@ -31,11 +31,7 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
         {
-            return $this->error(
-                'ERR_USER_BLOCKED',
-                'The user has restricted your access.',
-                403
-            );
+            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access.', 403);
         }
 
         $query = Post::select('posts.*')
@@ -68,11 +64,7 @@ class PostController extends Controller
 
         if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $post->user_id))
         {
-            return $this->error(
-                'ERR_USER_BLOCKED',
-                'The user has restricted your access to the post.',
-                403
-            );
+            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access to the post.', 403);
         }
 
         $post->load(self::POST_RELATIONS)->loadCount(['likes', 'comments', 'reposts']);
@@ -92,18 +84,18 @@ class PostController extends Controller
     {
         $data = $request->validated();
 
-        $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
+        $mediaFiles = $request->file('media');
+        if ($mediaFiles && !is_array($mediaFiles))
+        {
+            $mediaFiles = [$mediaFiles];
+        }
 
+        // Передаємо чистий $data. JSON вже розпаковано у Request!
         $post = $this->postService->createPost(
             $request->user(),
             $data,
-            $request->file('media')
+            $mediaFiles
         );
-
-        if (is_array($post) && isset($post['error']))
-        {
-            return $this->error($post['error'], $post['message'], $post['status'] ?? 400);
-        }
 
         $post->load(self::POST_RELATIONS);
 
@@ -119,19 +111,24 @@ class PostController extends Controller
 
         $data = $request->validated();
 
-        $data['content'] = !empty($data['content']) ? json_decode($data['content'], true) : null;
+        $mediaFiles = $request->file('media');
+        if ($mediaFiles && !is_array($mediaFiles))
+        {
+            $mediaFiles = [$mediaFiles];
+        }
+
+        $deletedMediaIds = $request->input('deleted_media');
+        if ($deletedMediaIds && !is_array($deletedMediaIds))
+        {
+            $deletedMediaIds = [$deletedMediaIds];
+        }
 
         $result = $this->postService->updatePost(
             $post,
             $data,
-            $request->file('media'),
-            $request->input('deleted_media')
+            $mediaFiles,
+            $deletedMediaIds
         );
-
-        if (is_array($result) && isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status'] ?? 400);
-        }
 
         $result->load(self::POST_RELATIONS)
             ->loadCount(['likes', 'comments', 'reposts'])
@@ -146,21 +143,12 @@ class PostController extends Controller
 
         if ($user->id !== $post->user_id && $post->target_user_id !== $user->id && $user->cannot('delete-any-content'))
         {
-            return $this->error(
-                'ERR_DELETE_PERMISSION_DENIED',
-                "You do not have right to delete this post.",
-                403
-            );
+            return $this->error('ERR_DELETE_PERMISSION_DENIED', "You do not have right to delete this post.", 403);
         }
 
         $this->postService->deletePost($post);
 
-        return $this->success(
-            'POST_DELETED',
-            'Post deleted.',
-            null,
-            202
-        );
+        return $this->success('POST_DELETED', 'Post deleted.', null, 202);
     }
 
     public function getUserAvatars(Request $request, string $username): JsonResponse
@@ -174,17 +162,23 @@ class PostController extends Controller
         }
 
         $posts = Post::where('user_id', $targetUser->id)
-            ->whereJsonContains('content', ['is_avatar_update' => true])
+            ->whereJsonContains('content->is_avatar_update', true)
             ->with(self::POST_RELATIONS)
             ->withCount(['likes', 'comments', 'reposts'])
             ->latest()
-            ->get();
+            ->paginate(30);
 
         if ($currentUser)
         {
-            $posts->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
+            $posts->getCollection()->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
         }
 
-        return $this->success('SUCCESS', '', PostResource::collection($posts));
+        return $this->success('SUCCESS', '', [
+            'data' => PostResource::collection($posts)->resolve(),
+            'meta' => [
+                'current_page' => $posts->currentPage(),
+                'last_page' => $posts->lastPage()
+            ]
+        ]);
     }
 }

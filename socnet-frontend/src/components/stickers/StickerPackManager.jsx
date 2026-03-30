@@ -9,7 +9,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
     const { t } = useTranslation();
     const { openConfirm } = useModal();
 
-    const [packId, setPackId] = useState(existingPack?.id || null);
+    const [packShortName, setPackShortName] = useState(existingPack?.short_name || null);
     const [title, setTitle] = useState(existingPack?.title || '');
     const [isPublished, setIsPublished] = useState(existingPack?.is_published || false);
     const [coverFile, setCoverFile] = useState(null);
@@ -50,7 +50,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
         if (!isConfirmed) return;
 
         try {
-            await StickerService.deletePack(packId);
+            await StickerService.deletePack(packShortName);
             notifySuccess(t('stickers.deleted'));
             if (onSuccess) onSuccess();
             if (onRefresh) onRefresh();
@@ -73,18 +73,18 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
         setIsSaving(true);
         try {
             const packData = { title, is_published: isPublished, cover: coverFile };
-            let currentPackId = packId;
+            let currentPackShortName = packShortName;
 
-            if (currentPackId) {
-                await StickerService.updatePack(currentPackId, packData);
+            if (currentPackShortName) {
+                await StickerService.updatePack(currentPackShortName, packData);
             } else {
                 if (!coverFile) {
                     setIsSaving(false);
                     return notifyError(t('stickers.err_no_cover'));
                 }
                 const response = await StickerService.createPack(packData);
-                currentPackId = response.data.id;
-                setPackId(currentPackId);
+                currentPackShortName = response.data.short_name;
+                setPackShortName(currentPackShortName);
             }
 
             for (const id of deletedStickerIds) {
@@ -94,7 +94,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
 
             for (const sticker of localStickers) {
                 if (sticker.isNew && sticker.file) {
-                    await StickerService.addSticker(currentPackId, {
+                    await StickerService.addSticker(packShortName, {
                         file: sticker.file,
                         shortcode: sticker.shortcode,
                         keywords: sticker.keywords
@@ -188,7 +188,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                     </div>
                 </div>
 
-                {packId && (
+                {packShortName && (
                     <div className="tetrone-pack-items-manager">
                         <div className="tetrone-section-title tetrone-section-title-spaced">
                             <span>{t('stickers.stickers_list')} ({localStickers.length})</span>
@@ -220,7 +220,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
 
             <div className="tetrone-modal-footer tetrone-flex-between">
                 <div>
-                    {packId && (
+                    {packShortName && (
                         <button
                             className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
                             onClick={executeDeletePack}

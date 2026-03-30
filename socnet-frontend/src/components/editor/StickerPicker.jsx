@@ -7,7 +7,6 @@ export default function StickerPicker({ onSelect, onClose }) {
     const [packs, setPacks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('favorites');
-
     const [searchQuery, setSearchQuery] = useState('');
 
     const [favorites, setFavorites] = useState(() => {
@@ -21,7 +20,7 @@ export default function StickerPicker({ onSelect, onClose }) {
                 const response = await StickerService.getMyPacks();
                 setPacks(response.data || []);
             } catch (error) {
-                // console.error('Packs load fail');
+                // error handling
             } finally {
                 setIsLoading(false);
             }
@@ -37,14 +36,19 @@ export default function StickerPicker({ onSelect, onClose }) {
         const selectedPack = packs.find(p => p.id === activeTab);
         let stickers = selectedPack?.stickers || [];
 
+        let formattedStickers = stickers.map(s => ({
+            ...s,
+            pack_short_name: selectedPack?.short_name || selectedPack?.id
+        }));
+
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
-            return stickers.filter(e =>
+            return formattedStickers.filter(e =>
                 e.shortcode.toLowerCase().includes(query) ||
                 (e.keywords && e.keywords.toLowerCase().includes(query))
             );
         }
-        return stickers;
+        return formattedStickers;
     }, [packs, activeTab, searchQuery, favorites]);
 
     return (

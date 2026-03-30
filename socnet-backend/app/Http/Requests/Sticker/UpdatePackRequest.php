@@ -11,6 +11,14 @@ class UpdatePackRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('is_published'))
+        {
+            $this->merge(['is_published' => $this->boolean('is_published')]);
+        }
+    }
+
     public function rules(): array
     {
         return [

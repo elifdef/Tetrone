@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\SanitizesProseMirror;
 
 class UpdatePostRequest extends FormRequest
 {
+    use SanitizesProseMirror;
+
     public function authorize(): bool
     {
         return true;
@@ -14,26 +17,18 @@ class UpdatePostRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $payload = $this->input('payload');
+        $payloadArray = is_string($payload) ? json_decode($payload, true) : $payload;
+
+        if (is_array($payloadArray) && isset($payloadArray['text']) && is_array($payloadArray['text']))
+        {
+            $payloadArray['text'] = $this->sanitizeProseMirrorNode($payloadArray['text']);
+        }
 
         $this->merge([
-            'payload' => is_string($payload) ? json_decode($payload, true) : $payload,
+            'payload' => $payloadArray,
         ]);
     }
 
-    public function rules(): array
-    {
-        return [
-            'payload' => 'nullable|array',
-            'media' => 'nullable|array|max:10',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,webm,m4a,mp3,wav,pdf,doc,docx|max:' . config('uploads.max_size'),
-            'deleted_media' => 'nullable|array',
-            'deleted_media.*' => 'integer|exists:post_attachments,id'
-        ];
-    }
-
-    /**
-     * перевірка щоб пост не став порожнім після видалення тексту та файлів
-     */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator)
@@ -41,19 +36,29 @@ class UpdatePostRequest extends FormRequest
             $post = $this->route('post');
             $payload = $this->input('payload') ?? [];
 
-            // чи є текст у новому payload?
-            $hasText = !empty($payload['text']);
+            $hasText = false;
+            if (array_key_exists('text', $payload))
+            {
+                if (is_array($payload['text']))
+                {
+                    $hasText = $this->hasActualContent($payload['text']);
+                } else
+                {
+                    $hasText = trim((string)$payload['text']) !== '';
+                }
+            } else
+            {
+                $postContent = is_array($post->content) ? $post->content : [];
+                $hasText = !empty($postContent['text']);
+            }
 
-            // чи є опитування?
             $hasPoll = isset($payload['poll']) ? true : (is_array($post->content) && isset($post->content['poll']));
 
-            // Було - Видалили + Завантажили нові
             $currentMediaCount = $post->attachments()->count();
             $deletedMediaCount = count($this->input('deleted_media') ?? []);
             $newMediaCount = $this->hasFile('media') ? count($this->file('media')) : 0;
             $mediaLeft = ($currentMediaCount - $deletedMediaCount) + $newMediaCount;
 
-            // чи це репост? (пусті репости дозволені)
             $isRepost = $post->is_repost;
 
             if (!$hasText && !$hasPoll && $mediaLeft <= 0 && !$isRepost)
@@ -61,5 +66,26 @@ class UpdatePostRequest extends FormRequest
                 $validator->errors()->add('payload', 'Post cannot be empty. Add text, media, poll, or repost.');
             }
         });
+    }
+
+    private function hasActualContent(array $node): bool
+    {
+        if (isset($node['type']) && in_array($node['type'], ['text', 'customSticker', 'mention']))
+        {
+            return true;
+        }
+
+        if (isset($node['content']) && is_array($node['content']))
+        {
+            foreach ($node['content'] as $child)
+            {
+                if (is_array($child) && $this->hasActualContent($child))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -11,6 +11,11 @@ class StickerPack extends Model
 
     protected $guarded = [];
 
+    public function getRouteKeyName()
+    {
+        return 'short_name';
+    }
+
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
