@@ -49,9 +49,7 @@ export default async function fetchClient(endpoint, { method = 'GET', body, ...c
                 };
             }
 
-            const translatedMessage = i18n.exists(`api.error.${errorCode}`)
-                ? i18n.t(`api.error.${errorCode}`)
-                : (data?.message || i18n.t('common.error'));
+            const translatedMessage = i18n.t(`api.error.${errorCode}`);
 
             throw {
                 success: false,

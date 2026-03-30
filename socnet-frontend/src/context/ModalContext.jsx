@@ -33,7 +33,7 @@ export const ModalProvider = ({ children }) => {
         });
     }, []);
 
-    const openPrompt = useCallback((message, title = i18n.t('common.action'), placeholder = '', allowEmpty = false, btnSubmit = i18n.t('common.save'), btnCancel = i18n.t('common.cancel')) => {
+    const openPrompt = useCallback((message, title, placeholder = '', allowEmpty = false, btnSubmit = i18n.t('common.save'), btnCancel = i18n.t('common.cancel')) => {
         return new Promise((resolve) => {
             setModalState({
                 isOpen: true, type: 'prompt', title, message, placeholder, allowEmptyPrompt: allowEmpty, btnSubmit, btnCancel, resolve, inputValue: '', customContent: null

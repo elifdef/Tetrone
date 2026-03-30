@@ -35,7 +35,6 @@ const NotificationContent = ({ name, text, snippet, t }) => {
         } else if (typeof snippet === 'string') {
             if (snippet === 'POLL') renderedSnippet = `📊 ${t('post.poll')}`;
             else if (snippet === 'ATTACHMENT') renderedSnippet = `📎 ${t('post.attachment')}`;
-            else if (snippet === 'AVATAR_UPDATE') renderedSnippet = `🖼 ${t('post.avatar_update')}`;
             else renderedSnippet = `"${snippet}"`;
         }
     }

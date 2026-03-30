@@ -33,7 +33,7 @@ export default function PostPage() {
                 }
             })
             .catch(err => {
-                setError(err.message || t('error.loading_post'));
+                setError(err.message || t('error.load_post'));
             })
             .finally(() => {
                 setLoading(false);
@@ -57,8 +57,8 @@ export default function PostPage() {
     if (error || !post) {
         return (
             <ErrorState
-                title={error || t('error.not_found')}
-                description={t('error.try_again_later')}
+                title={error || t('post.not_found')}
+                description={t('error.load_post')}
                 onRetry={() => window.location.reload()}
             />
         );

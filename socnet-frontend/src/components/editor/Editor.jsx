@@ -158,7 +158,6 @@ const MenuBar = ({ editor, t }) => {
                 className="tetrone-toolbar-select"
                 title={t('editor.toolbar_size')}
             >
-                <option value="">{t('common.default')}</option>
                 <option value="12px">12</option>
                 <option value="14px">14</option>
                 <option value="16px">16</option>

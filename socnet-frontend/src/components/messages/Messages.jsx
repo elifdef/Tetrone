@@ -62,7 +62,7 @@ export default function Messages(props) {
                 <div className="tetrone-modern-chat-list">
                     {safeChats.map(chat => (
                         <div key={chat.slug} className={`tetrone-modern-chat-item ${dmSlug === chat.slug ? 'active' : ''}`} onClick={() => handleSelectChat(chat.slug)}>
-                            <img src={chat.target_user?.avatar} alt={t('chat.avatar')} className="tetrone-modern-avatar" />
+                            <img src={chat.target_user?.avatar} className="tetrone-modern-avatar" />
                             <div className="tetrone-modern-chat-info">
                                 <div className="tetrone-modern-chat-top">
                                     <span className="tetrone-modern-chat-name">{chat.target_user?.first_name} {chat.target_user?.last_name}</span>

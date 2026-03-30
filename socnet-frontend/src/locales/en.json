@@ -287,8 +287,7 @@
   "banner": {
     "email": {
       "text": "Your email has not been confirmed. Some features may not be available.",
-      "send": "Send email",
-      "sending": "Sending..."
+      "send": "Send email"
     }
   },
   "footer": {
