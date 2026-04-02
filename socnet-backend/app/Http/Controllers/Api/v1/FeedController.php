@@ -14,6 +14,7 @@ class FeedController extends Controller
         'user:id,username,first_name,last_name,avatar',
         'targetUser',
         'attachments',
+        'pollVotes',
         'originalPost.user',
         'originalPost.attachments',
         'originalPost.originalPost.user',

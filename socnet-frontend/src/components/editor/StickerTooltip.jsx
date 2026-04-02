@@ -95,14 +95,14 @@ export default function StickerTooltip({ shortcode, position, onMouseLeave }) {
                             <>
                                 <Link
                                     to={`/stickers-shop?tab=catalog&search=${info.pack.short_name}`}
-                                    className="tetrone-btn tetrone-btn-small tetrone-btn-ghost tetrone-btn-full-width"
+                                    className="tetrone-btn  tetrone-btn-ghost tetrone-btn-full-width"
                                 >
                                     {t('stickers.view_pack')}
                                 </Link>
 
                                 {!info.pack.is_installed && (
                                     <button
-                                        className="tetrone-btn tetrone-btn-small tetrone-btn-full-width tetrone-mt-4"
+                                        className="tetrone-btn  tetrone-btn-full-width tetrone-mt-4"
                                         onClick={handleInstall}
                                     >
                                         {t('stickers.add_pack')}

@@ -15,8 +15,12 @@ class PostService
 {
     public const POST_RELATIONS = [
         'user', 'targetUser', 'attachments', 'pollVotes.user', 'myPollVotes',
-        'originalPost.user', 'originalPost.attachments',
-        'originalPost.originalPost.user', 'originalPost.originalPost.attachments'
+        // 1-й рівень вкладеності
+        'originalPost.user', 'originalPost.attachments', 'originalPost.pollVotes.user', 'originalPost.myPollVotes',
+        // 2-й рівень вкладеності
+        'originalPost.originalPost.user', 'originalPost.originalPost.attachments', 'originalPost.originalPost.pollVotes.user', 'originalPost.originalPost.myPollVotes',
+        // 3-й рівень вкладеності
+        'originalPost.originalPost.originalPost.user', 'originalPost.originalPost.originalPost.attachments'
     ];
 
     public function __construct(protected FileStorageService $fileService)

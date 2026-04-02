@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../../context/AuthContext';
-import Button from '../UI/Button';
+import Button from '../ui/Button';
 import AppealService from '../../services/appeal.service';
 import { notifySuccess, notifyError } from '../common/Notify';
 

@@ -60,10 +60,10 @@ export default function HomePage() {
                 <>
                     <p>{t('feed.my_feed_empty')}</p>
                     <div className="tetrone-feed-actions">
-                        <Link to="/friends?tab=all" className="tetrone-btn-small">
+                        <Link to="/friends?tab=all" className="">
                             {t('feed.find_friends')}
                         </Link>
-                        <button className="tetrone-btn-small" onClick={() => handleTabChange('global')}>
+                        <button className="" onClick={() => handleTabChange('global')}>
                             {t('feed.view_global_feed')}
                         </button>
                     </div>

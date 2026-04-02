@@ -16,7 +16,8 @@ class ActivityService
         'originalPost.user',
         'originalPost.attachments',
         'originalPost.originalPost.user',
-        'originalPost.originalPost.attachments'
+        'originalPost.originalPost.attachments',
+        'pollVotes'
     ];
 
     public function getLikedPosts(User $user): LengthAwarePaginator
@@ -74,5 +75,19 @@ class ActivityService
                 ];
             })->sortByDesc('date')->values()
         ];
+    }
+
+    public function getVotedPolls(User $user): LengthAwarePaginator
+    {
+        return Post::whereHas('pollVotes', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->with(self::POST_RELATIONS)
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->withExists(['likes as is_liked' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
+            ->latest()
+            ->paginate(config('posts.max_paginate'));
     }
 }

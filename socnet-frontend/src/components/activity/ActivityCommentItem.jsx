@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import { DeleteIcon } from "../ui/Icons";
+import RichText from '../common/RichText';
 
 export default function ActivityCommentItem({ comment, onDelete }) {
     const { t } = useTranslation();
@@ -10,6 +11,16 @@ export default function ActivityCommentItem({ comment, onDelete }) {
     const postAuthor = comment.post?.user;
     const me = comment.user;
     const opColor = postAuthor?.personalization?.username_color;
+
+    const renderContent = () => {
+        if (!comment.content) return null;
+
+        if (typeof comment.content === 'object') {
+            return <RichText text={comment.content} />;
+        }
+
+        return comment.content;
+    };
 
     return (
         <div className="tetrone-activity-card tetrone-relative-card">
@@ -59,7 +70,7 @@ export default function ActivityCommentItem({ comment, onDelete }) {
 
                 <div className="tetrone-activity-bubble-wrapper">
                     <div className="tetrone-activity-bubble">
-                        {comment.content}
+                        {renderContent()}
                     </div>
 
                     <div className="tetrone-activity-meta">
@@ -69,7 +80,6 @@ export default function ActivityCommentItem({ comment, onDelete }) {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

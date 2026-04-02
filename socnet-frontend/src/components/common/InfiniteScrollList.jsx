@@ -32,7 +32,7 @@ export default function InfiniteScrollList({
             <div className="tetrone-empty-state with-card">
                 <h3>{t('error.connection')}</h3>
                 {onRetry && (
-                    <button className="tetrone-btn-small tetrone-btn-retry" onClick={onRetry}>
+                    <button className="tetrone-btn-retry" onClick={onRetry}>
                         {t('common.reload_page')}
                     </button>
                 )}
@@ -64,7 +64,7 @@ export default function InfiniteScrollList({
             {/* кінець списку */}
             {!hasMore && itemsCount > 0 && (
                 <div className="tetrone-infinite-scroll-msg">
-                    {endMessage || t('wall.no_more_posts')}
+                    {endMessage}
                 </div>
             )}
 
@@ -76,7 +76,7 @@ export default function InfiniteScrollList({
                     </span>
                     <br />
                     {onRetry && (
-                        <button className="tetrone-btn-small tetrone-btn-retry-small" onClick={onRetry}>
+                        <button className=" tetrone-btn-retry-small" onClick={onRetry}>
                             {t('common.reload_page')}
                         </button>
                     )}

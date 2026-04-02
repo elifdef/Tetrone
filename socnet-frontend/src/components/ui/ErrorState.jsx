@@ -13,7 +13,7 @@ export default function ErrorState({ title, description, onRetry, buttonText, sh
             {showButton && (
                 <div className="tetrone-feed-actions tetrone-mt-10">
                     <button
-                        className="tetrone-btn tetrone-btn-small"
+                        className="tetrone-btn "
                         onClick={handleRetry}
                     >
                         {buttonText || t('common.reload_page')}

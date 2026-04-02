@@ -82,8 +82,8 @@ export default function GlobalModal({
                     </div>
 
                     <div className="tetrone-modal-footer">
-                        <Button className="tetrone-btn-ghost" onClick={handleCancel}>{btnCancel}</Button>
-                        <Button variant="save" onClick={handleSubmit} disabled={isSubmitDisabled}>{btnSubmit}</Button>
+                        <Button variant="secondary" onClick={handleCancel}>{btnCancel}</Button>
+                        <Button onClick={handleSubmit} disabled={isSubmitDisabled}>{btnSubmit}</Button>
                     </div>
                 </div>
             )}

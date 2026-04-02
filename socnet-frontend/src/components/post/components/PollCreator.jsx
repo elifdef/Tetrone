@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from '../..//UI/Button';
-import Input from '../..//UI/Input';
-import Textarea from '../../UI/Textarea';
+import Button from '../..//ui/Button';
+import Input from '../..//ui/Input';
+import Textarea from '../../ui/Textarea';
 import { notifyError } from '../..//common/Notify';
 
 export default function PollCreator({ initialData, onSave, onCancel }) {
@@ -153,8 +153,8 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
             )}
 
             <div className="tetrone-poll-actions">
-                <Button type="button" onClick={onCancel} className="tetrone-btn-cancel">{t('common.cancel')}</Button>
-                <Button type="button" onClick={handleSave}>{t('common.save')}</Button>
+                <Button variant="secondary" onClick={onCancel}>{t('common.cancel')}</Button>
+                <Button onClick={handleSave}>{t('common.save')}</Button>
             </div>
         </div>
     );

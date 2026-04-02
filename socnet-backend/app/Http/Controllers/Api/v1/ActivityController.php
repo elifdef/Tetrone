@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
+use App\Models\PollVote;
 use App\Services\ActivityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,9 +53,21 @@ class ActivityController extends Controller
      */
     public function getCounts(Request $request): JsonResponse
     {
-        $counts = $this->activityService->getCounts($request->user());
+        $user = auth()->user();
 
-        return $this->success('ACTIVITY_COUNTS_RETRIEVED', 'Counts retrieved', $counts);
+        $votedPollsCount = PollVote::where('user_id', $user->id)
+            ->distinct('post_id')
+            ->count('post_id');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'likes' => $user->likes()->count(),
+                'comments' => $user->comments()->count(),
+                'reposts' => $user->posts()->where('is_repost', true)->count(),
+                'voted_polls' => $votedPollsCount,
+            ]
+        ]);
     }
 
     /**
@@ -83,5 +96,20 @@ class ActivityController extends Controller
         $data = $this->activityService->getScreenTime($request->user());
 
         return $this->success('SCREEN_TIME_RETRIEVED', 'Screen time retrieved', $data);
+    }
+
+    /**
+     * Повертає список постів де ми голосували в опитуванні
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function votedPolls(Request $request): JsonResponse
+    {
+        $posts = $this->activityService->getVotedPolls($request->user());
+
+        return $this->success('VOTED_POLLS_RETRIEVED', 'Voted polls retrieved',
+            PostResource::collection($posts)->response()->getData(true)
+        );
     }
 }

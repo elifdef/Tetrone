@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useEditPost } from "./hooks/useEditPost";
 import Editor from '../editor/Editor';
-import Button from "../UI/Button";
+import Button from "../ui/Button";
 import AttachBar from './components/AttachBar';
 import FormatBar from './components/FormatBar';
 import MediaPreviews from './components/MediaPreviews';
@@ -59,11 +59,11 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
                 <AttachBar onFileSelect={handleFileSelect} />
 
                 <div className="tetrone-edit-buttons-right">
-                    <Button className="tetrone-btn-small" onClick={handleSave}>
-                        {t('common.save')}
-                    </Button>
-                    <Button className="tetrone-btn-small tetrone-btn-cancel" onClick={cancelEditing}>
+                    <Button variant='secondary' onClick={cancelEditing}>
                         {t('common.cancel')}
+                    </Button>
+                    <Button onClick={handleSave}>
+                        {t('common.save')}
                     </Button>
                 </div>
             </div>

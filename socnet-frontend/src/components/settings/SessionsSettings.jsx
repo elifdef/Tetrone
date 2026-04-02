@@ -5,7 +5,7 @@ import { notifySuccess, notifyError } from '../common/Notify';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import { useModal } from '../../context/ModalContext';
 import { parseUserAgent } from '../../utils/userAgent';
-import Button from '../UI/Button';
+import Button from '../ui/Button';
 
 export default function SessionsSettings() {
     const { t } = useTranslation();

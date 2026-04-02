@@ -6,8 +6,8 @@ import { notifySuccess, notifyError } from "../common/Notify";
 import { AuthContext } from "../../context/AuthContext";
 import { useModal } from '../../context/ModalContext';
 import { usePageTitle } from "../../hooks/usePageTitle";
-import Button from '../UI/Button';
-import Input from '../UI/Input';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 
 const UserSearchForm = ({ search, setSearch, handleSearch }) => {
     const { t } = useTranslation();

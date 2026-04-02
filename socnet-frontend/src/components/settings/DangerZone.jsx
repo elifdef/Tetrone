@@ -1,4 +1,5 @@
 import { notifyWarn } from "../common/Notify";
+import Button from "../ui/Button";
 
 const DangerZone = ({ t }) => {
     return (
@@ -10,9 +11,9 @@ const DangerZone = ({ t }) => {
                     <div className="tetrone-settings-quote">{t('settings.quote')}</div>
                     <p className="tetrone-settings-desc">{t('settings.delete_warning')}</p>
                 </div>
-                <button className="tetrone-btn-delete" onClick={() => notifyWarn('under construction')}>
+                <Button variant="danger" onClick={() => notifyWarn('under construction')}>
                     {t('settings.delete_account')}
-                </button>
+                </Button>
             </div>
         </div>
     );

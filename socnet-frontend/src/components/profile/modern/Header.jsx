@@ -5,7 +5,8 @@ import { useDateFormatter } from "../../../hooks/useDateFormatter";
 import PostService from "../../../services/post.service";
 import MessageService from "../../../services/chat.service";
 import { notifyError } from "../../common/Notify";
-import PhotoModal from "../../../components/UI/PhotoModal";
+import PhotoModal from "../../../components/ui/PhotoModal";
+import Button from "../../ui/Button";
 
 export default function Header({
     currentUser, isPreview, displayAvatar, isBlockedByTarget, isBanned,
@@ -138,7 +139,7 @@ export default function Header({
 
             <div className="tetrone-modern-actions-group">
                 {sameUser && !isPreview && (
-                    <Link to="/settings" className="tetrone-btn-ghost modern-action-btn">
+                    <Link to="/settings" className="tetrone-btn tetrone-btn-primary">
                         {t('common.edit')}
                     </Link>
                 )}
@@ -146,23 +147,23 @@ export default function Header({
                 {!sameUser && !isPreview && !isBlockedByTarget && authUser && (
                     <>
                         {!isBlockedByMe && (
-                            <button
+                            <Button
                                 className="tetrone-btn modern-action-btn"
                                 onClick={handleSendMessage}
                                 disabled={isChatLoading || loading}
                             >
                                 {isChatLoading ? '...' : t('messages.send_message')}
-                            </button>
+                            </Button>
                         )}
 
                         <div className="tetrone-dropdown-wrapper" ref={menuRef}>
-                            <button
+                            <Button
                                 className="tetrone-btn tetrone-btn-dropdown-trigger modern-trigger"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 disabled={loading}
                             >
                                 {getActionBtnLabel()}
-                            </button>
+                            </Button>
 
                             {isMenuOpen && (
                                 <div className="tetrone-menu-list modern-menu-list">

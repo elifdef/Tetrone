@@ -1,0 +1,159 @@
+:root {
+    /* Primary */
+    --theme-btn-primary-bg: #496b8c;
+    --theme-btn-primary-grad-top: #5a80a5;
+    --theme-btn-primary-border: #334d66;
+    --theme-btn-primary-text: #ffffff;
+    --theme-btn-primary-hover-bg: #52779c;
+    --theme-btn-primary-hover-grad-top: #658eb5;
+
+    /* Secondary */
+    --theme-btn-secondary-bg: #383838;
+    --theme-btn-secondary-grad-top: #4a4a4a;
+    --theme-btn-secondary-border: #222222;
+    --theme-btn-secondary-text: #cccccc;
+    --theme-btn-secondary-hover-bg: #424242;
+    --theme-btn-secondary-hover-grad-top: #555555;
+
+    /* Danger */
+    --theme-btn-danger-bg: #a64242;
+    --theme-btn-danger-grad-top: #bc5252;
+    --theme-btn-danger-border: #732929;
+    --theme-btn-danger-text: #ffffff;
+    --theme-btn-danger-hover-bg: #b54a4a;
+    --theme-btn-danger-hover-grad-top: #cc5c5c;
+
+    /* Warning */
+    --theme-btn-warning-bg: #b5802a;
+    --theme-btn-warning-grad-top: #cc963b;
+    --theme-btn-warning-border: #805716;
+    --theme-btn-warning-text: #ffffff;
+    --theme-btn-warning-hover-bg: #c48c30;
+    --theme-btn-warning-hover-grad-top: #dbb34b;
+
+    /* Disabled */
+    --theme-btn-disabled-bg: #2a2a2a;
+    --theme-btn-disabled-border: #444444;
+    --theme-btn-disabled-text: #666666;
+}
+
+[data-theme="light"] {
+    /* Primary */
+    --theme-btn-primary-bg: #5d81ab;
+    --theme-btn-primary-grad-top: #749bc4;
+    --theme-btn-primary-border: #45688e;
+    --theme-btn-primary-text: #ffffff;
+    --theme-btn-primary-hover-bg: #6a8cb6;
+    --theme-btn-primary-hover-grad-top: #82a8d1;
+
+    /* Secondary */
+    --theme-btn-secondary-bg: #f2f2f2;
+    --theme-btn-secondary-grad-top: #ffffff;
+    --theme-btn-secondary-border: #cccccc;
+    --theme-btn-secondary-text: #2b587a;
+    --theme-btn-secondary-hover-bg: #e5e5e5;
+    --theme-btn-secondary-hover-grad-top: #f2f2f2;
+
+    /* Danger */
+    --theme-btn-danger-bg: #c95151;
+    --theme-btn-danger-grad-top: #df6b6b;
+    --theme-btn-danger-border: #993b3b;
+    --theme-btn-danger-text: #ffffff;
+    --theme-btn-danger-hover-bg: #d15d5d;
+    --theme-btn-danger-hover-grad-top: #e87878;
+
+    /* Warning */
+    --theme-btn-warning-bg: #e5a43b;
+    --theme-btn-warning-grad-top: #f7ba59;
+    --theme-btn-warning-border: #b37a22;
+    --theme-btn-warning-text: #ffffff;
+    --theme-btn-warning-hover-bg: #eda940;
+    --theme-btn-warning-hover-grad-top: #fdc266;
+
+    /* Disabled */
+    --theme-btn-disabled-bg: #e0e0e0;
+    --theme-btn-disabled-border: #cccccc;
+    --theme-btn-disabled-text: #999999;
+}
+
+.tetrone-btn {
+    display: inline-block;
+    padding: 5px 12px;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    outline: none;
+    transition: background-color 0.1s ease;
+    user-select: none;
+}
+
+.tetrone-btn:active:not(:disabled):not(.is-disabled) {
+    padding: 6px 12px 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tetrone-btn-primary {
+    background-color: var(--theme-btn-primary-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-primary-grad-top), var(--theme-btn-primary-bg));
+    border: 1px solid var(--theme-btn-primary-border);
+    color: var(--theme-btn-primary-text);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.tetrone-btn-primary:hover:not(:disabled) {
+    background-color: var(--theme-btn-primary-hover-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-primary-hover-grad-top), var(--theme-btn-primary-hover-bg));
+}
+
+.tetrone-btn-secondary {
+    background-color: var(--theme-btn-secondary-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-secondary-grad-top), var(--theme-btn-secondary-bg));
+    border: 1px solid var(--theme-btn-secondary-border);
+    color: var(--theme-btn-secondary-text);
+}
+
+.tetrone-btn-secondary:hover:not(:disabled) {
+    background-color: var(--theme-btn-secondary-hover-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-secondary-hover-grad-top), var(--theme-btn-secondary-hover-bg));
+}
+
+.tetrone-btn-danger {
+    background-color: var(--theme-btn-danger-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-danger-grad-top), var(--theme-btn-danger-bg));
+    border: 1px solid var(--theme-btn-danger-border);
+    color: var(--theme-btn-danger-text);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.tetrone-btn-danger:hover:not(:disabled) {
+    background-color: var(--theme-btn-danger-hover-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-danger-hover-grad-top), var(--theme-btn-danger-hover-bg));
+}
+
+.tetrone-btn-warning {
+    background-color: var(--theme-btn-warning-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-warning-grad-top), var(--theme-btn-warning-bg));
+    border: 1px solid var(--theme-btn-warning-border);
+    color: var(--theme-btn-warning-text);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.tetrone-btn-warning:hover:not(:disabled) {
+    background-color: var(--theme-btn-warning-hover-bg);
+    background-image: linear-gradient(to bottom, var(--theme-btn-warning-hover-grad-top), var(--theme-btn-warning-hover-bg));
+}
+
+.tetrone-btn.is-disabled,
+.tetrone-btn:disabled {
+    background-color: var(--theme-btn-disabled-bg) !important;
+    background-image: none !important;
+    border: 1px solid var(--theme-btn-disabled-border) !important;
+    color: var(--theme-btn-disabled-text) !important;
+    text-shadow: none !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}

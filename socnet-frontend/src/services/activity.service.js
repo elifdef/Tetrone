@@ -16,6 +16,10 @@ class ActivityService {
     async getScreenTime() {
         return await fetchClient(`/activity/screen-time`);
     }
+
+    async getVotedPolls(page = 1) {
+        return await fetchClient(`/activity/voted-polls?page=${page}`);
+    }
 }
 
 export default new ActivityService();

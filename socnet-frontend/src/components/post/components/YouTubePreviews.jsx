@@ -1,4 +1,4 @@
-import VideoPlayer from "../../UI/VideoPlayer";
+import VideoPlayer from "../../ui/VideoPlayer";
 
 export default function YouTubePreviews({ youtubeLinks, removedPreviews, onToggle }) {
     if (!youtubeLinks || youtubeLinks.length === 0) return null;

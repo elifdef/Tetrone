@@ -118,63 +118,6 @@
     width: 100%;
 }
 
-.admin-btn {
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-}
-
-.admin-btn-warning {
-    background: transparent;
-    border-color: #d39e00;
-    color: #d39e00;
-}
-
-.admin-btn-warning:hover,
-.admin-btn-warning.active {
-    background: #d39e00;
-    color: #fff;
-}
-
-.admin-btn-danger {
-    background: transparent;
-    border-color: var(--theme-error);
-    color: var(--theme-error);
-}
-
-.admin-btn-danger:hover,
-.admin-btn-danger.active {
-    background: var(--theme-error);
-    color: #fff;
-}
-
-.admin-btn-group {
-    display: flex;
-    gap: 10px;
-}
-
-.admin-btn-ban {
-    background-color: var(--theme-error) !important;
-    color: white !important;
-}
-
-.admin-btn-ban:hover {
-    opacity: 0.8;
-}
-
-.admin-btn-unban {
-    background-color: #4caf50 !important;
-    color: white !important;
-}
-
-.admin-btn-unban:hover {
-    background-color: #388e3c !important;
-}
-
 .admin-dossier-card {
     padding: 20px;
     margin-bottom: 20px;

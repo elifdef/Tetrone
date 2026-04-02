@@ -218,3 +218,13 @@
     margin-top: 5px;
     width: 100%;
 }
+
+.tetrone-relative-card {
+    position: relative;
+}
+
+.tetrone-absolute-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}

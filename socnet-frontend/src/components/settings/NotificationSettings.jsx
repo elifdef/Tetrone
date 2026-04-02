@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import notificationService from '../../services/notification.service';
 import { notifySuccess, notifyError } from '../common/Notify';
+import Button from '../ui/Button';
 
 const SOUND_OPTIONS = [
     { value: '', label: 'settings.sounds.default' },
@@ -269,13 +270,12 @@ const NotificationSettings = () => {
                                                 onChange={(e) => handleFileChange(soundKey, e)}
                                             />
 
-                                            <button
+                                            <Button
                                                 type="button"
-                                                className="tetrone-btn btn-small"
                                                 onClick={() => fileInputRefs.current[soundKey]?.click()}
                                             >
                                                 {t('common.browse')}
-                                            </button>
+                                            </Button>
 
                                             <span
                                                 className="tetrone-avatar-file-name"
@@ -288,14 +288,13 @@ const NotificationSettings = () => {
                                     )}
 
                                     {currentSelectValue !== 'none' && (
-                                        <button
+                                        <Button
                                             type="button"
-                                            className="tetrone-btn btn-small"
                                             onClick={() => handlePlaySound(type)}
                                             title={isPlaying ? "Пауза" : t('common.play_sound')}
                                         >
                                             {isPlaying ? '⏸' : '▶'}
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             )}
@@ -305,13 +304,12 @@ const NotificationSettings = () => {
             </div>
 
             <div className="settings-actions" style={{ marginTop: '20px' }}>
-                <button
-                    className="tetrone-btn-save"
+                <Button
                     onClick={handleSave}
                     disabled={saving}
                 >
                     {saving ? t('common.saving') : t('common.save')}
-                </button>
+                </Button>
             </div>
         </div>
     );

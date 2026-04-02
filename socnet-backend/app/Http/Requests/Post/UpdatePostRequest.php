@@ -14,6 +14,15 @@ class UpdatePostRequest extends FormRequest
         return true;
     }
 
+    public function rules(): array
+    {
+        return [
+            'payload' => ['nullable'],
+            'media.*' => ['nullable', 'file', 'max:51200'],
+            'deleted_media' => ['nullable', 'array'],
+        ];
+    }
+
     protected function prepareForValidation(): void
     {
         $payload = $this->input('payload');

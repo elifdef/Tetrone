@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { useProfileSettings } from './hooks/useProfileSettings';
 import UserProfileCard from '../profile/UserProfileCard';
 
-import Input from '../UI/Input';
-import DateInput from '../UI/DateInput';
-import Button from '../UI/Button';
-import Label from '../UI/Label';
-import Textarea from '../UI/Textarea';
+import Input from '../ui/Input';
+import DateInput from '../ui/DateInput';
+import Button from '../ui/Button';
+import Label from '../ui/Label';
+import Textarea from '../ui/Textarea';
 import ImageDropzone from './ImageDropzone';
 import GenderSelect from './GenderSelect';
 import CountrySelect from './CountrySelect';

@@ -854,69 +854,6 @@
     width: 100%;
 }
 
-.tetrone-post-action-btn-trigger {
-    background: transparent;
-    border: none;
-    color: var(--theme-text-muted);
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
-
-.tetrone-post-action-btn-trigger:hover {
-    background: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-    color: var(--theme-text-main);
-}
-
-.tetrone-actions-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--theme-bg-box);
-    border: 1px solid var(--theme-border);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 100;
-    min-width: 160px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 5px 0;
-}
-
-.tetrone-actions-dropdown button {
-    background: transparent;
-    border: none;
-    padding: 10px 15px;
-    text-align: left;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--theme-text-main);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.2s;
-}
-
-.tetrone-actions-dropdown button:hover {
-    background: var(--theme-bg-hover, rgba(0, 0, 0, 0.05));
-}
-
-.tetrone-actions-dropdown button.danger {
-    color: var(--theme-error);
-}
-
-.tetrone-actions-dropdown button.danger svg {
-    fill: var(--theme-error);
-    color: var(--theme-error);
-}
-
-.tetrone-actions-dropdown button.warning {
-    color: #f39c12;
-}
-
 .tetrone-spoiler {
     background-color: var(--tg-theme-hint-color, #888);
     color: transparent;

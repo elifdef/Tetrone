@@ -78,10 +78,10 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
                             onChange={setEditContent}
                         />
                         <div className="tetrone-edit-buttons-right">
-                            <button className="tetrone-btn tetrone-btn-small" onClick={handleSave}>
+                            <button className="tetrone-btn" onClick={handleSave}>
                                 {t('common.save')}
                             </button>
-                            <button className="tetrone-btn tetrone-btn-small tetrone-btn-cancel" onClick={() => setIsEditing(false)}>
+                            <button className="tetrone-btn tetrone-btn-cancel" onClick={() => setIsEditing(false)}>
                                 {t('common.cancel')}
                             </button>
                         </div>

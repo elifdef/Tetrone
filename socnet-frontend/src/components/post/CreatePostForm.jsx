@@ -7,6 +7,7 @@ import MediaPreviews from './components/MediaPreviews';
 import YouTubePreviews from './components/YouTubePreviews';
 import PollCreatorModal from '../modals/PollCreatorModal';
 import { PollIcon } from '../ui/Icons';
+import Button from '../ui/Button';
 
 export default function CreatePostForm({ onSubmitSuccess }) {
     const { t } = useTranslation();
@@ -85,9 +86,9 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                     )}
                 </div>
 
-                <button className="tetrone-btn" onClick={handleSubmit}>
+                <Button onClick={handleSubmit}>
                     {t('wall.send_btn')}
-                </button>
+                </Button>
             </div>
 
             <PollCreatorModal

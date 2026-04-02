@@ -6,6 +6,7 @@ import LikedPostsTab from '../components/activity/LikedPostsTab';
 import MyCommentsTab from '../components/activity/MyCommentsTab';
 import MyRepostsTab from '../components/activity/MyRepostsTab';
 import ScreenTimeTab from '../components/activity/ScreenTimeTab';
+import VotedPollsTab from '../components/activity/VotedPollsTab';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { notifyError } from '../components/common/Notify';
 
@@ -13,9 +14,9 @@ export default function ActivityPage() {
     const { t } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // Отримуємо вкладку з URL (дефолтна: 'likes')
     const activeTab = searchParams.get('tab') || 'likes';
-    const [counts, setCounts] = useState({ likes: 0, comments: 0, reposts: 0 });
+    
+    const [counts, setCounts] = useState({ likes: 0, comments: 0, reposts: 0, voted_polls: 0 });
 
     const getPageTitle = () => {
         const baseTitle = t('common.my_activity');
@@ -23,6 +24,7 @@ export default function ActivityPage() {
             case 'likes': return `${baseTitle} | ${t('common.likes')}`;
             case 'comments': return `${baseTitle} | ${t('common.comments')}`;
             case 'reposts': return `${baseTitle} | ${t('common.reposts')}`;
+            case 'voted-polls': return `${baseTitle} | ${t('common.poll')}`;
             case 'stats': return `${baseTitle} | ${t('activity.stats.title')}`;
             default: return baseTitle;
         }
@@ -35,7 +37,6 @@ export default function ActivityPage() {
             if (res.success) {
                 setCounts(res.data);
             } else {
-                // console.error("Failed to fetch activity counts:", res.message);
                 notifyError(res.message);
             }
         });
@@ -60,6 +61,8 @@ export default function ActivityPage() {
                 return <MyCommentsTab onCountUpdate={(delta) => updateCount('comments', delta)} />;
             case 'reposts':
                 return <MyRepostsTab onCountUpdate={(delta) => updateCount('reposts', delta)} />;
+            case 'voted-polls':
+                return <VotedPollsTab />;
             case 'stats':
                 return <ScreenTimeTab />;
             default:
@@ -96,6 +99,14 @@ export default function ActivityPage() {
                 >
                     {t('common.reposts')}
                     <span className="tetrone-tab-count">({counts.reposts})</span>
+                </button>
+
+                <button
+                    onClick={() => handleTabChange('voted-polls')}
+                    className={`tetrone-tab ${activeTab === 'voted-polls' ? 'active' : ''}`}
+                >
+                    {t('common.poll', 'Опитування')}
+                    <span className="tetrone-tab-count">({counts.voted_polls})</span>
                 </button>
 
                 <button

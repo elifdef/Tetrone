@@ -4,7 +4,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import AdminService from '../../services/admin.service';
 import { notifySuccess, notifyError } from '../../components/common/Notify';
 import { useTranslation } from 'react-i18next';
-import Button from '../../components/UI/Button';
+import Button from '../../components/ui/Button';
 import { useModal } from '../../context/ModalContext';
 import { useDateFormatter } from '../../hooks/useDateFormatter';
 import InfiniteScrollList from "../../components/common/InfiniteScrollList";

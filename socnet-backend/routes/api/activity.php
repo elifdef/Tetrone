@@ -5,12 +5,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'not_banned'])->group(function ()
 {
-    Route::prefix('activity')->group(function ()
-    {
-        Route::get('/liked', [ActivityController::class, 'likedPosts']);
-        Route::get('/reposts', [ActivityController::class, 'reposts']);
-        Route::get('/comments', [ActivityController::class, 'comments']);
-        Route::get('/counts', [ActivityController::class, 'getCounts']);
-        Route::get('/screen-time', [ActivityController::class, 'screenTime']);
-    });
+    Route::prefix('activity')->controller(ActivityController::class)
+        ->group(function ()
+        {
+            Route::get('/liked', 'likedPosts');
+            Route::get('/reposts', 'reposts');
+            Route::get('/comments', 'comments');
+            Route::get('/counts', 'getCounts');
+            Route::get('/voted-polls', 'votedPolls');
+            Route::get('/screen-time', 'screenTime');
+        });
 });

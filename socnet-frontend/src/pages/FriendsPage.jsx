@@ -1,4 +1,4 @@
-import Input from "../components/UI/Input";
+import Input from "../components/ui/Input";
 import FriendCard from "../components/friends/FriendCard";
 import { useFriendsLogic } from "../components/friends/hooks/useFriendsLogic";
 

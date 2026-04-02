@@ -1,4 +1,4 @@
-import VideoPlayer from "../../UI/VideoPlayer";
+import VideoPlayer from "../../ui/VideoPlayer";
 
 export default function PostVideos({ localVideos = [], youtubeVideos = [] }) {
     const visibleYouTube = youtubeVideos.filter(yt => !yt.isRemoved);

@@ -1,39 +1,37 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import ActivityService from '../../services/activity.service';
-import CommentService from '../../services/comment.service';
-import ActivityCommentItem from './ActivityCommentItem';
+import PostItem from '../post/PostItem';
 import InfiniteScrollList from '../common/InfiniteScrollList';
 import { notifyError } from '../common/Notify';
-import { useModal } from '../../context/ModalContext';
 
-export default function MyCommentsTab({ onCountUpdate }) {
+export default function VotedPollsTab() {
     const { t } = useTranslation();
-    const { openConfirm } = useModal();
 
-    const [comments, setComments] = useState([]);
+    const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
     const [isLoadingInitial, setIsLoadingInitial] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState(false);
-    const fetchComments = useCallback(async () => {
+
+    const fetchPolls = useCallback(async () => {
         if (page === 1) setIsLoadingInitial(true);
         else setIsLoadingMore(true);
         setError(false);
 
-        const res = await ActivityService.getMyComments(page);
+        const res = await ActivityService.getVotedPolls(page);
 
         if (res.success) {
             const items = res.data || [];
             const meta = res.meta;
 
-            setComments(prev => {
+            setPosts(prev => {
                 if (page === 1) return items;
-                const existingIds = new Set(prev.map(c => c.id));
-                const uniqueNewComments = items.filter(c => !existingIds.has(c.id));
-                return [...prev, ...uniqueNewComments];
+                const existingIds = new Set(prev.map(p => p.id));
+                const uniqueNewPosts = items.filter(p => !existingIds.has(p.id));
+                return [...prev, ...uniqueNewPosts];
             });
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
@@ -45,10 +43,9 @@ export default function MyCommentsTab({ onCountUpdate }) {
         setIsLoadingInitial(false);
         setIsLoadingMore(false);
     }, [page, t]);
-
     useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
+        fetchPolls();
+    }, [fetchPolls]);
 
     const loadMore = useCallback(() => {
         if (!isLoadingInitial && !isLoadingMore && hasMore && !error) {
@@ -56,42 +53,34 @@ export default function MyCommentsTab({ onCountUpdate }) {
         }
     }, [isLoadingInitial, isLoadingMore, hasMore, error]);
 
-    const handleDeleteComment = async (commentId) => {
-        const isConfirmed = await openConfirm(t('comment.remove_comment'));
-        if (!isConfirmed) return;
-
-        const res = await CommentService.delete(commentId);
-
-        if (res.success) {
-            setComments(prev => prev.filter(c => c.id !== commentId));
-            if (onCountUpdate) onCountUpdate(-1);
-        } else {
-            notifyError(res.message || t('error.delete_comment'));
-        }
+    const handleUpdatePost = (updatedPost) => {
+        setPosts(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p));
     };
+
+
 
     return (
         <InfiniteScrollList
-            itemsCount={comments.length}
+            itemsCount={posts.length}
             isLoadingInitial={isLoadingInitial}
             isLoadingMore={isLoadingMore}
             hasMore={hasMore}
             onLoadMore={loadMore}
             error={error}
-            onRetry={fetchComments}
-            className="tetrone-notification-list"
+            onRetry={fetchPolls}
+            className="tetrone-feed-list"
             emptyState={
                 <div className="tetrone-empty-state">
-                    <p>{t('activity.comments.empty')}</p>
+                    <p>{t('activity.no_voted_polls_desc')}</p>
                 </div>
             }
-            endMessage={t('common.no_more_data')}
         >
-           {comments.map((comment, index) => (
-                <ActivityCommentItem
-                    key={comment.id ? `comment-${comment.id}` : `fallback-${index}`}
-                    comment={comment}
-                    onDelete={() => handleDeleteComment(comment.id)}
+            {posts.map((post, index) => (
+                <PostItem
+                    key={post.id || `poll-${index}`}
+                    post={post}
+                    onUpdate={handleUpdatePost}
+                    readonly={true}
                 />
             ))}
         </InfiniteScrollList>

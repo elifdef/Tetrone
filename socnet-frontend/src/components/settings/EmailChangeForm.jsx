@@ -1,4 +1,5 @@
-import Input from '../UI/Input';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 
 const EmailChangeForm = ({
     user,
@@ -50,13 +51,12 @@ const EmailChangeForm = ({
                         placeholder="********"
                     />
                 </div>
-                <button
-                    className="tetrone-btn-save"
+                <Button
                     type="submit"
                     disabled={loading}
                 >
                     {loading ? t('common.saving') : t('common.change')}
-                </button>
+                </Button>
             </form>
         </div>
     );

@@ -5,6 +5,7 @@ import LikeIcon from "../../assets/like.svg?react";
 import NoLikeIcon from "../../assets/nolike.svg?react";
 import NoRepostIcon from "../../assets/norepost.svg?react";
 import RepostIcon from "../../assets/repost.svg?react";
+import Button from "../ui/Button";
 
 export default function PostFooter({
     postId,
@@ -52,12 +53,12 @@ export default function PostFooter({
         }
 
         return (
-            <button
+            <Button
                 className={`tetrone-like-btn ${isLiked ? 'liked' : ''}`}
                 onClick={onLike}>
                 <IconComponent width={16} height={16} />
                 {likesCount}
-            </button>
+            </Button>
         );
     }
 
@@ -73,7 +74,7 @@ export default function PostFooter({
             );
 
         return (
-            <button
+            <Button
                 className="tetrone-repost-btn"
                 onClick={onRepost}
                 disabled={isReposting}
@@ -81,7 +82,7 @@ export default function PostFooter({
                 <IconComponent width={16} height={16} />
                 {repostsCount}
                 {isReposting && '...'}
-            </button>
+            </Button>
         );
     }
 

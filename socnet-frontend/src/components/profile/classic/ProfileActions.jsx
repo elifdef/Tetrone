@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import MessageService from "../../../services/chat.service";
+import Button from "../../ui/Button";
 
 export default function ProfileActions({
     sameUser, userId, loading, status, isBlockedByMe, isBlockedByTarget,
@@ -27,7 +28,7 @@ export default function ProfileActions({
     if (sameUser)
         return (
             <div className="tetrone-actions">
-                <Link to="/settings" className="tetrone-btn">{t('common.edit')}</Link>
+                <Link to="/settings" className="tetrone-btn tetrone-btn-primary">{t('common.edit')}</Link>
             </div>
         );
 
@@ -70,23 +71,22 @@ export default function ProfileActions({
     return (
         <div className="tetrone-actions">
             {!isBlockedByMe && (
-                <button
-                    className="tetrone-btn"
+                <Button
                     onClick={handleSendMessage}
                     disabled={isChatLoading || loading}
                 >
                     {isChatLoading ? '...' : t('messages.send_message')}
-                </button>
+                </Button>
             )}
 
             <div className="tetrone-dropdown-wrapper" ref={menuRef}>
-                <button
-                    className="tetrone-btn tetrone-btn-dropdown-trigger"
+                <Button
+                    className="tetrone-btn-dropdown-trigger"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     disabled={loading}
                 >
                     {getStatusLabel()}
-                </button>
+                </Button>
 
                 {isMenuOpen && (
                     <div className="tetrone-menu-list">

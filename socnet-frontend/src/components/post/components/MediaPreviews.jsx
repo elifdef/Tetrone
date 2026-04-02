@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import VideoPlayer from '../../UI/VideoPlayer';
+import VideoPlayer from '../../ui/VideoPlayer';
 import { DocumentIcon } from "../../ui/Icons";
 
 export default function MediaPreviews({ previews, onRemove, isExisting = false }) {

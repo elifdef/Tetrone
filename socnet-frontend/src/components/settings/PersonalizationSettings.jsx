@@ -6,6 +6,7 @@ import PersonalizationService from '../../services/personalization.service';
 import { notifySuccess, notifyError } from '../common/Notify';
 import UserProfileCard from '../profile/UserProfileCard';
 import ImageDropzone from './ImageDropzone';
+import Button from '../ui/Button';
 
 const PopoverPicker = ({ color, onChange, t }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -210,13 +211,11 @@ export default function PersonalizationSettings() {
             <div className="tetrone-settings-form">
                 <div className="tetrone-settings-header-row">
                     <h3 className="tetrone-settings-title">{t('settings.personalization_title')}</h3>
-
-                    <button
-                        className="tetrone-btn-ghost tetrone-theme-toggle-btn"
+                    <Button
                         onClick={handleGlobalThemeToggle}
                     >
                         {isDarkTheme ? t('settings.theme_light') : t('settings.theme_dark')}
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="tetrone-form-group">
@@ -255,12 +254,11 @@ export default function PersonalizationSettings() {
                             onChange={(color) => setSettings({ ...settings, username_color: color })}
                             t={t}
                         />
-                        <button
-                            className="tetrone-btn-ghost"
+                        <Button
                             onClick={() => setSettings({ ...settings, username_color: '' })}
                         >
                             {t('common.reset')}
-                        </button>
+                        </Button>
                     </div>
                     <small className="tetrone-text-muted">{t('settings.username_color_hint')}</small>
                 </div>
@@ -278,13 +276,11 @@ export default function PersonalizationSettings() {
 
                             {previewBannerImage && (
                                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                                    <button
-                                        type="button"
-                                        className="tetrone-btn-ghost danger"
+                                    <Button
                                         onClick={handleRemoveImage}
                                     >
                                         {t('common.delete')}
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -321,9 +317,9 @@ export default function PersonalizationSettings() {
                     </div>
                 )}
 
-                <button className="tetrone-btn" onClick={handleSave} disabled={isSaving}>
+                <Button onClick={handleSave} disabled={isSaving}>
                     {isSaving ? t('common.loading') : t('common.save')}
-                </button>
+                </Button>
             </div>
         </div>
     );

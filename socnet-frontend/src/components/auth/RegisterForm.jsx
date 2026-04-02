@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import AuthService from "../../services/auth.service";
-import Input from "../UI/Input";
-import PasswordStrengthBar from "../UI/PasswordStrengthBar";
+import Input from "../ui/Input";
+import PasswordStrengthBar from "../ui/PasswordStrengthBar";
 
 export default function RegisterForm() {
     const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function RegisterForm() {
 
         try {
             const res = await AuthService.signUp(formData);
-            
+
             setMsg({
                 text: (
                     <span className="tetrone-auth-success-text">

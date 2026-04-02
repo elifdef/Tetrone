@@ -4,10 +4,6 @@ import { useModal } from "../../../context/ModalContext";
 import { notifyError, notifySuccess } from "../../common/Notify";
 import PostService from "../../../services/post.service";
 
-/**
- * Хук для керування станом поста (Лайки, Репости, Стейт).
- * Використовує Optimistic UI для миттєвого відображення лайків.
- */
 export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSuccess) => {
     const { t } = useTranslation();
     const { openPrompt } = useModal();
@@ -26,9 +22,6 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
         setPostData(prev => ({ ...prev, ...updates }));
     };
 
-    /**
-     * Логіка Лайка (Optimistic Update)
-     */
     const toggleLike = async () => {
         if (readonly || isLiking) return;
 
@@ -36,7 +29,6 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
         const originalLiked = postData.is_liked;
         const originalCount = postData.likes_count;
 
-        // 1. Миттєво міняємо UI (Оптимістичне оновлення)
         setPostData(prev => ({
             ...prev,
             is_liked: !originalLiked,
@@ -44,11 +36,9 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
         }));
 
         try {
-            // 2. Відправляємо запит на бекенд
             const res = await PostService.toggleLike(postData.id);
 
             if (res.success) {
-                // 3. Синхронізуємо з реальними даними сервера
                 setPostData(prev => ({
                     ...prev,
                     is_liked: res.data.liked,
@@ -59,7 +49,6 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
                 throw new Error(res.message);
             }
         } catch (err) {
-            // 4. Відкат, якщо сталася помилка мережі
             setPostData(prev => ({
                 ...prev,
                 is_liked: originalLiked,
@@ -71,21 +60,32 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
         }
     };
 
-    /**
-     * Логіка створення Репосту
-     */
-    const createRepost = async () => {
+  const createRepost = async () => {
         if (readonly) return;
 
-        const content = await openPrompt(t('common.repost'), t('common.comment'), true);
+        const content = await openPrompt(t('common.repost'), t('common.comment'), '', true);
         if (content === null) return;
 
         setIsReposting(true);
-        const targetId = postData.is_repost ? postData.original_post_id : postData.id;
+        
+        const targetId = postData.id;
+
+        let payloadText = null;
+        if (content && content.trim() !== '') {
+            payloadText = {
+                type: "doc",
+                content: [
+                    {
+                        type: "paragraph",
+                        content: [{ type: "text", text: content.trim() }]
+                    }
+                ]
+            };
+        }
 
         try {
             const res = await PostService.create({
-                content: content.trim() !== '' ? content : null,
+                payload: payloadText ? { text: payloadText } : null,
                 original_post_id: targetId
             });
 

@@ -6,7 +6,7 @@ import PostGallery from "./PostGallery";
 import PostVideos from "./PostVideos";
 import PostDocuments from "./PostDocuments";
 import PostPoll from "./PostPoll";
-import PhotoModal from "../../UI/PhotoModal";
+import PhotoModal from "../../ui/PhotoModal";
 
 export default function PostContent({ content: originalContent, post, onUpdate, isOwner, className }) {
     const { content, local, external } = usePostMedia(

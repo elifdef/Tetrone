@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReportService from '../../services/report.service';
 import { notifySuccess, notifyError } from '../common/Notify';
+import Button from '../ui/Button';
 
 export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
     const { t } = useTranslation();
@@ -103,12 +104,12 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
                     </div>
 
                     <div className="tetrone-modal-footer">
-                        <button type="button" className="tetrone-btn-ghost" onClick={handleClose}>
+                        <Button variant="secondary" onClick={handleClose}>
                             {t('common.cancel')}
-                        </button>
-                        <button type="submit" className="tetrone-btn" disabled={isSubmitting || isLoadingReasons}>
+                        </Button>
+                        <Button type="submit" className="tetrone-btn" disabled={isSubmitting || isLoadingReasons}>
                             {isSubmitting ? t('common.saving') : t('reports.submit_btn')}
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

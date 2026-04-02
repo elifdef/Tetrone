@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Input from '../UI/Input';
-import PasswordStrengthBar from '../UI/PasswordStrengthBar';
+import Input from '../ui/Input';
+import PasswordStrengthBar from '../ui/PasswordStrengthBar';
+import Button from '../ui/Button';
 
 const PasswordChangeForm = ({
     currentPassword, setCurrentPassword,
@@ -55,13 +56,12 @@ const PasswordChangeForm = ({
                     onScoreChange={setNewPasswordScore}
                 />
 
-                <button
+                <Button
                     type="submit"
-                    className="tetrone-btn-save"
                     disabled={loading || (newPassword && newPasswordScore < 5)}
                 >
                     {loading ? t('common.saving') : t('common.save')}
-                </button>
+                </Button>
             </form>
         </div>
     );

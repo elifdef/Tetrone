@@ -146,7 +146,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                             </div>
                             <div className="tetrone-modal-footer">
                                 <button
-                                    className="tetrone-btn tetrone-btn-small tetrone-btn-full-width"
+                                    className="tetrone-btn  tetrone-btn-full-width"
                                     onClick={() => toggleFavorite(selectedSticker)}
                                 >
                                     ⭐ {t('stickers.save_to_favorites')}

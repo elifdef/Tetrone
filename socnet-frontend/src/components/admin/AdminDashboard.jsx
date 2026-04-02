@@ -40,7 +40,7 @@ export default function AdminDashboard() {
         <div className="admin-dashboard-wrapper">
             <div className="admin-dashboard-header">
                 <span className="admin-timeframe-badge">{t('admin.dashboard.last_7_days')}</span>
-                <button className="tetrone-btn-small" onClick={fetchStats}>
+                <button onClick={fetchStats}>
                     {t('common.reload_page')}
                 </button>
             </div>
