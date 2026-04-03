@@ -413,6 +413,50 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
+.admin-btn {
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-btn-warning {
+    background: transparent;
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+}
+
+.admin-btn-warning:hover {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.admin-btn-warning.active {
+    background: #f59e0b;
+    color: var(--theme-btn-text);
+}
+
+.admin-btn-warning.active:hover {
+    opacity: 0.85;
+}
+
+.admin-btn-danger {
+    background: transparent;
+    border: 1px solid var(--theme-error);
+    color: var(--theme-error);
+}
+
+.admin-btn-danger:hover {
+    background: rgba(230, 70, 70, 0.1);
+}
+
+.admin-btn-danger.active {
+    background: var(--theme-error);
+    color: var(--theme-btn-text);
+}
+
+.admin-btn-danger.active:hover {
+    opacity: 0.85;
+}
+
 @media (max-width: 480px) {
     .tetrone-btn-dropdown-trigger {
         padding: 12px;

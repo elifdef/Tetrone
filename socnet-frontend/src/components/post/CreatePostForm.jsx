@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { useCreatePost } from "./hooks/useCreatePost";
 import Editor from '../editor/Editor';
 import AttachBar from './components/AttachBar';
-import FormatBar from './components/FormatBar';
 import MediaPreviews from './components/MediaPreviews';
 import YouTubePreviews from './components/YouTubePreviews';
 import PollCreatorModal from '../modals/PollCreatorModal';
@@ -31,8 +30,6 @@ export default function CreatePostForm({ onSubmitSuccess }) {
             onDrop={handleDrop}
             onPaste={handlePaste}
         >
-            <FormatBar />
-
             <Editor
                 className="tetrone-form-textarea fixed-size"
                 placeholder={isDragging ? t('wall.drop_files_here') : t('wall.write_post')}

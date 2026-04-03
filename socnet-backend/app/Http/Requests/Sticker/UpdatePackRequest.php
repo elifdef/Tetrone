@@ -22,8 +22,8 @@ class UpdatePackRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|min:3|max:50',
-            'cover' => 'nullable|file|mimes:webp,gif,png|max:512',
+            'title' => 'sometimes|string|min:2|max:50',
+            'cover' => 'nullable|file|mimes:webp,png|max:2048',
             'is_published' => 'boolean'
         ];
     }

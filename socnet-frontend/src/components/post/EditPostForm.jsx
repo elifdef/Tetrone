@@ -3,7 +3,6 @@ import { useEditPost } from "./hooks/useEditPost";
 import Editor from '../editor/Editor';
 import Button from "../ui/Button";
 import AttachBar from './components/AttachBar';
-import FormatBar from './components/FormatBar';
 import MediaPreviews from './components/MediaPreviews';
 import YouTubePreviews from './components/YouTubePreviews';
 import { PollIcon } from '../ui/Icons';
@@ -29,7 +28,6 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
             onDrop={handleDrop}
             onPaste={handlePaste}
         >
-            <FormatBar />
 
             <Editor
                 className="tetrone-form-textarea fixed-size"

@@ -4,7 +4,7 @@ export default function PackCard({ pack, onClick }) {
     const { t } = useTranslation();
 
     return (
-        <div className="tetrone-pack-card tetrone-pointer" onClick={() => onClick(pack)}>
+        <div className="tetrone-pack-card" onClick={() => onClick(pack)}>
             <img src={pack.cover_url} alt={pack.title} className="tetrone-pack-cover" />
             <div className="tetrone-pack-title">{pack.title}</div>
             <div className="tetrone-pack-status">

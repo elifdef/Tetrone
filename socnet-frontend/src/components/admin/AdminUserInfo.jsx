@@ -123,10 +123,15 @@ const TabInfo = ({ user, formatDate, handleToggleAction, t }) => (
                 <div className="admin-actions-box">
                     <h4 className="admin-actions-title">{t('admin.actions.title')}</h4>
                     <div className="admin-btn-group">
-                        <Button className="admin-btn-warning" variant={user.is_muted ? 'primary' : 'save'} onClick={() => handleToggleAction('mute', user.is_muted)}>
+                        <Button
+                            className={`admin-btn admin-btn-warning ${user.is_muted ? 'active' : ''}`} onClick={() => handleToggleAction('mute', user.is_muted)}
+                        >
                             {user.is_muted ? t('admin.actions.unmute') : t('admin.actions.mute')}
                         </Button>
-                        <Button className={user.is_banned ? 'admin-btn-unban' : 'admin-btn-ban'} onClick={() => handleToggleAction('ban', user.is_banned)}>
+                        <Button
+                            className={`admin-btn admin-btn-danger ${user.is_banned ? 'active' : ''}`}
+                            onClick={() => handleToggleAction('ban', user.is_banned)}
+                        >
                             {user.is_banned ? t('admin.actions.unban') : t('admin.actions.ban')}
                         </Button>
                     </div>

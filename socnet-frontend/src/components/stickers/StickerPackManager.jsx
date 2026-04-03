@@ -4,6 +4,7 @@ import StickerService from '../../services/sticker.service';
 import { notifyError, notifySuccess } from '../common/Notify';
 import StickerEditorModal from '../modals/StickerEditorModal';
 import { useModal } from '../../context/ModalContext';
+import Button from '../ui/Button';
 
 export default function StickerPackManager({ existingPack = null, onSuccess, onCancel, onRefresh }) {
     const { t } = useTranslation();
@@ -221,21 +222,21 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
             <div className="tetrone-modal-footer tetrone-flex-between">
                 <div>
                     {packShortName && (
-                        <button
-                            className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
+                        <Button
+                            variant='danger'
                             onClick={executeDeletePack}
                         >
                             {t('stickers.delete_pack')}
-                        </button>
+                        </Button>
                     )}
                 </div>
                 <div className="tetrone-modal-footer-right">
-                    <button className="tetrone-btn tetrone-btn-cancel" onClick={handleCloseAttempt}>
+                    <Button variant="secondary" onClick={handleCloseAttempt}>
                         {t('common.cancel')}
-                    </button>
-                    <button className="tetrone-btn" onClick={handleSavePack} disabled={isSaving || !hasChanges}>
+                    </Button>
+                    <Button onClick={handleSavePack} disabled={isSaving || !hasChanges}>
                         {isSaving ? t('common.loading') : t('common.save')}
-                    </button>
+                    </Button>
                 </div>
             </div>
 

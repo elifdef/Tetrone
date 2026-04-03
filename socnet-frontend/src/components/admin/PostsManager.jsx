@@ -63,19 +63,19 @@ const UserCard = ({ user, handleMute, handleBan, canBan }) => {
             </div>
             {user.role <= userRole.Moderator && (
                 <div className="admin-user-actions">
-                    <button
+                    <Button
                         className={`admin-btn admin-btn-warning ${user.is_muted ? 'active' : ''}`}
                         onClick={() => handleMute(user.username, user.is_muted)}
                     >
                         {user.is_muted ? t('admin.allow_posting') : t('admin.forbid_posting')}
-                    </button>
+                    </Button>
                     {canBan && (
-                        <button
+                        <Button
                             className={`admin-btn admin-btn-danger ${user.is_banned ? 'active' : ''}`}
                             onClick={() => handleBan(user.username, user.is_banned)}
                         >
                             {user.is_banned ? t('admin.actions.unban') : t('admin.actions.ban')}
-                        </button>
+                        </Button>
                     )}
                 </div>
             )}

@@ -6,30 +6,20 @@ use App\Http\Requests\Sticker\StorePackRequest;
 use App\Http\Requests\Sticker\UpdatePackRequest;
 use App\Http\Resources\Sticker\StickerPackResource;
 use App\Http\Resources\Sticker\StickerResource;
-use App\Models\CustomSticker;
 use App\Models\StickerPack;
 use App\Services\StickerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * @group Стікерпаки
- *
- * API для каталогу стікерів, керування паками та встановлення їх на клавіатуру.
- */
 class StickerPackController extends Controller
 {
     public function __construct(protected StickerService $stickerService)
     {
     }
 
-    /**
-     * Інформація про пак
-     */
     public function info(Request $request, StickerPack $pack): JsonResponse
     {
         $pack->load(['author', 'stickers']);
-
         $packData = (new StickerPackResource($pack))->resolve();
         $packData['is_deleted'] = $pack->trashed();
 
@@ -41,26 +31,11 @@ class StickerPackController extends Controller
 
     public function store(StorePackRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $title = $request->validated('title');
-
-        $shortName = $this->stickerService->generateUniqueShortName($title);
-        $coverPath = null;
-
-        if ($request->hasFile('cover'))
-        {
-            $coverPath = $this->stickerService->uploadImage($request->file('cover'), $shortName);
-        }
-
-        $pack = StickerPack::create([
-            'author_id' => $user->id,
-            'title' => $title,
-            'short_name' => $shortName,
-            'cover_path' => $coverPath,
-            'is_published' => $request->boolean('is_published', false)
-        ]);
-
-        $user->installedStickerPacks()->attach($pack->id, ['sort_order' => 0]);
+        $pack = $this->stickerService->createPack(
+            $request->user(),
+            $request->validated(),
+            $request->file('cover')
+        );
 
         return $this->success('PACK_CREATED', 'Sticker pack created successfully', $pack, 201);
     }
@@ -72,15 +47,7 @@ class StickerPackController extends Controller
             return $this->error('ERR_FORBIDDEN', 'You can only edit your own packs.', 403);
         }
 
-        $data = $request->only(['title', 'is_published']);
-
-        if ($request->hasFile('cover'))
-        {
-            $this->stickerService->deleteImage($pack->cover_path);
-            $data['cover_path'] = $this->stickerService->uploadImage($request->file('cover'), $pack->short_name);
-        }
-
-        $pack->update($data);
+        $this->stickerService->updatePack($pack, $request->validated(), $request->file('cover'));
 
         return $this->success('PACK_UPDATED', 'Sticker pack updated', $pack);
     }
@@ -93,29 +60,23 @@ class StickerPackController extends Controller
         }
 
         $pack->delete(); // Soft delete
-
         return $this->success('PACK_DELETED', 'Sticker pack deleted');
     }
 
     public function install(Request $request, StickerPack $pack): JsonResponse
     {
-        $user = $request->user();
+        $installed = $this->stickerService->installPack($request->user(), $pack);
 
-        if ($user->installedStickerPacks()->where('pack_id', $pack->id)->exists())
+        if (!$installed)
         {
             return $this->error('ERR_ALREADY_INSTALLED', 'Pack is already installed.', 409);
         }
-
-        $maxOrder = $user->installedStickerPacks()->max('user_sticker_packs.sort_order') ?? 0;
-        $user->installedStickerPacks()->attach($pack->id, ['sort_order' => $maxOrder + 1]);
-
         return $this->success('PACK_INSTALLED', 'Pack added to your keyboard');
     }
 
     public function uninstall(Request $request, StickerPack $pack): JsonResponse
     {
         $request->user()->installedStickerPacks()->detach($pack->id);
-
         return $this->success('PACK_UNINSTALLED', 'Pack removed from your keyboard');
     }
 
@@ -126,17 +87,7 @@ class StickerPackController extends Controller
             'packShortNames.*' => 'exists:sticker_packs,short_name'
         ]);
 
-        $packs = StickerPack::whereIn('short_name', $request->packShortNames)->pluck('id', 'short_name');
-
-        foreach ($request->packShortNames as $index => $shortName)
-        {
-            if (isset($packs[$shortName]))
-            {
-                $request->user()->installedStickerPacks()->updateExistingPivot($packs[$shortName], [
-                    'sort_order' => $index
-                ]);
-            }
-        }
+        $this->stickerService->reorderUserPacks($request->user(), $request->packShortNames);
 
         return $this->success('PACKS_REORDERED', 'Packs order updated');
     }
@@ -156,11 +107,7 @@ class StickerPackController extends Controller
     public function myPacks(Request $request): JsonResponse
     {
         $user = auth('sanctum')->user();
-
-        if (!$user)
-        {
-            return $this->success('MY_PACKS_EMPTY', 'Guest access', []);
-        }
+        if (!$user) return $this->success('MY_PACKS_EMPTY', 'Guest access', []);
 
         $packs = $user->installedStickerPacks()
             ->withTrashed()

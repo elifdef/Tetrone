@@ -25,7 +25,7 @@ class StorePackRequest extends FormRequest
         return [
             'title' => 'required|string|min:2|max:50',
             'is_published' => 'boolean',
-            'cover' => 'nullable|image|mimes:jpeg,png,webp|max:2048'
+            'cover' => 'nullable|image|mimes:webp,png|max:2048'
         ];
     }
 
@@ -34,7 +34,6 @@ class StorePackRequest extends FormRequest
         $validator->after(function ($validator)
         {
             $createdPacksCount = StickerPack::where('author_id', $this->user()->id)->count();
-
             if ($createdPacksCount >= 255)
             {
                 $validator->errors()->add('title', 'ERR_MAX_PACKS_REACHED');

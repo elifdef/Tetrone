@@ -5,6 +5,7 @@ import { useModal } from '../../context/ModalContext';
 import { notifyError } from '../common/Notify';
 import { ImageIcon } from '../ui/Icons';
 import PostItem from '../post/PostItem';
+import Button from '../ui/Button';
 
 export default function StickerEditorModal({ stickerToEdit = null, onClose, onSuccess, onDelete }) {
     const { t } = useTranslation();
@@ -20,7 +21,10 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
 
     const fileInputRef = useRef(null);
 
-    const isFormValid = preview !== null && shortcode.trim().length >= 2;
+    const tagsArray = keywords.split(',').filter(k => k.trim() !== '');
+    const isKeywordsValid = tagsArray.length <= 5;
+    const isShortcodeValid = shortcode.trim().length >= 2 && shortcode.trim().length <= 30 && /^[a-zA-Z0-9_]+$/.test(shortcode.trim());
+    const isFormValid = preview !== null && isShortcodeValid && isKeywordsValid;
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -31,13 +35,13 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
             if (!shortcode && !isEditMode) {
                 const defaultName = selectedFile.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_]/g, '');
                 setShortcode(defaultName || 'sticker');
-                setKeywords(defaultName || 'sticker');
+                if (defaultName) setKeywords(defaultName);
             }
         }
     };
 
     const handleSave = () => {
-        if (!isFormValid) return notifyError(t('stickers.err_no_file'));
+        if (!isFormValid) return notifyError(t('common.error'));
 
         onSuccess({
             ...stickerToEdit,
@@ -68,11 +72,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                 type: 'paragraph',
                 content: [{
                     type: 'customSticker',
-                    attrs: {
-                        id: stickerToEdit?.id,
-                        shortcode: 'demo_code',
-                        src: preview
-                    }
+                    attrs: { id: stickerToEdit?.id, shortcode: shortcode || 'demo_code', src: preview }
                 }]
             }]
         },
@@ -80,7 +80,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
         created_at: new Date().toISOString(),
         likes_count: 0, comments_count: 0, reposts_count: 0,
         is_liked: false, is_repost: false, original_post_id: null
-    }), [preview, stickerToEdit?.id, user]);
+    }), [preview, stickerToEdit?.id, shortcode, user]);
 
     const fakePostSmall = useMemo(() => ({
         id: -1,
@@ -90,7 +90,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                 type: 'paragraph',
                 content: [
                     { type: 'text', text: t(`stickers.preview_text_${Math.floor(Math.random() * 8 + 1)}`) },
-                    { type: 'customSticker', attrs: { id: stickerToEdit?.id, shortcode: 'demo_code', src: preview } }
+                    { type: 'customSticker', attrs: { id: stickerToEdit?.id, shortcode: shortcode || 'demo_code', src: preview } }
                 ]
             }]
         },
@@ -98,7 +98,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
         created_at: new Date().toISOString(),
         likes_count: 0, comments_count: 0, reposts_count: 0,
         is_liked: false, is_repost: false, original_post_id: null
-    }), [preview, stickerToEdit?.id, user, t]);
+    }), [preview, stickerToEdit?.id, shortcode, user, t]);
 
     const previewPostsJSX = useMemo(() => (
         <div className="tetrone-sticker-preview-posts">
@@ -138,7 +138,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                                     type="file"
                                     ref={fileInputRef}
                                     onChange={handleFileChange}
-                                    accept="image/png, image/webp, image/gif"
+                                    accept="image/png, image/webp"
                                     className="tetrone-hidden"
                                 />
                             </div>
@@ -147,22 +147,32 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                                 <label className="tetrone-form-label">{t('stickers.table_shortcode')}</label>
                                 <input
                                     type="text"
-                                    className="tetrone-form-input"
+                                    className={`tetrone-form-input ${!isShortcodeValid && shortcode.length > 0 ? 'tetrone-input-error' : ''}`}
                                     value={shortcode}
                                     onChange={e => setShortcode(e.target.value)}
                                     placeholder={t('stickers.placeholder_shortcode')}
                                 />
+                                {!isShortcodeValid && shortcode.length > 0 && (
+                                    <span className="tetrone-text-error tetrone-text-small">
+                                        {t('stickers.err_shortcode_format')}
+                                    </span>
+                                )}
                             </div>
 
                             <div className="tetrone-form-group">
                                 <label className="tetrone-form-label">{t('stickers.tags')}</label>
                                 <input
                                     type="text"
-                                    className="tetrone-form-input"
+                                    className={`tetrone-form-input ${!isKeywordsValid ? 'tetrone-input-error' : ''}`}
                                     value={keywords}
                                     onChange={e => setKeywords(e.target.value)}
                                     placeholder={t('stickers.placeholder_tags')}
                                 />
+                                {!isKeywordsValid && (
+                                    <span className="tetrone-text-error tetrone-text-small">
+                                        {t('stickers.err_tags_format')}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -180,22 +190,19 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                 <div className="tetrone-modal-footer tetrone-flex-between">
                     <div>
                         {isEditMode && (
-                            <button
-                                className="tetrone-btn tetrone-btn-cancel tetrone-text-error"
-                                onClick={handleDeleteClick}
-                            >
+                            <Button variant="danger" onClick={handleDeleteClick}>
                                 {t('common.delete')}
-                            </button>
+                            </Button>
                         )}
                     </div>
 
                     <div className="tetrone-modal-footer-right">
-                        <button className="tetrone-btn tetrone-btn-cancel" onClick={onClose}>
+                        <Button variant="secondary" onClick={onClose}>
                             {t('common.cancel')}
-                        </button>
-                        <button className="tetrone-btn" onClick={handleSave} disabled={!isFormValid}>
+                        </Button>
+                        <Button onClick={handleSave} disabled={!isFormValid}>
                             {t('common.save')}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

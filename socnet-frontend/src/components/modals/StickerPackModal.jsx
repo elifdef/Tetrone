@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { notifyError, notifySuccess } from '../common/Notify';
 import StickerService from '../../services/sticker.service';
 import { DotsIcon, ReportIcon } from '../ui/Icons';
+import Button from '../ui/Button';
 
 export default function StickerPackModal({ pack, onClose, onRefresh }) {
     const { t } = useTranslation();
@@ -10,6 +11,11 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isInstalled, setIsInstalled] = useState(pack.is_installed);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    const [favoriteIds, setFavoriteIds] = useState(() => {
+        const saved = localStorage.getItem('tetrone_favorite_emojis');
+        return saved ? JSON.parse(saved).map(f => f.id) : [];
+    });
 
     const detailRef = useRef(null);
     const menuRef = useRef(null);
@@ -60,13 +66,14 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
 
         if (favs.find(f => f.id === sticker.id)) {
             favs = favs.filter(f => f.id !== sticker.id);
-            notifySuccess(t('stickers.removed_from_favorites'));
+            notifySuccess(t('stickers.removed_from_favorites', 'Видалено з улюблених'));
         } else {
             favs.unshift(sticker);
             notifySuccess(t('stickers.saved_to_favorites'));
         }
 
         localStorage.setItem('tetrone_favorite_emojis', JSON.stringify(favs));
+        setFavoriteIds(favs.map(f => f.id));
     };
 
     return (
@@ -77,22 +84,24 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                     <h3>{t('stickers.view_pack')}</h3>
 
                     <div className="tetrone-modal-header-actions">
-                        <div className="tetrone-post-actions-container" ref={menuRef}>
-                            <button
-                                className="tetrone-modal-close"
-                                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            >
-                                <DotsIcon width={16} height={16} />
-                            </button>
+                        {!pack.is_owner && (
+                            <div className="tetrone-post-actions-container" ref={menuRef}>
+                                <button
+                                    className="tetrone-modal-close"
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                >
+                                    <DotsIcon width={16} height={16} />
+                                </button>
 
-                            {isMenuOpen && (
-                                <div className="tetrone-actions-dropdown">
-                                    <button className="warning" onClick={() => { setIsMenuOpen(false); notifySuccess(t('api.success.PACK_REPORTED')); }}>
-                                        <ReportIcon /> {t('reports.title')}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                {isMenuOpen && (
+                                    <div className="tetrone-actions-dropdown">
+                                        <button className="warning" onClick={() => { setIsMenuOpen(false); notifySuccess(t('api.success.PACK_REPORTED')); }}>
+                                            <ReportIcon /> {t('reports.title')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         <button className="tetrone-modal-close" onClick={onClose} title={t('common.close')}>✖</button>
                     </div>
                 </div>
@@ -145,33 +154,35 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                                 )}
                             </div>
                             <div className="tetrone-modal-footer">
-                                <button
-                                    className="tetrone-btn  tetrone-btn-full-width"
-                                    onClick={() => toggleFavorite(selectedSticker)}
-                                >
-                                    ⭐ {t('stickers.save_to_favorites')}
-                                </button>
+                                <Button onClick={() => toggleFavorite(selectedSticker)}>
+                                    ⭐ {favoriteIds.includes(selectedSticker.id)
+                                        ? t('stickers.remove_from_favorites')
+                                        : t('stickers.save_to_favorites')}
+                                </Button>
                             </div>
                         </div>
                     )}
                 </div>
 
                 <div className="tetrone-modal-footer">
-                    <button className="tetrone-btn-ghost" onClick={onClose}>
+                    <Button variant="secondary" onClick={onClose}>
                         {t('common.close')}
-                    </button>
-                    <button
-                        className={`tetrone-btn ${isInstalled ? 'tetrone-btn-cancel' : ''}`}
-                        onClick={handleToggleInstall}
-                        disabled={isProcessing}
-                    >
-                        {isProcessing
-                            ? t('common.loading')
-                            : isInstalled
-                                ? t('stickers.remove_pack')
-                                : t('stickers.add_pack')
-                        }
-                    </button>
+                    </Button>
+
+                    {!pack.is_owner && (
+                        <Button
+                            className={`tetrone-btn ${isInstalled ? 'tetrone-btn-cancel' : ''}`}
+                            onClick={handleToggleInstall}
+                            disabled={isProcessing}
+                        >
+                            {isProcessing
+                                ? t('common.loading')
+                                : isInstalled
+                                    ? t('stickers.remove_pack')
+                                    : t('stickers.add_pack')
+                            }
+                        </Button>
+                    )}
                 </div>
             </div>
         </div>

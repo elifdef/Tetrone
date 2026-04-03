@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import StickerService from '../../services/sticker.service';
 
-export default function StickerPicker({ onSelect, onClose }) {
+export default function StickerPicker({ onSelect }) {
     const { t } = useTranslation();
     const [packs, setPacks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ export default function StickerPicker({ onSelect, onClose }) {
                 const response = await StickerService.getMyPacks();
                 setPacks(response.data || []);
             } catch (error) {
-                // error handling
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }
@@ -52,12 +52,13 @@ export default function StickerPicker({ onSelect, onClose }) {
     }, [packs, activeTab, searchQuery, favorites]);
 
     return (
-        <div className="tetrone-sticker-picker">
+        <div className="tetrone-sticker-picker" onClick={(e) => e.stopPropagation()}>
             <div className="tetrone-sticker-picker-header">
                 <button
                     type="button"
                     className={`tetrone-sticker-picker-tab ${activeTab === 'favorites' ? 'active' : ''}`}
                     onClick={() => setActiveTab('favorites')}
+                    title={t('stickers.tab_favorites')}
                 >
                     ⭐
                 </button>
@@ -68,47 +69,62 @@ export default function StickerPicker({ onSelect, onClose }) {
                         type="button"
                         className={`tetrone-sticker-picker-tab ${activeTab === pack.id ? 'active' : ''}`}
                         onClick={() => setActiveTab(pack.id)}
+                        title={pack.title}
                     >
                         <img src={pack.cover_url} alt="" />
                     </button>
                 ))}
             </div>
 
-            <div className="tetrone-sticker-picker-search">
-                <input
-                    type="text"
-                    className="tetrone-form-input"
-                    placeholder={t('stickers.search_placeholder')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-            </div>
+            {activeTab !== 'favorites' && (
+                <div className="tetrone-sticker-picker-search">
+                    <input
+                        type="text"
+                        className="tetrone-form-input"
+                        placeholder={t('stickers.search_placeholder')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+            )}
 
-            <div className="tetrone-sticker-picker-grid">
-                {activeTab === 'favorites' && favorites.length > 0 && (
-                    <div className="tetrone-sticker-picker-section-label">
-                        {t('stickers.your_favorites')}
-                    </div>
-                )}
-
+            <div className="tetrone-sticker-picker-content">
                 {isLoading ? (
-                    <div className="tetrone-sticker-picker-loader">{t('common.loading')}</div>
+                    <div className="tetrone-sticker-picker-empty">
+                        {t('common.loading')}
+                    </div>
                 ) : displayStickers.length > 0 ? (
-                    displayStickers.map(sticker => (
-                        <button
-                            key={sticker.id}
-                            type="button"
-                            className="tetrone-sticker-btn"
-                            onClick={() => {
-                                onSelect(sticker);
-                            }}
-                        >
-                            <img src={sticker.url} alt={sticker.shortcode} />
-                        </button>
-                    ))
+                    <>
+                        {activeTab === 'favorites' && (
+                            <div className="tetrone-sticker-picker-section-label">
+                                {t('stickers.your_favorites')}
+                            </div>
+                        )}
+
+                        <div className="tetrone-sticker-picker-grid">
+                            {displayStickers.map(sticker => (
+                                <button
+                                    key={sticker.id}
+                                    type="button"
+                                    className="tetrone-sticker-btn"
+                                    onClick={() => {
+                                        onSelect({
+                                            ...sticker,
+                                            url: sticker.url || sticker.src
+                                        });
+                                    }}
+                                    title={`:${sticker.shortcode}:`}
+                                >
+                                    <img src={sticker.url || sticker.src} alt={sticker.shortcode} />
+                                </button>
+                            ))}
+                        </div>
+                    </>
                 ) : (
                     <div className="tetrone-sticker-picker-empty">
-                        {activeTab === 'favorites' ? t('stickers.no_favorites') : t('stickers.not_found')}
+                        {activeTab === 'favorites'
+                            ? t('stickers.no_favorites')
+                            : t('stickers.not_found')}
                     </div>
                 )}
             </div>
