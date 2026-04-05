@@ -4,7 +4,7 @@ namespace App\Traits;
 
 trait SanitizesProseMirror
 {
-    protected array $allowedFontSizes = ['12px', '14px', '16px', '18px', '20px', '24px'];
+    protected array $allowedFontSizes = ['11px', '12px', '14px', '16px', '18px', '20px', '24px'];
 
     protected function sanitizeProseMirrorNode(array $node): array
     {

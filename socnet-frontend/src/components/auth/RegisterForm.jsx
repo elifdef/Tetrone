@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import AuthService from "../../services/auth.service";
-import Input from "../ui/Input";
 import PasswordStrengthBar from "../ui/PasswordStrengthBar";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 export default function RegisterForm() {
     const { t } = useTranslation();
@@ -128,13 +129,13 @@ export default function RegisterForm() {
                 </div>
             )}
 
-            <button
+            <Button
                 className="tetrone-btn tetrone-btn-block"
                 type="submit"
                 disabled={loading || (formData.password && passwordScore < 5)}
             >
                 {loading ? t('common.loading') : t('auth.signup')}
-            </button>
+            </Button>
 
             <div className="tetrone-auth-footer">
                 {t('auth.already_have_account')}{' '}

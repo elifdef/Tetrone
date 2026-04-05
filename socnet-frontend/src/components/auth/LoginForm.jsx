@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuthForms } from "./hooks/useAuthForms";
 import { useTranslation } from 'react-i18next';
 import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 export default function LoginForm() {
     const { t } = useTranslation();
@@ -54,12 +55,11 @@ export default function LoginForm() {
                 </div>
             )}
 
-            <button
-                className="tetrone-btn tetrone-btn-block"
+            <Button
                 disabled={loading}
             >
                 {loading ? t('common.loading') : t('auth.signin')}
-            </button>
+            </Button>
 
             <div className="tetrone-auth-footer">
                 {t('auth.not_have_account')} <Link to="/register" className="tetrone-link">{t('auth.signup')}</Link>

@@ -17,18 +17,8 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable, HasApiTokens, HasFactory;
 
     protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'first_name',
-        'last_name',
-        'avatar',
-        'avatar_post_id',
-        'birth_date',
-        'bio',
-        'country',
-        'gender',
-        'is_muted',
+        'username', 'email', 'password', 'first_name', 'last_name', 'avatar',
+        'avatar_post_id', 'birth_date', 'bio', 'country', 'gender', 'is_muted',
         'is_banned'
     ];
 
@@ -46,10 +36,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
-            'last_seen_at'=>'datetime',
+            'last_seen_at' => 'datetime',
             'password' => 'hashed',
             'is_setup_complete' => 'boolean',
             'role' => Role::class,
+            'privacy_settings' => 'array'
         ];
     }
 
@@ -270,5 +261,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(CustomSticker::class, 'user_favorite_stickers', 'user_id', 'sticker_id')
             ->withPivot('sort_order')
             ->orderByPivot('sort_order');
+    }
+
+    public function privacyExceptions()
+    {
+        return $this->hasMany(UserPrivacyException::class);
     }
 }

@@ -88,7 +88,7 @@ class CustomStickerController extends Controller
 
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'required|exists:custom_stickers,id', // ФІКС: була неправильна назва таблиці
+            'items.*.id' => 'required|exists:custom_stickers,id',
             'items.*.sort_order' => 'required|integer'
         ]);
 

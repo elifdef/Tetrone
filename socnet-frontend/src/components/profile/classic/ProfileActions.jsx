@@ -6,7 +6,7 @@ import Button from "../../ui/Button";
 
 export default function ProfileActions({
     sameUser, userId, loading, status, isBlockedByMe, isBlockedByTarget,
-    onFriendAction, onBlockAction, onReportAction
+    onFriendAction, onBlockAction, onReportAction, permissions
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -32,8 +32,7 @@ export default function ProfileActions({
             </div>
         );
 
-    if (isBlockedByTarget)
-        return null;
+    if (isBlockedByTarget) return null;
 
     const getStatusLabel = () => {
         if (loading) return "...";
@@ -70,7 +69,7 @@ export default function ProfileActions({
 
     return (
         <div className="tetrone-actions">
-            {!isBlockedByMe && (
+            {!isBlockedByMe && permissions?.can_message && (
                 <Button
                     onClick={handleSendMessage}
                     disabled={isChatLoading || loading}
@@ -79,6 +78,7 @@ export default function ProfileActions({
                 </Button>
             )}
 
+            {/* Дропдаун залишається без змін */}
             <div className="tetrone-dropdown-wrapper" ref={menuRef}>
                 <Button
                     className="tetrone-btn-dropdown-trigger"

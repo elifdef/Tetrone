@@ -15,7 +15,8 @@ export default function ProfileHeader({ user, isPreview }) {
     };
 
     const getStatusBlock = () => {
-        if (isPreview) return;
+        if (isPreview || user.is_private) return null;
+
         return (
             <span className={`tetrone-status ${user.is_online ? 'online' : 'offline'}`}>
                 {getStatusText()}
@@ -24,8 +25,8 @@ export default function ProfileHeader({ user, isPreview }) {
     }
 
     const customNameColor = user.personalization?.username_color;
-    const nameStyle = customNameColor && customNameColor.startsWith('#') 
-        ? { color: customNameColor } 
+    const nameStyle = customNameColor && customNameColor.startsWith('#')
+        ? { color: customNameColor }
         : {};
 
     return (

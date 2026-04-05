@@ -39,6 +39,11 @@ class UserResource extends JsonResource
                 'banner_color' => $this->personalization->banner_color,
                 'username_color' => $this->personalization->username_color,
             ] : null,
+            'is_private' => false,
+            'permissions' => [
+                'can_message' => true,
+                'can_post_on_wall' => true,
+            ],
         ];
     }
 }

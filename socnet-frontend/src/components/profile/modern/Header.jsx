@@ -12,7 +12,7 @@ export default function Header({
     currentUser, isPreview, displayAvatar, isBlockedByTarget, isBanned,
     authUser, sameUser, loading, status, isBlockedByMe,
     handleFriendshipAction, handleBlockAction, onReportAction,
-    customNameColor
+    customNameColor, isPrivateProfile
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -47,7 +47,8 @@ export default function Header({
     };
 
     const getStatusBlock = () => {
-        if (isPreview) return null;
+        if (isPreview || isPrivateProfile) return null;
+
         return (
             <span className={`tetrone-modern-status ${currentUser.is_online ? 'online' : 'offline'}`}>
                 {currentUser.is_online && <span className="tetrone-modern-online-dot"></span>}
@@ -89,7 +90,8 @@ export default function Header({
     };
 
     const hasCustomAvatar = displayAvatar && !displayAvatar.includes('defaultAvatar');
-    const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned) && hasCustomAvatar;
+
+    const canViewAvatar = !isPreview && !(isBlockedByTarget || isBanned || isPrivateProfile) && hasCustomAvatar;
     const nameStyle = { color: customNameColor };
 
     const handleAvatarClick = async () => {
@@ -146,7 +148,7 @@ export default function Header({
 
                 {!sameUser && !isPreview && !isBlockedByTarget && authUser && (
                     <>
-                        {!isBlockedByMe && (
+                        {!isBlockedByMe && currentUser.permissions?.can_message && (
                             <Button
                                 className="tetrone-btn modern-action-btn"
                                 onClick={handleSendMessage}

@@ -9,16 +9,28 @@ import InfiniteScrollList from '../common/InfiniteScrollList';
 
 export default function UserWall({ profileUser, isOwnProfile }) {
     const { user: authUser } = useContext(AuthContext);
-    const wallData = useUserWall(profileUser);
     const { t } = useTranslation();
 
-    const canWriteOnWall = authUser && (isOwnProfile || profileUser.friendship_status !== "blocked_by_target");
+    if (profileUser.is_private && !isOwnProfile) {
+        return null;
+    }
+
+    const wallData = useUserWall(profileUser);
+    const canWriteOnWall = Boolean(profileUser.permissions?.can_post_on_wall);
 
     return (
         <div className="tetrone-wall">
             <WallHeader postsCount={wallData.countPosts} />
 
-            {canWriteOnWall && (<CreatePostForm onSubmitSuccess={wallData.createPost} />)}
+            {canWriteOnWall ? (
+                <CreatePostForm onSubmitSuccess={wallData.createPost} />
+            ) : (
+                authUser && !isOwnProfile && (
+                    <div className="tetrone-empty-state with-card tetrone-mb-15">
+                        <span className="tetrone-text-muted">{t('privacy.wall_posting_disabled')}</span>
+                    </div>
+                )
+            )}
 
             <InfiniteScrollList
                 itemsCount={wallData.posts.length}

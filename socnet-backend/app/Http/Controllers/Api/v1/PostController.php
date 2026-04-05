@@ -29,31 +29,7 @@ class PostController extends Controller
         $targetUser = User::where('username', $username)->firstOrFail();
         $currentUser = $request->user('sanctum');
 
-        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
-        {
-            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access.', 403);
-        }
-
-        $query = Post::select('posts.*')
-            ->join('users', 'posts.user_id', '=', 'users.id')
-            ->where('users.is_banned', false)
-            ->where(function ($q) use ($targetUser)
-            {
-                $q->where('posts.target_user_id', $targetUser->id)
-                    ->orWhere(function ($q2) use ($targetUser)
-                    {
-                        $q2->where('posts.user_id', $targetUser->id)->whereNull('posts.target_user_id');
-                    });
-            })
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts']);
-
-        if ($currentUser)
-        {
-            $query->withExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
-        }
-
-        $posts = $query->latest('posts.created_at')->paginate(config('posts.max_paginate'));
+        $posts = $this->postService->getWallPosts($targetUser, $currentUser);
 
         return PostResource::collection($posts);
     }
@@ -156,22 +132,7 @@ class PostController extends Controller
         $targetUser = User::where('username', $username)->firstOrFail();
         $currentUser = $request->user('sanctum');
 
-        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
-        {
-            return $this->error('ERR_USER_BLOCKED', '', 403);
-        }
-
-        $posts = Post::where('user_id', $targetUser->id)
-            ->whereJsonContains('content->is_avatar_update', true)
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts'])
-            ->latest()
-            ->paginate(30);
-
-        if ($currentUser)
-        {
-            $posts->getCollection()->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
-        }
+        $posts = $this->postService->getAvatarPosts($targetUser, $currentUser);
 
         return $this->success('SUCCESS', '', [
             'data' => PostResource::collection($posts)->resolve(),

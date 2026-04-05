@@ -4,6 +4,8 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Enums\Role;
+use App\Enums\PrivacyContext;
+use App\Services\PrivacyService;
 
 class UserPolicy
 {
@@ -12,7 +14,7 @@ class UserPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role >= Role::Moderator->value)
+        if ($user->role?->value >= Role::Moderator->value)
         {
             return true;
         }
@@ -41,23 +43,9 @@ class UserPolicy
      */
     public function interact(User $me, User $target): bool
     {
-        // якщо це я
-        if ($me->id === $target->id)
-        {
-            return true;
-        }
-
-        // чи я заблокував його
-        if ($me->isBlockedByTarget($target->id, $me->id))
-        {
-            return false;
-        }
-
-        // він заблокував мене
-        if ($me->isBlockedByTarget($me->id, $target->id))
-        {
-            return false;
-        }
+        if ($me->id === $target->id) return true;
+        if ($me->isBlockedByTarget($target->id, $me->id)) return false;
+        if ($me->isBlockedByTarget($me->id, $target->id)) return false;
 
         return true;
     }
@@ -67,14 +55,8 @@ class UserPolicy
      */
     public function writeOnWall(User $me, User $target): bool
     {
-        // якщо ми в чс один одного - неа
-        if (!$this->interact($me, $target))
-        {
-            return false;
-        }
-
-        // TODO: добавити приватність
-        return true;
+        if (!$this->interact($me, $target)) return false;
+        return app(PrivacyService::class)->canAccess($target, $me, PrivacyContext::WallPost->value);
     }
 
     /**
@@ -82,7 +64,8 @@ class UserPolicy
      */
     public function viewProfile(User $me, User $target): bool
     {
-        return $this->interact($me, $target);
+        if (!$this->interact($me, $target)) return false;
+        return app(PrivacyService::class)->canAccess($target, $me, PrivacyContext::Profile->value);
     }
 
     /**
@@ -90,16 +73,8 @@ class UserPolicy
      */
     public function addFriend(User $me, User $target): bool
     {
-        if ($me->id === $target->id)
-        {
-            return false; // добавляти самого себе не можна (я гуль 1000-7)
-        }
-
-        if (!$this->interact($me, $target))
-        {
-            return false;
-        }
-
+        if ($me->id === $target->id) return false; // добавляти самого себе не можна (я гуль 1000-7)
+        if (!$this->interact($me, $target)) return false;
         return true;
     }
 
@@ -108,16 +83,8 @@ class UserPolicy
      */
     public function sendMessage(User $me, User $target): bool
     {
-        if ($me->id === $target->id)
-        {
-            return true; // писати самому собі можна (Тайлер Дерден)
-        }
-
-        if (!$this->interact($me, $target))
-        {
-            return false;
-        }
-
-        return true;
+        if ($me->id === $target->id) return true; // писати самому собі можна (Тайлер Дерден)
+        if (!$this->interact($me, $target)) return false;
+        return app(PrivacyService::class)->canAccess($target, $me, PrivacyContext::Message->value);
     }
 }

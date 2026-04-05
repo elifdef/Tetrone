@@ -8,6 +8,7 @@ use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserBasicResource;
 use App\Models\Chat;
 use App\Models\Message;
+use App\Models\User;
 use App\Services\ChatService;
 use App\Services\MessageService;
 use Illuminate\Http\Request;
@@ -31,6 +32,9 @@ class ChatController extends Controller
     public function getOrCreateChat(Request $request): JsonResponse
     {
         $request->validate(['target_user_id' => 'required|exists:users,id']);
+
+        $receiver = User::findOrFail($request->target_user_id);
+        $this->authorize('sendMessage', $receiver);
 
         $chat = $this->chatService->getOrCreatePrivateChat($request->user(), $request->target_user_id);
 

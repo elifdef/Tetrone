@@ -32,7 +32,24 @@ class NewCommentNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $snippet = $this->comment->content ? Str::limit(strip_tags($this->comment->content), 40) : null;
+        $content = $this->comment->content;
+        $textContent = '';
+
+        if (is_array($content))
+        {
+            array_walk_recursive($content, function ($value, $key) use (&$textContent)
+            {
+                if ($key === 'text')
+                {
+                    $textContent .= $value . ' ';
+                }
+            });
+        } else
+        {
+            $textContent = (string)$content;
+        }
+
+        $snippet = $textContent ? Str::limit(strip_tags(trim($textContent)), 40) : null;
 
         return [
             'type' => 'new_comment',

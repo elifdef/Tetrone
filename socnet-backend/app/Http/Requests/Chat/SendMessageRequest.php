@@ -2,12 +2,21 @@
 
 namespace App\Http\Requests\Chat;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SendMessageRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        $receiverId = $this->input('target_user_id');
+
+        if ($receiverId && $receiverId != $this->user()->id)
+        {
+            $receiver = User::findOrFail($receiverId);
+            return $this->user()->can('sendMessage', $receiver);
+        }
+
         return true;
     }
 

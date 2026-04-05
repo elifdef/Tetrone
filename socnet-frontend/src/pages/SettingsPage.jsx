@@ -8,6 +8,7 @@ import SecuritySettings from '../components/settings/SecuritySettings';
 import PersonalizationSettings from '../components/settings/PersonalizationSettings';
 import NotificationSettings from '../components/settings/NotificationSettings';
 import SessionsSettings from '../components/settings/SessionsSettings';
+import PrivacySettings from '../components/settings/PrivacySettings'
 
 const SettingsPage = () => {
     const { t } = useTranslation();
@@ -20,6 +21,7 @@ const SettingsPage = () => {
         if (activeTab === 'personalization') return t('settings.personalization');
         if (activeTab === 'notifications') return t('common.notifications');
         if (activeTab === 'sessions') return t('settings.sessions');
+        if (activeTab === 'privacy') return t('settings.privacy');
         return t('settings.profile_settings');
     };
     usePageTitle(getPageTitle());
@@ -49,6 +51,9 @@ const SettingsPage = () => {
                 <Link to="/settings?act=sessions" className={getTabClass('sessions')}>
                     {t('settings.sessions')}
                 </Link>
+                <Link to="/settings?act=privacy" className={getTabClass('privacy')}>
+                    {t('settings.privacy')}
+                </Link>
             </div>
 
             <div className="settings-content">
@@ -57,6 +62,7 @@ const SettingsPage = () => {
                 {activeTab === 'security' && <SecuritySettings />}
                 {activeTab === 'notifications' && <NotificationSettings />}
                 {activeTab === 'sessions' && <SessionsSettings />}
+                {activeTab === 'privacy' && <PrivacySettings />}
             </div>
         </div>
     );

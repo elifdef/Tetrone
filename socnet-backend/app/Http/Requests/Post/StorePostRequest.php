@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Post;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\SanitizesProseMirror;
 
@@ -11,6 +13,29 @@ class StorePostRequest extends FormRequest
 
     public function authorize(): bool
     {
+        $targetUserId = $this->input('target_user_id');
+        $originalPostId = $this->input('original_post_id');
+
+        // Перевірка прав на стіну
+        if ($targetUserId && $targetUserId != $this->user()->id)
+        {
+            $targetUser = User::findOrFail($targetUserId);
+            if (!$this->user()->can('writeOnWall', $targetUser))
+            {
+                return false;
+            }
+        }
+
+        // Перевірка прав на репост
+        if ($originalPostId)
+        {
+            $originalPost = Post::findOrFail($originalPostId);
+            if (!$this->user()->can('repost', $originalPost))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 

@@ -1,8 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\v1\AuthController;
-use App\Http\Controllers\Api\v1\NotificationSettingsController;
-use App\Http\Controllers\Api\v1\PersonalizationController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -18,7 +15,7 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
     // Отримати поточного юзера
     Route::get('me', function (Request $request)
     {
-        return (new UserResource($request->user()))->resolve();
+        return new UserResource($request->user())->resolve();
     });
 
     // Дозволено тільки НЕ ЗАБЛОКОВАНИМ юзерам
@@ -40,36 +37,5 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
             Route::put('/user/email', 'updateEmail');
             Route::put('/user/password', 'updatePassword');
         });
-
-        Route::prefix('settings')->group(function ()
-        {
-            // Персоналізація
-            Route::controller(PersonalizationController::class)->prefix('personalization')->group(function ()
-            {
-                Route::get('/', 'show');
-                Route::post('/', 'update');
-            });
-
-            // Сповіщення
-            Route::controller(NotificationSettingsController::class)->prefix('notifications')->group(function ()
-            {
-                Route::get('/', 'getSettings');
-                Route::put('/', 'updateSettings');
-
-                Route::get('/overrides', 'getOverrides');
-                Route::put('/overrides/{targetUserId}', 'updateOverride');
-                Route::delete('/overrides/{targetUserId}', 'deleteOverride');
-            });
-
-            // Сесії
-            Route::controller(AuthController::class)->prefix('sessions')->group(function ()
-            {
-                Route::get('/', 'getSessions');
-                Route::delete('/', 'revokeAllOtherSessions');
-                Route::delete('/{tokenId}', 'revokeSession');
-            });
-
-        });
-
     });
 });

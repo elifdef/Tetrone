@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserProfileLogic } from "../hooks/useUserProfileLogic";
 import { AuthContext } from "../../../context/AuthContext";
 import ReportModal from "../../modals/ReportModal";
@@ -12,8 +13,9 @@ import StaffBanner from "./StaffBanner";
 
 export default function ClassicProfileCard({ currentUser, isPreview = false }) {
     const { user: authUser } = useContext(AuthContext);
-    if (!currentUser)
-        return null;
+    const { t } = useTranslation();
+
+    if (!currentUser) return null;
 
     const {
         status, loading, sameUser,
@@ -21,9 +23,13 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
         displayAvatar, displayBio, displayBirth, displayCountry, displayGender,
         handleFriendshipAction, handleBlockAction
     } = useUserProfileLogic(currentUser, isPreview);
+
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     const isStaff = currentUser.role >= userRole.Support;
+    const isPrivateProfile = currentUser.is_private && !sameUser;
+
+    const effectiveBio = isPrivateProfile ? t('privacy.account_is_private') : displayBio;
 
     return (
         <div className="tetrone-card-wrapper">
@@ -33,7 +39,7 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
                     <ProfileAvatar
                         user={{ ...currentUser, avatar: displayAvatar }}
                         isPreview={isPreview}
-                        isBlocked={isBlockedByTarget || isBanned}
+                        isBlocked={isBlockedByTarget || isBanned || isPrivateProfile}
                     />
 
                     {!isPreview && authUser && (!isPreview || sameUser) && (
@@ -48,6 +54,7 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
                             onBlockAction={handleBlockAction}
                             isBanned={isBanned}
                             onReportAction={() => setIsReportModalOpen(true)}
+                            permissions={currentUser.permissions}
                         />
                     )}
                 </div>
@@ -55,9 +62,9 @@ export default function ClassicProfileCard({ currentUser, isPreview = false }) {
                 <div className="tetrone-right-col">
                     <ProfileHeader user={currentUser} isPreview={isPreview} />
 
-                    <ProfileStatus bio={displayBio} />
+                    <ProfileStatus bio={effectiveBio} />
 
-                    {(isPreview || (!isBlockedByTarget && !isBanned)) && (
+                    {(isPreview || (!isBlockedByTarget && !isBanned && !isPrivateProfile)) && (
                         <ProfileInfo
                             user={currentUser}
                             displayBirth={displayBirth}

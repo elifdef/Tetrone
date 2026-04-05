@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PrivacyContext;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\MentionNotification;
@@ -27,9 +28,21 @@ class PostService
     {
     }
 
-    public function getWallPosts(User $targetUser): LengthAwarePaginator
+    /**
+     * Отримати пости для стіни з урахуванням приватності
+     */
+    public function getWallPosts(User $targetUser, ?User $currentUser)
     {
-        $currentUser = auth('sanctum')->user();
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
+        {
+            return Post::whereNull('id')->paginate(config('posts.max_paginate', 15));
+        }
+
+        $canSeeProfile = app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Profile->value);
+        if (!$canSeeProfile)
+        {
+            return Post::whereNull('id')->paginate(config('posts.max_paginate', 15));
+        }
 
         $query = Post::select('posts.*')
             ->join('users', 'posts.user_id', '=', 'users.id')
@@ -50,7 +63,38 @@ class PostService
             $query->withExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
         }
 
-        return $query->latest('posts.created_at')->paginate(config('posts.max_paginate'));
+        return $query->latest('posts.created_at')->paginate(config('posts.max_paginate', 15));
+    }
+
+    /**
+     * Отримати пости-аватарки з урахуванням приватності
+     */
+    public function getAvatarPosts(User $targetUser, ?User $currentUser)
+    {
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $targetUser->id))
+        {
+            return Post::whereNull('id')->paginate(30);
+        }
+
+        $canSeeAvatars = app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Avatar->value);
+        if (!$canSeeAvatars)
+        {
+            return Post::whereNull('id')->paginate(30);
+        }
+
+        $posts = Post::where('user_id', $targetUser->id)
+            ->whereJsonContains('content->is_avatar_update', true)
+            ->with(['user', 'targetUser', 'attachments', 'pollVotes', 'myPollVotes', 'originalPost.user', 'originalPost.attachments', 'originalPost.originalPost.user', 'originalPost.originalPost.attachments'])
+            ->withCount(['likes', 'comments', 'reposts'])
+            ->latest()
+            ->paginate(30);
+
+        if ($currentUser)
+        {
+            $posts->getCollection()->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
+        }
+
+        return $posts;
     }
 
     public function loadPostRelations(Post $post): Post

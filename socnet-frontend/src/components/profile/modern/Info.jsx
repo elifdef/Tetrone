@@ -2,7 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useDateFormatter } from "../../../hooks/useDateFormatter";
 import isoCountries from "i18n-iso-countries";
 
-export default function Info({ currentUser, displayBio, displayBirth, displayCountry, displayGender, isPreview, isBlockedByTarget, isBanned }) {
+export default function Info({
+    currentUser, displayBio, displayBirth, displayCountry, displayGender,
+    isPreview, isBlockedByTarget, isBanned, isPrivateProfile
+}) {
     const { t, i18n } = useTranslation();
     const formatDate = useDateFormatter();
     const langCode = i18n.language || 'en';
@@ -13,7 +16,7 @@ export default function Info({ currentUser, displayBio, displayBirth, displayCou
                 <div className="tetrone-modern-bio">{displayBio}</div>
             )}
 
-            {(isPreview || (!isBlockedByTarget && !isBanned)) && (
+            {(isPreview || (!isBlockedByTarget && !isBanned && !isPrivateProfile)) && (
                 <div className="tetrone-modern-info-grid">
                     <div className="tetrone-modern-info-item">
                         <span className="tetrone-modern-info-label">{t('common.birthday')}</span>

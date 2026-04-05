@@ -8,6 +8,7 @@ use App\Services\CommentService;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Comment\StoreCommentRequest;
 
 class CommentController extends Controller
 {
@@ -31,21 +32,15 @@ class CommentController extends Controller
         );
     }
 
-    public function store(Request $request, Post $post): JsonResponse
+    public function store(StoreCommentRequest $request, Post $post): JsonResponse
     {
-        $this->authorize('comment', $post);
-
-        $request->validate([
-            'content' => 'required|array'
-        ]);
-
         $comment = $this->commentService->createComment(
             $post,
             $request->user(),
             $request->input('content')
         );
 
-        return $this->success('COMMENT_CREATED', 'Comment created', (new CommentResource($comment->load('user')))->resolve(), 201);
+        return $this->success('COMMENT_CREATED', 'Comment created', new CommentResource($comment->load('user'))->resolve(), 201);
     }
 
     public function update(Request $request, Comment $comment): JsonResponse
@@ -61,7 +56,7 @@ class CommentController extends Controller
             $request->input('content')
         );
 
-        return $this->success('COMMENT_UPDATED', 'Comment updated', (new CommentResource($updatedComment->load('user')))->resolve());
+        return $this->success('COMMENT_UPDATED', 'Comment updated', new CommentResource($updatedComment->load('user'))->resolve());
     }
 
     public function destroy(Request $request, Comment $comment): JsonResponse

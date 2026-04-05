@@ -5,6 +5,8 @@ namespace App\Policies;
 use App\Models\Post;
 use App\Models\User;
 use App\Enums\Role;
+use App\Enums\PrivacyContext;
+use App\Services\PrivacyService;
 
 class PostPolicy
 {
@@ -13,11 +15,7 @@ class PostPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role >= Role::Moderator->value)
-        {
-            return true;
-        }
-
+        if ($user->role?->value >= Role::Moderator->value) return true;
         return null;
     }
 
@@ -42,25 +40,12 @@ class PostPolicy
      */
     public function comment(User $user, Post $post): bool
     {
-        // якщо коментарі вимкнені автором поста
-        if (!$post->can_comment)
-        {
-            return false;
-        }
+        if (!$post->can_comment) return false;
+        if ($user->isBlockedByTarget($user->id, $post->user_id)) return false;
+        if ($user->isBlockedByTarget($post->user_id, $user->id)) return false;
 
-        // якщо автор поста заблокував коментатора
-        if ($user->isBlockedByTarget($user->id, $post->user_id))
-        {
-            return false;
-        }
-
-        // якщо коментатор сам заблокував автора поста
-        if ($user->isBlockedByTarget($post->user_id, $user->id))
-        {
-            return false;
-        }
-
-        return true;
+        // Перевіряємо приватність автора поста на коментарі
+        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Comment->value);
     }
 
     /**
@@ -68,12 +53,7 @@ class PostPolicy
      */
     public function like(User $user, Post $post): bool
     {
-        if (!$user->can('interact', $post->user))
-        {
-            return false;
-        }
-
-        return true;
+        return $user->can('interact', $post->user);
     }
 
     /**
@@ -81,13 +61,9 @@ class PostPolicy
      */
     public function repost(User $user, Post $post): bool
     {
-        if (!$user->can('interact', $post->user))
-        {
-            return false;
-        }
+        if (!$user->can('interact', $post->user)) return false;
 
-        // TODO: якщо користувач закрив профіль то ми не можемо репостити його пости
-
-        return true;
+        // Перевіряємо, чи взагалі відкритий профіль для репосту
+        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Profile->value);
     }
 }
