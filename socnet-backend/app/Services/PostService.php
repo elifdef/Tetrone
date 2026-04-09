@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Enums\PrivacyContext;
+use App\Exceptions\ApiException;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\MentionNotification;
 use App\Notifications\NewRepostNotification;
 use App\Notifications\NewWallPostNotification;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class PostService
@@ -161,7 +160,7 @@ class PostService
 
             if (($currentMediaCount - $deletedMediaCount + $newMediaCount) > 10)
             {
-                throw ValidationException::withMessages(['media' => 'A post cannot have more than 10 media attachments.']);
+                throw new ApiException('ERR_MAX_MEDIA_EXCEEDED', 422);
             }
 
             $contentData = is_array($post->content) ? $post->content : [];
@@ -245,34 +244,31 @@ class PostService
 
     private function validatePoll(?array $poll): void
     {
-        if (empty($poll)) return;
+        if (empty($poll))
+            return;
 
         if (empty(trim($poll['question'] ?? '')))
-        {
-            throw ValidationException::withMessages(['poll' => 'Poll question cannot be empty.']);
-        }
+            throw new ApiException('ERR_POLL_QUESTION_EMPTY', 422);
+
         if (!isset($poll['options']) || !is_array($poll['options']))
-        {
-            throw ValidationException::withMessages(['poll' => 'Poll options must be a valid array.']);
-        }
-        if (count($poll['options']) < 2 || count($poll['options']) > 10)
-        {
-            throw ValidationException::withMessages(['poll' => 'Poll must have between 2 and 10 options.']);
-        }
+            throw new ApiException('ERR_POLL_OPTIONS_INVALID', 422);
+
+        if (count($poll['options']) < 2 || count($poll['options']) > 16)
+            throw new ApiException('ERR_POLL_OPTIONS_LIMIT', 422);
 
         $hasCorrectOption = false;
         foreach ($poll['options'] as $option)
         {
             if (empty(trim($option['text'] ?? '')))
-            {
-                throw ValidationException::withMessages(['poll' => 'Poll options cannot be empty.']);
-            }
-            if (!empty($option['is_correct'])) $hasCorrectOption = true;
+                throw new ApiException('ERR_POLL_OPTION_EMPTY', 422);
+
+            if (!empty($option['is_correct']))
+                $hasCorrectOption = true;
         }
 
         if (($poll['type'] ?? 'regular') === 'quiz' && !$hasCorrectOption)
         {
-            throw ValidationException::withMessages(['poll' => 'Quiz must have at least one correct option.']);
+            throw new ApiException('ERR_QUIZ_NO_CORRECT_OPTION', 422);
         }
     }
 

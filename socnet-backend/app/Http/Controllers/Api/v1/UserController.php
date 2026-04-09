@@ -6,10 +6,10 @@ use App\Http\Resources\PublicUserResource;
 use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Requests\User\UpdateEmailRequest;
 use App\Http\Requests\User\UpdatePasswordRequest;
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller
@@ -18,62 +18,95 @@ class UserController extends Controller
     {
     }
 
+    /**
+     * Отримати список користувачів (Пошук)
+     *
+     * @group Users
+     * @response 200 storage/responses/users_list.json
+     */
     public function index(Request $request): AnonymousResourceCollection
     {
         $users = $this->userService->getPaginatedUsers(
-            $request->user(),
+            $request->user('sanctum'),
             $request->input('search')
         );
 
-        return PublicUserResource::collection($users);
+        return PublicUserResource::collection($users)->additional([
+            'success' => true,
+            'code' => 'SUCCESS'
+        ]);
     }
 
-    public function show(string $username): array
+    /**
+     * Отримати профіль користувача
+     *
+     * @group Users
+     * @urlParam user string required Нікнейм користувача. Example: andrew
+     * @response 200 storage/responses/user_profile.json
+     */
+    public function show(Request $request, User $user): PublicUserResource
     {
-        $user = $this->userService->getUserByUsername($username);
-
-        return (new PublicUserResource($user))->resolve();
+        return new PublicUserResource($user)->additional([
+            'success' => true,
+            'code' => 'SUCCESS'
+        ]);
     }
 
-    public function update(UpdateProfileRequest $request, string $username): JsonResponse
+    /**
+     * Оновити профіль
+     *
+     * @group Users
+     * @authenticated
+     * @urlParam user string required Нікнейм користувача. Example: andrew
+     * @response 200 storage/responses/profile_updated.json
+     */
+    public function update(UpdateProfileRequest $request, User $user): JsonResponse
     {
-        $targetUser = $this->userService->getUserByUsername($username);
+        $this->authorize('updateProfile', $user);
 
-        if ($request->user()->id !== $targetUser->id)
-        {
-            return $this->error('ERR_ACCESS_DENIED', 'Access denied.', 403);
-        }
-
-        $updated = $this->userService->updateProfile(
-            $targetUser,
+        $this->userService->updateProfile(
+            $user,
             $request->validated(),
             $request->file('avatar')
         );
 
-        if (!$updated)
-        {
-            return $this->error('ERR_NOTHING_TO_UPDATE', 'Nothing to update', 418);
-        }
-
-        return $this->success('PROFILE_UPDATED', 'Profile updated successfully');
+        return response()->json([
+            'success' => true,
+            'code' => 'PROFILE_UPDATED'
+        ], 200);
     }
 
+    /**
+     * Змінити email
+     *
+     * @group Users
+     * @authenticated
+     * @response 200
+     */
     public function updateEmail(UpdateEmailRequest $request): JsonResponse
     {
-        if (!Hash::check($request->password, $request->user()->password))
-        {
-            return $this->error('ERR_INVALID_PASSWORD', 'Invalid password', 422);
-        }
+        $this->userService->updateEmail($request->user(), $request->validated('email'));
 
-        $this->userService->updateEmail($request->user(), $request->email);
-
-        return $this->success('EMAIL_UPDATED', 'Email changed. Please confirm your new address.');
+        return response()->json([
+            'success' => true,
+            'code' => 'EMAIL_UPDATED'
+        ], 200);
     }
 
+    /**
+     * Змінити пароль
+     *
+     * @group Users
+     * @authenticated
+     * @response 200
+     */
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
-        $this->userService->updatePassword($request->user(), $request->password);
+        $this->userService->updatePassword($request->user(), $request->validated('password'));
 
-        return $this->success('PASSWORD_UPDATED', 'Password has been changed.');
+        return response()->json([
+            'success' => true,
+            'code' => 'PASSWORD_UPDATED'
+        ], 200);
     }
 }

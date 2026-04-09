@@ -14,132 +14,131 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    protected const POST_RELATIONS = [
-        'user', 'targetUser', 'attachments', 'pollVotes', 'myPollVotes',
-        'originalPost.user', 'originalPost.attachments',
-        'originalPost.originalPost.user', 'originalPost.originalPost.attachments'
-    ];
-
     public function __construct(protected PostService $postService)
     {
     }
 
-    public function index(Request $request, string $username): JsonResponse|AnonymousResourceCollection
+    /**
+     * Отримати стіну користувача
+     *
+     * @group Posts
+     * @urlParam user string required Нікнейм користувача. Example: andrew
+     * @response 200 storage/responses/posts_list.json
+     */
+    public function index(Request $request, User $user): AnonymousResourceCollection
     {
-        $targetUser = User::where('username', $username)->firstOrFail();
-        $currentUser = $request->user('sanctum');
+        $posts = $this->postService->getWallPosts($user, $request->user('sanctum'));
 
-        $posts = $this->postService->getWallPosts($targetUser, $currentUser);
-
-        return PostResource::collection($posts);
+        return PostResource::collection($posts)->additional([
+            'success' => true,
+            'code' => 'SUCCESS'
+        ]);
     }
 
-    public function show(Request $request, Post $post): JsonResponse
+    /**
+     * Отримати один пост
+     *
+     * @group Posts
+     * @urlParam post integer required ID поста. Example: 1
+     * @response 200 storage/responses/post_single.json
+     */
+    public function show(Request $request, Post $post): PostResource
     {
-        $currentUser = $request->user('sanctum');
+        $this->authorize('view', $post);
 
-        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $post->user_id))
-        {
-            return $this->error('ERR_USER_BLOCKED', 'The user has restricted your access to the post.', 403);
-        }
+        $post = $this->postService->loadPostRelations($post, $request->user('sanctum'));
 
-        $post->load(self::POST_RELATIONS)->loadCount(['likes', 'comments', 'reposts']);
-
-        if ($currentUser)
-        {
-            $post->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $currentUser->id)]);
-        } else
-        {
-            $post->is_liked = false;
-        }
-
-        return $this->success('SUCCESS', 'Post retrieved successfully', (new PostResource($post))->resolve());
+        return new PostResource($post)->additional([
+            'success' => true,
+            'code' => 'SUCCESS'
+        ]);
     }
 
-    public function store(StorePostRequest $request): JsonResponse
+    /**
+     * Створити пост
+     *
+     * @group Posts
+     * @authenticated
+     * @response 201 storage/responses/post_created.json
+     */
+    public function store(StorePostRequest $request): PostResource
     {
-        $data = $request->validated();
-
-        $mediaFiles = $request->file('media');
-        if ($mediaFiles && !is_array($mediaFiles))
-        {
-            $mediaFiles = [$mediaFiles];
-        }
-
-        // Передаємо чистий $data. JSON вже розпаковано у Request!
         $post = $this->postService->createPost(
             $request->user(),
-            $data,
-            $mediaFiles
+            $request->validated(),
+            $request->file('media')
         );
 
-        $post->load(self::POST_RELATIONS);
+        $post = $this->postService->loadPostRelations($post, $request->user());
 
-        return $this->success('POST_CREATED', 'Post created successfully', (new PostResource($post))->resolve(), 201);
+        return new PostResource($post)->additional([
+            'success' => true,
+            'code' => 'POST_CREATED'
+        ]);
     }
 
-    public function update(UpdatePostRequest $request, Post $post): JsonResponse
+    /**
+     * Оновити пост
+     *
+     * @group Posts
+     * @authenticated
+     * @urlParam post integer required ID поста. Example: 1
+     * @response 200 storage/responses/post_updated.json
+     */
+    public function update(UpdatePostRequest $request, Post $post): PostResource
     {
-        if ($request->user()->id !== $post->user_id && $request->user()->cannot('edit-any-content'))
-        {
-            return $this->error('ERR_EDIT_PERMISSION_DENIED', "You do not have permission to edit someone else's post.", 403);
-        }
+        $this->authorize('update', $post);
 
-        $data = $request->validated();
-
-        $mediaFiles = $request->file('media');
-        if ($mediaFiles && !is_array($mediaFiles))
-        {
-            $mediaFiles = [$mediaFiles];
-        }
-
-        $deletedMediaIds = $request->input('deleted_media');
-        if ($deletedMediaIds && !is_array($deletedMediaIds))
-        {
-            $deletedMediaIds = [$deletedMediaIds];
-        }
-
-        $result = $this->postService->updatePost(
+        $updatedPost = $this->postService->updatePost(
             $post,
-            $data,
-            $mediaFiles,
-            $deletedMediaIds
+            $request->validated(),
+            $request->file('media'),
+            $request->input('deleted_media')
         );
 
-        $result->load(self::POST_RELATIONS)
-            ->loadCount(['likes', 'comments', 'reposts'])
-            ->loadExists(['likes as is_liked' => fn($q) => $q->where('user_id', $request->user()->id)]);
+        $updatedPost = $this->postService->loadPostRelations($updatedPost, $request->user());
 
-        return $this->success('POST_UPDATED', 'Post updated successfully', (new PostResource($result))->resolve());
+        return new PostResource($updatedPost)->additional([
+            'success' => true,
+            'code' => 'POST_UPDATED'
+        ]);
     }
 
-    public function destroy(Post $post, Request $request): JsonResponse
+    /**
+     * Видалити пост
+     *
+     * @group Posts
+     * @authenticated
+     * @urlParam post integer required ID поста. Example: 1
+     * @response 202
+     */
+    public function destroy(Post $post): JsonResponse
     {
-        $user = $request->user();
-
-        if ($user->id !== $post->user_id && $post->target_user_id !== $user->id && $user->cannot('delete-any-content'))
-        {
-            return $this->error('ERR_DELETE_PERMISSION_DENIED', "You do not have right to delete this post.", 403);
-        }
+        $this->authorize('delete', $post);
 
         $this->postService->deletePost($post);
 
-        return $this->success('POST_DELETED', 'Post deleted.', null, 202);
+        // Для дій без ресурсу віддаємо просто JSON
+        return response()->json([
+            'success' => true,
+            'code' => 'POST_DELETED'
+        ], 202);
     }
 
-    public function getUserAvatars(Request $request, string $username): JsonResponse
+    /**
+     * Отримати історію аватарок
+     *
+     * @group Posts
+     * @urlParam user string required Нікнейм користувача. Example: andrew
+     * @response 200 storage/responses/avatars_list.json
+     */
+    public function getUserAvatars(Request $request, User $user): AnonymousResourceCollection
     {
-        $targetUser = User::where('username', $username)->firstOrFail();
-        $currentUser = $request->user('sanctum');
+        $posts = $this->postService->getAvatarPosts($user, $request->user('sanctum'));
 
-        $posts = $this->postService->getAvatarPosts($targetUser, $currentUser);
-
-        return $this->success('SUCCESS', '', [
-            'data' => PostResource::collection($posts)->resolve(),
-            'meta' => [
-                'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage()
-            ]
+        return PostResource::collection($posts)->additional([
+            'success' => true,
+            'code' => 'SUCCESS'
         ]);
     }
 }

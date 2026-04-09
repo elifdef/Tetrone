@@ -14,6 +14,13 @@ class AuthController extends Controller
     {
     }
 
+    /**
+     * Авторизація користувача
+     *
+     * @group Authentication
+     * @unauthenticated
+     * @response 200
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login(
@@ -22,28 +29,38 @@ class AuthController extends Controller
             $request
         );
 
-        if (!$result)
-        {
-            return $this->error('ERR_INVALID_CREDENTIALS', '', 401);
-        }
-
-        return $this->success('LOGIN_SUCCESS', '', $result);
+        return response()->json([
+            'success' => true,
+            'code' => 'LOGIN_SUCCESS',
+            'data' => $result
+        ], 200);
     }
 
+    /**
+     * Реєстрація нового користувача
+     *
+     * @group Authentication
+     * @unauthenticated
+     * @response 201
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
-        if (!config('features.allow_registration'))
-        {
-            return $this->error('ERR_REGISTRATION_SUSPENDED', 'New user registration is currently suspended', 403);
-        }
-
         $user = $this->authService->register($request->validated());
 
-        return $this->success('REGISTER_SUCCESS', 'User registered successfully. Please check your email.', [
-            'user_id' => $user->id
+        return response()->json([
+            'success' => true,
+            'code' => 'REGISTER_SUCCESS',
+            'data' => ['user_id' => $user->id]
         ], 201);
     }
 
+    /**
+     * Отримати активні сесії
+     *
+     * @group Authentication
+     * @authenticated
+     * @response 200
+     */
     public function getSessions(Request $request): JsonResponse
     {
         $tokens = $request->user()->tokens()->orderBy('last_used_at', 'desc')->get();
@@ -59,25 +76,50 @@ class AuthController extends Controller
             'is_current' => $token->id === $currentId
         ]);
 
-        return $this->success('SESSIONS_RETRIEVED', 'Sessions retrieved', $sessions);
+        return response()->json([
+            'success' => true,
+            'code' => 'SESSIONS_RETRIEVED',
+            'data' => $sessions
+        ], 200);
     }
 
+    /**
+     * Завершити конкретну сесію
+     *
+     * @group Authentication
+     * @authenticated
+     * @response 200
+     */
     public function revokeSession(Request $request, $tokenId): JsonResponse
     {
         $request->user()->tokens()->where('id', $tokenId)->delete();
-        return $this->success('SESSION_REVOKED', 'Session revoked successfully');
+        return response()->json(['success' => true, 'code' => 'SESSION_REVOKED'], 200);
     }
 
+    /**
+     * Завершити всі інші сесії
+     *
+     * @group Authentication
+     * @authenticated
+     * @response 200
+     */
     public function revokeAllOtherSessions(Request $request): JsonResponse
     {
         $currentId = $request->user()->currentAccessToken()->id;
         $request->user()->tokens()->where('id', '!=', $currentId)->delete();
-        return $this->success('ALL_OTHER_SESSIONS_REVOKED', 'All other sessions revoked successfully');
+        return response()->json(['success' => true, 'code' => 'ALL_OTHER_SESSIONS_REVOKED'], 200);
     }
 
+    /**
+     * Вихід (завершення поточної сесії)
+     *
+     * @group Authentication
+     * @authenticated
+     * @response 200
+     */
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return $this->success('LOGOUT_SUCCESS', 'Logged out successfully');
+        return response()->json(['success' => true, 'code' => 'LOGOUT_SUCCESS'], 200);
     }
 }

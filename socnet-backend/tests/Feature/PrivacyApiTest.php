@@ -298,7 +298,9 @@ class PrivacyApiTest extends TestCase
     {
         $target = User::factory()->create(['last_seen_at' => now(), 'privacy_settings' => ['profile' => PrivacyLevel::Nobody->value]]);
         $response = $this->getJson("/api/v1/users/{$target->username}");
-        $response->assertJsonPath('is_online', false);
+//        dd($response);
+        $response->assertJsonPath('data.last_seen_at', null)
+            ->assertJsonPath('data.is_online', false);
     }
 
     #[TestDox('24. Писати на стіні можна всім (Everyone)')]
@@ -379,7 +381,7 @@ class PrivacyApiTest extends TestCase
         $sender = User::factory()->create();
 
         $response = $this->actingAs($sender, 'sanctum')->postJson('/api/v1/chat/init', ['target_user_id' => $target->id]);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     #[TestDox('32. Неможливо писати в ПП (Nobody)')]
@@ -400,7 +402,7 @@ class PrivacyApiTest extends TestCase
         $this->makeFriends($target, $friend);
 
         $response = $this->actingAs($friend, 'sanctum')->postJson('/api/v1/chat/init', ['target_user_id' => $target->id]);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     #[TestDox('34. Чужий НЕ може писати в ПП (Friends)')]
@@ -421,7 +423,7 @@ class PrivacyApiTest extends TestCase
         UserPrivacyException::create(['user_id' => $target->id, 'target_user_id' => $writer->id, 'context' => 'message', 'is_allowed' => true]);
 
         $response = $this->actingAs($writer, 'sanctum')->postJson('/api/v1/chat/init', ['target_user_id' => $target->id]);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     #[TestDox('36. ВИНЯТОК: НЕ може писати в ПП (Everyone + Deny)')]
@@ -633,11 +635,13 @@ class PrivacyApiTest extends TestCase
 
         $exception = UserPrivacyException::create(['user_id' => $target->id, 'target_user_id' => $viewer->id, 'context' => 'profile', 'is_allowed' => true]);
 
-        $this->actingAs($viewer, 'sanctum')->getJson("/api/v1/users/{$target->username}")->assertJsonPath('is_private', false);
+        // Перевіряємо фрагмент:
+        $this->actingAs($viewer, 'sanctum')->getJson("/api/v1/users/{$target->username}")->assertJsonFragment(['is_private' => false]);
 
         $this->actingAs($target, 'sanctum')->deleteJson("/api/v1/settings/privacy/exceptions/{$exception->id}");
 
-        $this->actingAs($viewer, 'sanctum')->getJson("/api/v1/users/{$target->username}")->assertJsonPath('is_private', true);
+        // Перевіряємо фрагмент:
+        $this->actingAs($viewer, 'sanctum')->getJson("/api/v1/users/{$target->username}")->assertJsonFragment(['is_private' => true]);
     }
 
     #[TestDox('54. Не можна додати виняток без параметру is_allowed')]

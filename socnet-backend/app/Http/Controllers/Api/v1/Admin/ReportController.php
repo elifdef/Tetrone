@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Http\Controllers\Api\v1\Controller;
+use App\Http\Requests\Admin\ManageReportRequest;
 use App\Models\Report;
-use App\Models\User;
 use App\Services\Admin\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -15,52 +15,60 @@ class ReportController extends Controller
     {
     }
 
+    /**
+     * Список скарг (Панель Адміна)
+     *
+     * @group Admin - Reports
+     * @authenticated
+     * @urlParam status string Фільтр за статусом (pending, resolved, rejected). Example: pending
+     * @response 200
+     */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAdminPanel', User::class);
+        $this->authorize('viewAny', Report::class);
 
-        $stats = [
-            'total' => Report::count(),
-            'pending' => Report::where('status', 'pending')->count(),
-            'resolved' => Report::where('status', 'resolved')->count(),
-            'rejected' => Report::where('status', 'rejected')->count(),
-        ];
+        $data = $this->reportService->getReportsWithStats($request->query('status'));
 
-        $query = Report::with(['reporter', 'moderator', 'reportable'])->latest();
-
-        if ($request->has('status') && in_array($request->status, ['pending', 'resolved', 'rejected']))
-        {
-            $query->where('status', $request->status);
-        }
-
-        return $this->success('REPORTS_RETRIEVED', 'Reports retrieved', [
-            'stats' => $stats,
-            'reports' => $query->paginate(20)
-        ]);
+        return response()->json([
+            'success' => true,
+            'code' => 'REPORTS_RETRIEVED',
+            'data' => $data
+        ], 200);
     }
 
-    public function resolve(Request $request, Report $report): JsonResponse
+    /**
+     * Задовольнити скаргу
+     *
+     * @group Admin - Reports
+     * @authenticated
+     * @response 200
+     */
+    public function resolve(ManageReportRequest $request, Report $report): JsonResponse
     {
-        $this->authorize('viewAdminPanel', User::class);
-        $request->validate(['admin_response' => 'required|string|max:1000']);
+        $this->authorize('manage', $report);
 
-        if (class_basename($report->reportable_type) === 'User' && $report->reportable)
-        {
-            $this->authorize('moderate', clone $report->reportable);
-        }
+        $this->reportService->resolve($report, $request->user(), $request->validated('admin_response'));
 
-        $this->reportService->resolve($report, $request->user(), $request->admin_response);
-
-        return $this->success('REPORT_RESOLVED', 'Report resolved. Content deleted/User banned.');
+        return response()->json([
+            'success' => true,
+            'code' => 'REPORT_RESOLVED'
+        ], 200);
     }
 
-    public function reject(Request $request, Report $report): JsonResponse
+    /**
+     * Відхилити скаргу
+     *
+     * @group Admin - Reports
+     * @authenticated
+     * @response 200
+     */
+    public function reject(ManageReportRequest $request, Report $report): JsonResponse
     {
-        $this->authorize('viewAdminPanel', User::class);
-        $request->validate(['admin_response' => 'required|string|max:1000']);
+        $this->reportService->reject($report, $request->user(), $request->validated('admin_response'));
 
-        $this->reportService->reject($report, $request->user(), $request->admin_response);
-
-        return $this->success('REPORT_REJECTED', 'Report rejected. Content remains.');
+        return response()->json([
+            'success' => true,
+            'code' => 'REPORT_REJECTED'
+        ], 200);
     }
 }

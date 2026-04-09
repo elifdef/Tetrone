@@ -15,8 +15,12 @@ class UpdateEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', Rule::unique('users')->ignore($this->user()->id)],
-            'password' => ['required'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($this->user()->id)
+            ],
+            'password' => ['required', 'current_password'],
         ];
     }
 }

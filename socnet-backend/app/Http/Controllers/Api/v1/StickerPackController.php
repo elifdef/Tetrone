@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Exceptions\ApiException;
 use App\Http\Requests\Sticker\StorePackRequest;
 use App\Http\Requests\Sticker\UpdatePackRequest;
 use App\Http\Resources\Sticker\StickerPackResource;
@@ -10,6 +11,7 @@ use App\Models\StickerPack;
 use App\Services\StickerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class StickerPackController extends Controller
 {
@@ -17,18 +19,36 @@ class StickerPackController extends Controller
     {
     }
 
+    /**
+     * Інформація про стікер-пак
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function info(Request $request, StickerPack $pack): JsonResponse
     {
         $pack->load(['author', 'stickers']);
         $packData = (new StickerPackResource($pack))->resolve();
         $packData['is_deleted'] = $pack->trashed();
 
-        return $this->success('STICKER_INFO_RETRIEVED', 'Pack info retrieved', [
-            'pack' => $packData,
-            'samples' => StickerResource::collection($pack->stickers->take(4))
-        ]);
+        return response()->json([
+            'success' => true,
+            'code' => 'STICKER_INFO_RETRIEVED',
+            'data' => [
+                'pack' => $packData,
+                'samples' => StickerResource::collection($pack->stickers->take(4))
+            ]
+        ], 200);
     }
 
+    /**
+     * Створити новий пак
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 201
+     */
     public function store(StorePackRequest $request): JsonResponse
     {
         $pack = $this->stickerService->createPack(
@@ -37,49 +57,87 @@ class StickerPackController extends Controller
             $request->file('cover')
         );
 
-        return $this->success('PACK_CREATED', 'Sticker pack created successfully', $pack, 201);
+        return response()->json([
+            'success' => true,
+            'code' => 'PACK_CREATED',
+            'data' => new StickerPackResource($pack)
+        ], 201);
     }
 
+    /**
+     * Оновити пак
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function update(UpdatePackRequest $request, StickerPack $pack): JsonResponse
     {
         if ($pack->author_id !== $request->user()->id && $request->user()->cannot('edit-any-content'))
         {
-            return $this->error('ERR_FORBIDDEN', 'You can only edit your own packs.', 403);
+            throw new ApiException('ERR_FORBIDDEN', 403);
         }
 
         $this->stickerService->updatePack($pack, $request->validated(), $request->file('cover'));
 
-        return $this->success('PACK_UPDATED', 'Sticker pack updated', $pack);
+        return response()->json([
+            'success' => true,
+            'code' => 'PACK_UPDATED',
+            'data' => new StickerPackResource($pack)
+        ], 200);
     }
 
+    /**
+     * Видалити пак
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function destroy(Request $request, StickerPack $pack): JsonResponse
     {
         if ($pack->author_id !== $request->user()->id && $request->user()->cannot('delete-any-content'))
         {
-            return $this->error('ERR_FORBIDDEN', 'You can only delete your own packs.', 403);
+            throw new ApiException('ERR_FORBIDDEN', 403);
         }
 
-        $pack->delete(); // Soft delete
-        return $this->success('PACK_DELETED', 'Sticker pack deleted');
+        $pack->delete();
+        return response()->json(['success' => true, 'code' => 'PACK_DELETED'], 200);
     }
 
+    /**
+     * Встановити пак
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function install(Request $request, StickerPack $pack): JsonResponse
     {
-        $installed = $this->stickerService->installPack($request->user(), $pack);
-
-        if (!$installed)
-        {
-            return $this->error('ERR_ALREADY_INSTALLED', 'Pack is already installed.', 409);
-        }
-        return $this->success('PACK_INSTALLED', 'Pack added to your keyboard');
+        $this->stickerService->installPack($request->user(), $pack);
+        return response()->json(['success' => true, 'code' => 'PACK_INSTALLED'], 200);
     }
 
+    /**
+     * Видалити встановлений пак з клавіатури
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function uninstall(Request $request, StickerPack $pack): JsonResponse
     {
         $request->user()->installedStickerPacks()->detach($pack->id);
-        return $this->success('PACK_UNINSTALLED', 'Pack removed from your keyboard');
+        return response()->json(['success' => true, 'code' => 'PACK_UNINSTALLED'], 200);
     }
 
+    /**
+     * Змінити порядок паків
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function reorder(Request $request): JsonResponse
     {
         $request->validate([
@@ -89,25 +147,42 @@ class StickerPackController extends Controller
 
         $this->stickerService->reorderUserPacks($request->user(), $request->packShortNames);
 
-        return $this->success('PACKS_REORDERED', 'Packs order updated');
+        return response()->json(['success' => true, 'code' => 'PACKS_REORDERED'], 200);
     }
 
-    public function catalog(): JsonResponse
+    /**
+     * Каталог публічних паків
+     *
+     * @group Sticker Packs
+     * @response 200
+     */
+    public function catalog(): AnonymousResourceCollection
     {
         $packs = StickerPack::where('is_published', true)
             ->with(['stickers', 'author'])
             ->withCount('stickers')
             ->paginate(15);
 
-        return $this->success('CATALOG_RETRIEVED', 'Sticker packs catalog',
-            StickerPackResource::collection($packs)->response()->getData(true)
-        );
+        return StickerPackResource::collection($packs)->additional([
+            'success' => true,
+            'code' => 'CATALOG_RETRIEVED'
+        ]);
     }
 
+    /**
+     * Мої встановлені паки
+     *
+     * @group Sticker Packs
+     * @authenticated
+     * @response 200
+     */
     public function myPacks(Request $request): JsonResponse
     {
         $user = auth('sanctum')->user();
-        if (!$user) return $this->success('MY_PACKS_EMPTY', 'Guest access', []);
+        if (!$user)
+        {
+            return response()->json(['success' => true, 'code' => 'MY_PACKS_EMPTY', 'data' => []], 200);
+        }
 
         $packs = $user->installedStickerPacks()
             ->withTrashed()
@@ -115,8 +190,10 @@ class StickerPackController extends Controller
             ->orderBy('user_sticker_packs.sort_order', 'asc')
             ->get();
 
-        return $this->success('MY_PACKS_RETRIEVED', 'Your sticker packs',
-            StickerPackResource::collection($packs)
-        );
+        return response()->json([
+            'success' => true,
+            'code' => 'MY_PACKS_RETRIEVED',
+            'data' => StickerPackResource::collection($packs)
+        ], 200);
     }
 }

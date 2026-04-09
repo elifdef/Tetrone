@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Exceptions\ApiException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function __construct(protected FileStorageService $fileService)
+    public function __construct(
+        protected FileStorageService $fileService
+    )
     {
     }
 
@@ -38,12 +41,10 @@ class UserService
         return $query->paginate(20);
     }
 
-    public function getUserByUsername(string $username): User
-    {
-        return User::where('username', $username)->firstOrFail();
-    }
-
-    public function updateProfile(User $targetUser, array $data, ?UploadedFile $avatarFile): bool
+    /**
+     * Оновити профіль юзера
+     */
+    public function updateProfile(User $targetUser, array $data, ?UploadedFile $avatarFile): void
     {
         $targetUser->fill(collect($data)->except(['avatar', 'remove_avatar', 'finish_setup'])->toArray());
 
@@ -59,6 +60,7 @@ class UserService
                 prefix: 'avatar'
             );
 
+            // Створюємо пост про зміну аватарки
             $post = $targetUser->posts()->create([
                 'target_user_id' => null,
                 'content' => ['is_avatar_update' => true],
@@ -85,12 +87,10 @@ class UserService
 
         if (!$targetUser->isDirty())
         {
-            return false;
+            throw new ApiException('ERR_NOTHING_TO_UPDATE', 422);
         }
 
         $targetUser->save();
-
-        return true;
     }
 
     public function updateEmail(User $user, string $email): void

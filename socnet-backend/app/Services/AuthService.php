@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Exceptions\ApiException;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuthService
 {
-    public function login(string $login, string $password, Request $request): ?array
+    public function login(string $login, string $password, Request $request): array
     {
         $loginType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
@@ -18,7 +19,7 @@ class AuthService
 
         if (!auth()->attempt($credentials))
         {
-            return null;
+            throw new ApiException('ERR_INVALID_CREDENTIALS', 401);
         }
 
         $user = auth()->user();
@@ -49,6 +50,11 @@ class AuthService
 
     public function register(array $data): User
     {
+        if (!config('features.allow_registration'))
+        {
+            throw new ApiException('ERR_REGISTRATION_SUSPENDED', 403);
+        }
+
         $user = User::create([
             'username' => $data['username'],
             'email' => $data['email'],

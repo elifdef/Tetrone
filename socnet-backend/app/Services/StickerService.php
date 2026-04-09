@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ApiException;
 use App\Models\CustomSticker;
 use App\Models\StickerPack;
 use App\Models\User;
@@ -12,18 +13,12 @@ use Illuminate\Support\Str;
 
 class StickerService
 {
-    /**
-     * Завантаження файлу (обкладинки або стікера)
-     */
     public function uploadImage(UploadedFile $file, string $folder): string
     {
         $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
         return $file->storeAs("emojis/{$folder}", $filename, 'public');
     }
 
-    /**
-     * Видалення файлу з диска
-     */
     public function deleteImage(?string $path): void
     {
         if ($path && Storage::disk('public')->exists($path))
@@ -32,9 +27,6 @@ class StickerService
         }
     }
 
-    /**
-     * Генерація безпечного short_name для пака
-     */
     public function generateUniqueShortName(string $title): string
     {
         $slug = Str::slug($title, '_');
@@ -50,9 +42,6 @@ class StickerService
         return $uniqueSlug;
     }
 
-    /**
-     * Створення нового пака
-     */
     public function createPack(User $user, array $data, ?UploadedFile $cover = null): StickerPack
     {
         return DB::transaction(function () use ($user, $data, $cover)
@@ -80,9 +69,6 @@ class StickerService
         });
     }
 
-    /**
-     * Оновлення пака
-     */
     public function updatePack(StickerPack $pack, array $data, ?UploadedFile $newCover = null): StickerPack
     {
         if ($newCover)
@@ -95,9 +81,6 @@ class StickerService
         return $pack;
     }
 
-    /**
-     * Додавання стікера в пак
-     */
     public function addSticker(StickerPack $pack, array $data, UploadedFile $file): CustomSticker
     {
         $path = $this->uploadImage($file, $pack->short_name);
@@ -111,24 +94,17 @@ class StickerService
         ]);
     }
 
-    /**
-     * Встановлення пака юзеру
-     */
-    public function installPack(User $user, StickerPack $pack): bool
+    public function installPack(User $user, StickerPack $pack): void
     {
         if ($user->installedStickerPacks()->where('pack_id', $pack->id)->exists())
         {
-            return false;
+            throw new ApiException('ERR_ALREADY_INSTALLED', 409);
         }
 
         $maxOrder = $user->installedStickerPacks()->max('user_sticker_packs.sort_order') ?? 0;
         $user->installedStickerPacks()->attach($pack->id, ['sort_order' => $maxOrder + 1]);
-        return true;
     }
 
-    /**
-     * Реордер паків юзера
-     */
     public function reorderUserPacks(User $user, array $packShortNames): void
     {
         $packs = StickerPack::whereIn('short_name', $packShortNames)->pluck('id', 'short_name');

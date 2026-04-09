@@ -9,13 +9,23 @@ use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
 use App\Notifications\NewMessageNotification;
+use App\Exceptions\ApiException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MessageService
 {
-    public function sendMessage(Chat $chat, User $sender, array $data, ?array $files): array|Message
+    public function getChatMessages(Chat $chat): LengthAwarePaginator
+    {
+        return Message::with(['chat', 'sharedPost.user', 'sharedPost.attachments', 'repliedMessage.sender'])
+            ->where('chat_id', $chat->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+    }
+
+    public function sendMessage(Chat $chat, User $sender, array $data, ?array $files): Message
     {
         $targetParticipant = $chat->participants()->withTrashed()->where('user_id', '!=', $sender->id)->first();
 
@@ -25,7 +35,7 @@ class MessageService
                 ->orWhere(fn($q) => $q->where('user_id', $targetParticipant->user_id)->where('friend_id', $sender->id))
                 ->where('status', Friendship::STATUS_BLOCKED)->exists();
 
-            if ($isBlocked) return ['error' => 'ERR_USER_BLOCKED', 'message' => 'User blocked.', 'status' => 403];
+            if ($isBlocked) throw new ApiException('ERR_USER_BLOCKED', 403);
         }
 
         $savedFiles = [];
@@ -41,10 +51,7 @@ class MessageService
 
                 $savedFiles = $this->uploadFiles($chat->slug, $files);
 
-                $payload = [
-                    'text' => $data['text'] ?? '',
-                    'files' => $savedFiles
-                ];
+                $payload = ['text' => $data['text'] ?? '', 'files' => $savedFiles];
 
                 $message = Message::create([
                     'chat_id' => $chat->id,
@@ -77,13 +84,13 @@ class MessageService
         }
     }
 
-    public function updateMessage(Message $message, Chat $chat, array $data, ?array $newFiles, ?array $deletedMedia): array|Message
+    public function updateMessage(Message $message, Chat $chat, array $data, ?array $newFiles, ?array $deletedMedia): Message
     {
         $oldPayload = ChatEncryptionService::decryptPayload($message->encrypted_payload, $chat->encrypted_dek);
 
         if ($oldPayload === null)
         {
-            return ['error' => 'ERR_DECRYPTION_FAILED', 'message' => 'Cannot edit corrupted message', 'status' => 500];
+            throw new ApiException('ERR_DECRYPTION_FAILED', 500);
         }
 
         $currentFiles = $oldPayload['files'] ?? [];
@@ -93,7 +100,6 @@ class MessageService
         {
             return DB::transaction(function () use ($message, $chat, $data, $newFiles, $deletedMedia, $currentFiles, &$newUploadedFiles)
             {
-
                 if (!empty($deletedMedia))
                 {
                     foreach ($deletedMedia as $fileToDelete)
@@ -115,7 +121,7 @@ class MessageService
 
                 if (empty($data['text']) && empty($currentFiles) && !$message->shared_post_id)
                 {
-                    return ['error' => 'ERR_EMPTY_MESSAGE', 'message' => 'Message cannot be empty', 'status' => 422];
+                    throw new ApiException('ERR_EMPTY_MESSAGE', 422);
                 }
 
                 $newPayload = ['text' => $data['text'] ?? '', 'files' => $currentFiles];

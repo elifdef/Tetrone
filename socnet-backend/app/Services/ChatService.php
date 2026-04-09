@@ -9,11 +9,13 @@ use App\Models\ChatParticipant;
 use App\Models\Friendship;
 use App\Models\Message;
 use App\Models\User;
+use App\Exceptions\ApiException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class ChatService
 {
-    public function getUserChats(int $userId)
+    public function getUserChats(int $userId): LengthAwarePaginator
     {
         $chats = Chat::whereHas('participants', fn($q) => $q->where('user_id', $userId))
             ->has('messages')
@@ -39,14 +41,7 @@ class ChatService
             if ($lastMsg)
             {
                 $payload = ChatEncryptionService::decryptPayload($lastMsg->encrypted_payload, $chat->encrypted_dek);
-
-                if ($payload === null)
-                {
-                    $payload = [
-                        'text' => 'Message unavailable',
-                        'files' => []
-                    ];
-                }
+                $payload = $payload ?? ['text' => 'Message unavailable', 'files' => []];
                 $lastMsgText = $payload['text'] ?? (empty($payload['files']) ? 'Post' : 'Media');
             }
 
@@ -55,9 +50,7 @@ class ChatService
                 'created_at' => $chat->created_at,
                 'initiator_id' => $chat->initiator_id,
                 'updated_at' => $chat->updated_at,
-                'target_user' => ($targetParticipant && $targetParticipant->user)
-                    ?  (new UserBasicResource($targetParticipant->user))->resolve()
-                    : null,
+                'target_user' => ($targetParticipant && $targetParticipant->user) ? new UserBasicResource($targetParticipant->user) : null,
                 'last_message' => $lastMsgText,
                 'last_message_sender_id' => $lastMsg?->sender_id,
                 'unread_count' => $chat->unread_count
@@ -67,7 +60,7 @@ class ChatService
         return $chats;
     }
 
-    public function getOrCreatePrivateChat(User $user, int $targetId): array|Chat
+    public function getOrCreatePrivateChat(User $user, int $targetId): Chat
     {
         $isBlocked = Friendship::where(fn($q) => $q->where('user_id', $user->id)->where('friend_id', $targetId))
             ->orWhere(fn($q) => $q->where('user_id', $targetId)->where('friend_id', $user->id))
@@ -75,11 +68,7 @@ class ChatService
 
         if ($isBlocked)
         {
-            return [
-                'error' => 'ERR_USER_BLOCKED',
-                'message' => 'Cannot create chat due to privacy settings.',
-                'status' => 403
-            ];
+            throw new ApiException('ERR_USER_BLOCKED', 403);
         }
 
         $chat = Chat::where('type', 'private')

@@ -7,23 +7,24 @@ use App\Models\Post;
 use App\Models\Report;
 use App\Models\User;
 use App\Models\StickerPack;
+use App\Exceptions\ApiException;
 
 class ReportService
 {
-    protected array $typeMap = [
-        'post' => Post::class,
-        'user' => User::class,
-        'comment' => Comment::class,
-        'emoji_pack' => StickerPack::class,
-    ];
-
-    public function submitReport(int $reporterId, string $type, string $targetId, string $reason, string $details): array|Report
+    public function submitReport(int $reporterId, string $type, string $targetId, string $reason, string $details): Report
     {
-        $targetClass = $this->typeMap[$type];
+        $targetClass = match ($type)
+        {
+            'post' => Post::class,
+            'user' => User::class,
+            'comment' => Comment::class,
+            'emoji_pack' => StickerPack::class,
+            default => throw new ApiException('ERR_VALIDATION', 422)
+        };
 
         if (!$targetClass::find($targetId))
         {
-            return ['error' => 'ERR_TARGET_NOT_FOUND', 'message' => 'Target not found', 'status' => 404];
+            throw new ApiException('ERR_TARGET_NOT_FOUND', 404);
         }
 
         $exists = Report::where('reporter_id', $reporterId)
@@ -34,7 +35,7 @@ class ReportService
 
         if ($exists)
         {
-            return ['error' => 'ERR_ALREADY_REPORTED', 'message' => 'You already reported this.', 'status' => 429];
+            throw new ApiException('ERR_ALREADY_REPORTED', 429);
         }
 
         return Report::create([

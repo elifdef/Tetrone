@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Requests\Chat\InitChatRequest;
 use App\Http\Requests\Chat\SendMessageRequest;
 use App\Http\Requests\Chat\UpdateMessageRequest;
 use App\Http\Resources\MessageResource;
@@ -23,135 +24,191 @@ class ChatController extends Controller
     {
     }
 
+    /**
+     * Отримати список чатів
+     *
+     * @group Chats
+     * @authenticated
+     * @response 200
+     */
     public function index(Request $request): JsonResponse
     {
         $chats = $this->chatService->getUserChats($request->user()->id);
-        return $this->success('CHATS_RETRIEVED', 'Chats retrieved successfully', $chats);
+
+        return response()->json([
+            'success' => true,
+            'code' => 'CHATS_RETRIEVED',
+            'data' => $chats // Пагінація обробляється Laravel автоматично
+        ], 200);
     }
 
-    public function getOrCreateChat(Request $request): JsonResponse
+    /**
+     * Ініціалізувати чат
+     *
+     * @group Chats
+     * @authenticated
+     * @response 201
+     */
+    public function getOrCreateChat(InitChatRequest $request): JsonResponse
     {
-        $request->validate(['target_user_id' => 'required|exists:users,id']);
+        $targetUser = User::findOrFail($request->validated('target_user_id'));
+        $this->authorize('sendMessage', $targetUser);
 
-        $receiver = User::findOrFail($request->target_user_id);
-        $this->authorize('sendMessage', $receiver);
+        $chat = $this->chatService->getOrCreatePrivateChat($request->user(), $targetUser->id);
 
-        $chat = $this->chatService->getOrCreatePrivateChat($request->user(), $request->target_user_id);
-
-        if (is_array($chat) && isset($chat['error']))
-        {
-            return $this->error($chat['error'], $chat['message'], $chat['status']);
-        }
-
-        return $this->success('CHAT_INITIALIZED', 'Chat initialized', ['chat_slug' => $chat->slug]);
+        return response()->json([
+            'success' => true,
+            'code' => 'CHAT_INITIALIZED',
+            'data' => ['chat_slug' => $chat->slug]
+        ], 201);
     }
 
-    public function sendMessage(SendMessageRequest $request, string $slug): JsonResponse
+    /**
+     * Надіслати повідомлення
+     *
+     * @group Chats
+     * @authenticated
+     * @response 201
+     */
+    public function sendMessage(SendMessageRequest $request, Chat $chat): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
+        $this->authorize('access', $chat);
 
-        if (!$chat->participants()->where('user_id', $request->user()->id)->exists())
+        $mediaFiles = $request->file('media');
+        if ($mediaFiles && !is_array($mediaFiles))
         {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
+            $mediaFiles = [$mediaFiles];
         }
 
-        $result = $this->messageService->sendMessage($chat, $request->user(), $request->validated(), $request->file('media'));
+        $message = $this->messageService->sendMessage(
+            $chat,
+            $request->user(),
+            $request->validated(),
+            $mediaFiles
+        );
 
-        if (is_array($result) && isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
-
-        return $this->success('MESSAGE_SENT', 'Message sent', ['message_id' => $result->id]);
+        return response()->json([
+            'success' => true,
+            'code' => 'MESSAGE_SENT',
+            'data' => ['message_id' => $message->id]
+        ], 201);
     }
 
-    public function updateMessage(UpdateMessageRequest $request, string $slug, int $messageId): JsonResponse
+    /**
+     * Оновити повідомлення
+     *
+     * @group Chats
+     * @authenticated
+     * @response 200
+     */
+    public function updateMessage(UpdateMessageRequest $request, Chat $chat, Message $message): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
-        $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
+        $this->authorize('manageMessage', [$chat, $message]);
 
-        if ($message->sender_id !== $request->user()->id)
+        $mediaFiles = $request->file('media');
+        if ($mediaFiles && !is_array($mediaFiles))
         {
-            return $this->error('ERR_NOT_YOUR_MESSAGE', 'Not your message', 403);
+            $mediaFiles = [$mediaFiles];
         }
 
-        $result = $this->messageService->updateMessage($message, $chat, $request->validated(), $request->file('media'), $request->input('deleted_media'));
-
-        if (is_array($result) && isset($result['error']))
+        $deletedMedia = $request->input('deleted_media');
+        if ($deletedMedia && !is_array($deletedMedia))
         {
-            return $this->error($result['error'], $result['message'], $result['status']);
+            $deletedMedia = [$deletedMedia];
         }
 
-        return $this->success('MESSAGE_UPDATED', 'Message updated', ['edited_at' => $result->updated_at]);
+        $updatedMessage = $this->messageService->updateMessage(
+            $message,
+            $chat,
+            $request->validated(),
+            $mediaFiles,
+            $deletedMedia
+        );
+
+        return response()->json([
+            'success' => true,
+            'code' => 'MESSAGE_UPDATED',
+            'data' => ['edited_at' => $updatedMessage->updated_at]
+        ], 200);
     }
 
-    public function getMessages(Request $request, string $slug): JsonResponse
+    /**
+     * Отримати повідомлення чату
+     *
+     * @group Chats
+     * @authenticated
+     * @response 200
+     */
+    public function getMessages(Request $request, Chat $chat): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
-
-        if (!$chat->participants()->where('user_id', $request->user()->id)->exists())
-        {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-        }
+        $this->authorize('access', $chat);
 
         $targetParticipant = $chat->participants()->where('user_id', '!=', $request->user()->id)->first();
+        $messages = $this->messageService->getChatMessages($chat);
 
-        $messages = Message::with(['chat', 'sharedPost.user', 'sharedPost.attachments', 'repliedMessage.sender'])
-            ->where('chat_id', $chat->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(30);
-
-        return $this->success('MESSAGES_RETRIEVED', 'Messages loaded', [
-            'data' => MessageResource::collection($messages)->resolve(),
+        return response()->json([
+            'success' => true,
+            'code' => 'MESSAGES_RETRIEVED',
+            'data' => MessageResource::collection($messages),
             'meta' => [
                 'current_page' => $messages->currentPage(),
                 'last_page' => $messages->lastPage()
             ],
             'chat_info' => [
                 'slug' => $chat->slug,
-                'target_user' => $targetParticipant ? (new UserBasicResource($targetParticipant->user))->resolve() : null,
+                'target_user' => $targetParticipant ? new UserBasicResource($targetParticipant->user) : null,
             ]
-        ]);
+        ], 200);
     }
 
-    public function destroyMessage(Request $request, string $slug, int $messageId): JsonResponse
+    /**
+     * Видалити повідомлення
+     *
+     * @group Chats
+     * @authenticated
+     * @response 204
+     */
+    public function destroyMessage(Chat $chat, Message $message): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
-        $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
-
-        if ($message->sender_id !== $request->user()->id)
-        {
-            return $this->error('ERR_NOT_YOUR_MESSAGE', 'Not your message', 403);
-        }
+        $this->authorize('manageMessage', [$chat, $message]);
 
         $this->messageService->deleteMessage($message, $chat);
 
-        return $this->success('MESSAGE_DELETED', 'Message deleted');
+        return response()->json([
+            'success' => true,
+            'code' => 'MESSAGE_DELETED'
+        ], 200);
     }
 
-    public function destroyChat(Request $request, string $slug): JsonResponse
+    /**
+     * Видалити чат
+     *
+     * @group Chats
+     * @authenticated
+     * @response 200
+     */
+    public function destroyChat(Request $request, Chat $chat): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
-
-        if (!$chat->participants()->where('user_id', $request->user()->id)->exists())
-        {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-        }
+        $this->authorize('access', $chat);
 
         $this->chatService->deleteChat($chat, $request->user(), $request->boolean('for_both'));
 
-        return $this->success('CHAT_DELETED', 'Chat deleted');
+        return response()->json([
+            'success' => true,
+            'code' => 'CHAT_DELETED'
+        ], 200);
     }
 
-    public function togglePinMessage(Request $request, string $slug, int $messageId): JsonResponse
+    /**
+     * Закріпити повідомлення
+     *
+     * @group Chats
+     * @authenticated
+     * @response 200
+     */
+    public function togglePinMessage(Chat $chat, Message $message): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
-        $message = Message::where('id', $messageId)->where('chat_id', $chat->id)->firstOrFail();
-
-        if (!$chat->participants()->where('user_id', $request->user()->id)->exists())
-        {
-            return $this->error('ERR_FORBIDDEN', 'Forbidden', 403);
-        }
+        $this->authorize('access', $chat);
 
         if (!$message->is_pinned)
         {
@@ -160,14 +217,26 @@ class ChatController extends Controller
 
         $message->update(['is_pinned' => !$message->is_pinned]);
 
-        return $this->success('MESSAGE_PIN_TOGGLED', 'Message pin status updated', ['is_pinned' => $message->is_pinned]);
+        return response()->json([
+            'success' => true,
+            'code' => 'MESSAGE_PIN_TOGGLED',
+            'data' => ['is_pinned' => $message->is_pinned]
+        ], 200);
     }
 
-    public function markAsRead(Request $request, string $slug): JsonResponse
+    /**
+     * Позначити прочитаним
+     *
+     * @group Chats
+     * @authenticated
+     * @response 204
+     */
+    public function markAsRead(Request $request, Chat $chat): JsonResponse
     {
-        $chat = Chat::where('slug', $slug)->firstOrFail();
+        $this->authorize('access', $chat);
+
         $this->messageService->markAsRead($chat, $request->user());
 
-        return $this->success('MARKED_AS_READ', 'Messages marked as read');
+        return response()->json(null, 204);
     }
 }

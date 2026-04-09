@@ -10,11 +10,35 @@ use Illuminate\Support\Facades\Storage;
 
 class ReportService
 {
+    /**
+     * Отримати статистику та список скарг
+     */
+    public function getReportsWithStats(?string $statusFilter): array
+    {
+        $stats = [
+            'total' => Report::count(),
+            'pending' => Report::where('status', 'pending')->count(),
+            'resolved' => Report::where('status', 'resolved')->count(),
+            'rejected' => Report::where('status', 'rejected')->count(),
+        ];
+
+        $query = Report::with(['reporter', 'moderator', 'reportable'])->latest();
+
+        if ($statusFilter && in_array($statusFilter, ['pending', 'resolved', 'rejected']))
+        {
+            $query->where('status', $statusFilter);
+        }
+
+        return [
+            'stats' => $stats,
+            'reports' => $query->paginate(config('admin.max_paginate', 20))
+        ];
+    }
+
     public function resolve(Report $report, User $admin, string $response): void
     {
         DB::transaction(function () use ($report, $admin, $response)
         {
-
             $modelName = class_basename($report->reportable_type);
 
             // Оновлюємо саму скаргу

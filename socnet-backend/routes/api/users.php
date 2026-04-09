@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 
 // публічне отримання БАЗОВОЇ інформації профілю (120 запитів/хв)
-Route::middleware('throttle:120,1')->get('users/{username}', [UserController::class, 'show']);
+Route::middleware('throttle:120,1')->get('users/{user:username}', [UserController::class, 'show']);
 
 Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
 {
@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum', 'throttle:150,1'])->group(function ()
         Route::controller(UserController::class)->group(function ()
         {
             Route::get('/users', 'index');
-            Route::patch('/users/{username}', 'update');
+            Route::patch('/users/{user:username}', 'update');
             Route::put('/user/email', 'updateEmail');
             Route::put('/user/password', 'updatePassword');
         });

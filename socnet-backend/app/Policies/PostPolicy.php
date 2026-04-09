@@ -10,17 +10,27 @@ use App\Services\PrivacyService;
 
 class PostPolicy
 {
-    /**
-     * Якщо юзер адмін або модератор - одразу дозволяємо йому все
-     */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role?->value >= Role::Moderator->value) return true;
+        if ($user->role?->value >= Role::Moderator->value)
+        {
+            return true;
+        }
         return null;
     }
 
     /**
-     * Чи може юзер оновити пост
+     * Чи може юзер бачити цей конкретний пост?
+     */
+    public function view(User $user, Post $post): bool
+    {
+        if ($user->isBlockedByTarget($user->id, $post->user_id)) return false;
+
+        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Profile->value);
+    }
+
+    /**
+     * Чи може юзер оновити пост?
      */
     public function update(User $user, Post $post): bool
     {
@@ -28,7 +38,7 @@ class PostPolicy
     }
 
     /**
-     * Чи може юзер видалити цей пост
+     * Чи може юзер видалити цей пост?
      */
     public function delete(User $user, Post $post): bool
     {
@@ -36,7 +46,7 @@ class PostPolicy
     }
 
     /**
-     * Чи може юзер залишити коментар під цим постом
+     * Чи може юзер коментувати?
      */
     public function comment(User $user, Post $post): bool
     {
@@ -44,7 +54,6 @@ class PostPolicy
         if ($user->isBlockedByTarget($user->id, $post->user_id)) return false;
         if ($user->isBlockedByTarget($post->user_id, $user->id)) return false;
 
-        // Перевіряємо приватність автора поста на коментарі
         return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Comment->value);
     }
 
@@ -57,13 +66,22 @@ class PostPolicy
     }
 
     /**
-     * Чи можна зробити репост
+     * Чи може юзер зробити репост цього поста?
      */
     public function repost(User $user, Post $post): bool
     {
         if (!$user->can('interact', $post->user)) return false;
 
-        // Перевіряємо, чи взагалі відкритий профіль для репосту
         return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Profile->value);
+    }
+
+    /**
+     * Чи може юзер голосувати в опитуванні?
+     */
+    public function vote(User $user, Post $post): bool
+    {
+        if (!$this->view($user, $post)) return false;
+
+        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::WallPost->value);
     }
 }

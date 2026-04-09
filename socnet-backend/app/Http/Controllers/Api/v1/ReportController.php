@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Requests\StoreReportRequest;
 use App\Services\ReportService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -13,16 +12,31 @@ class ReportController extends Controller
     {
     }
 
+    /**
+     * Отримати причини скарг
+     *
+     * @group Reports
+     * @response 200 storage/responses/report_reasons.json
+     */
     public function getReasons(): JsonResponse
     {
-        return $this->success('REASONS_RETRIEVED', 'Reasons retrieved', [
-            'reasons' => config('reports.reasons')
+        return response()->json([
+            'success' => true,
+            'code' => 'REASONS_RETRIEVED',
+            'data' => ['reasons' => config('reports.reasons')]
         ])->setCache(['max_age' => 86400, 'public' => true]);
     }
 
+    /**
+     * Надіслати скаргу
+     *
+     * @group Reports
+     * @authenticated
+     * @response 201
+     */
     public function store(StoreReportRequest $request): JsonResponse
     {
-        $result = $this->reportService->submitReport(
+        $this->reportService->submitReport(
             $request->user()->id,
             $request->validated('type'),
             $request->validated('id'),
@@ -30,11 +44,9 @@ class ReportController extends Controller
             $request->validated('details')
         );
 
-        if (is_array($result))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
-
-        return $this->success('REPORT_SUBMITTED', 'Report submitted successfully.');
+        return response()->json([
+            'success' => true,
+            'code' => 'REPORT_SUBMITTED'
+        ], 201);
     }
 }

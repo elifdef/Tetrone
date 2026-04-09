@@ -14,8 +14,7 @@ Route::middleware(['auth:sanctum', 'not_banned', 'verified', 'not_muted'])
         Route::get('/', [ChatController::class, 'index']);
         Route::post('/init', [ChatController::class, 'getOrCreateChat']);
 
-        // операції над конкретним чатом
-        Route::prefix('{slug}')->group(function ()
+        Route::prefix('{chat:slug}')->group(function ()
         {
             Route::delete('/', [ChatController::class, 'destroyChat']);
             Route::post('/read', [ChatController::class, 'markAsRead']);
@@ -26,11 +25,8 @@ Route::middleware(['auth:sanctum', 'not_banned', 'verified', 'not_muted'])
             Route::get('/files/{filename}', [ChatFileController::class, 'show']);
 
             // операції над конкретним повідомленням
-            Route::prefix('message/{messageId}')->group(function ()
-            {
-                Route::post('/update', [ChatController::class, 'updateMessage']);
-                Route::delete('/', [ChatController::class, 'destroyMessage']);
-                Route::post('/pin', [ChatController::class, 'togglePinMessage']);
-            });
+            Route::put('/message/{message}', [ChatController::class, 'updateMessage']);
+            Route::delete('/message/{message}', [ChatController::class, 'destroyMessage']);
+            Route::post('/message/{message}/pin', [ChatController::class, 'togglePinMessage']);
         });
     });

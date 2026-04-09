@@ -87,4 +87,12 @@ class UserPolicy
         if (!$this->interact($me, $target)) return false;
         return app(PrivacyService::class)->canAccess($target, $me, PrivacyContext::Message->value);
     }
+
+    /**
+     * Чи може юзер оновити цей профіль
+     */
+    public function updateProfile(User $me, User $target): bool
+    {
+        return $me->id === $target->id;
+    }
 }

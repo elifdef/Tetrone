@@ -8,7 +8,9 @@ use App\Services\CommentService;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Requests\Comment\StoreCommentRequest;
+use App\Http\Requests\Comment\UpdateCommentRequest;
 
 class CommentController extends Controller
 {
@@ -16,67 +18,68 @@ class CommentController extends Controller
     {
     }
 
-    public function index(Post $post): JsonResponse
+    public function index(Post $post): AnonymousResourceCollection
     {
-        $comments = $post->comments()
-            ->with('user')
-            ->whereHas('user', function ($query)
-            {
-                $query->where('is_banned', false);
-            })
-            ->latest()
-            ->paginate(config('comments.max_paginate', 30));
+        $comments = $this->commentService->getPostComments($post);
 
-        return $this->success('COMMENTS_RETRIEVED', 'Comments retrieved',
-            CommentResource::collection($comments)->response()->getData(true)
-        );
+        return CommentResource::collection($comments)->additional([
+            'success' => true,
+            'code' => 'COMMENTS_RETRIEVED'
+        ]);
     }
 
-    public function store(StoreCommentRequest $request, Post $post): JsonResponse
+    public function store(StoreCommentRequest $request, Post $post): CommentResource
     {
+        $this->authorize('comment', $post);
+
         $comment = $this->commentService->createComment(
             $post,
             $request->user(),
-            $request->input('content')
+            $request->validated('content')
         );
 
-        return $this->success('COMMENT_CREATED', 'Comment created', new CommentResource($comment->load('user'))->resolve(), 201);
+        return new CommentResource($comment->load('user'))->additional([
+            'success' => true,
+            'code' => 'COMMENT_CREATED'
+        ]);
     }
 
-    public function update(Request $request, Comment $comment): JsonResponse
+    public function update(UpdateCommentRequest $request, Comment $comment): CommentResource
     {
+        // Перевіряємо чи є права на редагування (через CommentPolicy)
         $this->authorize('update', $comment);
-
-        $request->validate([
-            'content' => 'required|array'
-        ]);
 
         $updatedComment = $this->commentService->updateComment(
             $comment,
-            $request->input('content')
+            $request->validated('content')
         );
 
-        return $this->success('COMMENT_UPDATED', 'Comment updated', new CommentResource($updatedComment->load('user'))->resolve());
+        return new CommentResource($updatedComment->load('user'))->additional([
+            'success' => true,
+            'code' => 'COMMENT_UPDATED'
+        ]);
     }
 
-    public function destroy(Request $request, Comment $comment): JsonResponse
+    public function destroy(Comment $comment): JsonResponse
     {
+        // Перевіряємо чи є права на видалення (через CommentPolicy)
         $this->authorize('delete', $comment);
 
         $comment->delete();
 
-        return $this->success('COMMENT_DELETED', 'Deleted');
+        return response()->json([
+            'success' => true,
+            'code' => 'COMMENT_DELETED'
+        ], 200);
     }
 
-    public function myComments(Request $request): JsonResponse
+    public function myComments(Request $request): AnonymousResourceCollection
     {
-        $comments = $request->user()->comments()
-            ->with(['post.user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(config('comments.max_paginate', 30));
+        $comments = $this->commentService->getMyComments($request->user());
 
-        return $this->success('MY_COMMENTS_RETRIEVED', 'My comments',
-            CommentResource::collection($comments)->response()->getData(true)
-        );
+        return CommentResource::collection($comments)->additional([
+            'success' => true,
+            'code' => 'MY_COMMENTS_RETRIEVED'
+        ]);
     }
 }

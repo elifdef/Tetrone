@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Services\PollService;
 use App\Http\Requests\Poll\VotePollRequest;
@@ -14,43 +13,66 @@ class PollController extends Controller
     {
     }
 
+    /**
+     * Проголосувати в опитуванні
+     *
+     * @group Polls
+     * @authenticated
+     * @response 200 storage/responses/poll_voted.json
+     */
     public function vote(VotePollRequest $request, Post $post): JsonResponse
     {
-        $result = $this->pollService->vote(
+        $this->authorize('vote', $post);
+
+        $payload = $this->pollService->vote(
             $post,
             $request->user(),
             $request->validated('option_ids')
         );
 
-        if (isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
-
-        return $this->success('VOTE_RECORDED', 'Vote successfully recorded.', $result['payload']);
+        return response()->json([
+            'success' => true,
+            'code' => 'VOTE_RECORDED',
+            'data' => $payload
+        ]);
     }
 
+    /**
+     * Отримати список тих, хто проголосував
+     *
+     * @group Polls
+     * @authenticated
+     * @response 200 storage/responses/poll_voters.json
+     */
     public function voters(Post $post): JsonResponse
     {
-        $result = $this->pollService->getVoters($post);
+        $this->authorize('view', $post);
 
-        if (isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
+        $voters = $this->pollService->getVoters($post);
 
-        return $this->success('SUCCESS', 'Voters retrieved', ['voters' => $result['voters']]);
+        return response()->json([
+            'success' => true,
+            'code' => 'SUCCESS',
+            'data' => ['voters' => $voters]
+        ]);
     }
 
-    public function close(Request $request, Post $post): JsonResponse
+    /**
+     * Закрити опитування
+     *
+     * @group Polls
+     * @authenticated
+     * @response 200
+     */
+    public function close(Post $post): JsonResponse
     {
-        $result = $this->pollService->closePoll($post, $request->user());
+        $this->authorize('update', $post);
 
-        if (is_array($result) && isset($result['error']))
-        {
-            return $this->error($result['error'], $result['message'], $result['status']);
-        }
+        $this->pollService->closePoll($post);
 
-        return $this->success('POLL_CLOSED', 'Poll closed.');
+        return response()->json([
+            'success' => true,
+            'code' => 'POLL_CLOSED'
+        ]);
     }
 }

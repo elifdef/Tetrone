@@ -165,7 +165,7 @@ class PostApiTest extends TestCase
         $user = User::factory()->create();
         $payload = ['poll' => ['question' => '', 'options' => [['text' => 'A'], ['text' => 'B']]]];
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/posts', ['payload' => json_encode($payload)]);
-        $response->assertStatus(422)->assertJsonValidationErrors(['poll']);
+        $response->assertStatus(422)->assertJsonPath('code', 'ERR_POLL_QUESTION_EMPTY');
     }
 
     #[TestDox('13. Опитування з 1 варіантом відхиляється')]
@@ -174,18 +174,19 @@ class PostApiTest extends TestCase
         $user = User::factory()->create();
         $payload = ['poll' => ['question' => 'Q?', 'options' => [['text' => 'A']]]];
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/posts', ['payload' => json_encode($payload)]);
-        $response->assertStatus(422)->assertJsonValidationErrors(['poll']);
+        $response->assertStatus(422)->assertJsonPath('code', 'ERR_POLL_OPTIONS_LIMIT');
     }
 
-    #[TestDox('14. Опитування з 11 варіантами відхиляється')]
+    #[TestDox('14. Опитування з 17 варіантами відхиляється')]
     public function test_cannot_create_poll_with_more_than_ten_options(): void
     {
         $user = User::factory()->create();
-        $options = array_map(fn($i) => ['text' => "Option $i"], range(1, 11));
+        // ТУТ МАЄ БУТИ 17!
+        $options = array_map(fn($i) => ['text' => "Option $i"], range(1, 17));
         $payload = ['poll' => ['question' => 'Q?', 'options' => $options]];
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/posts', ['payload' => json_encode($payload)]);
-        $response->assertStatus(422)->assertJsonValidationErrors(['poll']);
+        $response->assertStatus(422)->assertJsonPath('code', 'ERR_POLL_OPTIONS_LIMIT');
     }
 
     #[TestDox('15. Вікторина (quiz) без правильної відповіді відхиляється')]
@@ -194,12 +195,8 @@ class PostApiTest extends TestCase
         $user = User::factory()->create();
         $payload = ['poll' => ['type' => 'quiz', 'question' => 'Q?', 'options' => [['text' => 'A'], ['text' => 'B']]]];
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/posts', ['payload' => json_encode($payload)]);
-        $response->assertStatus(422)->assertJsonValidationErrors(['poll']);
+        $response->assertStatus(422)->assertJsonPath('code', 'ERR_QUIZ_NO_CORRECT_OPTION');
     }
-
-    // ==========================================
-    // 🔁 4. РЕПОСТИ (2 тести)
-    // ==========================================
 
     #[TestDox('16. Успішний пустий репост')]
     public function test_can_create_repost(): void

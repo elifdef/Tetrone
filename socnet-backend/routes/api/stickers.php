@@ -9,23 +9,29 @@ Route::prefix('stickers')->group(function ()
     Route::get('/catalog', [StickerPackController::class, 'catalog']);
     Route::get('/search', [CustomStickerController::class, 'search']);
     Route::get('/{pack:short_name}/info', [StickerPackController::class, 'info']);
-    Route::get('/my', [StickerPackController::class, 'myPacks']);
+
+    Route::get('/my', [StickerPackController::class, 'myPacks'])->middleware('auth:sanctum');
 
     Route::middleware('auth:sanctum')->group(function ()
     {
-        Route::post('/packs', [StickerPackController::class, 'store']);
-        Route::put('/packs/{pack}', [StickerPackController::class, 'update']);
-        Route::delete('/packs/{pack}', [StickerPackController::class, 'destroy']);
+        Route::middleware('not_banned')->group(function ()
+        {
+            Route::post('/packs/{pack}/install', [StickerPackController::class, 'install']);
+            Route::delete('/packs/{pack}/uninstall', [StickerPackController::class, 'uninstall']);
+            Route::put('/reorder-packs', [StickerPackController::class, 'reorder']);
+            Route::post('/packs/{pack}/report', [StickerPackController::class, 'report']);
+        });
 
-        Route::post('/packs/{pack}/install', [StickerPackController::class, 'install']);
-        Route::delete('/packs/{pack}/uninstall', [StickerPackController::class, 'uninstall']);
-        Route::put('/reorder-packs', [StickerPackController::class, 'reorder']);
+        Route::middleware(['verified', 'not_banned', 'not_muted'])->group(function ()
+        {
+            Route::post('/packs', [StickerPackController::class, 'store']);
+            Route::put('/packs/{pack}', [StickerPackController::class, 'update']);
+            Route::delete('/packs/{pack}', [StickerPackController::class, 'destroy']);
 
-        Route::post('/packs/{pack}/items', [CustomStickerController::class, 'store']);
-        Route::put('/packs/{pack}/reorder', [CustomStickerController::class, 'reorder']);
-        Route::put('/{sticker}', [CustomStickerController::class, 'update']);
-        Route::delete('/{sticker}', [CustomStickerController::class, 'destroy']);
-
-        Route::post('/packs/{pack}/report', [StickerPackController::class, 'report']);
+            Route::post('/packs/{pack}/items', [CustomStickerController::class, 'store']);
+            Route::put('/packs/{pack}/reorder', [CustomStickerController::class, 'reorder']);
+            Route::put('/{sticker}', [CustomStickerController::class, 'update']);
+            Route::delete('/{sticker}', [CustomStickerController::class, 'destroy']);
+        });
     });
 });

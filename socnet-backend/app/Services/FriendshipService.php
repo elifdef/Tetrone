@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Events\UserBlockedEvent;
+use App\Exceptions\ApiException;
 use App\Models\Friendship;
 use App\Models\User;
 use App\Notifications\NewFriendRequestNotification;
 
 class FriendshipService
 {
-    public function sendRequest(User $me, User $targetUser): bool|array
+    public function sendRequest(User $me, User $targetUser): void
     {
         if (!$me->hasVerifiedEmail())
         {
-            return ['error' => 'ERR_EMAIL_UNVERIFIED', 'message' => 'Email not confirmed.', 'status' => 403];
+            throw new ApiException('ERR_EMAIL_UNVERIFIED', 403);
         }
 
         if ($me->id === $targetUser->id)
         {
-            return ['error' => 'ERR_CANNOT_FRIEND_SELF', 'message' => 'You cannot friend yourself XD', 'status' => 400];
+            throw new ApiException('ERR_CANNOT_FRIEND_SELF', 400);
         }
 
         $existing = Friendship::between($me, $targetUser)->first();
@@ -27,15 +28,15 @@ class FriendshipService
         {
             if ($existing->status == Friendship::STATUS_ACCEPTED)
             {
-                return ['error' => 'ERR_ALREADY_FRIENDS', 'message' => 'Already friends', 'status' => 409];
+                throw new ApiException('ERR_ALREADY_FRIENDS', 409);
             }
             if ($existing->status == Friendship::STATUS_PENDING)
             {
-                return ['error' => 'ERR_REQUEST_PENDING', 'message' => 'Request already pending', 'status' => 409];
+                throw new ApiException('ERR_REQUEST_PENDING', 409);
             }
             if ($existing->status == Friendship::STATUS_BLOCKED)
             {
-                return ['error' => 'ERR_USER_BLOCKED', 'message' => 'Unable to send request', 'status' => 403];
+                throw new ApiException('ERR_USER_BLOCKED', 403);
             }
         }
 
@@ -46,28 +47,33 @@ class FriendshipService
         ]);
 
         $targetUser->notify(new NewFriendRequestNotification($me));
-
-        return true;
     }
 
-    public function acceptRequest(User $me, User $targetUser): bool
+    public function acceptRequest(User $me, User $targetUser): void
     {
         $friendship = Friendship::where('user_id', $targetUser->id)
             ->where('friend_id', $me->id)
             ->where('status', Friendship::STATUS_PENDING)
             ->first();
 
-        if (!$friendship) return false;
+        if (!$friendship)
+        {
+            throw new ApiException('ERR_NO_PENDING_REQUEST', 404);
+        }
 
         $friendship->update(['status' => Friendship::STATUS_ACCEPTED]);
-        return true;
     }
 
-    public function blockUser(User $me, User $targetUser): bool|array
+    public function destroyFriendship(User $me, User $targetUser): void
+    {
+        Friendship::between($me, $targetUser)->delete();
+    }
+
+    public function blockUser(User $me, User $targetUser): void
     {
         if ($me->id === $targetUser->id)
         {
-            return ['error' => 'ERR_CANNOT_BLOCK_SELF', 'message' => 'Cannot block yourself 1000-7', 'status' => 400];
+            throw new ApiException('ERR_CANNOT_BLOCK_SELF', 400);
         }
 
         Friendship::between($me, $targetUser)->delete();
@@ -79,15 +85,18 @@ class FriendshipService
         ]);
 
         broadcast(new UserBlockedEvent($me->id, $targetUser->id));
-
-        return true;
     }
 
-    public function unblockUser(User $me, User $targetUser): bool
+    public function unblockUser(User $me, User $targetUser): void
     {
-        return (bool)Friendship::where('user_id', $me->id)
+        $deleted = Friendship::where('user_id', $me->id)
             ->where('friend_id', $targetUser->id)
             ->where('status', Friendship::STATUS_BLOCKED)
             ->delete();
+
+        if (!$deleted)
+        {
+            throw new ApiException('ERR_NOT_IN_BLACKLIST', 404);
+        }
     }
 }

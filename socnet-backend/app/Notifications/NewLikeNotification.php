@@ -30,7 +30,10 @@ class NewLikeNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $snippet = $this->post->content ? Str::limit(strip_tags($this->post->content), 40) : null;
+        $content = $this->post->content ?? [];
+        $text = is_array($content) && isset($content['text']) ? $content['text'] : '';
+        $textContent = is_string($text) ? $text : json_encode($text);
+        $snippet = $textContent ? Str::limit(strip_tags(trim($textContent)), 40) : null;
 
         return [
             'type' => 'new_like',

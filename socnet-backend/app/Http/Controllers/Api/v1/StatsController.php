@@ -19,6 +19,6 @@ class StatsController extends Controller
             'online' => User::where('last_seen_at', '>=', $fiveMinutesAgo)->count(),
         ];
 
-        return $this->success('STATS_RETRIEVED', 'Statistics retrieved successfully', $data);
+        return response()->json(['code' => 'STATS_RETRIEVED', 'data' => $data]);
     }
 }

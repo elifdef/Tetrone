@@ -7,41 +7,51 @@ use App\Models\Post;
 use App\Models\User;
 use App\Notifications\NewCommentNotification;
 use App\Notifications\MentionNotification;
+use App\Exceptions\ApiException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CommentService
 {
+    public function getPostComments(Post $post): LengthAwarePaginator
+    {
+        return $post->comments()
+            ->with('user')
+            ->whereHas('user', fn($q) => $q->where('is_banned', false))
+            ->latest()
+            ->paginate(config('comments.max_paginate', 30));
+    }
+
+    public function getMyComments(User $user): LengthAwarePaginator
+    {
+        return $user->comments()
+            ->with(['post.user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('comments.max_paginate', 30));
+    }
+
     public function createComment(Post $post, User $author, array $content): Comment
     {
         if (!$this->hasActualContent($content))
         {
-            throw ValidationException::withMessages(['content' => 'Comment cannot be empty.']);
+            throw new ApiException('ERR_EMPTY_MESSAGE', 422);
         }
 
         return DB::transaction(function () use ($post, $author, $content)
         {
-            $comment = $post->comments()->create([
-                'content' => $content,
-                'user_id' => $author->id
-            ]);
-
+            $comment = $post->comments()->create(['content' => $content, 'user_id' => $author->id]);
             $this->sendNotifications($post, $comment, $author);
-
             return $comment;
         });
     }
 
     public function updateComment(Comment $comment, array $content): Comment
     {
-        // Захист від видалення всього тексту при редагуванні
         if (!$this->hasActualContent($content))
         {
-            throw ValidationException::withMessages(['content' => 'Comment cannot be empty.']);
+            throw new ApiException('ERR_EMPTY_MESSAGE', 422);
         }
-
         $comment->update(['content' => $content]);
-
         return $comment;
     }
 

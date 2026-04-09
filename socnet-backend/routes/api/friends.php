@@ -13,14 +13,15 @@ Route::middleware(['auth:sanctum', 'throttle:180,1', 'not_banned'])
         Route::get('requests', 'requests');             // вхідні заявки
         Route::get('sent', 'sentRequests');             // вихідні заявки
         Route::get('blocked', 'blocked');               // список заблокованих
+        Route::get('counts', 'getCounts');              // лічильники заявок
 
         // щоб додати друга треба підтверджену пошту
         Route::middleware(['verified', 'not_muted'])->group(function ()
         {
-            Route::post('add/{username}', 'sendRequest');   // додати друга
-            Route::post('accept/{username}', 'acceptRequest');// прийняти друга
-            Route::delete('{username}', 'destroy');         // видалити друга
-            Route::post('block/{username}', 'block');       // заблокувати
-            Route::delete('blocked/{username}', 'unblock'); // розблокувати
+            Route::post('add/{targetUser:username}', 'sendRequest');   // додати друга
+            Route::post('accept/{targetUser:username}', 'acceptRequest');// прийняти друга
+            Route::delete('{targetUser:username}', 'destroy');         // видалити друга
+            Route::post('block/{targetUser:username}', 'block');       // заблокувати
+            Route::delete('blocked/{targetUser:username}', 'unblock'); // розблокувати
         });
     });

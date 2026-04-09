@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['throttle:120,1', 'not_banned'])->controller(PostController::class)->group(function ()
 {
     // пости
-    Route::get('/users/{username}/posts', 'index'); // всі пости користувача
+    Route::get('/users/{user:username}/posts', 'index'); // всі пости користувача
     Route::get('/posts/{post}', 'show'); // один пост по ID
     // пости де користувач оновив аватарку
-    Route::get('/users/{username}/avatars', 'getUserAvatars');
+    Route::get('/users/{user:username}/avatars', 'getUserAvatars');
     // хто за кого проголосував в пості
     Route::get('/posts/{post}/poll/voters', [PollController::class, 'voters']);
 

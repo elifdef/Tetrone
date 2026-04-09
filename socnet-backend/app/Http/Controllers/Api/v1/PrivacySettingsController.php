@@ -2,86 +2,94 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use Illuminate\Http\Request;
-use App\Enums\PrivacyContext;
-use App\Enums\PrivacyLevel;
-use Illuminate\Validation\Rules\Enum;
+use App\Http\Requests\Privacy\StorePrivacyExceptionRequest;
+use App\Http\Requests\Privacy\UpdatePrivacySettingRequest;
+use App\Services\PrivacyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PrivacySettingsController extends Controller
 {
-    /**
-     * Отримати поточні налаштування та список винятків
-     */
-    public function index(Request $request): JsonResponse
+    public function __construct(protected PrivacyService $privacyService)
     {
-        $user = $request->user();
-
-        $settings = $user->privacy_settings ?? [];
-
-        $exceptions = $user->privacyExceptions()
-            ->with('targetUser:id,username,first_name,last_name,avatar')
-            ->get();
-
-        return $this->success('PRIVACY_SETTINGS_RETRIEVED', 'Privacy settings retrieved', [
-            'settings' => $settings,
-            'exceptions' => $exceptions
-        ]);
     }
 
     /**
-     * Оновити одне конкретне налаштування (наприклад, тільки avatar)
+     * Отримати поточні налаштування та список винятків
+     *
+     * @group Privacy
+     * @authenticated
+     * @response 200 storage/responses/privacy_settings.json
      */
-    public function update(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $request->validate([
-            'context' => ['required', new Enum(PrivacyContext::class)],
-            'level' => ['required', new Enum(PrivacyLevel::class)],
-        ]);
+        $data = $this->privacyService->getSettingsAndExceptions($request->user());
 
-        $user = $request->user();
-        $settings = $user->privacy_settings ?? [];
+        return response()->json([
+            'success' => true,
+            'code' => 'PRIVACY_SETTINGS_RETRIEVED',
+            'data' => $data
+        ], 200);
+    }
 
-        // Оновлюємо конкретний ключ
-        $settings[$request->context] = $request->level;
+    /**
+     * Оновити одне конкретне налаштування
+     *
+     * @group Privacy
+     * @authenticated
+     * @response 200
+     */
+    public function update(UpdatePrivacySettingRequest $request): JsonResponse
+    {
+        $settings = $this->privacyService->updateSetting(
+            $request->user(),
+            $request->validated('context'),
+            $request->validated('level')
+        );
 
-        $user->privacy_settings = $settings;
-        $user->save();
-
-        return $this->success('PRIVACY_SETTING_UPDATED', 'Setting updated', $settings);
+        return response()->json([
+            'success' => true,
+            'code' => 'PRIVACY_SETTING_UPDATED',
+            'data' => $settings
+        ], 200);
     }
 
     /**
      * Додати або оновити виняток (ОКРІМ)
+     *
+     * @group Privacy
+     * @authenticated
+     * @response 200
      */
-    public function storeException(Request $request): JsonResponse
+    public function storeException(StorePrivacyExceptionRequest $request): JsonResponse
     {
-        $request->validate([
-            'target_user_id' => 'required|exists:users,id',
-            'context' => ['required', new Enum(PrivacyContext::class)],
-            'is_allowed' => 'required|boolean',
-        ]);
-
-        $user = $request->user();
-
-        // updateOrCreate запобігає дублям
-        $exception = $user->privacyExceptions()->updateOrCreate(
-            [
-                'target_user_id' => $request->target_user_id,
-                'context' => $request->context,
-            ],
-            ['is_allowed' => $request->is_allowed]
+        $exception = $this->privacyService->storeException(
+            $request->user(),
+            $request->validated()
         );
 
-        return $this->success('PRIVACY_EXCEPTION_SAVED', 'Exception saved', $exception->load('targetUser:id,username,first_name,last_name,avatar'));
+        return response()->json([
+            'success' => true,
+            'code' => 'PRIVACY_EXCEPTION_SAVED',
+            'data' => $exception
+        ], 200);
     }
 
     /**
      * Видалити виняток
+     *
+     * @group Privacy
+     * @authenticated
+     * @urlParam id integer required ID винятку.
+     * @response 200
      */
     public function destroyException(Request $request, $id): JsonResponse
     {
-        $request->user()->privacyExceptions()->where('id', $id)->delete();
-        return $this->success('PRIVACY_EXCEPTION_DELETED', 'Exception deleted');
+        $this->privacyService->deleteException($request->user(), (int)$id);
+
+        return response()->json([
+            'success' => true,
+            'code' => 'PRIVACY_EXCEPTION_DELETED'
+        ], 200);
     }
 }
