@@ -57,8 +57,6 @@ export default function VotedPollsTab() {
         setPosts(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p));
     };
 
-
-
     return (
         <InfiniteScrollList
             itemsCount={posts.length}

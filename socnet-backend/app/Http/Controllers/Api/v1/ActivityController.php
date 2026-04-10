@@ -11,9 +11,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ActivityController extends Controller
 {
-    public function __construct(
-        protected ActivityService $activityService
-    )
+    public function __construct(protected ActivityService $activityService)
     {
     }
 

@@ -20,26 +20,34 @@ class ActivityService
         'pollVotes'
     ];
 
-    public function getLikedPosts(User $user): LengthAwarePaginator
+    /**
+     * Спільний метод для підготовки запиту постів
+     */
+    private function preparePostQuery(User $user)
     {
-        return Post::select('posts.*')
-            ->join('likes', 'posts.id', '=', 'likes.post_id')
-            ->where('likes.user_id', $user->id)
-            ->with(self::POST_RELATIONS)
+        return Post::with(self::POST_RELATIONS)
             ->withCount(['likes', 'comments', 'reposts'])
             ->withExists(['likes as is_liked' => function ($query) use ($user)
             {
                 $query->where('user_id', $user->id);
-            }])
+            }]);
+    }
+
+    public function getLikedPosts(User $user): LengthAwarePaginator
+    {
+        return $this->preparePostQuery($user)
+            ->join('likes', 'posts.id', '=', 'likes.post_id')
+            ->where('likes.user_id', $user->id)
+            ->select('posts.*')
             ->orderBy('likes.created_at', 'desc')
             ->paginate(config('posts.max_paginate'));
     }
 
     public function getReposts(User $user): LengthAwarePaginator
     {
-        return $user->posts()
+        return $this->preparePostQuery($user)
+            ->where('user_id', $user->id)
             ->whereNotNull('original_post_id')
-            ->with(self::POST_RELATIONS)
             ->latest()
             ->paginate(config('posts.max_paginate'));
     }
@@ -48,8 +56,9 @@ class ActivityService
     {
         return [
             'likes' => DB::table('likes')->where('user_id', $user->id)->count(),
-            'comments' => $user->comments()->count(),
-            'reposts' => $user->posts()->whereNotNull('original_post_id')->count()
+            'comments' => DB::table('comments')->where('user_id', $user->id)->count(),
+            'reposts' => DB::table('posts')->where('user_id', $user->id)->whereNotNull('original_post_id')->count(),
+            'voted_polls' => DB::table('poll_votes')->where('user_id', $user->id)->count()
         ];
     }
 
@@ -63,30 +72,28 @@ class ActivityService
 
     public function getScreenTime(User $user): array
     {
-        $user->load('activities');
+        $totalSeconds = (int)DB::table('user_activities')
+            ->where('user_id', $user->id)
+            ->sum('active_seconds');
+
+        $history = DB::table('user_activities')
+            ->where('user_id', $user->id)
+            ->orderByDesc('date')
+            ->get(['date', 'active_seconds as seconds']);
 
         return [
-            'total_active_seconds' => $user->activities->sum('active_seconds'),
-            'history' => $user->activities->map(function ($act)
-            {
-                return [
-                    'date' => $act->date,
-                    'seconds' => $act->active_seconds,
-                ];
-            })->sortByDesc('date')->values()
+            'total_active_seconds' => $totalSeconds,
+            'history' => $history
         ];
     }
 
     public function getVotedPolls(User $user): LengthAwarePaginator
     {
-        return Post::whereHas('pollVotes', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })
-            ->with(self::POST_RELATIONS)
-            ->withCount(['likes', 'comments', 'reposts'])
-            ->withExists(['likes as is_liked' => function ($query) use ($user) {
+        return $this->preparePostQuery($user)
+            ->whereHas('pollVotes', function ($query) use ($user)
+            {
                 $query->where('user_id', $user->id);
-            }])
+            })
             ->latest()
             ->paginate(config('posts.max_paginate'));
     }
