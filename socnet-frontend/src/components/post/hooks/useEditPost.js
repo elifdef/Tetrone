@@ -35,7 +35,7 @@ export const useEditPost = (post, saveEdit) => {
         const hasPoll = !!post?.poll;
 
         if (emptyEditor && existingMedia.length === 0 && formTools.files.length === 0 && !hasPoll) {
-            notifyError(t('post.empty_post'));
+            notifyError(t('api.error.ERR_POST_EMPTY'));
             return;
         }
 

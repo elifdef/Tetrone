@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Footer from "../components/layout/Footer";
 import { APP_NAME } from "../config";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useTranslation } from "react-i18next";
 import FeatureBlock from "../components/landing/FeatureBlock";
 import StatsService from "../services/stats.service";
+import LandingAuthWidget from "../components/landing/LandingAuthWidget";
+import RecentUsersSection from "../components/landing/RecentUsersSection";
 import "../styles/landing.css";
 
 export default function IndexPage() {
@@ -17,17 +18,22 @@ export default function IndexPage() {
     }
 
     const [stats, setStats] = useState({ users: 0, posts: 0, online: 0 });
+    const [recentUsers, setRecentUsers] = useState([]);
 
     useEffect(() => {
-        const fetchStats = async () => {
-            const res = await StatsService.getLandingStats();
-            if (res.success && res.data) {
-                setStats(res.data);
-            }
-        };
-        fetchStats();
-    }, []);
+        const fetchData = async () => {
+            const [statsRes, usersRes] = await Promise.all([
+                StatsService.getLandingStats(),
+                StatsService.getRecentUsers()
+            ]);
 
+            if (statsRes?.success && statsRes?.data) setStats(statsRes.data);
+            if (usersRes?.success && usersRes?.data) setRecentUsers(usersRes.data);
+        };
+        fetchData();
+    }, []);
+    
+    // eslint-disable-next-line i18next/no-literal-string
     const features = t('main.landing_features', { returnObjects: true }) || [];
 
     return (
@@ -65,22 +71,7 @@ export default function IndexPage() {
                 </div>
 
                 <div className="tetrone-landing-right-col">
-                    <div className="tetrone-landing-auth-panel">
-                        <div className="tetrone-landing-auth-header">
-                            {t('main.landing_join_header')}
-                        </div>
-                        <div className="tetrone-landing-auth-body">
-                            <p className="tetrone-landing-auth-text">
-                                {t('main.landing_join_desc')}
-                            </p>
-                            <Link to="/register" className="tetrone-landing-btn-primary">
-                                {t('main.landing_signup_btn')}
-                            </Link>
-                            <Link to="/login" className="tetrone-landing-btn-secondary">
-                                {t('main.landing_signin_btn')}
-                            </Link>
-                        </div>
-                    </div>
+                    <LandingAuthWidget />
 
                     <div className="tetrone-landing-stats-panel">
                         <div className="tetrone-landing-stats-header">
@@ -101,9 +92,10 @@ export default function IndexPage() {
                             </div>
                         </div>
                     </div>
+
+                    <RecentUsersSection users={recentUsers} />
                 </div>
             </div>
-
             <Footer />
         </div>
     );

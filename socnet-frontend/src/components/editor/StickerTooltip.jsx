@@ -105,7 +105,7 @@ export default function StickerTooltip({ shortcode, position, onMouseLeave }) {
                                         className="tetrone-btn  tetrone-btn-full-width tetrone-mt-4"
                                         onClick={handleInstall}
                                     >
-                                        {t('stickers.add_pack')}
+                                        {t('action.install')}
                                     </button>
                                 )}
                             </>

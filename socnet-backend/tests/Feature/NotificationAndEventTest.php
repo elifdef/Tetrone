@@ -102,7 +102,6 @@ class NotificationAndEventTest extends TestCase
         $liker = User::factory()->create();
         $notifiable = User::factory()->create();
 
-        // Створюємо віртуальний пост без звернення до БД
         $post = new Post();
         $post->id = 999;
         $post->content = ['text' => 'Дуже довгий текст який має бути обрізаний функцією Str::limit і ми це зараз перевіримо'];
@@ -112,7 +111,7 @@ class NotificationAndEventTest extends TestCase
 
         $this->assertEquals('new_like', $array['type']);
         $this->assertNotNull($array['post_snippet']);
-        $this->assertTrue(strlen($array['post_snippet']) <= 43); // 40 символів + "..."
+        $this->assertTrue(mb_strlen($array['post_snippet'], 'UTF-8') <= 43);
     }
 
     #[TestDox('5. NewWallPostNotification правильно формує fallback-сніпети (POLL, ATTACHMENT)')]

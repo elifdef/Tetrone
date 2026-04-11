@@ -54,20 +54,20 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
                 is_liked: originalLiked,
                 likes_count: originalCount
             }));
-            notifyError(err.message || t('error.connection'));
+            notifyError(err.message || t('api.error.ERR_NETWORK'));
         } finally {
             setIsLiking(false);
         }
     };
 
-  const createRepost = async () => {
+    const createRepost = async () => {
         if (readonly) return;
 
-        const content = await openPrompt(t('common.repost'), t('common.comment'), '', true);
+        const content = await openPrompt(t('common.repost'), t('action.comment'), '', true);
         if (content === null) return;
 
         setIsReposting(true);
-        
+
         const targetId = postData.id;
 
         let payloadText = null;
@@ -97,10 +97,10 @@ export const usePostActions = (initialPost, readonly, onLikeToggle, onRepostSucc
                 }));
                 if (onRepostSuccess && res.data) onRepostSuccess(res.data);
             } else {
-                notifyError(res.message || t('error.publish_post'));
+                notifyError(res.message || t('error.save_failed'));
             }
         } catch (err) {
-            notifyError(t('error.connection'));
+            notifyError(t('api.error.ERR_NETWORK'));
         } finally {
             setIsReposting(false);
         }

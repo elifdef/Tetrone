@@ -58,10 +58,10 @@ export default function EditPostForm({ post, saveEdit, cancelEditing }) {
 
                 <div className="tetrone-edit-buttons-right">
                     <Button variant='secondary' onClick={cancelEditing}>
-                        {t('common.cancel')}
+                        {t('action.cancel')}
                     </Button>
                     <Button onClick={handleSave}>
-                        {t('common.save')}
+                        {t('action.save')}
                     </Button>
                 </div>
             </div>

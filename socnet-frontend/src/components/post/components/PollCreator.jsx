@@ -153,8 +153,8 @@ export default function PollCreator({ initialData, onSave, onCancel }) {
             )}
 
             <div className="tetrone-poll-actions">
-                <Button variant="secondary" onClick={onCancel}>{t('common.cancel')}</Button>
-                <Button onClick={handleSave}>{t('common.save')}</Button>
+                <Button variant="secondary" onClick={onCancel}>{t('action.cancel')}</Button>
+                <Button onClick={handleSave}>{t('action.save')}</Button>
             </div>
         </div>
     );

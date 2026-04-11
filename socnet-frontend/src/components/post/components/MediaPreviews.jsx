@@ -55,7 +55,7 @@ export default function MediaPreviews({ previews, onRemove, isExisting = false }
                                     type="button"
                                     className="tetrone-preview-remove-btn"
                                     onClick={() => onRemove(removeId)}
-                                    title={t('common.delete')}
+                                    title={t('action.delete')}
                                 >
                                     ×
                                 </button>
@@ -77,7 +77,7 @@ export default function MediaPreviews({ previews, onRemove, isExisting = false }
                                     type="button"
                                     className="tetrone-preview-remove-video-btn"
                                     onClick={() => onRemove(removeId)}
-                                    title={t('common.delete')}
+                                    title={t('action.delete')}
                                 >
                                     ×
                                 </button>

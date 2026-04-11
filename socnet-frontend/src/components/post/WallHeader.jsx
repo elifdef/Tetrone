@@ -7,7 +7,7 @@ export default function WallHeader({ postsCount }) {
         <div className="tetrone-wall-header">
             <span className="tetrone-wall-title">{t('wall.title')}</span>
             <span className="tetrone-wall-count">
-                {t('wall.posts_count', { count: postsCount })}
+                {t('entities.post', { count: postsCount })}
             </span>
         </div>
     );

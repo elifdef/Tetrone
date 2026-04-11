@@ -5,7 +5,7 @@ import i18n from "../i18n";
 export const checkFileSize = (file) => {
     const maxBytes = MAX_FILE_SIZE_KB * 1024;
     if (file.size > maxBytes) {
-        notifyWarn(i18n.t('error.large_file', { size: MAX_FILE_SIZE_KB / 1024 }));
+        notifyWarn(i18n.t('error.file_too_large', { size: MAX_FILE_SIZE_KB / 1024 }));
         return false;
     }
     return true;

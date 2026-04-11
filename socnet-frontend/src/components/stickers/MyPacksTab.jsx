@@ -54,7 +54,7 @@ export default function MyPacksTab({ packs, onRefresh }) {
                     <div className="tetrone-modal-dialog modal-lg" onClick={e => e.stopPropagation()}>
 
                         <div className="tetrone-modal-header">
-                            <h3>{t('stickers.create_pack')}</h3>
+                            <h3>{t('action.create')}</h3>
                             <button className="tetrone-modal-close" onClick={() => {
                                 setIsCreating(false);
                                 if (onRefresh) onRefresh();

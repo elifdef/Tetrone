@@ -43,7 +43,7 @@ export const useComments = (postId) => {
                     return { ...oldData, pages: newPages };
                 });
             } else {
-                notifyError(res.message || t('error.add_comment'));
+                notifyError(res.message || t('error.save_failed'));
             }
         }
     });
@@ -63,7 +63,7 @@ export const useComments = (postId) => {
                     };
                 });
             } else {
-                notifyError(res.message || t('error.edit_comment'));
+                notifyError(res.message || t('error.save_failed'));
             }
         }
     });
@@ -71,7 +71,7 @@ export const useComments = (postId) => {
     const addComment = async (content) => {
         if (!content) return false;
         if (typeof content === 'string' && !content.trim()) return false;
-        
+
         await addMutation.mutateAsync(content);
         return true;
     };
@@ -85,7 +85,7 @@ export const useComments = (postId) => {
     };
 
     const removeComment = async (commentId) => {
-        const isConfirmed = await openConfirm(t('comment.remove_comment'));
+        const isConfirmed = await openConfirm(t('action.delete'));
         if (!isConfirmed) return false;
         await deleteMutation.mutateAsync(commentId);
         return true;

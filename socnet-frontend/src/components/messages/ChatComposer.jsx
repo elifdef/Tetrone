@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import Editor from '../editor/Editor';
 import Button from '../ui/Button';
 import { extractPreviewText } from '../../utils/messageParser';
-import { 
-    EditIcon, ReplyIcon, ImageIcon, VideoIcon, AudioIcon, 
-    DocumentIcon as FileIcon, CloseIcon, SendIcon, AttachIcon 
+import {
+    EditIcon, ReplyIcon, ImageIcon, VideoIcon, AudioIcon,
+    DocumentIcon as FileIcon, CloseIcon, SendIcon, AttachIcon
 } from '../ui/Icons';
 
 const ImagePreview = ({ file, onRemove, theme }) => {
     const [url, setUrl] = useState('');
-    
+
     useEffect(() => {
         if (file.type.startsWith('image/')) {
             const objectUrl = URL.createObjectURL(file);
@@ -108,19 +108,19 @@ export default function ChatComposer({
                         {isAttachOpen && (
                             <div className="tetrone-modern-attach-dropdown">
                                 <label className="tetrone-modern-attach-dropdown-item">
-                                    <ImageIcon width={16} height={16} /> <span>{t('messages.attach_image')}</span>
+                                    <ImageIcon width={16} height={16} /> <span>{t('action.attach_image')}</span>
                                     <input type="file" accept="image/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                 </label>
                                 <label className="tetrone-modern-attach-dropdown-item">
-                                    <VideoIcon width={16} height={16} /> <span>{t('messages.attach_video')}</span>
+                                    <VideoIcon width={16} height={16} /> <span>{t('action.attach_video')}</span>
                                     <input type="file" accept="video/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                 </label>
                                 <label className="tetrone-modern-attach-dropdown-item">
-                                    <AudioIcon width={16} height={16} /> <span>{t('messages.attach_audio')}</span>
+                                    <AudioIcon width={16} height={16} /> <span>{t('action.attach_audio')}</span>
                                     <input type="file" accept="audio/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                 </label>
                                 <label className="tetrone-modern-attach-dropdown-item">
-                                    <FileIcon width={16} height={16} /> <span>{t('messages.attach_file')}</span>
+                                    <FileIcon width={16} height={16} /> <span>{t('action.attach_document')}</span>
                                     <input type="file" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                 </label>
                             </div>
@@ -133,33 +133,33 @@ export default function ChatComposer({
                         className={theme === 'modern' ? "tetrone-modern-textarea" : "tetrone-messages-old-textarea"}
                         value={text}
                         onChange={(val) => { setText(val); if (onTyping) onTyping(); }}
-                        placeholder={t('messages.type_message')}
+                        placeholder={t('action.type_message')}
                         onEnter={handleSend}
                     />
 
                     {theme === 'old' && (
                         <div className="tetrone-messages-old-composer-actions">
                             <Button className="tetrone-messages-old-send-btn" onClick={handleSend} disabled={isSendDisabled}>
-                                {editingMessage ? t('common.save') : t('messages.send')}
+                                {editingMessage ? t('action.save') : t('action.send')}
                             </Button>
                             <div className="tetrone-attach-wrapper" ref={attachMenuRef}>
-                                <span className="tetrone-messages-old-attach-label" onClick={() => setIsAttachOpen(!isAttachOpen)}>{t('messages.attach')}</span>
+                                <span className="tetrone-messages-old-attach-label" onClick={() => setIsAttachOpen(!isAttachOpen)}>{t('action.attach')}</span>
                                 {isAttachOpen && (
                                     <div className="tetrone-attach-dropdown">
                                         <label className="tetrone-attach-dropdown-item">
-                                            <ImageIcon width={16} height={16} /> <span>{t('messages.attach_image')}</span>
+                                            <ImageIcon width={16} height={16} /> <span>{t('action.attach_image')}</span>
                                             <input type="file" accept="image/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                         </label>
                                         <label className="tetrone-attach-dropdown-item">
-                                            <VideoIcon width={16} height={16} /> <span>{t('messages.attach_video')}</span>
+                                            <VideoIcon width={16} height={16} /> <span>{t('action.attach_video')}</span>
                                             <input type="file" accept="video/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                         </label>
                                         <label className="tetrone-attach-dropdown-item">
-                                            <AudioIcon width={16} height={16} /> <span>{t('messages.attach_audio')}</span>
+                                            <AudioIcon width={16} height={16} /> <span>{t('action.attach_audio')}</span>
                                             <input type="file" accept="audio/*" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                         </label>
                                         <label className="tetrone-attach-dropdown-item">
-                                            <FileIcon width={16} height={16} /> <span>{t('messages.attach_file')}</span>
+                                            <FileIcon width={16} height={16} /> <span>{t('action.attach_document')}</span>
                                             <input type="file" multiple className="tetrone-hidden-input" onChange={handleFileSelect} />
                                         </label>
                                     </div>

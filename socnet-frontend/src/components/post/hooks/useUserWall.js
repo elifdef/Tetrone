@@ -36,7 +36,7 @@ export const useUserWall = (profileUser) => {
                     if (newPages.length > 0) newPages[0] = { ...newPages[0], data: [res.data, ...newPages[0].data] };
                     return { ...oldData, pages: newPages };
                 });
-            } else notifyError(res.message || t('error.publish_post'));
+            } else notifyError(res.message || t('error.save_failed'));
         }
     });
 
@@ -74,7 +74,7 @@ export const useUserWall = (profileUser) => {
                         }))
                     };
                 });
-            } else notifyError(res.message || t('error.delete_post'));
+            } else notifyError(res.message || t('error.delete_failed'));
         }
     });
 
@@ -86,7 +86,7 @@ export const useUserWall = (profileUser) => {
     const saveEdit = async (postId, updateData) => await editMutation.mutateAsync({ postId, updateData });
 
     const handleDelete = async (postId) => {
-        const isConfirmed = await openConfirm(t('post.delete_post'));
+        const isConfirmed = await openConfirm(t('action.delete'));
         if (!isConfirmed) return;
         await deleteMutation.mutateAsync(postId);
     };

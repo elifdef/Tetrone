@@ -8,7 +8,7 @@ const DangerZone = ({ t }) => {
             <div className="tetrone-settings-danger-body">
                 <div>
                     <h4>{t('settings.delete_account')}</h4>
-                    <div className="tetrone-settings-quote">{t('settings.quote')}</div>
+                    <div className="tetrone-settings-quote">{t('easter_eggs.quote')}</div>
                     <p className="tetrone-settings-desc">{t('settings.delete_warning')}</p>
                 </div>
                 <Button variant="danger" onClick={() => notifyWarn('under construction')}>

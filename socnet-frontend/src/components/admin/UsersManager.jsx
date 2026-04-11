@@ -24,7 +24,7 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </div>
-            <Button type="submit">{t('common.find')}</Button>
+            <Button type="submit">{t('action.find')}</Button>
         </form>
     );
 };
@@ -116,7 +116,7 @@ export const UsersManager = ({ canBan = true }) => {
     const handleMute = async (username, currentStatus) => {
         const reason = await openPrompt(
             t('admin.actions.reason_prompt'), "",
-            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'), t('common.cancel')
+            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'), t('action.cancel')
         );
 
         if (reason === null) return;
@@ -134,7 +134,7 @@ export const UsersManager = ({ canBan = true }) => {
     const handleBan = async (username, currentStatus) => {
         const reason = await openPrompt(
             t('admin.actions.reason_prompt'), "",
-            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'), t('common.cancel')
+            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'), t('action.cancel')
         );
 
         if (reason === null) return;

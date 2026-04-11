@@ -62,7 +62,7 @@ const ImageDropzone = ({ onFileSelect, fileName }) => {
 
             <div className="tetrone-dropzone-content">
                 <div className="tetrone-dropzone-text">
-                    <strong>{t('common.drag_and_drop')}</strong> {t('common.or_paste')} (Ctrl+V)
+                    <strong>{t('action.drag_and_drop')}</strong> {t('action.or_paste')} (Ctrl+V)
                 </div>
             </div>
             {fileName && (

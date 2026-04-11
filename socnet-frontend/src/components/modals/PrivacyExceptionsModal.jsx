@@ -121,7 +121,7 @@ export default function PrivacyExceptionsModal({ isOpen, onClose, context, initi
                     <input
                         type="text"
                         className="tetrone-form-input tetrone-mb-15"
-                        placeholder={t('common.search')}
+                        placeholder={t('action.search')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         disabled={isSaving}
@@ -166,7 +166,7 @@ export default function PrivacyExceptionsModal({ isOpen, onClose, context, initi
                             })
                         ) : (
                             <div className="tetrone-empty-state tetrone-text-center tetrone-mt-15">
-                                {t('common.not_found')}
+                                {t('empty.list')}
                             </div>
                         )}
                     </div>
@@ -174,14 +174,14 @@ export default function PrivacyExceptionsModal({ isOpen, onClose, context, initi
 
                 <div className="tetrone-modal-footer">
                     <Button variant="secondary" onClick={onClose} disabled={isSaving}>
-                        {t('common.cancel')}
+                        {t('action.cancel')}
                     </Button>
                     <Button
                         variant="primary"
                         onClick={handleSave}
                         disabled={!isDirty || isSaving}
                     >
-                        {isSaving ? t('common.loading') : t('common.save')}
+                        {isSaving ? t('common.loading') : t('action.save')}
                     </Button>
                 </div>
             </div>

@@ -66,11 +66,11 @@ export default function MessageItem({ msg, targetUser, formatDate, t, handleEdit
                 </div>
 
                 <div className={`tetrone-modern-message-actions-bottom ${showActions && !isTemp ? 'visible' : ''}`}>
-                    <button onClick={() => setReplyingTo(msg)}>{t('common.reply')}</button>
+                    <button onClick={() => setReplyingTo(msg)}>{t('action.reply')}</button>
                     {msg.isMine && (
                         <>
-                            <button onClick={() => handleEditClick(msg)}>{t('common.edit')}</button>
-                            <button onClick={() => handleDelete(msg.id)} className="tetrone-text-danger">{t('common.delete')}</button>
+                            <button onClick={() => handleEditClick(msg)}>{t('action.edit')}</button>
+                            <button onClick={() => handleDelete(msg.id)} className="tetrone-text-danger">{t('action.delete')}</button>
                         </>
                     )}
                 </div>

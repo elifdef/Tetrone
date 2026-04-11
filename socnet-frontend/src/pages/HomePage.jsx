@@ -58,7 +58,7 @@ export default function HomePage() {
             <h3>{t('common.welcome')}!</h3>
             {activeTab === 'feed' ? (
                 <>
-                    <p>{t('feed.my_feed_empty')}</p>
+                    <p>{t('empty.feed')}</p>
                     <div className="tetrone-feed-actions">
                         <Link to="/friends?tab=all" className="">
                             {t('feed.find_friends')}
@@ -69,7 +69,7 @@ export default function HomePage() {
                     </div>
                 </>
             ) : (
-                <p>{t('feed.global_feed_empty')}</p>
+                <p>{t('empty.feed')}</p>
             )}
         </div>
     );

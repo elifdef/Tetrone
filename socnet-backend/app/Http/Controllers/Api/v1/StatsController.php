@@ -19,6 +19,23 @@ class StatsController extends Controller
             'online' => User::where('last_seen_at', '>=', $fiveMinutesAgo)->count(),
         ];
 
-        return response()->json(['code' => 'STATS_RETRIEVED', 'data' => $data]);
+        return response()->json([
+            'success' => true,
+            'code' => 'STATS_RETRIEVED',
+            'data' => $data
+        ], 200);
+    }
+
+    public function getRecentUsers(): JsonResponse
+    {
+        $users = User::latest()
+            ->take(5)
+            ->get(['id', 'username', 'first_name', 'last_name', 'avatar']);
+
+        return response()->json([
+            'success' => true,
+            'code' => 'RECENT_USERS_RETRIEVED',
+            'data' => $users
+        ], 200);
     }
 }

@@ -37,7 +37,7 @@ const StickerShopPage = () => {
                 setCatalogPage(pageNumber);
             }
         } catch (error) {
-            notifyError(t('error.connection'));
+            notifyError(t('api.error.ERR_NETWORK'));
         } finally {
             setIsLoadingCatalog(false);
         }

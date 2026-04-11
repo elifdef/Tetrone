@@ -41,7 +41,7 @@ export default function FriendsPage() {
                 />
                 {activeTab === 'all' && (
                     <button className="tetrone-friends-search-btn" onClick={handleSearchSubmit}>
-                        {t('common.find')}
+                        {t('action.find')}
                     </button>
                 )}
             </div>
@@ -53,7 +53,7 @@ export default function FriendsPage() {
                     <>
                         {displayUsers.length === 0 && (
                             <div className="tetrone-empty-state">
-                                {t('friends.list_empty')}
+                                {t('empty.list')}
                             </div>
                         )}
 

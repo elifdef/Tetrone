@@ -50,7 +50,7 @@ export default function ChatInfoModal({ chat, messages, onClose, onScrollToMessa
                     </div>
                     <div className="tetrone-old-info-actions">
                         <span className="tetrone-action-link danger" onClick={onBlockUser}>
-                            {t('common.to_block')}
+                            {t('action.block')}
                         </span>
                         <span className="tetrone-action-link danger" onClick={onDeleteChat}>
                             {t('messages.delete_for_both')}
@@ -74,12 +74,12 @@ export default function ChatInfoModal({ chat, messages, onClose, onScrollToMessa
                         {mediaFiles.length > 0 ? mediaFiles.map((file, idx) => (
                             <div key={idx} className="tetrone-old-info-media-wrapper" onClick={() => handleMediaClick(file.messageId)} title={t('messages.go_to_message')}>
                                 {file.name.match(/\.(mp4|webm)$/i) ? (
-                                    <div className="tetrone-old-info-video-stub">🎥 {t('messages.attach_video')}</div>
+                                    <div className="tetrone-old-info-video-stub">🎥 {t('action.attach_video')}</div>
                                 ) : (
                                     <img src={file.url} alt="attachment" className="tetrone-old-info-grid-img" />
                                 )}
                             </div>
-                        )) : <div className="tetrone-empty-state">{t('messages.empty_inbox')}</div>}
+                        )) : <div className="tetrone-empty-state">{t('empty.inbox')}</div>}
                     </div>
                 )}
 
@@ -91,7 +91,7 @@ export default function ChatInfoModal({ chat, messages, onClose, onScrollToMessa
                                 <span className="tetrone-messages-old-date">{formatDate(file.createdAt)}</span>
                                 <span className="tetrone-action-link" onClick={() => handleMediaClick(file.messageId)}>➜</span>
                             </div>
-                        )) : <div className="tetrone-empty-state">{t('messages.no_files_yet')}</div>}
+                        )) : <div className="tetrone-empty-state">{t('empty.documents')}</div>}
                     </div>
                 )}
             </div>

@@ -101,14 +101,14 @@ export const BannedScreen = () => {
                                                 disabled={isSubmitting || !appealText.trim()}
                                                 className="banned-btn-flex"
                                             >
-                                                {isSubmitting ? t('common.saving') : t('banned.appeal_submit')}
+                                                {isSubmitting ? t('action.saving') : t('action.submit')}
                                             </Button>
                                             <Button
                                                 variant="secondary"
                                                 onClick={() => setIsAppealing(false)}
                                                 disabled={isSubmitting}
                                             >
-                                                {t('common.cancel')}
+                                                {t('action.cancel')}
                                             </Button>
                                         </div>
                                     </div>
@@ -118,7 +118,7 @@ export const BannedScreen = () => {
                                             {t('banned.appeal_btn')}
                                         </Button>
                                         <Button onClick={logout} className="admin-btn-danger">
-                                            {t('auth.signout')}
+                                            {t('action.logout')}
                                         </Button>
                                     </div>
                                 )}

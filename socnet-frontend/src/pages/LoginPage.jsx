@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
     const { t } = useTranslation();
-    usePageTitle(t('auth.signin'));
+    usePageTitle(t('action.login'));
 
     return (
         <div className="tetrone-fullscreen-center">
             <div className="tetrone-auth-card">
                 <div className="tetrone-auth-header">
-                    <h1 className="tetrone-auth-title">{t('auth.signin')}</h1>
+                    <h1 className="tetrone-auth-title">{t('action.login')}</h1>
                 </div>
                 <LoginForm />
             </div>

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import Button from "../ui/Button";
 
 export default function PollVotersModal({ isOpen, onClose, pollData, optionsToRender, activeTab, setActiveTab, isLoadingVoters, results }) {
     const { t } = useTranslation();
@@ -42,7 +43,7 @@ export default function PollVotersModal({ isOpen, onClose, pollData, optionsToRe
                 </div>
 
                 <div className="tetrone-modal-footer">
-                    <button className="tetrone-btn-ghost" onClick={onClose}>{t('common.close')}</button>
+                    <Button onClick={onClose}>{t('action.close')}</Button>
                 </div>
             </div>
         </div>

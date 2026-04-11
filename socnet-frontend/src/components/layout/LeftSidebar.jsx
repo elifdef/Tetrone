@@ -72,7 +72,7 @@ const LeftSidebar = () => {
                     {user ? (
                         <>
                             <Link to="/" className={getLinkClass("/")} onClick={closeMenu}>
-                                {t('sidebar.left.home')}
+                                {t('common.home')}
                             </Link>
                             <Link to={`/${user.username}`} className={getLinkClass(`/${user.username}`)} onClick={closeMenu}>
                                 {t('common.profile')}
@@ -92,7 +92,7 @@ const LeftSidebar = () => {
                                 {t('common.activity')}
                             </Link>
                             <Link to="/settings" className={getLinkClass("/settings")} onClick={closeMenu}>
-                                {t('sidebar.left.settings')}
+                                {t('common.settings')}
                             </Link>
 
                             {user.role === userRole.Support && (
@@ -129,10 +129,10 @@ const LeftSidebar = () => {
                     ) : (
                         <>
                             <Link to="/login" className={getLinkClass("/login")} onClick={closeMenu}>
-                                {t('auth.signin')}
+                                {t('action.login')}
                             </Link>
                             <Link to="/register" className={getLinkClass("/register")} onClick={closeMenu}>
-                                {t('auth.signup')}
+                                {t('action.register')}
                             </Link>
                         </>
                     )}
@@ -151,7 +151,7 @@ const LeftSidebar = () => {
                             </div>
                         </Link>
                         <button onClick={handleLogout} className="tetrone-logout-btn">
-                            {t('auth.signout')}
+                            {t('action.logout')}
                         </button>
                     </div>
                 )}

@@ -79,10 +79,10 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
                         />
                         <div className="tetrone-edit-buttons-right">
                             <button className="tetrone-btn" onClick={handleSave}>
-                                {t('common.save')}
+                                {t('action.save')}
                             </button>
                             <button className="tetrone-btn tetrone-btn-cancel" onClick={() => setIsEditing(false)}>
-                                {t('common.cancel')}
+                                {t('action.cancel')}
                             </button>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
                 {currentUser && !isEditing && (
                     <div className="tetrone-comment-reply-wrapper">
                         <button className="tetrone-comment-reply-btn" onClick={() => onReply(comment.user)}>
-                            <ReplyIcon /> {t('common.reply')}
+                            <ReplyIcon /> {t('action.reply')}
                         </button>
                     </div>
                 )}
@@ -113,10 +113,10 @@ export default function CommentItem({ comment, currentUser, onDelete, onEdit, on
                             {isOwner && (
                                 <>
                                     <button onClick={() => { setIsEditing(true); setShowMenu(false); }}>
-                                        <EditIcon /> {t('common.edit')}
+                                        <EditIcon /> {t('action.edit')}
                                     </button>
                                     <button className="danger" onClick={() => { onDelete(comment.uid); setShowMenu(false); }}>
-                                        <DeleteIcon /> {t('common.delete')}
+                                        <DeleteIcon /> {t('action.delete')}
                                     </button>
                                 </>
                             )}

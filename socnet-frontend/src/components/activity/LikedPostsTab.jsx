@@ -35,7 +35,7 @@ export default function LikedPostsTab({ onCountUpdate }) {
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
         } else {
-            notifyError(res.message || t('error.load_data'));
+            notifyError(res.message || t('error.load_failed'));
             setError(true);
         }
 
@@ -72,10 +72,10 @@ export default function LikedPostsTab({ onCountUpdate }) {
             className="tetrone-feed-list"
             emptyState={
                 <div className="tetrone-empty-state">
-                    <p>{t('activity.likes.empty')}</p>
+                    <p>{t('empty.likes')}</p>
                 </div>
             }
-            endMessage={t('common.no_more_data')}
+            endMessage={t('empty.no_more_data')}
         >
             {posts.map(post => (
                 <PostItem

@@ -63,7 +63,7 @@ export const useProfileSettings = (isSetupMode = false) => {
 
         // якщо користувач зніме disabled через DevTools
         if (!canSubmit) {
-            notifyInfo(t('settings.same_info'));
+            notifyInfo(t('easter_eggs.same_info'));
             setPreviewUser(prev => ({ ...prev, avatar: "https://substackcdn.com/image/fetch/$s_!N8t_!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25d56fff-096b-4f24-a996-149cc73e9cf6_1055x1212.jpeg" }));
             setTimeout(() => {
                 window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1";
@@ -71,7 +71,7 @@ export const useProfileSettings = (isSetupMode = false) => {
             return;
         }
 
-        const toastId = notifyLoading(t('common.saving'));
+        const toastId = notifyLoading(t('action.saving'));
 
         const data = new FormData();
         data.append('_method', 'PATCH');

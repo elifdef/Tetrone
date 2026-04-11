@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage() {
     const { t } = useTranslation();
-    usePageTitle(t('auth.signup'));
+    usePageTitle(t('action.register'));
 
     return (
         <div className="tetrone-fullscreen-center">
             <div className="tetrone-auth-card">
                 <div className="tetrone-auth-header">
-                    <h1 className="tetrone-auth-title">{t('auth.signup')}</h1>
+                    <h1 className="tetrone-auth-title">{t('action.register')}</h1>
                 </div>
                 <RegisterForm />
             </div>

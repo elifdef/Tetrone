@@ -40,7 +40,7 @@ export default function UserWall({ profileUser, isOwnProfile }) {
                 onLoadMore={wallData.loadMore}
                 emptyState={
                     <div className="tetrone-empty-state with-card">
-                        {t('wall.no_posts')}
+                        {t('empty.wall')}
                     </div>
                 }
             >

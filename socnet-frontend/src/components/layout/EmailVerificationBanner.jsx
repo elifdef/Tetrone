@@ -46,7 +46,7 @@ const EmailVerificationBanner = () => {
                 onClick={handleResend}
                 disabled={loading}
             >
-                {loading ? t('common.sending') : t('banner.email.send')}
+                {loading ? t('action.sending') : t('banner.email.send')}
             </button>
         </div>
     );

@@ -10,23 +10,42 @@ use App\Services\PrivacyService;
 
 class PostPolicy
 {
+    /**
+     * Якщо юзер адмін або модератор - одразу дозволяємо йому все
+     */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role?->value >= Role::Moderator->value)
-        {
-            return true;
-        }
+        if ($user->role?->value >= Role::Moderator->value) return true;
         return null;
     }
 
     /**
-     * Чи може юзер бачити цей конкретний пост?
+     * Чи може юзер БАЧИТИ цей пост (відкривати по прямому ID)
      */
-    public function view(User $user, Post $post): bool
+    public function view(?User $user, Post $post): bool
     {
-        if ($user->isBlockedByTarget($user->id, $post->user_id)) return false;
+        // Власник поста завжди бачить свій пост
+        if ($user && $user->id === $post->user_id) {
+            return true;
+        }
 
-        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Profile->value);
+        // Якщо пост написаний комусь на стіну, власник стіни теж його бачить завжди
+        if ($user && $user->id === $post->target_user_id) {
+            return true;
+        }
+
+        // Якщо юзер авторизований, перевіряємо чорні списки
+        if ($user) {
+            // Якщо автор поста заблокував мене
+            if ($user->isBlockedByTarget($user->id, $post->user_id)) return false;
+
+            // Якщо власник стіни (де лежить пост) заблокував мене
+            if ($post->target_user_id && $user->isBlockedByTarget($user->id, $post->target_user_id)) return false;
+        }
+
+        $wallOwner = $post->targetUser ?? $post->user;
+
+        return app(PrivacyService::class)->canAccess($wallOwner, $user, PrivacyContext::Profile->value);
     }
 
     /**
@@ -73,15 +92,5 @@ class PostPolicy
         if (!$user->can('interact', $post->user)) return false;
 
         return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::Profile->value);
-    }
-
-    /**
-     * Чи може юзер голосувати в опитуванні?
-     */
-    public function vote(User $user, Post $post): bool
-    {
-        if (!$this->view($user, $post)) return false;
-
-        return app(PrivacyService::class)->canAccess($post->user, $user, PrivacyContext::WallPost->value);
     }
 }

@@ -102,7 +102,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                                 )}
                             </div>
                         )}
-                        <button className="tetrone-modal-close" onClick={onClose} title={t('common.close')}>✖</button>
+                        <button className="tetrone-modal-close" onClick={onClose} title={t('action.close')}>✖</button>
                     </div>
                 </div>
 
@@ -156,7 +156,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                             <div className="tetrone-modal-footer">
                                 <Button onClick={() => toggleFavorite(selectedSticker)}>
                                     ⭐ {favoriteIds.includes(selectedSticker.id)
-                                        ? t('stickers.remove_from_favorites')
+                                        ? t('action.deselect')
                                         : t('stickers.save_to_favorites')}
                                 </Button>
                             </div>
@@ -166,7 +166,7 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
 
                 <div className="tetrone-modal-footer">
                     <Button variant="secondary" onClick={onClose}>
-                        {t('common.close')}
+                        {t('action.close')}
                     </Button>
 
                     {!pack.is_owner && (
@@ -178,8 +178,8 @@ export default function StickerPackModal({ pack, onClose, onRefresh }) {
                             {isProcessing
                                 ? t('common.loading')
                                 : isInstalled
-                                    ? t('stickers.remove_pack')
-                                    : t('stickers.add_pack')
+                                    ? t('action.uninstall')
+                                    : t('action.install')
                             }
                         </Button>
                     )}

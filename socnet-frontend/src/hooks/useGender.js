@@ -11,7 +11,7 @@ export const useGender = (genderValue) => {
         1: {
             gender: t('common.male'),
             wrote_on_wall: t('post.wrote_on_wall_male'),
-            restricted: (name) => t('profile.restricted_profile_m', { name }),
+            restricted: (name) => t('profile.restricted_profile_male', { name }),
             last_seen: (time) => t('profile.status.last_seen_m', { time }),
             liked: t('notifications.liked_male'),
             commented: t('notifications.commented_male'),
@@ -27,7 +27,7 @@ export const useGender = (genderValue) => {
         2: {
             gender: t('common.female'),
             wrote_on_wall: t('post.wrote_on_wall_female'),
-            restricted: (name) => t('profile.restricted_profile_f', { name }),
+            restricted: (name) => t('profile.restricted_profile_female', { name }),
             last_seen: (time) => t('profile.status.last_seen_f', { time }),
             liked: t('notifications.liked_female'),
             commented: t('notifications.commented_female'),

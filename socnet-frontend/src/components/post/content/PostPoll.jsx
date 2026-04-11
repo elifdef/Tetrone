@@ -57,7 +57,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
             setDraftOptionIds(res.data.voted_option_ids);
             if (res.data.quiz_data) setQuizData(res.data.quiz_data);
         } else {
-            notifyError(res.message || t('error.connection'));
+            notifyError(res.message || t('api.error.ERR_NETWORK'));
             setDraftOptionIds(votedOptionIds);
         }
         setIsLoading(false);
@@ -89,7 +89,7 @@ export default function PostPoll({ poll, postId, isOwner }) {
         setIsLoading(true);
         const res = await PostService.closePoll(postId);
         if (res.success) setIsClosed(true);
-        else notifyError(res.message || t('error.connection'));
+        else notifyError(res.message || t('api.error.ERR_NETWORK'));
         setIsLoading(false);
     };
 
@@ -162,20 +162,20 @@ export default function PostPoll({ poll, postId, isOwner }) {
 
             {poll.is_multiple_choice && hasDraftChanges && !isClosed && (
                 <div className="tetrone-poll-actions tetrone-poll-actions-start">
-                    <button className="tetrone-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>{t('poll.submit_vote')}</button>
-                    {votedOptionIds.length > 0 && <button className="tetrone-btn tetrone-btn-cancel" onClick={cancelDraft} disabled={isLoading}>{t('common.cancel')}</button>}
+                    <button className="tetrone-btn" onClick={() => submitVote(draftOptionIds)} disabled={isLoading || draftOptionIds.length === 0}>{t('action.vote')}</button>
+                    {votedOptionIds.length > 0 && <button className="tetrone-btn tetrone-btn-cancel" onClick={cancelDraft} disabled={isLoading}>{t('action.cancel')}</button>}
                 </div>
             )}
 
             <div className="tetrone-poll-meta tetrone-poll-meta-spaced">
                 <div className="tetrone-poll-meta-left">
-                    <span>{totalVotes} {t('post.votes_count', { count: totalVotes })}</span>
+                    <span>{t('entities.vote', { count: totalVotes })}</span>
                     {poll.is_anonymous && <><span className="dot">•</span><span>{t('post.anonymous_poll')}</span></>}
                     {isClosed && <><span className="dot">•</span><span className="tetrone-poll-closed-badge">{t('poll.closed_badge')}</span></>}
                 </div>
 
                 {isOwner && !isClosed && (
-                    <button className="tetrone-poll-close-btn" onClick={handleClosePollClick}>{t('common.close')}</button>
+                    <button className="tetrone-poll-close-btn" onClick={handleClosePollClick}>{t('action.close')}</button>
                 )}
             </div>
 

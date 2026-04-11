@@ -15,7 +15,7 @@ export default function ActivityPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const activeTab = searchParams.get('tab') || 'likes';
-    
+
     const [counts, setCounts] = useState({ likes: 0, comments: 0, reposts: 0, voted_polls: 0 });
 
     const getPageTitle = () => {
@@ -26,7 +26,8 @@ export default function ActivityPage() {
             case 'reposts': return `${baseTitle} | ${t('common.reposts')}`;
             case 'voted-polls': return `${baseTitle} | ${t('common.poll')}`;
             case 'stats': return `${baseTitle} | ${t('activity.stats.title')}`;
-            default: return baseTitle;
+            case 'likes': default: return `${baseTitle} | ${t('common.likes')}`;
+
         }
     };
 
@@ -55,8 +56,6 @@ export default function ActivityPage() {
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'likes':
-                return <LikedPostsTab onCountUpdate={(delta) => updateCount('likes', delta)} />;
             case 'comments':
                 return <MyCommentsTab onCountUpdate={(delta) => updateCount('comments', delta)} />;
             case 'reposts':
@@ -65,8 +64,9 @@ export default function ActivityPage() {
                 return <VotedPollsTab />;
             case 'stats':
                 return <ScreenTimeTab />;
+            case 'likes':
             default:
-                return <div className="tetrone-empty-state">{t('error.page_not_found')}</div>;
+                return <LikedPostsTab onCountUpdate={(delta) => updateCount('likes', delta)} />;
         }
     };
 

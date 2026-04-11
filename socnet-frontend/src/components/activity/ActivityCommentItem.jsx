@@ -29,7 +29,7 @@ export default function ActivityCommentItem({ comment, onDelete }) {
                     <button
                         className="tetrone-action-icon"
                         onClick={onDelete}
-                        title={t('common.delete')}
+                        title={t('action.delete')}
                     >
                         <DeleteIcon width={16} height={16} />
                     </button>

@@ -139,7 +139,7 @@ export default function PrivacySettings() {
                     onClick={handleSaveAll}
                     disabled={!isDirty || isSaving}
                 >
-                    {isSaving ? t('common.loading') : t('common.save_changes')}
+                    {isSaving ? t('action.saving') : t('action.save')}
                 </Button>
             </div>
 

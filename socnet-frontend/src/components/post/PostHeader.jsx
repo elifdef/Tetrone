@@ -79,7 +79,7 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
                 </Link>
             </div>
 
-           {showActions && (
+            {showActions && (
                 <div className="tetrone-post-actions-container" style={{ position: 'relative', marginLeft: 'auto' }}>
                     <button
                         className="tetrone-post-action-btn-trigger"
@@ -92,12 +92,12 @@ export default function PostHeader({ post, isOwner, onEdit, onDelete, onReport, 
                         <div className="tetrone-actions-dropdown">
                             {canEdit && (
                                 <button onClick={() => { onEdit(post); setShowMenu(false); }}>
-                                    <EditIcon /> {t('common.edit')}
+                                    <EditIcon /> {t('action.edit')}
                                 </button>
                             )}
                             {canDelete && (
                                 <button className="danger" onClick={() => { onDelete(post.id); setShowMenu(false); }}>
-                                    <DeleteIcon /> {t('common.delete')}
+                                    <DeleteIcon /> {t('action.delete')}
                                 </button>
                             )}
                             {canReport && (

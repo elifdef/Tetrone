@@ -57,7 +57,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
     };
 
     const handleDeleteClick = async () => {
-        const isConfirmed = await openConfirm(t('common.are_u_sure'), t('common.confirm'));
+        const isConfirmed = await openConfirm(t('action.are_u_sure'), t('action.confirm'));
         if (isConfirmed && onDelete) {
             onDelete(stickerToEdit.id);
             onClose();
@@ -89,7 +89,7 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
             content: [{
                 type: 'paragraph',
                 content: [
-                    { type: 'text', text: t(`stickers.preview_text_${Math.floor(Math.random() * 8 + 1)}`) },
+                    { type: 'text', text: t(`easter_eggs.preview_text_${Math.floor(Math.random() * 8 + 1)}`) },
                     { type: 'customSticker', attrs: { id: stickerToEdit?.id, shortcode: shortcode || 'demo_code', src: preview } }
                 ]
             }]
@@ -191,17 +191,17 @@ export default function StickerEditorModal({ stickerToEdit = null, onClose, onSu
                     <div>
                         {isEditMode && (
                             <Button variant="danger" onClick={handleDeleteClick}>
-                                {t('common.delete')}
+                                {t('action.delete')}
                             </Button>
                         )}
                     </div>
 
                     <div className="tetrone-modal-footer-right">
                         <Button variant="secondary" onClick={onClose}>
-                            {t('common.cancel')}
+                            {t('action.cancel')}
                         </Button>
                         <Button onClick={handleSave} disabled={!isFormValid}>
-                            {t('common.save')}
+                            {t('action.save')}
                         </Button>
                     </div>
                 </div>

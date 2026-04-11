@@ -58,11 +58,11 @@ export default function LoginForm() {
             <Button
                 disabled={loading}
             >
-                {loading ? t('common.loading') : t('auth.signin')}
+                {loading ? t('common.loading') : t('action.login')}
             </Button>
 
             <div className="tetrone-auth-footer">
-                {t('auth.not_have_account')} <Link to="/register" className="tetrone-link">{t('auth.signup')}</Link>
+                {t('auth.not_have_account')} <Link to="/register" className="tetrone-link">{t('action.register')}</Link>
             </div>
         </form>
     );

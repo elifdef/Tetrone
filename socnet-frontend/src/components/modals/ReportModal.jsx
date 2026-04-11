@@ -105,10 +105,10 @@ export default function ReportModal({ isOpen, onClose, targetType, targetId }) {
 
                     <div className="tetrone-modal-footer">
                         <Button variant="secondary" onClick={handleClose}>
-                            {t('common.cancel')}
+                            {t('action.cancel')}
                         </Button>
                         <Button type="submit" className="tetrone-btn" disabled={isSubmitting || isLoadingReasons}>
-                            {isSubmitting ? t('common.saving') : t('reports.submit_btn')}
+                            {isSubmitting ? t('action.saving') : t('action.submit')}
                         </Button>
                     </div>
                 </form>

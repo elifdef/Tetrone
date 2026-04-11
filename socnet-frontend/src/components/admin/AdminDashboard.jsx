@@ -20,7 +20,7 @@ export default function AdminDashboard() {
             setStats(res.data);
         } else {
             // console.error("Dashboard stats load failed:", res.message);
-            notifyError(res.message || t('error.load_stats'));
+            notifyError(res.message || t('error.load_failed'));
         }
 
         setLoading(false);
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
             <div className="admin-dashboard-header">
                 <span className="admin-timeframe-badge">{t('admin.dashboard.last_7_days')}</span>
                 <button onClick={fetchStats}>
-                    {t('common.reload_page')}
+                    {t('action.refresh')}
                 </button>
             </div>
 

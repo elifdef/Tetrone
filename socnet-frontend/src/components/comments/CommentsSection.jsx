@@ -31,7 +31,7 @@ export default function CommentsSection({ postId, onCountChange }) {
             <CommentForm
                 user={user}
                 onSubmit={handleAddComment}
-                placeholder={t('comment.create_comment')}
+                placeholder={t('action.comment')}
                 replyToUser={replyToUser}
                 onClearReply={() => setReplyToUser(null)}
             />
@@ -40,7 +40,7 @@ export default function CommentsSection({ postId, onCountChange }) {
                 comments={comments}
                 currentUser={user}
                 onDelete={handleRemoveComment}
-                noCommentsText={t('comment.no_comments')}
+                noCommentsText={t('empty.comments')}
                 isLoadingInitial={isLoadingInitial}
                 isLoadingMore={isLoadingMore}
                 hasMore={hasMore}

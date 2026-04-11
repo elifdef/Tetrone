@@ -49,7 +49,7 @@ export const useSecuritySettings = () => {
         e.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            return notifyError(t('error.not_match_password'));
+            return notifyError(t('api.error.ERR_PASSWORD_MISMATCH'));
         }
 
         setLoadingPass(true);

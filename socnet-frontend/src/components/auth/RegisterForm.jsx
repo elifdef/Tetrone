@@ -39,7 +39,7 @@ export default function RegisterForm() {
                     <span className="tetrone-auth-success-text">
                         {res.message || t('auth.you_have_registered')}<br />
                         <Link to="/login" className="tetrone-link tetrone-auth-msg-link">
-                            {t('auth.signin')}
+                            {t('action.login')}
                         </Link>
                     </span>
                 ),
@@ -47,7 +47,7 @@ export default function RegisterForm() {
             });
             setFormData({ username: "", email: "", password: "", password_confirmation: "" });
         } catch (error) {
-            setMsg({ text: error.message || t('error.registration'), type: "error" });
+            setMsg({ text: error.message || t('error.action_failed'), type: "error" });
         } finally {
             setLoading(false);
         }
@@ -134,13 +134,13 @@ export default function RegisterForm() {
                 type="submit"
                 disabled={loading || (formData.password && passwordScore < 5)}
             >
-                {loading ? t('common.loading') : t('auth.signup')}
+                {loading ? t('common.loading') : t('action.register')}
             </Button>
 
             <div className="tetrone-auth-footer">
                 {t('auth.already_have_account')}{' '}
                 <Link to="/login" className="tetrone-link">
-                    {t('auth.signin')}
+                    {t('action.login')}
                 </Link>
             </div>
         </form>

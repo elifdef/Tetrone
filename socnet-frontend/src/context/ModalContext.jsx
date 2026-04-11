@@ -25,7 +25,7 @@ export const ModalProvider = ({ children }) => {
         setModalState(prev => ({ ...prev, isOpen: false, inputValue: '', customContent: null }));
     };
 
-    const openConfirm = useCallback((message, title = i18n.t('common.confirm'), btnYes = i18n.t('common.yes'), btnNo = i18n.t('common.cancel')) => {
+    const openConfirm = useCallback((message, title = i18n.t('action.confirm'), btnYes = i18n.t('common.yes'), btnNo = i18n.t('action.cancel')) => {
         return new Promise((resolve) => {
             setModalState({
                 isOpen: true, type: 'confirm', title, message, btnSubmit: btnYes, btnCancel: btnNo, resolve, inputValue: '', customContent: null
@@ -33,7 +33,7 @@ export const ModalProvider = ({ children }) => {
         });
     }, []);
 
-    const openPrompt = useCallback((message, title, placeholder = '', allowEmpty = false, btnSubmit = i18n.t('common.save'), btnCancel = i18n.t('common.cancel')) => {
+    const openPrompt = useCallback((message, title, placeholder = '', allowEmpty = false, btnSubmit = i18n.t('action.save'), btnCancel = i18n.t('action.cancel')) => {
         return new Promise((resolve) => {
             setModalState({
                 isOpen: true, type: 'prompt', title, message, placeholder, allowEmptyPrompt: allowEmpty, btnSubmit, btnCancel, resolve, inputValue: '', customContent: null
@@ -41,10 +41,10 @@ export const ModalProvider = ({ children }) => {
         });
     }, []);
 
-    const openPassword = useCallback((message = i18n.t('error.enter_confirm_password'), title = i18n.t('common.security'), btnSubmit = i18n.t('common.confirm')) => {
+    const openPassword = useCallback((message = i18n.t('error.enter_confirm_password'), title = i18n.t('common.security'), btnSubmit = i18n.t('action.confirm')) => {
         return new Promise((resolve) => {
             setModalState({
-                isOpen: true, type: 'password', title, message, placeholder: '********', allowEmptyPrompt: false, btnSubmit, btnCancel: i18n.t('common.cancel'), resolve, inputValue: '', customContent: null
+                isOpen: true, type: 'password', title, message, placeholder: '********', allowEmptyPrompt: false, btnSubmit, btnCancel: i18n.t('action.cancel'), resolve, inputValue: '', customContent: null
             });
         });
     }, []);

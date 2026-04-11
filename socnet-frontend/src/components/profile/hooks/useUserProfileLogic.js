@@ -74,7 +74,7 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
                 if (res.success) nextStatus = 'friends';
                 break;
             case 'friends':
-                const confirmed = await openConfirm(`${t('friends.remove_friends')}?`);
+                const confirmed = await openConfirm(`${t('action.remove')}?`);
                 if (confirmed) {
                     res = await FriendService.removeFriend(currentUser.username);
                     if (res.success) nextStatus = 'none';
@@ -117,7 +117,7 @@ export const useUserProfileLogic = (currentUser, isPreview = false) => {
             }
             setLoading(false);
         } else {
-            const confirmed = await openConfirm(`${t('common.to_block')} @${currentUser.username}?`);
+            const confirmed = await openConfirm(`${t('action.block')} @${currentUser.username}?`);
             if (confirmed) {
                 setLoading(true);
                 const res = await FriendService.blockUser(currentUser.username);

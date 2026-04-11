@@ -60,7 +60,7 @@ const PasswordChangeForm = ({
                     type="submit"
                     disabled={loading || (newPassword && newPasswordScore < 5)}
                 >
-                    {loading ? t('common.saving') : t('common.save')}
+                    {loading ? t('action.saving') : t('action.save')}
                 </Button>
             </form>
         </div>

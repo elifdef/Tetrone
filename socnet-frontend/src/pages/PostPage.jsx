@@ -33,7 +33,7 @@ export default function PostPage() {
                 }
             })
             .catch(err => {
-                setError(err.message || t('error.load_post'));
+                setError(err.message || t('error.load_failed'));
             })
             .finally(() => {
                 setLoading(false);
@@ -58,7 +58,7 @@ export default function PostPage() {
         return (
             <ErrorState
                 title={error || t('post.not_found')}
-                description={t('error.load_post')}
+                description={t('error.load_failed')}
                 onRetry={() => window.location.reload()}
             />
         );
@@ -72,7 +72,7 @@ export default function PostPage() {
 
             if (res.success && res.data) {
                 setPost(res.data);
-                setIsEditing(false); 
+                setIsEditing(false);
             }
         } catch (err) {
             console.error('Помилка збереження:', err);
@@ -84,7 +84,7 @@ export default function PostPage() {
             <div className="tetrone-post-page-wrapper">
                 <EditPostForm
                     post={post}
-                    saveEdit={handleSaveEdit}    
+                    saveEdit={handleSaveEdit}
                     cancelEditing={() => setIsEditing(false)}
                 />
             </div>
@@ -98,7 +98,7 @@ export default function PostPage() {
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                {t('common.back')}
+                {t('action.go_back')}
             </button>
 
             <div className="tetrone-single-post-card">

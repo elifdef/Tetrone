@@ -56,22 +56,22 @@ export default function ChatInfoModal({ chat, messages, onClose }) {
     const renderContent = () => {
         if (activeTab === 'photos') {
             if (!categorizedFiles.photos.length) {
-                return <div className="tetrone-chat-info-empty">{t('chat.no_photos')}</div>;
+                return <div className="tetrone-chat-info-empty">{t('empty.photos')}</div>;
             }
             return (
                 <div className="tetrone-chat-info-grid">
                     {categorizedFiles.photos.map((photo, i) => (
                         <div key={i} className="tetrone-chat-info-grid-item">
-                            <img src={photo.url} alt={t('chat.photo')} />
+                            <img src={photo.url} alt={t('messages.photos')} />
                         </div>
                     ))}
                 </div>
             );
         }
-        
+
         if (activeTab === 'videos') {
             if (!categorizedFiles.videos.length) {
-                return <div className="tetrone-chat-info-empty">{t('chat.no_videos')}</div>;
+                return <div className="tetrone-chat-info-empty">{t('empty.videos')}</div>;
             }
             return (
                 <div className="tetrone-chat-info-grid">
@@ -86,7 +86,7 @@ export default function ChatInfoModal({ chat, messages, onClose }) {
 
         if (activeTab === 'audio') {
             if (!categorizedFiles.audio.length) {
-                return <div className="tetrone-chat-info-empty">{t('chat.no_audio')}</div>;
+                return <div className="tetrone-chat-info-empty">{t('empty.audio')}</div>;
             }
             return (
                 <div className="tetrone-chat-info-list">
@@ -101,10 +101,10 @@ export default function ChatInfoModal({ chat, messages, onClose }) {
                 </div>
             );
         }
-        
+
         if (activeTab === 'docs') {
             if (!categorizedFiles.docs.length) {
-                return <div className="tetrone-chat-info-empty">{t('chat.no_docs')}</div>;
+                return <div className="tetrone-chat-info-empty">{t('empty.documents')}</div>;
             }
             return (
                 <div className="tetrone-chat-info-list">
@@ -125,24 +125,24 @@ export default function ChatInfoModal({ chat, messages, onClose }) {
         <div className="tetrone-chat-info-overlay" onClick={onClose}>
             <div className="tetrone-chat-info-dialog" onClick={e => e.stopPropagation()}>
                 <div className="tetrone-chat-info-header">
-                    <h3 className="tetrone-chat-info-title">{t('chat.history')}</h3>
+                    <h3 className="tetrone-chat-info-title">{t('messages.history')}</h3>
                     <button className="tetrone-chat-info-close" onClick={onClose}>
                         <CloseIcon />
                     </button>
                 </div>
-                
+
                 <div className="tetrone-chat-info-tabs">
                     <div className={`tetrone-chat-info-tab ${activeTab === 'photos' ? 'active' : ''}`} onClick={() => setActiveTab('photos')}>
-                        {t('chat.photos')} <span className="tetrone-chat-info-count">{categorizedFiles.photos.length}</span>
+                        {t('messages.photos')} <span className="tetrone-chat-info-count">{categorizedFiles.photos.length}</span>
                     </div>
                     <div className={`tetrone-chat-info-tab ${activeTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveTab('videos')}>
-                        {t('chat.videos')} <span className="tetrone-chat-info-count">{categorizedFiles.videos.length}</span>
+                        {t('messages.videos')} <span className="tetrone-chat-info-count">{categorizedFiles.videos.length}</span>
                     </div>
                     <div className={`tetrone-chat-info-tab ${activeTab === 'audio' ? 'active' : ''}`} onClick={() => setActiveTab('audio')}>
-                        {t('chat.audio')} <span className="tetrone-chat-info-count">{categorizedFiles.audio.length}</span>
+                        {t('messages.audio')} <span className="tetrone-chat-info-count">{categorizedFiles.audio.length}</span>
                     </div>
                     <div className={`tetrone-chat-info-tab ${activeTab === 'docs' ? 'active' : ''}`} onClick={() => setActiveTab('docs')}>
-                        {t('chat.documents')} <span className="tetrone-chat-info-count">{categorizedFiles.docs.length}</span>
+                        {t('messages.documents')} <span className="tetrone-chat-info-count">{categorizedFiles.docs.length}</span>
                     </div>
                 </div>
 

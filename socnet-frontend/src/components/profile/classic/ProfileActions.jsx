@@ -28,7 +28,7 @@ export default function ProfileActions({
     if (sameUser)
         return (
             <div className="tetrone-actions">
-                <Link to="/settings" className="tetrone-btn tetrone-btn-primary">{t('common.edit')}</Link>
+                <Link to="/settings" className="tetrone-btn tetrone-btn-primary">{t('action.edit')}</Link>
             </div>
         );
 
@@ -39,7 +39,7 @@ export default function ProfileActions({
         if (isBlockedByMe) return t('profile.menu.you_have_blocked');
 
         switch (status) {
-            case 'friends': return `${t('common.your_friends')} ✓`;
+            case 'friends': return `${t('friends.your_contacts')} ✓`;
             case 'pending_sent': return t('friends.request_sent');
             case 'pending_received': return t('profile.menu.request_received');
             default: return t('profile.menu.not_your_friends');
@@ -48,9 +48,9 @@ export default function ProfileActions({
 
     const getFriendActionLabel = () => {
         switch (status) {
-            case 'friends': return t('friends.remove_friends');
+            case 'friends': return t('action.remove');
             case 'pending_sent': return t('profile.menu.cancel_request');
-            case 'pending_received': return t('friends.accept_request');
+            case 'pending_received': return t('action.accept');
             default: return t('profile.menu.add_friends');
         }
     };
@@ -108,8 +108,8 @@ export default function ProfileActions({
                             onClick={() => { onBlockAction(); setIsMenuOpen(false); }}
                         >
                             {isBlockedByMe
-                                ? t('common.to_unblock')
-                                : t('common.to_block')
+                                ? t('action.unblock')
+                                : t('action.block')
                             }
                         </button>
                     </div>

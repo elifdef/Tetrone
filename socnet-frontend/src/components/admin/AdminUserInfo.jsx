@@ -41,7 +41,7 @@ export default function AdminUserInfo() {
             ? (currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'))
             : (currentStatus ? t('admin.actions.unmute') : t('admin.actions.mute'));
 
-        const reason = await openPrompt(t('admin.actions.reason_prompt'), "", actionText, t('common.cancel'));
+        const reason = await openPrompt(t('admin.actions.reason_prompt'), "", actionText, t('action.cancel'));
         if (reason === null) return;
 
         const finalReason = reason || t('admin.actions.reason_not_specified');
@@ -196,7 +196,7 @@ const TabPosts = ({ username, t }) => {
             isLoadingMore={loading && page > 1}
             hasMore={hasMore}
             onLoadMore={() => setPage(p => p + 1)}
-            emptyState={<div className="tetrone-empty-state">{t('common.no_more_data')}</div>}
+            emptyState={<div className="tetrone-empty-state">{t('empty.no_more_data')}</div>}
         >
             {posts.map(post => <PostItem key={post.id} post={post} />)}
         </InfiniteScrollList>
@@ -228,7 +228,7 @@ const TabComments = ({ username, t }) => {
             isLoadingMore={loading && page > 1}
             hasMore={hasMore}
             onLoadMore={() => setPage(p => p + 1)}
-            emptyState={<div className="tetrone-empty-state">{t('common.no_more_data')}</div>}
+            emptyState={<div className="tetrone-empty-state">{t('empty.no_more_data')}</div>}
         >
             {comments.map(c => (
                 <div key={c.id} className="tetrone-card-wrapper" style={{ padding: '15px', marginBottom: '10px' }}>
@@ -267,7 +267,7 @@ const TabLikes = ({ username, t }) => {
             isLoadingMore={loading && page > 1}
             hasMore={hasMore}
             onLoadMore={() => setPage(p => p + 1)}
-            emptyState={<div className="tetrone-empty-state">{t('common.no_more_data')}</div>}
+            emptyState={<div className="tetrone-empty-state">{t('empty.no_more_data')}</div>}
         >
             {posts.map(post => <PostItem key={post.id} post={post} />)}
         </InfiniteScrollList>

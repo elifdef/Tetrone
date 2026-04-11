@@ -74,7 +74,7 @@ export const useFriendsLogic = () => {
 
     const handleAction = async (action, username) => {
         if (action === 'delete' || action === 'block') {
-            const confirmed = await openConfirm(t('common.are_u_sure'));
+            const confirmed = await openConfirm(t('action.are_u_sure'));
             if (!confirmed) return;
         }
 

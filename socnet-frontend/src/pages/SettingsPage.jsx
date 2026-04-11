@@ -21,7 +21,7 @@ const SettingsPage = () => {
         if (activeTab === 'personalization') return t('settings.personalization');
         if (activeTab === 'notifications') return t('common.notifications');
         if (activeTab === 'sessions') return t('settings.sessions');
-        if (activeTab === 'privacy') return t('settings.privacy');
+        if (activeTab === 'privacy') return t('common.privacy');
         return t('settings.profile_settings');
     };
     usePageTitle(getPageTitle());
@@ -52,7 +52,7 @@ const SettingsPage = () => {
                     {t('settings.sessions')}
                 </Link>
                 <Link to="/settings?act=privacy" className={getTabClass('privacy')}>
-                    {t('settings.privacy')}
+                    {t('common.privacy')}
                 </Link>
             </div>
 

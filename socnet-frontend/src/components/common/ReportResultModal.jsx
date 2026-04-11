@@ -51,7 +51,7 @@ export default function ReportResultModal({ payload, onClose }) {
 
                 <div className="tetrone-modal-actions">
                     <button className="tetrone-btn" onClick={onClose}>
-                        {t('common.cancel')}
+                        {t('action.cancel')}
                     </button>
                 </div>
 

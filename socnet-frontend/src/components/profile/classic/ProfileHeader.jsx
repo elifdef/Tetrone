@@ -6,8 +6,8 @@ export default function ProfileHeader({ user, isPreview }) {
     const formatDate = useDateFormatter();
 
     const getStatusText = () => {
-        if (user.is_online) return t('profile.online');
-        if (!user.last_seen) return t('profile.offline', { time: '' });
+        if (user.is_online) return t('common.online');
+        if (!user.last_seen) return t('common.offline');
 
         const dateStr = formatDate(user.last_seen);
         if (user.gender === 1) return t('profile.status.last_seen_m', { time: dateStr });

@@ -36,14 +36,12 @@ export default function Header({
     }, []);
 
     const getStatusText = () => {
-        if (currentUser.is_online) return t('profile.online');
-        if (!currentUser.last_seen) return t('profile.offline', { time: '' });
+        if (currentUser.is_online) return t('common.online');
+        if (!currentUser.last_seen) return t('common.offline');
 
         const dateStr = formatDate(currentUser.last_seen);
         if (currentUser.gender === 1) return t('profile.status.last_seen_m', { time: dateStr });
         if (currentUser.gender === 2) return t('profile.status.last_seen_f', { time: dateStr });
-
-        return t('profile.status.last_seen_n', { time: dateStr });
     };
 
     const getStatusBlock = () => {
@@ -61,7 +59,7 @@ export default function Header({
         if (loading) return "...";
         if (isBlockedByMe) return t('profile.menu.you_have_blocked');
         switch (status) {
-            case 'friends': return t('common.your_friends');
+            case 'friends': return t('friends.your_contacts');
             case 'pending_sent': return t('friends.request_sent');
             case 'pending_received': return t('profile.menu.request_received');
             default: return t('profile.menu.add_friends');
@@ -70,9 +68,9 @@ export default function Header({
 
     const getFriendMenuLabel = () => {
         switch (status) {
-            case 'friends': return t('friends.remove_friends');
+            case 'friends': return t('action.remove');
             case 'pending_sent': return t('profile.menu.cancel_request');
-            case 'pending_received': return t('friends.accept_request');
+            case 'pending_received': return t('action.accept');
             default: return t('profile.menu.add_friends');
         }
     };
@@ -142,7 +140,7 @@ export default function Header({
             <div className="tetrone-modern-actions-group">
                 {sameUser && !isPreview && (
                     <Link to="/settings" className="tetrone-btn tetrone-btn-primary">
-                        {t('common.edit')}
+                        {t('action.edit')}
                     </Link>
                 )}
 
@@ -183,7 +181,7 @@ export default function Header({
                                         className={`tetrone-menu-item ${!isBlockedByMe ? 'danger' : ''}`}
                                         onClick={() => { handleBlockAction(); setIsMenuOpen(false); }}
                                     >
-                                        {isBlockedByMe ? t('common.to_unblock') : t('common.to_block')}
+                                        {isBlockedByMe ? t('action.unblock') : t('action.block')}
                                     </button>
                                 </div>
                             )}

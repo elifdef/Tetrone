@@ -30,10 +30,10 @@ export default function InfiniteScrollList({
     if (error && itemsCount === 0) {
         return (
             <div className="tetrone-empty-state with-card">
-                <h3>{t('error.connection')}</h3>
+                <h3>{t('api.error.ERR_NETWORK')}</h3>
                 {onRetry && (
                     <button className="tetrone-btn-retry" onClick={onRetry}>
-                        {t('common.reload_page')}
+                        {t('action.refresh')}
                     </button>
                 )}
             </div>
@@ -44,7 +44,7 @@ export default function InfiniteScrollList({
     if (itemsCount === 0) {
         return emptyState || (
             <div className="tetrone-empty-state with-card">
-                {t('common.no_more_data')}
+                {t('empty.no_more_data')}
             </div>
         );
     }
@@ -72,12 +72,12 @@ export default function InfiniteScrollList({
             {error && itemsCount > 0 && (
                 <div className="tetrone-infinite-error-box">
                     <span className="tetrone-error-text">
-                        {t('error.connection')}
+                        {t('api.error.ERR_NETWORK')}
                     </span>
                     <br />
                     {onRetry && (
                         <button className=" tetrone-btn-retry-small" onClick={onRetry}>
-                            {t('common.reload_page')}
+                            {t('action.refresh')}
                         </button>
                     )}
                 </div>

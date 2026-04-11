@@ -21,7 +21,7 @@ export default function SessionsSettings() {
         if (res.success) {
             setSessions(res.data || []);
         } else {
-            notifyError(res.message || t('error.load_data'));
+            notifyError(res.message || t('error.load_failed'));
         }
         setIsLoading(false);
     };
@@ -31,7 +31,7 @@ export default function SessionsSettings() {
     }, []);
 
     const handleRevokeSession = async (tokenId) => {
-        const confirmed = await openConfirm(t('common.are_u_sure'));
+        const confirmed = await openConfirm(t('action.are_u_sure'));
         if (!confirmed) return;
 
         setIsActionLoading(true);
@@ -40,22 +40,22 @@ export default function SessionsSettings() {
             notifySuccess(res.message || t('common.deleted'));
             setSessions(prev => prev.filter(s => s.id !== tokenId));
         } else {
-            notifyError(res.message || t('error.delete_data'));
+            notifyError(res.message || t('error.delete_failed'));
         }
         setIsActionLoading(false);
     };
 
     const handleRevokeAllOther = async () => {
-        const confirmed = await openConfirm(t('common.are_u_sure'));
+        const confirmed = await openConfirm(t('action.are_u_sure'));
         if (!confirmed) return;
 
         setIsActionLoading(true);
         const res = await AuthService.revokeAllOtherSessions();
         if (res.success) {
-            notifySuccess(res.message || t('common.saved'));
+            notifySuccess(res.message || t('action.saved'));
             setSessions(prev => prev.filter(s => s.is_current));
         } else {
-            notifyError(res.message || t('error.delete_data'));
+            notifyError(res.message || t('error.delete_failed'));
         }
         setIsActionLoading(false);
     };
@@ -98,9 +98,9 @@ export default function SessionsSettings() {
                         className="tetrone-btn-cancel tetrone-session-close-btn"
                         onClick={() => handleRevokeSession(session.id)}
                         disabled={isActionLoading}
-                        title={t('common.close')}
+                        title={t('action.close')}
                     >
-                        {t('common.close')}
+                        {t('action.close')}
                     </Button>
                 )}
             </div>

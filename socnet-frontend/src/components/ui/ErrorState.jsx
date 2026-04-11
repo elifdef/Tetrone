@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import Button from './Button';
 
 export default function ErrorState({ title, description, onRetry, buttonText, showButton = true }) {
     const { t } = useTranslation();
@@ -12,12 +13,11 @@ export default function ErrorState({ title, description, onRetry, buttonText, sh
 
             {showButton && (
                 <div className="tetrone-feed-actions tetrone-mt-10">
-                    <button
-                        className="tetrone-btn "
+                    <Button
                         onClick={handleRetry}
                     >
-                        {buttonText || t('common.reload_page')}
-                    </button>
+                        {buttonText || t('action.refresh')}
+                    </Button>
                 </div>
             )}
         </div>

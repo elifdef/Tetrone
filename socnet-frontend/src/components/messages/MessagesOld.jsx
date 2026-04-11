@@ -85,7 +85,7 @@ export default function MessagesOld(props) {
                             </div>
                         </div>
                     ))}
-                    {chats.length === 0 && <div className="tetrone-empty-state">{t('messages.empty_inbox')}</div>}
+                    {chats.length === 0 && <div className="tetrone-empty-state">{t('empty.inbox')}</div>}
                 </div>
             </div>
         );
@@ -94,7 +94,7 @@ export default function MessagesOld(props) {
     return (
         <div className="tetrone-messages-old-container in-chat">
             <div className="tetrone-messages-old-chat-header-complex">
-                <span className="tetrone-messages-old-tab link" onClick={handleBackToInbox}>{t('common.back')}</span>
+                <span className="tetrone-messages-old-tab link" onClick={handleBackToInbox}>{t('action.go_back')}</span>
                 <div className="tetrone-im-header-center" onClick={onOpenInfo}>
                     <span className="tetrone-im-chat-title">{activeChat.target_user?.first_name} {activeChat.target_user?.last_name}</span>
                     <span className="tetrone-im-offline-text">
@@ -105,7 +105,7 @@ export default function MessagesOld(props) {
                             </span>
                         ) : targetOnline ? (
                             <span className="tetrone-im-online-indicator">
-                                <span className="tetrone-im-online-square" /> {t('messages.online')}
+                                <span className="tetrone-im-online-square" /> {t('common.online')}
                             </span>
                         ) : ''}
                     </span>
@@ -132,7 +132,7 @@ export default function MessagesOld(props) {
                 isLoadingInitial={isLoadingInitial} hasMore={hasMore} onLoadMore={onLoadMore}
             >
                 {messages.length === 0 && !isLoadingInitial ? (
-                    <div className="tetrone-empty-state">{t('messages.no_messages_yet')}</div>
+                    <div className="tetrone-empty-state">{t('empty.messages')}</div>
                 ) : (
                     <div className="tetrone-messages-old-history">
                         {messages.map(msg => (

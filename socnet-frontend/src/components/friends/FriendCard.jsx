@@ -14,13 +14,13 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('delete', user.username)}
                     >
-                        {t('common.delete')}
+                        {t('action.delete')}
                     </button>
                     <button
                         className={`${btnClass} tetrone-friends-btn-danger`}
                         onClick={() => onAction('block', user.username)}
                     >
-                        {t('common.to_block')}
+                        {t('action.block')}
                     </button>
                 </>
             );
@@ -33,13 +33,13 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('accept', user.username)}
                     >
-                        {t('common.accept')}
+                        {t('action.accept')}
                     </button>
                     <button
                         className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('cancel_request', user.username)}
                     >
-                        {t('common.dismiss')}
+                        {t('action.dismiss')}
                     </button>
                 </>
             );
@@ -51,7 +51,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                     className={`${btnClass} tetrone-friends-btn-secondary`}
                     onClick={() => onAction('cancel_request', user.username)}
                 >
-                    {t('common.cancel')}
+                    {t('action.cancel')}
                 </button>
             );
         }
@@ -62,7 +62,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                     className={`${btnClass} tetrone-friends-btn-primary`}
                     onClick={() => onAction('unblock', user.username)}
                 >
-                    {t('common.to_unblock')}
+                    {t('action.unblock')}
                 </button>
             );
         }
@@ -70,7 +70,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
         switch (user.friendship_status) {
             case 'friends':
                 return (
-                    <span className="tetrone-friends-status">{t('common.your_friends')}</span>
+                    <span className="tetrone-friends-status">{t('friends.your_contacts')}</span>
                 );
 
             case 'pending_sent':
@@ -79,7 +79,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-secondary`}
                         onClick={() => onAction('cancel_request', user.username)}
                     >
-                        {t('common.cancel')}
+                        {t('action.cancel')}
                     </button>
                 );
 
@@ -89,7 +89,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('accept', user.username)}
                     >
-                        {t('common.accept')}
+                        {t('action.accept')}
                     </button>
                 );
 
@@ -99,7 +99,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('unblock', user.username)}
                     >
-                        {t('common.to_unblock')}
+                        {t('action.unblock')}
                     </button>
                 );
 
@@ -114,7 +114,7 @@ export default function FriendCard({ user, viewMode, onAction }) {
                         className={`${btnClass} tetrone-friends-btn-primary`}
                         onClick={() => onAction('add', user.username)}
                     >
-                        {t('common.add')}
+                        {t('action.add')}
                     </button>
                 );
         }

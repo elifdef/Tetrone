@@ -32,7 +32,7 @@ export default function CreatePostForm({ onSubmitSuccess }) {
         >
             <Editor
                 className="tetrone-form-textarea fixed-size"
-                placeholder={isDragging ? t('wall.drop_files_here') : t('wall.write_post')}
+                placeholder={isDragging ? t('wall.drop_files_here') : t('action.write_post')}
                 value={content}
                 onChange={setContent}
             />
@@ -84,7 +84,7 @@ export default function CreatePostForm({ onSubmitSuccess }) {
                 </div>
 
                 <Button onClick={handleSubmit}>
-                    {t('wall.send_btn')}
+                    {t('action.send')}
                 </Button>
             </div>
 

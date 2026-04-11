@@ -31,21 +31,37 @@ class NewWallPostNotification extends Notification implements ShouldQueue
     {
         $contentMap = is_array($this->post->content) ? $this->post->content : [];
 
-        // Віддаємо СИРИЙ JSON-об'єкт тексту
         $snippet = $contentMap['text'] ?? null;
 
-        // Якщо тексту немає, відправляємо системні КОДИ
-        if (empty($snippet))
+        $hasRealText = false;
+        if (is_array($snippet))
+        {
+            $plainText = '';
+            array_walk_recursive($snippet, function ($value, $key) use (&$plainText)
+            {
+                if ($key === 'text') $plainText .= $value;
+            });
+            $hasRealText = trim($plainText) !== '';
+        } else
+        {
+            $hasRealText = !empty(trim(strip_tags((string)$snippet)));
+        }
+
+        if (!$hasRealText)
         {
             if (isset($contentMap['poll']))
             {
                 $snippet = 'POLL';
-            } elseif (isset($contentMap['youtube']) || $this->post->attachments()->exists())
+            }
+            elseif (isset($contentMap['youtube']) || $this->post->attachments->isNotEmpty())
             {
                 $snippet = 'ATTACHMENT';
             } elseif (isset($contentMap['is_avatar_update']))
             {
                 $snippet = 'AVATAR_UPDATE';
+            } else
+            {
+                $snippet = null;
             }
         }
 

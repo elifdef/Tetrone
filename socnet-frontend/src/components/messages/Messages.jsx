@@ -82,7 +82,7 @@ export default function Messages(props) {
                             </div>
                         </div>
                     ))}
-                    {safeChats.length === 0 && <div className="tetrone-modern-empty-inbox">{t('messages.empty_inbox')}</div>}
+                    {safeChats.length === 0 && <div className="tetrone-modern-empty-inbox">{t('empty.inbox')}</div>}
                 </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function Messages(props) {
                                             {t('common.typing')}
                                             <span className="tetrone-modern-typing-dots"><span /><span /><span /></span>
                                         </span>
-                                    ) : targetOnline ? t('messages.online') : ''}
+                                    ) : targetOnline ? t('common.online') : ''}
                                 </span>
                             </div>
                             <button className="tetrone-modern-header-btn" onClick={onDeleteChatClick}>
@@ -134,7 +134,7 @@ export default function Messages(props) {
                             isLoadingInitial={isLoadingInitial} hasMore={hasMore} onLoadMore={onLoadMore}
                         >
                             {safeMessages.length === 0 && !isLoadingInitial ? (
-                                <div className="tetrone-modern-empty-messages">{t('messages.no_messages_yet')}</div>
+                                <div className="tetrone-modern-empty-messages">{t('empty.messages')}</div>
                             ) : (
                                 <div className="tetrone-modern-messages-history">
                                     {safeMessages.map(msg => (

@@ -4,7 +4,9 @@ import { usePageTitle } from '../hooks/usePageTitle';
 export default function RulesPage() {
     const { t } = useTranslation();
     usePageTitle(t('rules.page_title'));
-    const rulesList = t('rules.items', { returnObjects: true });
+    
+    // eslint-disable-next-line i18next/no-literal-string
+    const rulesList = t('rules.items', { returnObjects: true }) || [];
 
     return (
         <div className="tetrone-card-wrapper tetrone-rules-page">
@@ -20,17 +22,17 @@ export default function RulesPage() {
                         </h3>
 
                         {rule.text && (
-                            <p 
-                                className="tetrone-rule-text" 
-                                dangerouslySetInnerHTML={{ __html: rule.text }} 
+                            <p
+                                className="tetrone-rule-text"
+                                dangerouslySetInnerHTML={{ __html: rule.text }}
                             />
                         )}
 
                         {Array.isArray(rule.subItems) && rule.subItems.length > 0 && (
                             <ol className="tetrone-rule-sublist">
                                 {rule.subItems.map((subItem, subIndex) => (
-                                    <li 
-                                        key={subIndex} 
+                                    <li
+                                        key={subIndex}
                                         className="tetrone-rule-sublist-item"
                                         dangerouslySetInnerHTML={{ __html: subItem }}
                                     />
@@ -43,7 +45,7 @@ export default function RulesPage() {
 
             <div className="tetrone-rule-block">
                 <p className="tetrone-rule-text">
-                    <em>{t('rules.footer_note')}</em>
+                    <em>{t('easter_eggs.footer_note')}</em>
                 </p>
             </div>
         </div>

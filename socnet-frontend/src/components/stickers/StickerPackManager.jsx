@@ -39,7 +39,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
 
     const handleCloseAttempt = async () => {
         if (hasChanges) {
-            const isConfirmed = await openConfirm(t('stickers.unsaved_changes_confirm'), t('common.confirm'));
+            const isConfirmed = await openConfirm(t('action.unsaved_changes'), t('action.confirm'));
             if (isConfirmed) onCancel();
         } else {
             onCancel();
@@ -47,7 +47,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
     };
 
     const executeDeletePack = async () => {
-        const isConfirmed = await openConfirm(t('stickers.confirm_delete_pack'), t('common.confirm'));
+        const isConfirmed = await openConfirm(t('stickers.confirm_delete_pack'), t('action.confirm'));
         if (!isConfirmed) return;
 
         try {
@@ -119,7 +119,7 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
             setStickersChanged(false);
             setDeletedStickerIds([]);
 
-            notifySuccess(t('common.saved'));
+            notifySuccess(t('action.saved'));
             if (onSuccess) onSuccess();
             if (onRefresh) onRefresh();
         } catch (error) {
@@ -226,16 +226,16 @@ export default function StickerPackManager({ existingPack = null, onSuccess, onC
                             variant='danger'
                             onClick={executeDeletePack}
                         >
-                            {t('stickers.delete_pack')}
+                            {t('action.delete')}
                         </Button>
                     )}
                 </div>
                 <div className="tetrone-modal-footer-right">
                     <Button variant="secondary" onClick={handleCloseAttempt}>
-                        {t('common.cancel')}
+                        {t('action.cancel')}
                     </Button>
                     <Button onClick={handleSavePack} disabled={isSaving || !hasChanges}>
-                        {isSaving ? t('common.loading') : t('common.save')}
+                        {isSaving ? t('common.loading') : t('action.save')}
                     </Button>
                 </div>
             </div>

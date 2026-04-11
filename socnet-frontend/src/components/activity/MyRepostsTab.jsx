@@ -39,7 +39,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
         } else {
-            notifyError(res.message || t('error.load_data'));
+            notifyError(res.message || t('error.load_failed'));
             setError(true);
         }
 
@@ -58,7 +58,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
     }, [isLoadingInitial, isLoadingMore, hasMore, error]);
 
     const handleDelete = async (postId) => {
-        const isConfirmed = await openConfirm(t('post.delete_post'));
+        const isConfirmed = await openConfirm(t('action.delete'));
         if (!isConfirmed) return;
 
         const res = await fetchClient(`/posts/${postId}`, { method: 'DELETE' });
@@ -67,7 +67,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
             setReposts(prev => prev.filter(p => p.id !== postId));
             if (onCountUpdate) onCountUpdate(-1);
         } else {
-            notifyError(res.message || t('error.delete_data'));
+            notifyError(res.message || t('error.delete_failed'));
         }
     };
 
@@ -83,7 +83,7 @@ export default function MyRepostsTab({ onCountUpdate }) {
             className="tetrone-post-list"
             emptyState={
                 <div className="tetrone-empty-state">
-                    <p>{t('activity.reposts.empty')}</p>
+                    <p>{t('empty.reposts')}</p>
                 </div>
             }
         >

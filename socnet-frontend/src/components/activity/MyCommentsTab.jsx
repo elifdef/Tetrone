@@ -38,7 +38,7 @@ export default function MyCommentsTab({ onCountUpdate }) {
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
         } else {
-            notifyError(res.message || t('error.load_data'));
+            notifyError(res.message || t('error.load_failed'));
             setError(true);
         }
 
@@ -57,7 +57,7 @@ export default function MyCommentsTab({ onCountUpdate }) {
     }, [isLoadingInitial, isLoadingMore, hasMore, error]);
 
     const handleDeleteComment = async (commentId) => {
-        const isConfirmed = await openConfirm(t('comment.remove_comment'));
+        const isConfirmed = await openConfirm(t('action.delete'));
         if (!isConfirmed) return;
 
         const res = await CommentService.delete(commentId);
@@ -66,7 +66,7 @@ export default function MyCommentsTab({ onCountUpdate }) {
             setComments(prev => prev.filter(c => c.id !== commentId));
             if (onCountUpdate) onCountUpdate(-1);
         } else {
-            notifyError(res.message || t('error.delete_comment'));
+            notifyError(res.message || t('error.delete_failed'));
         }
     };
 
@@ -82,12 +82,12 @@ export default function MyCommentsTab({ onCountUpdate }) {
             className="tetrone-notification-list"
             emptyState={
                 <div className="tetrone-empty-state">
-                    <p>{t('activity.comments.empty')}</p>
+                    <p>{t('empty.comments')}</p>
                 </div>
             }
-            endMessage={t('common.no_more_data')}
+            endMessage={t('empty.no_more_data')}
         >
-           {comments.map((comment, index) => (
+            {comments.map((comment, index) => (
                 <ActivityCommentItem
                     key={comment.id ? `comment-${comment.id}` : `fallback-${index}`}
                     comment={comment}

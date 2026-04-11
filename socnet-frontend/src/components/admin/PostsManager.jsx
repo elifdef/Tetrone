@@ -31,7 +31,7 @@ const UserSearchForm = ({ search, setSearch, handleSearch }) => {
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </div>
-            <Button type="submit">{t('common.find')}</Button>
+            <Button type="submit">{t('action.find')}</Button>
         </form>
     );
 };
@@ -116,7 +116,7 @@ export const UsersManager = ({ canBan = true }) => {
     const handleMute = async (username, currentStatus) => {
         const reason = await openPrompt(
             t('admin.actions.reason_prompt'), "",
-            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'), t('common.cancel')
+            currentStatus ? t('admin.actions.unmute') : t('admin.read_only'), t('action.cancel')
         );
 
         if (reason === null) return;
@@ -134,7 +134,7 @@ export const UsersManager = ({ canBan = true }) => {
     const handleBan = async (username, currentStatus) => {
         const reason = await openPrompt(
             t('admin.actions.reason_prompt'), "",
-            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'), t('common.cancel')
+            currentStatus ? t('admin.actions.unban') : t('admin.actions.ban'), t('action.cancel')
         );
 
         if (reason === null) return;
@@ -231,7 +231,7 @@ export const PostsManager = ({ currentUser }) => {
 
     const handleDelete = async (postId) => {
         const reason = await openPrompt(
-            t('admin.posts.delete_reason'), "", t('common.delete'), t('common.cancel')
+            t('admin.posts.delete_reason'), "", t('action.delete'), t('action.cancel')
         );
 
         if (reason === null) return;
@@ -262,7 +262,7 @@ export const PostsManager = ({ currentUser }) => {
                         onChange={(e) => setTargetUser(e.target.value)}
                     />
                 </div>
-                <Button type="submit">{t('common.find')}</Button>
+                <Button type="submit">{t('action.find')}</Button>
             </form>
 
             <InfiniteScrollList
@@ -276,7 +276,7 @@ export const PostsManager = ({ currentUser }) => {
                 onRetry={() => fetchPosts(targetUser, page, false)}
                 emptyState={
                     <div className="tetrone-empty-state with-card">
-                        <h3 className="tetrone-empty-title">{t('post.posts_not_found')}</h3>
+                        <h3 className="tetrone-empty-title">{t('empty.posts')}</h3>
                         <p className="tetrone-empty-desc">{t('admin.posts.not_found_desc')}</p>
                     </div>
                 }
@@ -314,11 +314,11 @@ export const PostsManager = ({ currentUser }) => {
 
                                 <div className="tetrone-post-actions-top admin-post-actions-visible">
                                     {isAdmin && (
-                                        <button className="tetrone-action-icon" onClick={() => handleEdit(post.id)} title={t('common.edit')}>
+                                        <button className="tetrone-action-icon" onClick={() => handleEdit(post.id)} title={t('action.edit')}>
                                             ✎
                                         </button>
                                     )}
-                                    <button className="tetrone-post-delete" onClick={() => handleDelete(post.id)} title={t('common.delete')}>
+                                    <button className="tetrone-post-delete" onClick={() => handleDelete(post.id)} title={t('action.delete')}>
                                         ✖
                                     </button>
                                 </div>

@@ -257,7 +257,7 @@ export default function PersonalizationSettings() {
                         <Button
                             onClick={() => setSettings({ ...settings, username_color: '' })}
                         >
-                            {t('common.reset')}
+                            {t('action.reset')}
                         </Button>
                     </div>
                     <small className="tetrone-text-muted">{t('settings.username_color_hint')}</small>
@@ -279,7 +279,7 @@ export default function PersonalizationSettings() {
                                     <Button
                                         onClick={handleRemoveImage}
                                     >
-                                        {t('common.delete')}
+                                        {t('action.delete')}
                                     </Button>
                                 </div>
                             )}
@@ -318,7 +318,7 @@ export default function PersonalizationSettings() {
                 )}
 
                 <Button onClick={handleSave} disabled={isSaving}>
-                    {isSaving ? t('common.loading') : t('common.save')}
+                    {isSaving ? t('common.loading') : t('action.save')}
                 </Button>
             </div>
         </div>

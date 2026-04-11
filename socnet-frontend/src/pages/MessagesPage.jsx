@@ -121,7 +121,7 @@ export default function MessagesPage() {
                 slug: currentChatInfo.slug,
                 target_user: currentChatInfo.target_user,
                 updated_at: new Date().toISOString(),
-                last_message: t('messages.no_messages_yet'),
+                last_message: t('empty.messages'),
                 last_message_sender_id: null,
                 unread_count: 0
             });
@@ -186,7 +186,7 @@ export default function MessagesPage() {
     }, []);
 
     const handleDeleteClick = useCallback(async (msgId) => {
-        const confirmed = await openConfirm(t('messages.delete_confirm'), t('common.delete'));
+        const confirmed = await openConfirm(t('messages.delete_confirm'), t('action.delete'));
         if (confirmed) {
             await deleteMessage(msgId);
             refreshInbox();
@@ -231,7 +231,7 @@ export default function MessagesPage() {
                     </label>
                 </div>
                 <div className="tetrone-modal-footer">
-                    <button className="tetrone-btn-ghost" onClick={() => closeModal()}>{t('common.cancel')}</button>
+                    <button className="tetrone-btn-ghost" onClick={() => closeModal()}>{t('action.cancel')}</button>
                     <button className="tetrone-btn-danger" onClick={async () => {
                         closeModal();
                         const res = await MessageService.deleteChat(dmSlug, isForBoth);
@@ -241,7 +241,7 @@ export default function MessagesPage() {
                         } else {
                             notifyError(res.message);
                         }
-                    }}>{t('common.delete')}</button>
+                    }}>{t('action.delete')}</button>
                 </div>
             </div>
         );
@@ -252,7 +252,7 @@ export default function MessagesPage() {
         const targetUser = activeChatObj?.target_user?.username;
         if (!targetUser) return;
 
-        const confirmed = await openConfirm(t('common.are_u_sure'), t('common.to_block'));
+        const confirmed = await openConfirm(t('action.are_u_sure'), t('action.block'));
         if (confirmed) {
             const res = await FriendService.blockUser(targetUser);
             if (res.success) {

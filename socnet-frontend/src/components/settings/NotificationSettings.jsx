@@ -274,7 +274,7 @@ const NotificationSettings = () => {
                                                 type="button"
                                                 onClick={() => fileInputRefs.current[soundKey]?.click()}
                                             >
-                                                {t('common.browse')}
+                                                {t('action.browse')}
                                             </Button>
 
                                             <span
@@ -308,7 +308,7 @@ const NotificationSettings = () => {
                     onClick={handleSave}
                     disabled={saving}
                 >
-                    {saving ? t('common.saving') : t('common.save')}
+                    {saving ? t('action.saving') : t('action.save')}
                 </Button>
             </div>
         </div>

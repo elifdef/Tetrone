@@ -36,7 +36,7 @@ export default function VotedPollsTab() {
 
             setHasMore(meta ? meta.current_page < meta.last_page : false);
         } else {
-            notifyError(res.message || t('error.load_data'));
+            notifyError(res.message || t('error.load_failed'));
             setError(true);
         }
 
@@ -69,7 +69,7 @@ export default function VotedPollsTab() {
             className="tetrone-feed-list"
             emptyState={
                 <div className="tetrone-empty-state">
-                    <p>{t('activity.no_voted_polls_desc')}</p>
+                    <p>{t('empty.polls_voted')}</p>
                 </div>
             }
         >

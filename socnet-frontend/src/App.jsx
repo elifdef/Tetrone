@@ -21,8 +21,8 @@ const GlobalError = () => {
   return (
     <div className="tetrone-fullscreen-center">
       <ErrorState
-        title={t('error.server_down')}
-        description={t('error.server_down_desc')}
+        title={t('api.error.ERR_NETWORK')}
+        description={t('easter_eggs.server_down_desc')}
         onRetry={() => window.location.reload()}
       />
     </div>

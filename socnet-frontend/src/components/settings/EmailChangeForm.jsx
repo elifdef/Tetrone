@@ -55,7 +55,7 @@ const EmailChangeForm = ({
                     type="submit"
                     disabled={loading}
                 >
-                    {loading ? t('common.saving') : t('common.change')}
+                    {loading ? t('action.saving') : t('action.change')}
                 </Button>
             </form>
         </div>

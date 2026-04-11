@@ -123,7 +123,7 @@ export default function NotificationsPage() {
 
             {notifications.length === 0 ? (
                 <div className="tetrone-empty-state">
-                    <p>{t('notifications.empty')}</p>
+                    <p>{t('empty.notifications')}</p>
                 </div>
             ) : (
                 <div className="tetrone-notification-list">
