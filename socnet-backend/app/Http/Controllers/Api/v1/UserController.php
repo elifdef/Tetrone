@@ -46,6 +46,12 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user): PublicUserResource
     {
+        $currentUser = $request->user('sanctum');
+        if ($currentUser && $currentUser->isBlockedByTarget($currentUser->id, $user->id))
+        {
+            abort(404);
+        }
+
         return new PublicUserResource($user)->additional([
             'success' => true,
             'code' => 'SUCCESS'

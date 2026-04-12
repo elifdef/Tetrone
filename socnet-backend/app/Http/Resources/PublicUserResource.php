@@ -94,7 +94,7 @@ class PublicUserResource extends JsonResource
             'friendship_status' => $status,
             'country' => null,
             'is_banned' => $isBanned,
-            'is_private' => false,
+            'is_private' => true,
             'personalization' => null,
             'permissions' => [
                 'can_message' => false,

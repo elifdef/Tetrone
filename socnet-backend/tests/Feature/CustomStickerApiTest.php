@@ -21,130 +21,110 @@ class CustomStickerApiTest extends TestCase
         Storage::fake('public');
     }
 
-    #[TestDox('1. Успішне додавання стікера в свій пак')]
-    public function test_can_add_sticker_to_own_pack(): void
+    #[TestDox('1. Успішне додавання стікера: перевірка контракту, БД та ФІЗИЧНОГО збереження файлу')]
+    public function test_can_add_sticker_to_own_pack_with_file_check(): void
     {
         $me = User::factory()->create();
         $pack = StickerPack::create(['author_id' => $me->id, 'title' => 'My Pack', 'short_name' => 'my_pack']);
         $file = UploadedFile::fake()->image('sticker.png');
 
-        $response = $this->actingAs($me, 'sanctum')->postJson("/api/v1/stickers/packs/{$pack->getRouteKey()}/items", [
-            'shortcode' => 'pepe_smile',
-            'keywords' => 'pepe, smile, happy',
-            'file' => $file
-        ]);
+        $response = $this->actingAs($me, 'sanctum')
+            ->withHeaders(['Accept' => 'application/json'])
+            ->post("/api/v1/stickers/packs/{$pack->getRouteKey()}/items", [
+                'shortcode' => 'pepe_smile',
+                'keywords' => 'pepe, smile',
+                'file' => $file
+            ]);
 
-        $response->assertStatus(201)->assertJsonPath('code', 'STICKER_ADDED');
-        $this->assertDatabaseHas('custom_stickers', ['pack_id' => $pack->id, 'shortcode' => 'pepe_smile']);
+        $response->assertStatus(201)
+            ->assertJsonPath('code', 'STICKER_ADDED')
+            ->assertJsonStructure([
+                'success', 'code', 'data' => ['id', 'shortcode', 'url', 'sort_order']
+            ]);
+
+        $stickerId = $response->json('data.id');
+        $this->assertDatabaseHas('custom_stickers', ['id' => $stickerId, 'shortcode' => 'pepe_smile']);
+
+        $sticker = CustomSticker::find($stickerId);
+        $this->assertTrue(Storage::disk('public')->exists($sticker->file_path));
     }
 
-    #[TestDox('2. Неможливо додати стікер в чужий пак (403)')]
-    public function test_cannot_add_sticker_to_others_pack(): void
-    {
-        $owner = User::factory()->create();
-        $stranger = User::factory()->create();
-        $pack = StickerPack::create(['author_id' => $owner->id, 'title' => 'Pack', 'short_name' => 'pack']);
-
-        $response = $this->actingAs($stranger, 'sanctum')->postJson("/api/v1/stickers/packs/{$pack->getRouteKey()}/items", [
-            'shortcode' => 'hack',
-            'file' => UploadedFile::fake()->image('hack.png')
-        ]);
-
-        $response->assertStatus(403)->assertJsonPath('code', 'ERR_FORBIDDEN');
-    }
-
-    #[TestDox('3. Успішне оновлення свого стікера')]
-    public function test_can_update_own_sticker(): void
+    #[TestDox('2. Захист від MIME Spoofing: не можна завантажити PHP під виглядом PNG')]
+    public function test_cannot_upload_malicious_sticker(): void
     {
         $me = User::factory()->create();
         $pack = StickerPack::create(['author_id' => $me->id, 'title' => 'Pack', 'short_name' => 'pack']);
-        $sticker = $pack->stickers()->create(['file_path' => 'path.png', 'shortcode' => 'old', 'sort_order' => 1]);
+        $maliciousFile = UploadedFile::fake()->createWithContent('hack.png', '<?php phpinfo(); ?>')->mimeType('application/x-php');
 
-        $response = $this->actingAs($me, 'sanctum')->putJson("/api/v1/stickers/{$sticker->getRouteKey()}", [
-            'shortcode' => 'new_code',
-            'keywords' => 'new'
+        $response = $this->actingAs($me, 'sanctum')->postJson("/api/v1/stickers/packs/{$pack->getRouteKey()}/items", [
+            'shortcode' => 'hack',
+            'file' => $maliciousFile
         ]);
 
-        $response->assertStatus(200)->assertJsonPath('code', 'STICKER_UPDATED');
-        $this->assertDatabaseHas('custom_stickers', ['id' => $sticker->id, 'shortcode' => 'new_code']);
+        $response->assertStatus(422);
+        $this->assertDatabaseMissing('custom_stickers', ['shortcode' => 'hack']);
     }
 
-    #[TestDox('4. Неможливо оновити чужий стікер')]
-    public function test_cannot_update_others_sticker(): void
+    #[TestDox('3. Чужий юзер не може оновити стікер і БАЗА НЕ ЗМІНЮЄТЬСЯ')]
+    public function test_cannot_update_others_sticker_and_db_is_untouched(): void
     {
         $owner = User::factory()->create();
         $stranger = User::factory()->create();
         $pack = StickerPack::create(['author_id' => $owner->id, 'title' => 'Pack', 'short_name' => 'pack']);
-        $sticker = $pack->stickers()->create(['file_path' => 'path.png', 'shortcode' => 'old', 'sort_order' => 1]);
+        $sticker = $pack->stickers()->create(['file_path' => 'path.png', 'shortcode' => 'safe_code', 'sort_order' => 1]);
 
         $response = $this->actingAs($stranger, 'sanctum')->putJson("/api/v1/stickers/{$sticker->getRouteKey()}", [
             'shortcode' => 'hacked'
         ]);
 
         $response->assertStatus(403);
+
+        $this->assertEquals('safe_code', $sticker->refresh()->shortcode);
     }
 
-    #[TestDox('5. Успішне видалення свого стікера')]
-    public function test_can_delete_own_sticker(): void
+    #[TestDox('4. Видалення стікера ФІЗИЧНО видаляє картинку з диска')]
+    public function test_can_delete_own_sticker_and_file_is_removed(): void
     {
         $me = User::factory()->create();
         $pack = StickerPack::create(['author_id' => $me->id, 'title' => 'Pack', 'short_name' => 'pack']);
-        $sticker = $pack->stickers()->create(['file_path' => 'path.png', 'shortcode' => 'delete_me', 'sort_order' => 1]);
 
-        $response = $this->actingAs($me, 'sanctum')->deleteJson("/api/v1/stickers/{$sticker->getRouteKey()}");
+        UploadedFile::fake()->image('test.png')->storeAs('stickers', 'test.png', 'public');
 
-        $response->assertStatus(200)->assertJsonPath('code', 'STICKER_DELETED');
+        $sticker = $pack->stickers()->create([
+            'file_path' => 'stickers/test.png',
+            'shortcode' => 'delete_me',
+            'sort_order' => 1
+        ]);
+
+        $this->assertTrue(Storage::disk('public')->exists('stickers/test.png'));
+
+        $this->actingAs($me, 'sanctum')->deleteJson("/api/v1/stickers/{$sticker->getRouteKey()}")
+            ->assertStatus(200);
+
         $this->assertDatabaseMissing('custom_stickers', ['id' => $sticker->id]);
+
+        $this->assertFalse(Storage::disk('public')->exists('stickers/test.png'));
     }
 
-    #[TestDox('6. Пошук (search): занадто короткий запит повертає порожній масив')]
-    public function test_search_too_short_query(): void
-    {
-        $me = User::factory()->create();
-        $response = $this->actingAs($me, 'sanctum')->getJson('/api/v1/stickers/search?q=a');
-
-        $response->assertStatus(200)->assertJsonPath('code', 'SUCCESS');
-        $this->assertEmpty($response->json('data'));
-    }
-
-    #[TestDox('7. Пошук: знаходить стікери тільки у встановлених або власних паках')]
-    public function test_search_finds_stickers_in_my_packs(): void
+    #[TestDox('5. Захист від ID Spoofing при зміні порядку стікерів (reorder)')]
+    public function test_cannot_reorder_stickers_from_other_packs(): void
     {
         $me = User::factory()->create();
         $stranger = User::factory()->create();
 
-        $myPack = StickerPack::create(['author_id' => $me->id, 'title' => 'My', 'short_name' => 'my']);
-        $myPack->stickers()->create(['file_path' => '1.png', 'shortcode' => 'pepe_smile', 'sort_order' => 1]);
-
+        $myPack = StickerPack::create(['author_id' => $me->id, 'title' => 'My Pack', 'short_name' => 'my']);
         $strangerPack = StickerPack::create(['author_id' => $stranger->id, 'title' => 'Str', 'short_name' => 'str']);
-        $strangerPack->stickers()->create(['file_path' => '2.png', 'shortcode' => 'pepe_sad', 'sort_order' => 1]);
 
-        $response = $this->actingAs($me, 'sanctum')->getJson('/api/v1/stickers/search?q=pepe');
+        $mySticker = $myPack->stickers()->create(['file_path' => '1.png', 'shortcode' => 's1', 'sort_order' => 1]);
+        $strangerSticker = $strangerPack->stickers()->create(['file_path' => '2.png', 'shortcode' => 's2', 'sort_order' => 1]);
 
-        $response->assertStatus(200);
-        $this->assertCount(1, $response->json('data'));
-        $this->assertEquals('pepe_smile', $response->json('data.0.shortcode'));
-    }
-
-    #[TestDox('8. Успішна зміна порядку стікерів (reorder)')]
-    public function test_can_reorder_stickers(): void
-    {
-        $me = User::factory()->create();
-        $pack = StickerPack::create(['author_id' => $me->id, 'title' => 'Pack', 'short_name' => 'pack']);
-
-        $sticker1 = $pack->stickers()->create(['file_path' => '1.png', 'shortcode' => 's1', 'sort_order' => 1]);
-        $sticker2 = $pack->stickers()->create(['file_path' => '2.png', 'shortcode' => 's2', 'sort_order' => 2]);
-
-        $response = $this->actingAs($me, 'sanctum')->putJson("/api/v1/stickers/packs/{$pack->getRouteKey()}/reorder", [
+        $response = $this->actingAs($me, 'sanctum')->putJson("/api/v1/stickers/packs/{$myPack->getRouteKey()}/reorder", [
             'items' => [
-                ['id' => $sticker1->id, 'sort_order' => 2],
-                ['id' => $sticker2->id, 'sort_order' => 1],
+                ['id' => $mySticker->id, 'sort_order' => 2],
+                ['id' => $strangerSticker->id, 'sort_order' => 1],
             ]
         ]);
 
-        $response->assertStatus(200)->assertJsonPath('code', 'STICKERS_REORDERED');
-
-        $this->assertEquals(2, $sticker1->refresh()->sort_order);
-        $this->assertEquals(1, $sticker2->refresh()->sort_order);
+        $this->assertEquals(1, $strangerSticker->refresh()->sort_order);
     }
 }

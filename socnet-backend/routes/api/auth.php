@@ -17,10 +17,13 @@ Route::get('/login', function ()
 })->name('login');
 
 // публічні (12 запитів/мін)
-Route::middleware('throttle:12,1')->controller(AuthController::class)->group(function ()
+Route::controller(AuthController::class)->group(function ()
 {
-    Route::post('sign-up', 'register');
-    Route::post('sign-in', 'login');
+    // 12 запитів для реєстрації
+    Route::post('sign-up', 'register')->middleware('throttle:12,1');
+
+    // 5 спроб на хвилину для логіну
+    Route::post('sign-in', 'login')->middleware('throttle:5,1');
 });
 
 // захищені

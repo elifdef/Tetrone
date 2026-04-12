@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Middleware\CheckIfBanned;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->group(function ()
+Route::middleware(['auth:sanctum', CheckIfBanned::class])->group(function ()
 {
 
     // Отримати останні 20 сповіщень

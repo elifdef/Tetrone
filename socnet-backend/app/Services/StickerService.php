@@ -96,6 +96,12 @@ class StickerService
 
     public function installPack(User $user, StickerPack $pack): void
     {
+        // не можна встановити чужий неопублікований пак
+        if (!$pack->is_published && $pack->author_id !== $user->id)
+        {
+            throw new ApiException('ERR_FORBIDDEN', 403);
+        }
+
         if ($user->installedStickerPacks()->where('pack_id', $pack->id)->exists())
         {
             throw new ApiException('ERR_ALREADY_INSTALLED', 409);

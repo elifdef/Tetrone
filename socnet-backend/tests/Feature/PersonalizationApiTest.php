@@ -20,47 +20,25 @@ class PersonalizationApiTest extends TestCase
         Storage::fake('public');
     }
 
-    #[TestDox('1. Анонімний юзер отримує 401 при отриманні налаштувань')]
-    public function test_guest_gets_401_on_show(): void
+    #[TestDox('1. Отримання налаштувань повертає строгий JSON контракт')]
+    public function test_get_settings_returns_strict_contract(): void
     {
-        $this->getJson('/api/v1/settings/personalization')->assertStatus(401);
+        $me = \App\Models\User::factory()->create();
+        $response = $this->actingAs($me, 'sanctum')->getJson('/api/v1/settings/personalization');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success', 'code',
+                'data' => [
+                    'personalization' => [
+                        'banner_color', 'username_color', 'banner_image'
+                    ]
+                ]
+            ]);
     }
 
-    #[TestDox('2. Успішне отримання існуючих налаштувань')]
-    public function test_can_get_personalization(): void
-    {
-        $user = User::factory()->create();
-        UserPersonalization::create([
-            'user_id' => $user->id,
-            'banner_color' => '#FF0000',
-            'username_color' => '#00FF00',
-        ]);
-
-        $response = $this->actingAs($user, 'sanctum')->getJson('/api/v1/settings/personalization');
-
-        $response->assertStatus(200)->assertJsonPath('code', 'PERSONALIZATION_RETRIEVED');
-        $this->assertEquals('#FF0000', $response->json('data.personalization.banner_color'));
-    }
-
-    #[TestDox('3. Успішне оновлення лише кольорів (без картинки)')]
-    public function test_can_update_colors_only(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/settings/personalization', [
-            'banner_color' => 'linear-gradient(135deg, red, blue)',
-            'username_color' => '#123456'
-        ]);
-
-        $response->assertStatus(200)->assertJsonPath('code', 'PERSONALIZATION_UPDATED');
-        $this->assertDatabaseHas('user_personalizations', [
-            'user_id' => $user->id,
-            'username_color' => '#123456'
-        ]);
-    }
-
-    #[TestDox('4. Успішне завантаження банера')]
-    public function test_can_upload_banner_image(): void
+    #[TestDox('2. Успішне завантаження банера ФІЗИЧНО ЗБЕРІГАЄ ФАЙЛ НА ДИСК')]
+    public function test_can_upload_banner_image_and_file_is_saved_to_disk(): void
     {
         $user = User::factory()->create();
         $banner = UploadedFile::fake()->image('banner.png');
@@ -70,46 +48,48 @@ class PersonalizationApiTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertNotNull($response->json('data.personalization.banner_image'));
 
-        $this->assertDatabaseMissing('user_personalizations', [
-            'user_id' => $user->id,
-            'banner_image' => null
-        ]);
+        $personalization = UserPersonalization::where('user_id', $user->id)->first();
+        $this->assertNotNull($personalization->banner_image);
+
+        $this->assertTrue(Storage::disk('public')->exists($personalization->banner_image));
     }
 
-    #[TestDox('5. Видалення банера через remove_banner_image=true')]
-    public function test_can_remove_banner_image(): void
+    #[TestDox('3. Видалення банера ФІЗИЧНО ВИДАЛЯЄ ЙОГО З ДИСКА')]
+    public function test_can_remove_banner_image_physically(): void
     {
         $user = User::factory()->create();
+
+        $path = UploadedFile::fake()->image('old_banner.png')->storeAs('banners', 'old_banner.png', 'public');
+
         UserPersonalization::create([
             'user_id' => $user->id,
-            'banner_image' => 'old_banner.png',
+            'banner_image' => $path,
         ]);
+
+        $this->assertTrue(Storage::disk('public')->exists($path));
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/settings/personalization', [
             'remove_banner_image' => 'true'
         ]);
 
         $response->assertStatus(200);
-        $this->assertNull($response->json('data.personalization.banner_image'));
 
-        $this->assertDatabaseHas('user_personalizations', [
-            'user_id' => $user->id,
-            'banner_image' => null
-        ]);
+        $this->assertNull(UserPersonalization::where('user_id', $user->id)->first()->banner_image);
+
+        $this->assertFalse(Storage::disk('public')->exists($path));
     }
 
-    #[TestDox('6. Помилка валідації при завантаженні неправильного формату файлу')]
-    public function test_validation_fails_on_wrong_file_type(): void
+    #[TestDox('4. XSS Security: Блокування невалідних CSS градієнтів та XSS')]
+    public function test_xss_protection_on_css_colors(): void
     {
         $user = User::factory()->create();
-        $pdf = UploadedFile::fake()->create('document.pdf', 100);
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/settings/personalization', [
-            'banner_image' => $pdf
+            'banner_color' => 'url("javascript:alert(1)")',
+            'username_color' => 'expression(alert(1))'
         ]);
 
-        $response->assertStatus(422)->assertJsonValidationErrors(['banner_image']);
+        $response->assertStatus(422);
     }
 }

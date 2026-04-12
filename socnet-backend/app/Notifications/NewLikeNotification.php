@@ -31,9 +31,20 @@ class NewLikeNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         $content = $this->post->content ?? [];
-        $text = is_array($content) && isset($content['text']) ? $content['text'] : '';
-        $textContent = is_string($text) ? $text : json_encode($text);
-        $snippet = $textContent ? Str::limit(strip_tags(trim($textContent)), 40) : null;
+        $textContent = '';
+
+        if (is_array($content)) {
+            array_walk_recursive($content, function ($value, $key) use (&$textContent) {
+                if ($key === 'text' && is_string($value)) {
+                    $textContent .= $value . ' ';
+                }
+            });
+        } elseif (is_string($content)) {
+            $textContent = $content;
+        }
+
+        $textContent = trim($textContent);
+        $snippet = $textContent !== '' ? Str::limit(strip_tags($textContent), 40) : null;
 
         return [
             'type' => 'new_like',
@@ -41,7 +52,7 @@ class NewLikeNotification extends Notification implements ShouldQueue
             'user_username' => $this->liker->username,
             'user_first_name' => $this->liker->first_name,
             'user_last_name' => $this->liker->last_name,
-            'user_avatar' => $this->liker->avatar_url,
+            'user_avatar' => $this->liker->avatar,
             'user_gender' => $this->liker->gender,
             'post_id' => $this->post->id,
             'post_snippet' => $snippet,

@@ -38,7 +38,7 @@ class ActivityService
         return $this->preparePostQuery($user)
             ->join('likes', 'posts.id', '=', 'likes.post_id')
             ->where('likes.user_id', $user->id)
-            ->select('posts.*')
+            ->addSelect('posts.*')
             ->orderBy('likes.created_at', 'desc')
             ->paginate(config('posts.max_paginate'));
     }

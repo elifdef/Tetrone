@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Notifications\NewFriendRequestNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use Tests\TestCase;
 
@@ -12,63 +13,89 @@ class NotificationApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[TestDox('1. Отримання списку сповіщень та підтягування об\'єкта користувача')]
-    public function test_can_get_notifications(): void
+    public static function protectedRoutesProvider(): array
+    {
+        return [
+            ['GET', '/api/v1/notifications'],
+            ['POST', '/api/v1/notifications/1/read'],
+        ];
+    }
+
+    #[TestDox('1. Анонімний юзер отримує 401 на ендпоінти сповіщень')]
+    #[DataProvider('protectedRoutesProvider')]
+    public function test_guest_gets_401(string $method, string $uri): void
+    {
+        $this->json($method, $uri)->assertStatus(401);
+    }
+
+    #[TestDox('2. Забанений юзер отримує 403 на ендпоінти сповіщень')]
+    #[DataProvider('protectedRoutesProvider')]
+    public function test_banned_user_gets_403(string $method, string $uri): void
+    {
+        $user = User::factory()->create(['is_banned' => true]);
+        $this->actingAs($user, 'sanctum')->json($method, $uri)->assertStatus(403);
+    }
+
+    #[TestDox('3. Отримання списку сповіщень має строгий JSON контракт (з пагінацією/структурою)')]
+    public function test_can_get_notifications_with_strict_contract(): void
     {
         $user = User::factory()->create();
         $sender = User::factory()->create();
 
-        // Реально відправляємо сповіщення через базу даних
         $user->notify(new NewFriendRequestNotification($sender));
 
-        // Виконуємо запит до твого роуту
         $response = $this->actingAs($user, 'sanctum')->getJson('/api/v1/notifications');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'notifications' => [
+                    '*' => [
+                        'id',
+                        'type',
+                        'read_at',
+                        'created_at',
+                        'data' => [
+                            'user' => ['id', 'username', 'avatar']
+                        ]
+                    ]
+                ],
+                'unread_count'
+            ]);
+
+        $this->assertEquals(1, $response->json('unread_count'));
+        $this->assertEquals($sender->id, $response->json('notifications.0.data.user.id'));
+    }
+
+    #[TestDox('4. Позначення як прочитаного ФІЗИЧНО оновлює БД')]
+    public function test_can_mark_notification_as_read_updates_db(): void
+    {
+        $user = User::factory()->create();
+        $sender = User::factory()->create();
+        $user->notify(new NewFriendRequestNotification($sender));
+
+        $notification = $user->notifications()->first();
+        $this->assertNull($notification->read_at);
+        $response = $this->actingAs($user, 'sanctum')->postJson("/api/v1/notifications/{$notification->id}/read");
 
         $response->assertStatus(200);
 
-        // Перевіряємо структуру
-        $this->assertCount(1, $response->json('notifications'));
-        $this->assertEquals(1, $response->json('unread_count'));
-
-        // Перевіряємо магію з твого роуту: чи підтягнувся об'єкт 'user'
-        $this->assertEquals($sender->id, $response->json('notifications.0.data.user.id'));
-        $this->assertEquals($sender->username, $response->json('notifications.0.data.user.username'));
-    }
-
-    #[TestDox('2. Успішне позначення сповіщення як прочитаного')]
-    public function test_can_mark_notification_as_read(): void
-    {
-        $user = User::factory()->create();
-        $sender = User::factory()->create();
-
-        $user->notify(new NewFriendRequestNotification($sender));
-
-        // Переконуємося, що є 1 непрочитане
-        $this->assertEquals(1, $user->unreadNotifications()->count());
-        $notificationId = $user->notifications()->first()->id;
-
-        // Робимо POST запит на прочитання
-        $response = $this->actingAs($user, 'sanctum')->postJson("/api/v1/notifications/{$notificationId}/read");
-
-        $response->assertStatus(200)->assertJsonPath('status', true);
-
-        // Перевіряємо, що лічильник обнулився
+        $this->assertNotNull($notification->refresh()->read_at);
         $this->assertEquals(0, $user->unreadNotifications()->count());
     }
 
-    #[TestDox('3. Помилка 404 при спробі прочитати чуже сповіщення')]
-    public function test_cannot_mark_others_notification_as_read(): void
+    #[TestDox('5. Чужий юзер отримує 404, а сповіщення ЗАЛИШАЄТЬСЯ НЕПРОЧИТАНИМ')]
+    public function test_cannot_mark_others_notification_as_read_and_db_is_untouched(): void
     {
         $me = User::factory()->create();
         $stranger = User::factory()->create();
 
-        // Відправляємо сповіщення "чужому"
         $stranger->notify(new NewFriendRequestNotification($me));
-        $notificationId = $stranger->notifications()->first()->id;
+        $notification = $stranger->notifications()->first();
 
-        // Я намагаюся прочитати його сповіщення
-        $response = $this->actingAs($me, 'sanctum')->postJson("/api/v1/notifications/{$notificationId}/read");
+        $response = $this->actingAs($me, 'sanctum')->postJson("/api/v1/notifications/{$notification->id}/read");
 
         $response->assertStatus(404);
+
+        $this->assertNull($notification->refresh()->read_at);
     }
 }

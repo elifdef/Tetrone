@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserBasicResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,10 +30,17 @@ class AuthController extends Controller
             $request
         );
 
+        $user = $result['user'];
+        $userData = new UserBasicResource($user)->resolve();
+        $userData['email'] = $user->email;
+
         return response()->json([
             'success' => true,
             'code' => 'LOGIN_SUCCESS',
-            'data' => $result
+            'data' => [
+                'token' => $result['token'],
+                'user' => $userData
+            ]
         ], 200);
     }
 
@@ -47,10 +55,18 @@ class AuthController extends Controller
     {
         $user = $this->authService->register($request->validated());
 
+        $tokenResult = $user->createToken('auth_token');
+
+        $userData = new UserBasicResource($user)->resolve();
+        $userData['email'] = $user->email;
+
         return response()->json([
             'success' => true,
             'code' => 'REGISTER_SUCCESS',
-            'data' => ['user_id' => $user->id]
+            'data' => [
+                'token' => $tokenResult->plainTextToken,
+                'user' => $userData
+            ]
         ], 201);
     }
 

@@ -11,6 +11,29 @@ class UpdateProfileRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $sanitized = [];
+
+        if ($this->has('bio'))
+        {
+            $sanitized['bio'] = strip_tags($this->bio);
+        }
+        if ($this->has('first_name'))
+        {
+            $sanitized['first_name'] = strip_tags($this->first_name);
+        }
+        if ($this->has('last_name'))
+        {
+            $sanitized['last_name'] = strip_tags($this->last_name);
+        }
+
+        if (!empty($sanitized))
+        {
+            $this->merge($sanitized);
+        }
+    }
+
     public function rules(): array
     {
         $rules = [

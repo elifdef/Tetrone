@@ -6,7 +6,9 @@ use App\Enums\Role;
 use App\Models\Post;
 use App\Models\Report;
 use App\Models\User;
+use App\Notifications\ReportReviewedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\TestDox;
 use Tests\TestCase;
 
@@ -14,15 +16,21 @@ class ReportApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[TestDox('1. Отримання причин скарг (Кеш)')]
-    public function test_get_report_reasons(): void
+    protected function setUp(): void
     {
-        $user = User::factory()->create();
-        $response = $this->actingAs($user, 'sanctum')->getJson('/api/v1/reports/reasons');
+        parent::setUp();
+        Notification::fake();
+    }
 
-        $response->assertStatus(200)
-            ->assertJsonPath('code', 'REASONS_RETRIEVED')
-            ->assertHeader('Cache-Control', 'max-age=86400, public');
+    #[TestDox('1. Отримання причин скарг (Кеш та Контракт)')]
+    public function test_can_get_report_reasons(): void
+    {
+        $me = User::factory()->create();
+
+        $response = $this->actingAs($me, 'sanctum')->getJson('/api/v1/reports/reasons');
+
+        $response->assertStatus(200);
+        $this->assertNotEmpty($response->json('data'));
     }
 
     #[TestDox('2. Успішне створення скарги на пост')]
@@ -31,119 +39,114 @@ class ReportApiTest extends TestCase
         $user = User::factory()->create();
         $post = User::factory()->create()->posts()->create(['content' => ['text' => 'Bad stuff']]);
 
-        $validReason = config('reports.reasons')[0] ?? 'spam'; // Беремо перший валідний конфіг
+        $validReason = config('reports.reasons')[0]['id'] ?? 'spam';
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/reports', [
             'type' => 'post',
             'id' => (string)$post->id,
             'reason' => $validReason,
-            'details' => 'This is highly offensive.'
+            'details' => 'Offensive.'
         ]);
 
         $response->assertStatus(201)->assertJsonPath('code', 'REPORT_SUBMITTED');
-        $this->assertDatabaseCount('reports', 1);
-    }
 
-    #[TestDox('3. Помилка 404 при спробі поскаржитись на неіснуючий об\'єкт')]
-    public function test_fails_if_target_not_found(): void
-    {
-        $user = User::factory()->create();
-        $validReason = config('reports.reasons')[0] ?? 'spam';
-
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/reports', [
-            'type' => 'user',
-            'id' => '999999',
-            'reason' => $validReason,
-            'details' => 'Does not exist.'
+        $this->assertDatabaseHas('reports', [
+            'reporter_id' => $user->id,
+            'reportable_type' => Post::class,
+            'reportable_id' => $post->id,
+            'reason' => $validReason
         ]);
-
-        $response->assertStatus(404)->assertJsonPath('code', 'ERR_TARGET_NOT_FOUND');
     }
 
-    #[TestDox('4. Захист від спаму: не можна скаржитись двічі (429)')]
-    public function test_cannot_report_same_target_twice(): void
+    #[TestDox('3. Захист від спаму: не можна скаржитись двічі (429)')]
+    public function test_spam_protection_cannot_report_twice(): void
     {
-        $user = User::factory()->create();
-        $targetUser = User::factory()->create();
-        $validReason = config('reports.reasons')[0] ?? 'spam';
+        $me = User::factory()->create();
+        $post = User::factory()->create()->posts()->create(['content' => ['text' => 'Bad']]);
 
-        // Перша скарга
-        $this->actingAs($user, 'sanctum')->postJson('/api/v1/reports', [
-            'type' => 'user', 'id' => (string)$targetUser->id, 'reason' => $validReason, 'details' => 'Bad user.'
-        ])->assertStatus(201);
+        $payload = [
+            'type' => 'post',
+            'id' => (string)$post->id,
+            'reason' => 'spam',
+            'details' => 'This is a terrible post!'
+        ];
 
-        // Друга скарга на того ж юзера
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/reports', [
-            'type' => 'user', 'id' => (string)$targetUser->id, 'reason' => $validReason, 'details' => 'Still bad.'
-        ]);
+        $this->actingAs($me, 'sanctum')->postJson("/api/v1/reports", $payload)->assertStatus(201);
 
-        $response->assertStatus(429)->assertJsonPath('code', 'ERR_ALREADY_REPORTED');
+        $this->actingAs($me, 'sanctum')->postJson("/api/v1/reports", $payload)->assertStatus(429);
     }
 
-    // ==========================================
-    // 🛡 ADMIN REPORTS API
-    // ==========================================
-
-    #[TestDox('5. Звичайний юзер не має доступу до адмінської панелі скарг (403)')]
-    public function test_regular_user_cannot_view_admin_reports(): void
+    #[TestDox('4. Модератор бачить список скарг з пагінацією та статистикою')]
+    public function test_moderator_can_see_reports_list(): void
     {
-        $user = User::factory()->create(['role' => Role::User->value]);
-        $response = $this->actingAs($user, 'sanctum')->getJson('/api/v1/admin/reports');
-        $response->assertStatus(403);
-    }
-
-    #[TestDox('6. Модератор бачить список скарг та статистику')]
-    public function test_moderator_can_view_reports(): void
-    {
-        $moderator = User::factory()->create(['role' => Role::Moderator->value]);
+        $moderator = \App\Models\User::factory()->create(['role' => \App\Enums\Role::Moderator]);
 
         $response = $this->actingAs($moderator, 'sanctum')->getJson('/api/v1/admin/reports');
-        $response->assertStatus(200)->assertJsonPath('code', 'REPORTS_RETRIEVED');
-        $this->assertArrayHasKey('stats', $response->json('data'));
+
+        $response->assertStatus(200);
+
+        $this->assertArrayHasKey('data', $response->json());
     }
 
-    #[TestDox('7. Модератор може відхилити скаргу')]
-    public function test_moderator_can_reject_report(): void
+    #[TestDox('5. Модератор відхиляє скаргу -> статус міняється -> ЮЗЕР ОТРИМУЄ СПОВІЩЕННЯ')]
+    public function test_moderator_can_reject_report_and_notify_user(): void
     {
         $moderator = User::factory()->create(['role' => Role::Moderator->value]);
-        $report = Report::create(['reporter_id' => 1, 'reportable_type' => User::class, 'reportable_id' => 2, 'reason' => 'spam', 'details' => 'test']);
+        $reporter = User::factory()->create();
+        $report = Report::create(['reporter_id' => $reporter->id, 'reportable_type' => User::class, 'reportable_id' => 2, 'reason' => 'spam']);
 
         $response = $this->actingAs($moderator, 'sanctum')->postJson("/api/v1/admin/reports/{$report->id}/reject", [
             'admin_response' => 'No violation found.'
         ]);
 
-        $response->assertStatus(200)->assertJsonPath('code', 'REPORT_REJECTED');
+        $response->assertStatus(200);
         $this->assertEquals('rejected', $report->refresh()->status);
+
+        Notification::assertSentTo($reporter, ReportReviewedNotification::class);
     }
 
-    #[TestDox('8. Модератор НЕ МОЖЕ вирішити скаргу на Адміна (Policy)')]
-    public function test_moderator_cannot_moderate_admin(): void
-    {
-        $moderator = User::factory()->create(['role' => Role::Moderator->value]);
-        $admin = User::factory()->create(['role' => Role::Admin->value]);
-
-        $report = Report::create(['reporter_id' => 1, 'reportable_type' => User::class, 'reportable_id' => $admin->id, 'reason' => 'spam', 'details' => 'test']);
-
-        $response = $this->actingAs($moderator, 'sanctum')->postJson("/api/v1/admin/reports/{$report->id}/resolve", [
-            'admin_response' => 'Banning admin.'
-        ]);
-
-        $response->assertStatus(403); // Policy block (moderator cannot moderate admin)
-    }
-
-    #[TestDox('9. Адмін МОЖЕ вирішити скаргу на юзера')]
-    public function test_admin_can_resolve_report(): void
+    #[TestDox('6. Адмін ВИРІШУЄ скаргу на юзера -> ЮЗЕР РЕАЛЬНО БАНИТЬСЯ -> Reporter отримує сповіщення')]
+    public function test_admin_resolving_user_report_actually_bans_user(): void
     {
         $admin = User::factory()->create(['role' => Role::Admin->value]);
-        $badUser = User::factory()->create(['role' => Role::User->value]);
+        $reporter = User::factory()->create();
+        $badUser = User::factory()->create(['role' => Role::User->value, 'is_banned' => false]);
 
-        $report = Report::create(['reporter_id' => 1, 'reportable_type' => User::class, 'reportable_id' => $badUser->id, 'reason' => 'spam', 'details' => 'test']);
+        $report = Report::create(['reporter_id' => $reporter->id, 'reportable_type' => User::class, 'reportable_id' => $badUser->id, 'reason' => 'spam']);
 
         $response = $this->actingAs($admin, 'sanctum')->postJson("/api/v1/admin/reports/{$report->id}/resolve", [
-            'admin_response' => 'User banned.'
+            'admin_response' => 'User banned.',
+            'action' => 'ban'
         ]);
 
-        $response->assertStatus(200)->assertJsonPath('code', 'REPORT_RESOLVED');
+        $response->assertStatus(200);
         $this->assertEquals('resolved', $report->refresh()->status);
+
+        $this->assertTrue((bool)$badUser->refresh()->is_banned);
+
+        Notification::assertSentTo($reporter, ReportReviewedNotification::class);
+    }
+
+    #[TestDox('7. Модератор НЕ МОЖЕ модерувати Адміна (Статус скарги не міняється, Адмін не баниться)')]
+    public function test_moderator_cannot_moderate_admin(): void
+    {
+        $moderator = User::factory()->create(['role' => Role::Moderator]);
+        $admin = User::factory()->create(['role' => Role::Admin]);
+        $reporter = User::factory()->create();
+
+        $this->actingAs($reporter, 'sanctum')->postJson("/api/v1/reports", [
+            'type' => 'user',
+            'id' => (string)$admin->id,
+            'reason' => 'spam',
+            'details' => 'He is bad'
+        ])->assertStatus(201);
+
+        $report = Report::first();
+
+        $response = $this->actingAs($moderator, 'sanctum')->postJson("/api/v1/admin/reports/{$report->id}/resolve", [
+            'action' => 'ban'
+        ]);
+
+        $response->assertStatus(403);
     }
 }

@@ -28,8 +28,14 @@ class StickerPackController extends Controller
      */
     public function info(Request $request, StickerPack $pack): JsonResponse
     {
+        // приховуємо інфу про приватний пак
+        $currentUser = $request->user('sanctum');
+        if (!$pack->is_published && $pack->author_id !== $currentUser?->id)
+        {
+            abort(404);
+        }
         $pack->load(['author', 'stickers']);
-        $packData = (new StickerPackResource($pack))->resolve();
+        $packData = new StickerPackResource($pack)->resolve();
         $packData['is_deleted'] = $pack->trashed();
 
         return response()->json([
