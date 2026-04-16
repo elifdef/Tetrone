@@ -13,10 +13,11 @@ import FriendsPage from "../pages/FriendsPage";
 import PostPage from "../pages/PostPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import AdminPage from '../pages/AdminPage';
-import SupportPage from "../pages/SupportPage"
+import SupportPage from "../pages/SupportPage";
+import SupportPanelPage from "../pages/SupportPanelPage";
 import RulesPage from "../pages/RulesPage";
-import ModerationPage from "../pages/ModerationPage"
-import { GuestGuard, AuthGuard, SetupGuard } from "./Guards";
+import ModerationPage from "../pages/ModerationPage";
+import { GuestGuard, AuthGuard, SetupGuard, RoleGuard } from "./Guards";
 import AdminUserInfo from "../components/admin/AdminUserInfo";
 import { userRole } from "../config";
 import NotificationsPage from "../pages/NotificationsPage";
@@ -42,10 +43,8 @@ export default function AppRoutes() {
             </Route>
 
             <Route element={<MainLayout />}>
-                {/* публічні сторінки */}
-                <Route path="/:username" element={<ProfilePage />} />
+            
                 <Route path="/post/:id" element={<PostPage />} />
-
                 {/* правила */}
                 <Route path="/rules" element={<RulesPage />} />
 
@@ -57,25 +56,36 @@ export default function AppRoutes() {
                     <Route path="/email-verify/:id/:hash" element={<HomePage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/activity/" element={<ActivityPage />} />
-
-                    {user?.role >= userRole.Support && (
-                        <Route path="/support" element={<SupportPage />} />
-                    )}
-
-                    {user?.role >= userRole.Moderator && (
-                        <Route path="/moderation" element={<ModerationPage currentUser={user} />} />
-                    )}
-
-                    {user?.role >= userRole.Admin && (
-                        <>
-                            <Route path="/control-panel" element={<AdminPage />} />
-                            <Route path="/control-panel/users/:username" element={<AdminUserInfo />} />
-                        </>
-                    )}
-
+                    <Route path="/activity" element={<ActivityPage />} />
                     <Route path="/stickers-shop" element={<StickerShopPage />} />
+                    <Route path="/support" element={<SupportPage />} />
+
+                    <Route path="/support-panel" element={
+                        <RoleGuard allowedRoles={[userRole.Support]}>
+                            <SupportPanelPage />
+                        </RoleGuard>
+                    } />
+
+                    <Route path="/moderation" element={
+                        <RoleGuard allowedRoles={[userRole.Moderator]}>
+                            <ModerationPage />
+                        </RoleGuard>
+                    } />
+
+                    <Route path="/control-panel" element={
+                        <RoleGuard allowedRoles={[userRole.Admin]}>
+                            <AdminPage />
+                        </RoleGuard>
+                    } />
+
+                    <Route path="/control-panel/users/:username" element={
+                        <RoleGuard allowedRoles={[userRole.Admin]}>
+                            <AdminUserInfo />
+                        </RoleGuard>
+                    } />
                 </Route>
+
+                <Route path="/:username" element={<ProfilePage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

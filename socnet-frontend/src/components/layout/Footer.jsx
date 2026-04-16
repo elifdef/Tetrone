@@ -37,8 +37,8 @@ export default function Footer() {
                 <Link to="/rules" className="tetrone-footer-link">
                     {t('common.rules')}
                 </Link>
-                <Link to="https://github.com/elifdef/social-network" className="tetrone-footer-link">
-                    Github
+                <Link to="/support" className="tetrone-footer-link">
+                    {t('common.support')}
                 </Link>
                 <Link to="/developers" className="tetrone-footer-link">
                     {t('footer.for_dev')}

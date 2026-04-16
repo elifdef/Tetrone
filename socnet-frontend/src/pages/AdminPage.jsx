@@ -10,6 +10,7 @@ import { PostsManager } from '../components/admin/PostsManager';
 import { UsersManager } from '../components/admin/UsersManager';
 import { AdminTabs } from '../components/admin/AdminTabs';
 import AdminAppeals from '../components/admin/AdminAppeals';
+import AdminTickets from '../components/admin/AdminTickets';
 
 const AdminPage = () => {
     const { t } = useTranslation();
@@ -19,34 +20,24 @@ const AdminPage = () => {
     usePageTitle(t('common.admin_panel'));
 
     const isAdmin = currentUser?.role === userRole.Admin;
-    const isModerator = currentUser?.role === userRole.Moderator;
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const activeTab = searchParams.get('tab') || (isAdmin ? 'dashboard' : 'reports');
+    const activeTab = searchParams.get('tab') || 'dashboard';
 
     useEffect(() => {
-        if (!isAdmin && !isModerator) {
+        if (!isAdmin) {
             navigate('/');
         }
-    }, [isAdmin, isModerator, navigate]);
+    }, [isAdmin, navigate]);
 
-    // кешуєм вкладки щоб вони не перестворювалися при кожному рендері
-    const adminTabs = useMemo(() => {
-        const tabs = [];
-
-        if (isAdmin) {
-            tabs.push({ id: 'dashboard', label: t('admin.dashboard.title') });
-        }
-
-        if (isAdmin || isModerator) {
-            tabs.push({ id: 'reports', label: t('admin.reports.tab') });
-            tabs.push({ id: 'appeals', label: t('admin.appeals.tab') });
-            tabs.push({ id: 'posts', label: t('common.posts') });
-            tabs.push({ id: 'users', label: t('admin.users_management') });
-        }
-
-        return tabs;
-    }, [isAdmin, isModerator, t]);
+    const adminTabs = useMemo(() => [
+        { id: 'dashboard', label: t('admin.dashboard.title') },
+        { id: 'reports', label: t('admin.reports.tab') },
+        { id: 'appeals', label: t('admin.appeals.tab') },
+        { id: 'tickets', label: t('admin.support.support_tickets') },
+        { id: 'posts', label: t('common.posts') },
+        { id: 'users', label: t('admin.users_management') }
+    ], [t]);
 
     const handleTabChange = (tabId) => {
         setSearchParams({ tab: tabId });
@@ -54,22 +45,17 @@ const AdminPage = () => {
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'dashboard':
-                return isAdmin ? <AdminDashboard /> : null;
-            case 'reports':
-                return <AdminReports />;
-            case 'posts':
-                return <PostsManager currentUser={currentUser} />;
-            case 'users':
-                return <UsersManager canBan={true} />;
-            case 'appeals':
-                return <AdminAppeals />;
-            default:
-                return null;
+            case 'dashboard': return <AdminDashboard />;
+            case 'reports': return <AdminReports />;
+            case 'appeals': return <AdminAppeals />;
+            case 'tickets': return <AdminTickets />;
+            case 'posts': return <PostsManager currentUser={currentUser} />;
+            case 'users': return <UsersManager canBan={true} />;
+            default: return null;
         }
     };
 
-    if (!isAdmin && !isModerator) return null;
+    if (!isAdmin) return null;
 
     return (
         <div className="tetrone-card-wrapper">

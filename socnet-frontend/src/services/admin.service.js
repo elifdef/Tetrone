@@ -52,6 +52,28 @@ class AdminService {
     async getUserSessions(username) {
         return await fetchClient(`/admin/users/${username}/sessions`);
     }
+
+    async getTickets(status = '') {
+        const query = status ? `?status=${status}` : '';
+        return await fetchClient(`/admin/tickets${query}`);
+    }
+
+    async getTicket(id) {
+        return await fetchClient(`/admin/tickets/${id}`);
+    }
+
+    async replyToTicket(id, message, isInternal) {
+        return await fetchClient(`/admin/tickets/${id}/reply`, {
+            method: 'POST',
+            body: { message, is_internal: isInternal }
+        });
+    }
+
+    async assignTicket(id) {
+        return await fetchClient(`/admin/tickets/${id}/assign`, {
+            method: 'POST'
+        });
+    }
 }
 
 export default new AdminService();

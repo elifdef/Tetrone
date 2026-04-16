@@ -30,3 +30,14 @@ export const SetupGuard = () => {
 
     return <Outlet />;
 };
+
+// перевірка ролі юзера
+export const RoleGuard = ({ allowedRoles, children }) => {
+    const { user } = useContext(AuthContext);
+
+    if (!user || !allowedRoles.includes(user.role)) {
+        return <Navigate to="/" replace />;
+    }
+
+    return children ? children : <Outlet />;
+};

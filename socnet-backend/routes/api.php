@@ -19,4 +19,5 @@ Route::prefix('v1')->group(function ()
     require __DIR__ . '/api/messages.php';
     require __DIR__ . '/api/stickers.php';
     require __DIR__ . '/api/settings.php';
+    require __DIR__ . '/api/support.php';
 });

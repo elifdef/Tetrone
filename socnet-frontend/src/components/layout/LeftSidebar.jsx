@@ -90,7 +90,13 @@ const LeftSidebar = () => {
                             </Link>
                             <Link to="/activity" className={getLinkClass("/activity")} onClick={closeMenu}>
                                 {t('common.activity')}
+
                             </Link>
+
+                            <Link to="/stickers-shop" className={getLinkClass("/stickers-shop")} onClick={closeMenu}>
+                                {t('common.stickers_shop')}
+                            </Link>
+                            
                             <Link to="/settings" className={getLinkClass("/settings")} onClick={closeMenu}>
                                 {t('common.settings')}
                             </Link>
@@ -121,10 +127,6 @@ const LeftSidebar = () => {
                                     </Link>
                                 </>
                             )}
-
-                            <Link to="/stickers-shop" className={getLinkClass("/stickers-shop")} onClick={closeMenu}>
-                                {t('common.stickers_shop')}
-                            </Link>
                         </>
                     ) : (
                         <>

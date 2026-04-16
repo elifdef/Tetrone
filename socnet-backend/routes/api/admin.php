@@ -6,10 +6,10 @@ use App\Http\Controllers\Api\v1\Admin\UserController;
 use App\Http\Controllers\Api\v1\Admin\ReportController;
 use App\Http\Controllers\Api\v1\Admin\AppealController;
 use App\Http\Controllers\Api\v1\Admin\PostController;
+use App\Http\Controllers\Api\v1\Admin\AdminTicketController;
 
 Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()
 {
-
     Route::get('/dashboard', [DashboardController::class, 'getStats']);
 
     // Юзери
@@ -46,5 +46,14 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()
         Route::get('/', [AppealController::class, 'index']);
         Route::post('/{appeal}/resolve', [AppealController::class, 'resolve']);
         Route::post('/{appeal}/reject', [AppealController::class, 'reject']);
+    });
+
+    // Техпідтримка
+    Route::prefix('tickets')->group(function ()
+    {
+        Route::get('/', [AdminTicketController::class, 'index']);
+        Route::get('/{ticket}', [AdminTicketController::class, 'show']);
+        Route::post('/{ticket}/reply', [AdminTicketController::class, 'reply']);
+        Route::post('/{ticket}/assign', [AdminTicketController::class, 'assign']);
     });
 });

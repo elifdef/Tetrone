@@ -267,4 +267,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserPrivacyException::class);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(\App\Models\Ticket::class);
+    }
+
+    public function ticketMessages()
+    {
+        return $this->hasMany(\App\Models\TicketMessage::class);
+    }
+
 }
