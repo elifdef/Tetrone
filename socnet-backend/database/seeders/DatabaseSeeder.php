@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([DefaultEmojiPacksSeeder::class]);
+//        $this->call([DefaultEmojiPacksSeeder::class]);
     }
 }

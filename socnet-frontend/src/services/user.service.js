@@ -30,6 +30,10 @@ class UserService {
         const queryString = new URLSearchParams(params).toString();
         return await fetchClient(`/users?${queryString}`);
     }
+
+    async searchUsers(query) {
+        return this.getUsers({ search: query });
+    }
 }
 
 export default new UserService();

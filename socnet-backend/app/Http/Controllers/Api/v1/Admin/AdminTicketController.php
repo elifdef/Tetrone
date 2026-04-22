@@ -78,7 +78,7 @@ class AdminTicketController extends Controller
     {
         $ticket->update([
             'assigned_to' => $request->user()->id,
-            'status' => TicketStatus::IN_PROGRESS
+            'status' => TicketStatus::InProgress
         ]);
 
         return response()->json(['success' => true, 'code' => 'TICKET_ASSIGNED']);

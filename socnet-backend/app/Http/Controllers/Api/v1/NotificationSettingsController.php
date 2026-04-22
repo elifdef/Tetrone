@@ -2,34 +2,48 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Services\FileStorageService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Models\User;
+use App\Services\FileStorageService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class NotificationSettingsController extends Controller
 {
-    protected $fileService;
-
-    public function __construct(FileStorageService $fileService)
+    public function __construct(protected FileStorageService $fileService)
     {
-        $this->fileService = $fileService;
     }
 
+    /**
+     * Отримати налаштування сповіщень
+     *
+     * @group Notifications
+     * @authenticated
+     * @response 200
+     */
     public function getSettings(Request $request): JsonResponse
     {
-        return $this->success('SETTINGS_RETRIEVED', 'Settings retrieved', $request->user()->notificationSettings);
+        return response()->json([
+            'success' => true,
+            'code' => 'SETTINGS_RETRIEVED',
+            'data' => $request->user()->notificationSettings
+        ], 200);
     }
 
+    /**
+     * Оновити налаштування сповіщень
+     *
+     * @group Notifications
+     * @authenticated
+     * @response 200
+     */
     public function updateSettings(Request $request): JsonResponse
     {
         $user = $request->user();
         $validatedData = [];
         $types = ['likes', 'comments', 'reposts', 'friend_requests', 'messages', 'wall_posts'];
 
-        // отримуємо реальні налаштування з бази
-        // це потрібно щоб правильно видалити старий файл
+        // отримуємо реальні налаштування з бази для правильного видалення старого файлу
         $oldSettings = $user->notificationSettings()->first();
 
         foreach ($types as $type)
@@ -75,47 +89,87 @@ class NotificationSettingsController extends Controller
             $validatedData
         );
 
-        return $this->success('SETTINGS_UPDATED', 'Settings updated successfully', $settings);
+        return response()->json([
+            'success' => true,
+            'code' => 'SETTINGS_UPDATED',
+            'data' => $settings
+        ], 200);
     }
 
+    /**
+     * Отримати винятки для сповіщень (перевизначення)
+     *
+     * @group Notifications
+     * @authenticated
+     * @response 200
+     */
     public function getOverrides(Request $request): JsonResponse
     {
         $overrides = $request->user()->notificationOverrides()
             ->with('targetUser:id,username,first_name,last_name,avatar')
             ->get();
 
-        return $this->success('OVERRIDES_RETRIEVED', 'Overrides retrieved', $overrides);
+        return response()->json([
+            'success' => true,
+            'code' => 'OVERRIDES_RETRIEVED',
+            'data' => $overrides
+        ], 200);
     }
 
-    public function updateOverride(Request $request, $targetUserId): JsonResponse
+    /**
+     * Оновити виняток для конкретного користувача
+     *
+     * @group Notifications
+     * @authenticated
+     * @response 200
+     */
+    public function updateOverride(Request $request, User $targetUser): JsonResponse
     {
         $request->validate([
             'is_muted' => 'boolean',
             'custom_sound' => 'nullable|string|max:255',
         ]);
 
-        User::findOrFail($targetUserId);
-
-        if ($request->user()->id == $targetUserId)
+        if ($request->user()->id === $targetUser->id)
         {
-            return $this->error('ERR_MUTE_SELF', 'You cannot mute yourself.', 400);
+            return response()->json([
+                'success' => false,
+                'code' => 'ERR_MUTE_SELF',
+                'message' => 'You cannot mute yourself.'
+            ], 400);
         }
 
         $override = $request->user()->notificationOverrides()->updateOrCreate(
-            ['target_user_id' => $targetUserId],
+            ['target_user_id' => $targetUser->id],
             [
                 'is_muted' => $request->input('is_muted', false),
                 'custom_sound' => $request->input('custom_sound', null),
             ]
         );
 
-        return $this->success('OVERRIDE_UPDATED', 'Override updated', $override->load('targetUser:id,username,first_name,last_name,avatar'));
+        return response()->json([
+            'success' => true,
+            'code' => 'OVERRIDE_UPDATED',
+            'data' => $override->load('targetUser:id,username,first_name,last_name,avatar')
+        ], 200);
     }
 
-    public function deleteOverride(Request $request, $targetUserId): JsonResponse
+    /**
+     * Видалити виняток
+     *
+     * @group Notifications
+     * @authenticated
+     * @response 200
+     */
+    public function deleteOverride(Request $request, User $targetUser): JsonResponse
     {
-        $request->user()->notificationOverrides()->where('target_user_id', $targetUserId)->delete();
+        $request->user()->notificationOverrides()
+            ->where('target_user_id', $targetUser->id)
+            ->delete();
 
-        return $this->success('OVERRIDE_DELETED', 'Override removed.');
+        return response()->json([
+            'success' => true,
+            'code' => 'OVERRIDE_DELETED'
+        ], 200);
     }
 }

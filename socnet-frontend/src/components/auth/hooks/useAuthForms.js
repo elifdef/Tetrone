@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import AuthService from '../../../services/auth.service';
+import AuthService from '../../services/auth.service';
 import { useTranslation } from 'react-i18next';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 export function useAuthForms() {
     const [loading, setLoading] = useState(false);
@@ -25,7 +25,11 @@ export function useAuthForms() {
                 navigate(from, { replace: true });
             }
         } catch (err) {
-            setError(err.message || t('api.error.ERR_UNKNOWN'));
+            let errorMessage = err.message || t('api.error.ERR_UNKNOWN');
+            if (typeof errorMessage === 'object') {
+                errorMessage = errorMessage.text || errorMessage.message || Object.values(errorMessage)[0] || "Login failed";
+            }
+            setError(String(errorMessage));
         } finally {
             setLoading(false);
         }

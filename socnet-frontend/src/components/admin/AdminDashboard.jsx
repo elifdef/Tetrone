@@ -38,13 +38,6 @@ export default function AdminDashboard() {
 
     return (
         <div className="admin-dashboard-wrapper">
-            <div className="admin-dashboard-header">
-                <span className="admin-timeframe-badge">{t('admin.dashboard.last_7_days')}</span>
-                <button onClick={fetchStats}>
-                    {t('action.refresh')}
-                </button>
-            </div>
-
             <div className="admin-dossier-row admin-stats-row">
                 <div className="admin-stats-box">
                     <div className="admin-stats-label">{t('common.users')}</div>

@@ -42,7 +42,6 @@ export default function LoginForm() {
                 name="password"
                 id="login-password"
                 label={t('auth.password')}
-                placeholder=""
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}

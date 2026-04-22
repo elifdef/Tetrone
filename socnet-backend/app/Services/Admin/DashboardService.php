@@ -2,15 +2,18 @@
 
 namespace App\Services\Admin;
 
-use App\Models\User;
-use App\Models\Post;
-use App\Models\Comment;
 use App\Http\Resources\UserBasicResource;
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
+    /**
+     * Отримати всі дані для головного екрану адмін-панелі
+     */
     public function getDashboardData(): array
     {
         return [
@@ -21,6 +24,9 @@ class DashboardService
         ];
     }
 
+    /**
+     * Зведена статистика (загальна кількість)
+     */
     private function getSummaryStats(): array
     {
         return [
@@ -30,6 +36,9 @@ class DashboardService
         ];
     }
 
+    /**
+     * Дані для графіків (активність за останні 7 днів)
+     */
     private function getChartsData(): array
     {
         $last7Days = Carbon::today()->subDays(6);
@@ -42,11 +51,17 @@ class DashboardService
 
         $postsTimeline = Post::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as posts_count'))
             ->where('created_at', '>=', $last7Days)
-            ->groupBy('date')->orderBy('date')->get()->keyBy('date');
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
 
         $commentsTimeline = Comment::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as comments_count'))
             ->where('created_at', '>=', $last7Days)
-            ->groupBy('date')->orderBy('date')->get()->keyBy('date');
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
 
         $contentActivity = [];
         for ($i = 0; $i < 7; $i++)
@@ -67,6 +82,9 @@ class DashboardService
         ];
     }
 
+    /**
+     * Статистика реального часу (користувачі онлайн)
+     */
     private function getRealtimeStats(): array
     {
         $fiveMinutesAgo = Carbon::now()->subMinutes(5);
@@ -83,6 +101,9 @@ class DashboardService
         ];
     }
 
+    /**
+     * Метрики навантаження сервера
+     */
     private function getServerMetrics(): array
     {
         $cpuLoad = function_exists('sys_getloadavg') ? sys_getloadavg()[0] : 0;

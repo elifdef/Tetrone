@@ -632,7 +632,6 @@
     },
     "dashboard": {
       "title": "Дашборд",
-      "last_7_days": "Дані за останні 7 днів",
       "server_health": "Стан сервера",
       "cpu_load": "Навантаження CPU",
       "disk_usage": "Дисковий простір",

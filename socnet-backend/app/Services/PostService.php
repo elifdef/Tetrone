@@ -37,8 +37,7 @@ class PostService
             return Post::whereNull('id')->paginate(config('posts.max_paginate', 15));
         }
 
-        $canSeeProfile = app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Profile->value);
-        if (!$canSeeProfile)
+        if (!app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Profile->value))
         {
             return Post::whereNull('id')->paginate(config('posts.max_paginate', 15));
         }
@@ -75,8 +74,7 @@ class PostService
             return Post::whereNull('id')->paginate(30);
         }
 
-        $canSeeAvatars = app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Avatar->value);
-        if (!$canSeeAvatars)
+        if (!app(PrivacyService::class)->canAccess($targetUser, $currentUser, PrivacyContext::Avatar->value))
         {
             return Post::whereNull('id')->paginate(30);
         }
@@ -117,17 +115,17 @@ class PostService
         return DB::transaction(function () use ($user, $data, $mediaFiles)
         {
             $payload = $data['payload'] ?? [];
-
             $targetUserId = $data['target_user_id'] ?? null;
             $originalPostId = $data['original_post_id'] ?? null;
 
             $this->validatePoll($payload['poll'] ?? null);
 
-            $contentData = [];
-            if (!empty($payload['text'])) $contentData['text'] = $payload['text'];
-            if (!empty($payload['poll'])) $contentData['poll'] = $payload['poll'];
-            if (!empty($payload['youtube'])) $contentData['youtube'] = $payload['youtube'];
-            if (!empty($payload['is_avatar_update'])) $contentData['is_avatar_update'] = true;
+            $contentData = array_filter([
+                'text' => $payload['text'] ?? null,
+                'poll' => $payload['poll'] ?? null,
+                'youtube' => $payload['youtube'] ?? null,
+                'is_avatar_update' => !empty($payload['is_avatar_update']) ? true : null,
+            ]);
 
             $post = $user->posts()->create([
                 'target_user_id' => $targetUserId == $user->id ? null : $targetUserId,
@@ -163,7 +161,7 @@ class PostService
                 throw new ApiException('ERR_MAX_MEDIA_EXCEEDED', 422);
             }
 
-            $contentData = is_array($post->content) ? $post->content : [];
+            $contentData = $post->content ?? [];
 
             if (array_key_exists('text', $payload))
             {
@@ -205,7 +203,7 @@ class PostService
         {
             $content = $post->content;
 
-            if (is_array($content) && isset($content['is_avatar_update']) && $content['is_avatar_update'])
+            if (!empty($content['is_avatar_update']))
             {
                 $user = $post->user;
 
@@ -225,45 +223,33 @@ class PostService
                         ]);
                     } else
                     {
-                        $user->update([
-                            'avatar' => null,
-                            'avatar_post_id' => null
-                        ]);
+                        $user->update(['avatar' => null, 'avatar_post_id' => null]);
                     }
                 }
             }
 
-            $attachments = $post->attachments;
-            foreach ($attachments as $attachment)
+            foreach ($post->attachments as $attachment)
             {
                 $this->fileService->delete($attachment->file_path);
             }
+
             $post->delete();
         });
     }
 
     private function validatePoll(?array $poll): void
     {
-        if (empty($poll))
-            return;
+        if (empty($poll)) return;
 
-        if (empty(trim($poll['question'] ?? '')))
-            throw new ApiException('ERR_POLL_QUESTION_EMPTY', 422);
-
-        if (!isset($poll['options']) || !is_array($poll['options']))
-            throw new ApiException('ERR_POLL_OPTIONS_INVALID', 422);
-
-        if (count($poll['options']) < 2 || count($poll['options']) > 16)
-            throw new ApiException('ERR_POLL_OPTIONS_LIMIT', 422);
+        if (empty(trim($poll['question'] ?? ''))) throw new ApiException('ERR_POLL_QUESTION_EMPTY', 422);
+        if (!isset($poll['options']) || !is_array($poll['options'])) throw new ApiException('ERR_POLL_OPTIONS_INVALID', 422);
+        if (count($poll['options']) < 2 || count($poll['options']) > 16) throw new ApiException('ERR_POLL_OPTIONS_LIMIT', 422);
 
         $hasCorrectOption = false;
         foreach ($poll['options'] as $option)
         {
-            if (empty(trim($option['text'] ?? '')))
-                throw new ApiException('ERR_POLL_OPTION_EMPTY', 422);
-
-            if (!empty($option['is_correct']))
-                $hasCorrectOption = true;
+            if (empty(trim($option['text'] ?? ''))) throw new ApiException('ERR_POLL_OPTION_EMPTY', 422);
+            if (!empty($option['is_correct'])) $hasCorrectOption = true;
         }
 
         if (($poll['type'] ?? 'regular') === 'quiz' && !$hasCorrectOption)
@@ -277,21 +263,52 @@ class PostService
         $textNode = $post->content['text'] ?? null;
         if (empty($textNode) || !is_array($textNode)) return;
 
-        $mentionedUsernames = [];
-        $this->extractMentions($textNode, $mentionedUsernames);
-        $mentionedUsernames = array_unique($mentionedUsernames);
+        $mentionedUsernames = array_unique($this->extractMentions($textNode));
 
         if (!empty($mentionedUsernames))
         {
-            $mentionedUsers = User::whereIn('username', $mentionedUsernames)->get();
+            $mentionedUsers = User::whereIn('username', $mentionedUsernames)
+                ->where('id', '!=', $user->id)
+                ->where('id', '!=', $targetUserId)
+                ->get();
+
             foreach ($mentionedUsers as $mentionedUser)
             {
-                if ($mentionedUser->id !== $user->id && $mentionedUser->id != $targetUserId)
+                $mentionedUser->notify(new MentionNotification($user, $post));
+            }
+        }
+    }
+
+    /**
+     * Чиста рекурсивна функція для парсингу TipTap JSON
+     */
+    private function extractMentions(array|string $node): array
+    {
+        $usernames = [];
+
+        if (isset($node['type']) && $node['type'] === 'mention')
+        {
+            // TipTap може зберігати нікнейм в id, username або label
+            $username = $node['attrs']['username'] ?? $node['attrs']['id'] ?? $node['attrs']['label'] ?? null;
+            if ($username)
+            {
+                // Відкидаємо символ @ якщо він випадково зберігся
+                $usernames[] = ltrim($username, '@');
+            }
+        }
+
+        if (isset($node['content']) && is_array($node['content']))
+        {
+            foreach ($node['content'] as $child)
+            {
+                if (is_array($child))
                 {
-                    $mentionedUser->notify(new MentionNotification($user, $post));
+                    $usernames = array_merge($usernames, $this->extractMentions($child));
                 }
             }
         }
+
+        return $usernames;
     }
 
     private function uploadMedia(Post $post, string $username, array $mediaFiles): void
@@ -301,9 +318,14 @@ class PostService
         foreach ($mediaFiles as $index => $file)
         {
             $mime = $file->getMimeType();
-            $type = str_starts_with($mime, 'image/') ? 'image' :
-                (str_starts_with($mime, 'video/') ? 'video' :
-                    (str_starts_with($mime, 'audio/') ? 'audio' : 'document'));
+            $type = match (true)
+            {
+                str_starts_with($mime, 'image/') => 'image',
+                str_starts_with($mime, 'video/') => 'video',
+                str_starts_with($mime, 'audio/') => 'audio',
+                default => 'document',
+            };
+
             $path = $this->fileService->upload($file, $username, 'media');
 
             $post->attachments()->create([
@@ -314,25 +336,6 @@ class PostService
                 'original_name' => $file->getClientOriginalName(),
                 'file_size' => $file->getSize()
             ]);
-        }
-    }
-
-    private function extractMentions(array $node, array &$usernames): void
-    {
-        if (isset($node['type']) && $node['type'] === 'mention' && isset($node['attrs']['username']))
-        {
-            $usernames[] = $node['attrs']['username'];
-        }
-
-        if (isset($node['content']) && is_array($node['content']))
-        {
-            foreach ($node['content'] as $child)
-            {
-                if (is_array($child))
-                {
-                    $this->extractMentions($child, $usernames);
-                }
-            }
         }
     }
 

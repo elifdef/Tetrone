@@ -13,11 +13,23 @@ class DashboardController extends Controller
     {
     }
 
+    /**
+     * Отримати статистику для дашборду
+     *
+     * Повертає зведену інформацію, дані для графіків, список користувачів онлайн та метрики сервера.
+     *
+     * @group Admin - Dashboard
+     * @authenticated
+     * @response 200
+     */
     public function getStats(): JsonResponse
     {
         $this->authorize('viewAdminPanel', User::class);
-        $data = $this->dashboardService->getDashboardData();
 
-        return $this->success('DASHBOARD_STATS_RETRIEVED', 'Stats retrieved', $data);
+        return response()->json([
+            'success' => true,
+            'code' => 'DASHBOARD_STATS_RETRIEVED',
+            'data' => $this->dashboardService->getDashboardData()
+        ], 200);
     }
 }

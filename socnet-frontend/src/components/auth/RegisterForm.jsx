@@ -33,7 +33,6 @@ export default function RegisterForm() {
 
         try {
             const res = await AuthService.signUp(formData);
-
             setMsg({
                 text: (
                     <span className="tetrone-auth-success-text">
@@ -47,7 +46,11 @@ export default function RegisterForm() {
             });
             setFormData({ username: "", email: "", password: "", password_confirmation: "" });
         } catch (error) {
-            setMsg({ text: error.message || t('error.action_failed'), type: "error" });
+            let errorText = error.message || t('error.action_failed');
+            if (typeof errorText === 'object') {
+                errorText = errorText.text || errorText.message || Object.values(errorText)[0] || "Registration failed";
+            }
+            setMsg({ text: String(errorText), type: "error" });
         } finally {
             setLoading(false);
         }
@@ -68,42 +71,13 @@ export default function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit} className="tetrone-auth-form">
-            <Input
-                type="text"
-                name="username"
-                id="reg-username"
-                label={t('auth.username')}
-                value={formData.username}
-                onChange={handleChange}
-                autoComplete="off"
-                required
-            />
-
-            <Input
-                type="email"
-                name="email"
-                id="reg-email"
-                label={t('auth.email')}
-                value={formData.email}
-                onChange={handleChange}
-                autoComplete="username"
-                required
-            />
+            <Input type="text" name="username" id="reg-username" label={t('auth.username')} value={formData.username} onChange={handleChange} autoComplete="off" required />
+            <Input type="email" name="email" id="reg-email" label={t('auth.email')} value={formData.email} onChange={handleChange} autoComplete="username" required />
 
             <div className="tetrone-form-row">
                 <div className="tetrone-form-group">
-                    <Input
-                        type="password"
-                        name="password"
-                        id="reg-password"
-                        label={t('auth.password')}
-                        value={formData.password}
-                        onChange={handleChange}
-                        autoComplete="new-password"
-                        required
-                    />
+                    <Input type="password" name="password" id="reg-password" label={t('auth.password')} value={formData.password} onChange={handleChange} autoComplete="new-password" required />
                 </div>
-
                 <div className="tetrone-form-group">
                     <Input
                         type="password"
@@ -118,10 +92,7 @@ export default function RegisterForm() {
                 </div>
             </div>
 
-            <PasswordStrengthBar
-                password={formData.password}
-                onScoreChange={setPasswordScore}
-            />
+            <PasswordStrengthBar password={formData.password} onScoreChange={setPasswordScore} />
 
             {msg.type === "error" && (
                 <div className="tetrone-auth-msg error">

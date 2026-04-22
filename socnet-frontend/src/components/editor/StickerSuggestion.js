@@ -2,6 +2,8 @@ import { ReactRenderer } from '@tiptap/react';
 import tippy from 'tippy.js';
 import SuggestionList from './SuggestionList';
 import StickerService from '../../services/sticker.service';
+import Mention from '@tiptap/extension-mention';
+import mentionSuggestion from './mentionSuggestion';
 
 let cachedStickers = null;
 

@@ -14,6 +14,7 @@ import StickerPicker from './StickerPicker';
 import stickerSuggestion from './StickerSuggestion';
 import EditorMenu from './EditorMenu';
 import { SpoilerMark, FontSize, EnterHandler, StickerTrigger } from './extensions';
+import mentionSuggestion from './mentionSuggestion';
 
 export default function Editor({
     value,
@@ -49,10 +50,7 @@ export default function Editor({
 
             Mention.configure({
                 HTMLAttributes: { class: 'tetrone-user-mention' },
-                suggestion: {
-                    char: '@',
-                    // TODO: додати пошук користувачів
-                }
+                suggestion: mentionSuggestion
             }),
         ],
         content: value,

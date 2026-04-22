@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Report;
+use App\Traits\ExtractsPostContent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class ReportReviewedNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, ExtractsPostContent;
 
     protected $report;
 
@@ -34,10 +35,18 @@ class ReportReviewedNotification extends Notification implements ShouldQueue
         {
             if ($targetType === 'Post' || $targetType === 'Comment')
             {
-                $targetContent = $this->report->reportable->content;
+                $parsedContent = $this->getPostSnippet($this->report->reportable->content, 150);
+
+                if (!empty($parsedContent))
+                {
+                    $targetContent = $parsedContent;
+                } else
+                {
+                    $targetContent = 'Media content'; // Якщо там тільки картинка
+                }
             } elseif ($targetType === 'User')
             {
-                $targetContent = $this->report->reportable->first_name . ' ' . $this->report->reportable->last_name;
+                $targetContent = trim($this->report->reportable->first_name . ' ' . $this->report->reportable->last_name);
             }
         }
 
